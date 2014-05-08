@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="48dp" >
+    <ImageView
+        android:id="@+id/ImageViewNoteType"
+        android:layout_width="54dp"
+        android:layout_height="92dp"
+        android:contentDescription="Thumbnail"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
+ 
+    <TextView
+        android:id="@+id/TextViewNoteType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/ImageViewNoteType" 
+        android:paddingTop="13dp"
+        android:paddingLeft="10dp"
+		android:textSize="50px"/>
+</RelativeLayout>

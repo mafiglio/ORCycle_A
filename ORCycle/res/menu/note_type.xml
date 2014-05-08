@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/action_cancel_note_type"
+        android:showAsAction="always"
+          android:title="cancel"/>
+    <item android:id="@+id/action_save_note_type"
+        android:showAsAction="always"
+          android:title="save"/>
+</menu>

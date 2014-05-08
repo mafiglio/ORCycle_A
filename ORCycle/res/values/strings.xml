@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ORCycle</string>
+    <string name="title_section4">User Info</string>
+    <string name="title_section3">My Notes</string>
+    <string name="title_section2">My Trips</string>
+    <string name="title_section1">Record</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main_input">Record</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_trip_purpose">Trip Purpose</string>
+    <string name="title_activity_user_info">User Information</string>
+    <string name="title_activity_trip_map">Trip Map</string>
+    <string name="title_activity_saved_trips">Saved Trips</string>
+    <string name="title_activity_trip_detail">Trip Details</string>
+    <string name="title_activity_note_type">Note Type</string>
+    <string name="title_activity_note_detail">Note Details</string>
+    <string name="title_activity_note_map">Note Map</string>
+    <string name="title_activity_saved_notes">Saved Notes</string>
+    <string name="post_url">http://orcycle.cecs.pdx.edu/post/</string>
+
+    <string-array name="ageArray">
+        <item></item>
+        <item>Less than 18</item>
+        <item>18–24</item>
+        <item>25–34</item>
+        <item>35–44</item>
+        <item>45–54</item>
+        <item>55–64</item>
+        <item>65+</item>
+    </string-array>
+    <string-array name="genderArray">
+        <item></item>
+        <item>Female</item>
+        <item>Male</item>
+    </string-array>
+    <string-array name="ethnicityArray">
+        <item></item>
+        <item>White</item>
+        <item>African American</item>
+        <item>Asian</item>
+        <item>Native American</item>
+        <item>Pacific Islander</item>
+        <item>Multi-racial</item>
+        <item>Hispanic / Mexican / Latino</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="incomeArray">
+        <item></item>
+        <item>Less than $20,000</item>
+        <item>$20,000 to $39,999</item>
+        <item>$40,000 to $59,999</item>
+        <item>$60,000 to $74,999</item>
+        <item>$75,000 to $99,999</item>
+        <item>$100,000 or greater</item>
+    </string-array>
+    <string-array name="cyclefreqArray">
+        <item></item>
+        <item>Less than once a month</item>
+        <item>Several times a month</item>
+        <item>Several times per week</item>
+        <item>Daily</item>
+    </string-array>
+    <string-array name="ridertypeArray">
+        <item></item>
+        <item><![CDATA[Strong & fearless]]></item>
+        <item><![CDATA[Enthused & confident]]></item>
+        <item>Comfortable, but cautious</item>
+        <item>Interested, but concerned</item>
+    </string-array>
+    <string-array name="riderhistoryArray">
+        <item></item>
+        <item>Since childhood</item>
+        <item>Several years</item>
+        <item>One year or less</item>
+        <item>Just trying it out / just started</item>
+    </string-array>
+
+    <string name="email_hint">name@domain</string>
+    <string name="zip_hint">12345</string>
+
+    <string-array name="trippurposeArray">
+        <item>Commute</item>
+        <item>School</item>
+        <item>Work-Related</item>
+        <item>Exercise</item>
+        <item>Social</item>
+        <item>Shopping</item>
+        <item>Errand</item>
+        <item>Other</item>
+    </string-array>
+
+    <string name="title_activity_main">ORCycle</string>
+
+</resources>

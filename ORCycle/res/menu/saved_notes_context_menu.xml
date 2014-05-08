@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/action_delete_saved_notes"
+        android:showAsAction="always"
+          android:title="delete" />
+    <item android:id="@+id/action_upload_saved_notes"
+        android:showAsAction="always"
+          android:title="upload" />
+</menu>

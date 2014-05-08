@@ -1,0 +1,5 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/action_save_user_info"
+          android:showAsAction="always"
+          android:title="save"/>
+</menu>

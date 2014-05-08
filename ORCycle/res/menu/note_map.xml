@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/action_switch_note_view"
+          android:showAsAction="always"
+          android:title="image"/>
+    <item android:id="@+id/action_close_note_map"
+          android:showAsAction="always"
+          android:title="close"/>
+</menu>

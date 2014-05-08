@@ -1,0 +1,162 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".RecordTrip$DummySectionFragment" >
+
+    <fragment
+        android:id="@+id/map"
+        android:name="edu.gatech.ppl.cycleatlanta.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_marginTop="53dp"
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:scrollbars="vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:background="@drawable/lcdscreen" >
+
+        <LinearLayout
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="120dp"
+                android:layout_height="30dp" >
+
+                <TextView
+                    android:id="@+id/textViewElapsedTime"
+                    android:layout_width="140dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="00:00:00"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="120dp"
+                android:layout_height="20dp" >
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="140dp"
+                    android:layout_height="20dp"
+                    android:gravity="top|center"
+                    android:text="elapsed time"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="30dp" >
+
+                <TextView
+                    android:id="@+id/textViewDistance"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="4dp"
+                    android:gravity="center|center"
+                    android:text="0.0 miles"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="20dp" >
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="100dp"
+                    android:layout_height="20dp"
+                    android:gravity="top|right"
+                    android:text="distance"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="110dp"
+            android:layout_height="50dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="110dp"
+                android:layout_height="30dp" >
+
+                <TextView
+                    android:id="@+id/textViewSpeed"
+                    android:layout_width="110dp"
+                    android:layout_height="40dp"
+                    android:gravity="center|right"
+                    android:text="0.0 mph"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="110dp"
+                android:layout_height="20dp" >
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="110dp"
+                    android:layout_height="20dp"
+                    android:gravity="top|right"
+                    android:text="speed"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="75dp" >
+
+            <Button
+                android:id="@+id/buttonNoteThis"
+                android:layout_width="140dp"
+                android:layout_height="40dp"
+                android:background="@android:color/white"
+                android:textColor="#d17242"
+                android:textStyle="bold"
+                android:text="Note this..." />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="30dp"
+            android:gravity="center|bottom"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/buttonStart"
+                android:layout_width="140dp"
+                android:layout_height="40dp"
+                android:background="#4d7d36"
+                android:onClick="OnSave"
+                android:textColor="#ffffff"
+                android:textStyle="bold" 
+                android:text="Start" />
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>
