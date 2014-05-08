@@ -134,8 +134,8 @@
                 android:id="@+id/buttonNoteThis"
                 android:layout_width="140dp"
                 android:layout_height="40dp"
-                android:background="@android:color/white"
-                android:textColor="#d17242"
+                android:background="#474334"
+                android:textColor="#ffffff"
                 android:textStyle="bold"
                 android:text="Note this..." />
         </LinearLayout>
@@ -151,7 +151,7 @@
                 android:id="@+id/buttonStart"
                 android:layout_width="140dp"
                 android:layout_height="40dp"
-                android:background="#4d7d36"
+                android:background="#6A7F10"
                 android:onClick="OnSave"
                 android:textColor="#ffffff"
                 android:textStyle="bold" 

@@ -354,7 +354,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 	@Override
 	protected void onPreExecute() {
 		Toast.makeText(mCtx.getApplicationContext(),
-				"Submitting. Thanks for using Cycle Atlanta!",
+				"Submitting. Thanks for using ORCycle!",
 				Toast.LENGTH_LONG).show();
 	}
 
@@ -400,7 +400,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 			} else {
 				Toast.makeText(
 						mCtx.getApplicationContext(),
-						"Cycle Atlanta couldn't upload the note, and will retry when your next note is completed.",
+						"ORCycle couldn't upload the note, and will retry when your next note is completed.",
 						Toast.LENGTH_LONG).show();
 			}
 		} catch (Exception e) {

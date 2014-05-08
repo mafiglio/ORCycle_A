@@ -39,42 +39,20 @@ public class NoteTypeActivity extends Activity {
 	// Set up the purpose buttons to be one-click only
 	void prepareNoteTypeButtons() {
 		// Note Issue
-		noteTypeDescriptions
-				.put(0,
-						"Here’s a spot where the road needs to be repaired (pothole, rough concrete, gravel in the road, manhole cover, sewer grate).");
-		noteTypeDescriptions.put(1,
-				"Here’s a signal that you can’t activate with your bike.");
-		noteTypeDescriptions
-				.put(2,
-						"The bike lane is always blocked here, cars disobey \"no right on red\"… anything where the cops can help make cycling safer.");
-		noteTypeDescriptions.put(3,
-				"You need a bike rack to secure your bike here.");
-		noteTypeDescriptions
-				.put(4,
-						"Where the bike lane ends (abruptly) or is too narrow (pesky parked cars).");
-		noteTypeDescriptions
-				.put(5,
-						"Anything else ripe for improvement: want a sharrow, a sign, a bike lane? Share the details.");
+		noteTypeDescriptions.put(0, getResources().getString(R.string.note_pavement_issue_details));
+		noteTypeDescriptions.put(1, getResources().getString(R.string.note_traffic_signal_details));
+		noteTypeDescriptions.put(2, getResources().getString(R.string.note_enforcement_details));
+		noteTypeDescriptions.put(3, getResources().getString(R.string.note_needs_bike_rack_details));
+		noteTypeDescriptions.put(4, getResources().getString(R.string.note_bike_lane_issue_details));
+		noteTypeDescriptions.put(5, getResources().getString(R.string.note_note_issue_details));
 
 		// Note Asset
-		noteTypeDescriptions
-				.put(6,
-						"Park them here and remember to secure your bike well! Please only include racks or other objects intended for bikes.");
-		noteTypeDescriptions
-				.put(7,
-						"Have a flat, a broken chain, or spongy brakes? Or do you need a bike to jump into this world of cycling in the first place? Here's a shop ready to help.");
-		noteTypeDescriptions
-				.put(8,
-						"Help us make cycling mainstream… here’s a place to refresh yourself before you re-enter the fashionable world of Atlanta.");
-		noteTypeDescriptions
-				.put(9,
-						"Here's an access point under the tracks, through the park, onto a trail, or over a ravine.");
-		noteTypeDescriptions
-				.put(10,
-						"Here’s a spot to fill your bottle on those hot summer days… stay hydrated, people. We need you.");
-		noteTypeDescriptions
-				.put(11,
-						"Anything else we should map to help your fellow cyclists? Share the details.");
+		noteTypeDescriptions.put(6,getResources().getString(R.string.note_bike_rack_details));
+		noteTypeDescriptions.put(7,getResources().getString(R.string.note_bike_shop_details));
+		noteTypeDescriptions.put(8,getResources().getString(R.string.note_public_restroom_details));
+		noteTypeDescriptions.put(9,getResources().getString(R.string.note_secret_passage_details));
+		noteTypeDescriptions.put(10,getResources().getString(R.string.note_water_fountain_details));
+		noteTypeDescriptions.put(11,getResources().getString(R.string.note_note_asset_details));
 	}
 
 	@Override
@@ -94,11 +72,19 @@ public class NoteTypeActivity extends Activity {
 		isRecording = myIntent.getIntExtra("isRecording", -1);
 
 		final ListView listView = (ListView) findViewById(R.id.listViewNoteType);
-		values = new String[] { "Pavement issue", "Traffic signal",
-				"Enforcement", "Bike parking", "Bike lane issue",
-				"Note this issue", "Bike parking", "Bike shops",
-				"Public restrooms", "Secret passage", "Water fountains",
-				"Note this asset" };
+		values = new String[] {
+				getResources().getString(R.string.note_pavement_issue), 
+				getResources().getString(R.string.note_traffic_signal),
+				getResources().getString(R.string.note_enforcement), 
+				getResources().getString(R.string.note_needs_bike_rack), 
+				getResources().getString(R.string.note_bike_lane_issue),
+				getResources().getString(R.string.note_note_issue), 
+				getResources().getString(R.string.note_bike_rack), 
+				getResources().getString(R.string.note_bike_shop),
+				getResources().getString(R.string.note_public_restroom), 
+				getResources().getString(R.string.note_secret_passage), 
+				getResources().getString(R.string.note_water_fountain),
+				getResources().getString(R.string.note_note_asset)};
 		// final ArrayList<String> list = new ArrayList<String>();
 		// for (int i = 0; i < values.length; ++i) {
 		// list.add(values[i]);

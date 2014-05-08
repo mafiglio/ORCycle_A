@@ -92,5 +92,33 @@
     </string-array>
 
     <string name="title_activity_main">ORCycle</string>
+    
+    <string name="note_note_asset">Note this asset</string>
+	<string name="note_water_fountain">Water fountain</string>
+	<string name="note_secret_passage">Secret passage</string>
+	<string name="note_public_restroom">Public restroom</string>
+	<string name="note_bike_shop">Bike shop</string>
+	<string name="note_bike_rack">Bike parking</string>
+	<string name="note_misc">&#8230;</string>
+	<string name="note_pavement_issue">Pavement issue</string>
+	<string name="note_traffic_signal">Inadequate traffic signal</string>
+	<string name="note_enforcement">Enforcement issue</string>
+	<string name="note_needs_bike_rack">Needs bike parking</string>
+	<string name="note_bike_lane_issue">Bike lane issue</string>
+	<string name="note_note_issue">Note this issue</string>
+	
+	<string name="note_note_asset_details">Anything else we should map to help fellow cyclists? Share the details.</string>
+	<string name="note_water_fountain_details">Here\'s a spot to fill your water bottle&#8230; stay hydrated!</string>
+	<string name="note_secret_passage_details">Here\'s an access way under the tracks, through a park, onto a trail, or over a ravine. </string>
+	<string name="note_public_restroom_details">Here\'s a spot with public restroom facilities.</string>
+	<string name="note_bike_shop_details">Need a quick fix to get back in the saddle? Here\'s a bicycle shop to help. </string>
+	<string name="note_bike_rack_details">Here\'s a safe and secure place to park bicycles. Please only include racks or other objects intended for bikes.</string>
+	<string name="note_misc_details">Anything notable about this spot?</string>
+	<string name="note_pavement_issue_details">Here\'s a spot where the pavement needs to be repaired. This could be a pothole, rough pavement, excessive gravel in the road, a problematic sewer grate, etc.</string>
+	<string name="note_traffic_signal_details">Here\'s a signal that you can\'t activate with your bike.</string>
+	<string name="note_enforcement_details">The bike lane is always blocked here, cars disobey "no right on red"&#8230; or anything else where enforcement can help make cycling safer. </string>
+	<string name="note_needs_bike_rack_details">You wish you had a bike rack at this spot to securely park your bike.</string>
+	<string name="note_bike_lane_issue_details">The bike lane ends abruptly here or is too narrow to safely ride in.</string>
+	<string name="note_note_issue_details">Anywhere else in need of improvement:want a sharrow, sign, or a bike lane? Share the details.</string>
 
 </resources>
