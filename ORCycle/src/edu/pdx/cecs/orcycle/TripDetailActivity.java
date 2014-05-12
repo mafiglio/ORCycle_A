@@ -3,7 +3,6 @@ package edu.pdx.cecs.orcycle;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
-import edu.pdx.cecs.orcycle.R;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -54,11 +53,23 @@ public class TripDetailActivity extends Activity {
 		Log.v("Jason", "Start: " + fancyStartTime);
 
 		// "3.5 miles in 26 minutes"
-		SimpleDateFormat sdf = new SimpleDateFormat("m");
+		/*
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-		String minutes = sdf.format(trip.endTime - trip.startTime);
-		String fancyEndInfo = String.format("%1.1f miles, %s minutes.  %s",
-				(0.0006212f * trip.distance), minutes, notesToUpload);
+		char[] tripStart = sdf.format(trip.startTime).toCharArray();
+		char[] tripEnd = sdf.format(trip.endTime).toCharArray();
+		int minStart = (tripStart[0]*10 + tripStart[1])*60 + tripStart[3]*10+tripStart[4];
+		int minEnd = (tripEnd[0]*10 + tripEnd[1])*60 + tripEnd[3]*10+tripEnd[4];
+		int minutes = minEnd - minStart;*/
+
+		SimpleDateFormat sdfDuration = new SimpleDateFormat("HH:mm:ss");
+		sdfDuration.setTimeZone(TimeZone.getTimeZone("UTC"));
+		Double endTime = trip.endTime;
+		Double startTime = trip.startTime;
+		String duration = sdfDuration.format(endTime - startTime);
+
+		String fancyEndInfo = String.format("%1.1f miles, %s,  %s",
+				(0.0006212f * trip.distance), duration, notesToUpload);
 
 		// Save the trip details to the phone database. W00t!
 		trip.updateTrip(purpose, fancyStartTime, fancyEndInfo, notesToUpload);
