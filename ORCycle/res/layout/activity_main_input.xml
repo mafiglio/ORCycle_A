@@ -156,6 +156,7 @@
                 android:textColor="#ffffff"
                 android:textStyle="bold" 
                 android:text="Start" />
+            
         </LinearLayout>
     </LinearLayout>
 
