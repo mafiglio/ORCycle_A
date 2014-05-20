@@ -101,6 +101,8 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 
 	public static final String USER_ETHNICITY = "ethnicity";
 	public static final String USER_INCOME = "income";
+	public static final String USER_HHSIZE = "hhSize";
+	public static final String USER_HHVEHICLES = "hhVehicles";
 	public static final String USER_RIDERTYPE = "rider_type";
 	public static final String USER_RIDERHISTORY = "rider_history";
 
@@ -192,6 +194,10 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 				settings.getInt("" + FragmentUserInfo.PREF_ETHNICITY, 0));
 		user.put(USER_INCOME,
 				settings.getInt("" + FragmentUserInfo.PREF_INCOME, 0));
+		user.put(USER_HHSIZE,
+				settings.getInt("" + FragmentUserInfo.PREF_HHSIZE, 0));
+		user.put(USER_HHVEHICLES,
+				settings.getInt("" + FragmentUserInfo.PREF_HHVEHICLES, 0));
 		user.put(USER_RIDERTYPE,
 				settings.getInt("" + FragmentUserInfo.PREF_RIDERTYPE, 0));
 		user.put(USER_RIDERHISTORY,
