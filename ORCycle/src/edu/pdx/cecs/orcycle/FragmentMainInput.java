@@ -39,8 +39,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 
-import edu.pdx.cecs.orcycle.R;
-
 public class FragmentMainInput extends Fragment implements ConnectionCallbacks,
 		OnConnectionFailedListener, LocationListener,
 		OnMyLocationButtonClickListener {
