@@ -141,21 +141,54 @@
         </LinearLayout>
 
         <LinearLayout
+            style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="30dp"
             android:gravity="center|bottom"
-            android:orientation="vertical" >
+            android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/buttonStart"
-                android:layout_width="140dp"
-                android:layout_height="40dp"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="#6A7F10"
                 android:onClick="OnSave"
                 android:textColor="#ffffff"
                 android:textStyle="bold" 
-                android:text="Start" />
+                android:text="@string/btn_lbl_start" />
+
+            <Button
+                android:id="@+id/buttonPause"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#6A7F10"
+                android:text="@string/btn_lbl_pause"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/buttonResume"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#6A7F10"
+                android:text="@string/btn_lbl_resume"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/buttonFinish"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#6A7F10"
+                android:text="@string/btn_lbl_finish"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
+            
         </LinearLayout>
     </LinearLayout>
 

@@ -4,13 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -20,6 +16,13 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 public class TripDetailActivity extends Activity {
+
+	// Reference to Global application object
+	private MyApplication myApp = null;
+
+	// Reference to recording service;
+	private IRecordService recordingService = null;
+
 	long tripid;
 	String purpose = "";
 	EditText notes;
@@ -27,6 +30,11 @@ public class TripDetailActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Convenient pointer to global application object
+		myApp = MyApplication.getInstance();
+		recordingService = myApp.getRecordingService();
+
 		setContentView(R.layout.activity_trip_detail);
 
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -91,36 +99,11 @@ public class TripDetailActivity extends Activity {
 	}
 
 	void finishRecording() {
-		Intent rService = new Intent(this, RecordingService.class);
-		ServiceConnection sc = new ServiceConnection() {
-			public void onServiceDisconnected(ComponentName name) {
-			}
-
-			public void onServiceConnected(ComponentName name, IBinder service) {
-				IRecordService rs = (IRecordService) service;
-				tripid = rs.finishRecording();
-				// TripDetailActivity.this.activateSubmitButton();
-				unbindService(this);
-			}
-		};
-		// This should block until the onServiceConnected (above) completes.
-		bindService(rService, sc, Context.BIND_AUTO_CREATE);
+		tripid = recordingService.finishRecording();
 	}
 
 	void resetService() {
-		Intent rService = new Intent(this, RecordingService.class);
-		ServiceConnection sc = new ServiceConnection() {
-			public void onServiceDisconnected(ComponentName name) {
-			}
-
-			public void onServiceConnected(ComponentName name, IBinder service) {
-				IRecordService rs = (IRecordService) service;
-				rs.reset();
-				unbindService(this);
-			}
-		};
-		// This should block until the onServiceConnected (above) completes.
-		bindService(rService, sc, Context.BIND_AUTO_CREATE);
+		recordingService.reset();
 	}
 
 	/* Creates the menu items */

@@ -19,7 +19,11 @@
     <string name="title_activity_note_map">Note Map</string>
     <string name="title_activity_saved_notes">Saved Notes</string>
     <string name="post_url">http://orcycle.cecs.pdx.edu/post/</string>
-
+    <string name="btn_lbl_start">Start</string>
+    <string name="btn_lbl_pause">Pause</string>
+    <string name="btn_lbl_resume">Resume</string>
+    <string name="btn_lbl_finish">Finish</string>
+        
     <string-array name="ageArray">
         <item></item>
         <item>Less than 18</item>

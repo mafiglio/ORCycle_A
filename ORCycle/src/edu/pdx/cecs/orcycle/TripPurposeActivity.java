@@ -32,16 +32,11 @@ package edu.pdx.cecs.orcycle;
 
 import java.util.HashMap;
 
-import edu.pdx.cecs.orcycle.R;
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.text.Html;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -55,6 +50,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class TripPurposeActivity extends Activity {
+
+	// Reference to Global application object
+	private MyApplication myApp = null;
+
+	// Reference to recording service;
+	private IRecordService recordingService = null;
+
 	// HashMap<Integer, ToggleButton> purpButtons = new HashMap<Integer,
 	// ToggleButton>();
 	String purpose = "";
@@ -118,6 +120,12 @@ public class TripPurposeActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Convenient pointer to global application object
+		myApp = MyApplication.getInstance();
+		recordingService = myApp.getRecordingService();
+
+
 		setContentView(R.layout.activity_trip_purpose);
 
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -206,19 +214,7 @@ public class TripPurposeActivity extends Activity {
 	}
 
 	void cancelRecording() {
-		Intent rService = new Intent(this, RecordingService.class);
-		ServiceConnection sc = new ServiceConnection() {
-			public void onServiceDisconnected(ComponentName name) {
-			}
-
-			public void onServiceConnected(ComponentName name, IBinder service) {
-				IRecordService rs = (IRecordService) service;
-				rs.cancelRecording();
-				unbindService(this);
-			}
-		};
-		// This should block until the onServiceConnected (above) completes.
-		bindService(rService, sc, Context.BIND_AUTO_CREATE);
+		myApp.cancelRecording();
 	}
 
 	/* Creates the menu items */

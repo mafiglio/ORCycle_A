@@ -194,6 +194,11 @@ public class TripData {
 	// gpspoints.addOverlay(opoint);
 	// }
 
+	// TODO: Verify this calculation.  Should be tied to whether trip is done or in progress
+	public double getDuration () {
+		return System.currentTimeMillis() - startTime - totalPauseTime;
+	}
+
 	boolean addPointNow(Location loc, double currentTime, float dst) {
 		int lat = (int) (loc.getLatitude() * 1E6);
 		int lgt = (int) (loc.getLongitude() * 1E6);

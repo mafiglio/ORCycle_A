@@ -50,7 +50,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-public class RecordingService extends Service implements LocationListener {
+public class RecordingService extends Service implements IRecordService, LocationListener {
 	FragmentMainInput recordActivity;
 	LocationManager lm = null;
 	DbAdapter mDb;
@@ -105,9 +105,19 @@ public class RecordingService extends Service implements LocationListener {
 		}
 	}
 
-	public class MyServiceBinder extends Binder implements IRecordService {
+	public class MyServiceBinder extends Binder {
+
+        /**
+         * This function returns a reference to the bound service
+         *
+         * @return Reference to the bound service
+         */
+        public RecordingService getService() {
+            return RecordingService.this;
+        }
+
 		public int getState() {
-			return state;
+			return RecordingService.this.getState();
 		}
 
 		public void startRecording(TripData trip) {
@@ -118,6 +128,14 @@ public class RecordingService extends Service implements LocationListener {
 			RecordingService.this.cancelRecording();
 		}
 
+		public long finishRecording() {
+			return RecordingService.this.finishRecording();
+		}
+
+		public long getCurrentTripID() {
+			return RecordingService.this.getCurrentTripID();
+		}
+
 		public void pauseRecording() {
 			RecordingService.this.pauseRecording();
 		}
@@ -126,28 +144,22 @@ public class RecordingService extends Service implements LocationListener {
 			RecordingService.this.resumeRecording();
 		}
 
-		public long finishRecording() {
-			return RecordingService.this.finishRecording();
-		}
-
-		public long getCurrentTrip() {
-			if (RecordingService.this.trip != null) {
-				return RecordingService.this.trip.tripid;
-			}
-			return -1;
-		}
-
 		public void reset() {
-			RecordingService.this.state = STATE_IDLE;
+			RecordingService.this.reset();
 		}
 
 		public void setListener(FragmentMainInput mia) {
-			RecordingService.this.recordActivity = mia;
-			notifyListeners();
+			RecordingService.this.setListener(mia);
 		}
 	}
 
 	// ---end SERVICE methods -------------------------
+
+	// --- IRecordService --------------------------
+
+	public int getState() {
+		return state;
+	}
 
 	public void startRecording(TripData trip) {
 		this.state = STATE_RECORDING;
@@ -177,28 +189,6 @@ public class RecordingService extends Service implements LocationListener {
 		}, BELL_FIRST_INTERVAL * 60000, BELL_NEXT_INTERVAL * 60000);
 	}
 
-	public void pauseRecording() {
-		this.state = STATE_PAUSED;
-		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		lm.removeUpdates(this);
-	}
-
-	public void resumeRecording() {
-		this.state = STATE_RECORDING;
-		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}
-
-	public long finishRecording() {
-		this.state = STATE_FULL;
-		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		lm.removeUpdates(this);
-
-		clearNotifications();
-
-		return trip.tripid;
-	}
-
 	public void cancelRecording() {
 		if (trip != null) {
 			trip.dropTrip();
@@ -211,12 +201,52 @@ public class RecordingService extends Service implements LocationListener {
 		this.state = STATE_IDLE;
 	}
 
-	public void registerUpdates(FragmentMainInput r) {
-		this.recordActivity = r;
+	public long finishRecording() {
+		this.state = STATE_FULL;
+		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		lm.removeUpdates(this);
+
+		clearNotifications();
+
+		return trip.tripid;
 	}
 
-	public TripData getCurrentTrip() {
+	public long getCurrentTripID() {
+		if (RecordingService.this.trip != null) {
+			return RecordingService.this.trip.tripid;
+		}
+		return -1;
+	}
+
+	public void pauseRecording() {
+		this.state = STATE_PAUSED;
+		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		lm.removeUpdates(this);
+	}
+
+	public void resumeRecording() {
+		this.state = STATE_RECORDING;
+		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+	}
+
+	public void reset() {
+		RecordingService.this.state = STATE_IDLE;
+	}
+
+	public void setListener(FragmentMainInput mia) {
+		RecordingService.this.recordActivity = mia;
+		notifyListeners();
+	}
+
+	// --- end IRecordService --------------------------
+
+	public TripData getCurrentTripData() {
 		return trip;
+	}
+
+	public void registerUpdates(FragmentMainInput r) {
+		this.recordActivity = r;
 	}
 
 	// LocationListener implementation:
@@ -350,4 +380,5 @@ public class RecordingService extends Service implements LocationListener {
 					curSpeed, maxSpeed);
 		}
 	}
+
 }
