@@ -38,8 +38,22 @@ import android.location.Location;
 
 public class TripData {
 	long tripid;
-	double startTime = 0;
-	double endTime = 0;
+
+	private final static double RESET_START_TIME = 0.0;
+
+	private double tripStartTime = RESET_START_TIME;
+	private double startTime = RESET_START_TIME;
+	private double endTime = RESET_START_TIME;
+
+	private double pauseStartedTime = RESET_START_TIME;
+
+
+	private double totalPauseTime = 0.0f;
+	private double totalTravelTime = 0.0f;
+	private boolean isPaused = false;
+	private boolean isFinished = false;
+
+
 	int numpoints = 0;
 	int lathigh, lgthigh, latlow, lgtlow, latestlat, latestlgt;
 	int status;
@@ -48,8 +62,6 @@ public class TripData {
 	// private ItemizedOverlayTrack gpspoints;
 	private ArrayList<CyclePoint> gpspoints = new ArrayList<CyclePoint>();
 	CyclePoint startpoint, endpoint;
-	double totalPauseTime = 0;
-	double pauseStartedAt = 0;
 
 	DbAdapter mDb;
 
@@ -77,8 +89,12 @@ public class TripData {
 	}
 
 	void initializeData() {
-		startTime = System.currentTimeMillis();
-		endTime = System.currentTimeMillis();
+		endTime = (startTime = (tripStartTime = System.currentTimeMillis()));
+		pauseStartedTime = RESET_START_TIME;
+		totalPauseTime = 0.0f;
+		totalTravelTime = 0.0f;
+		isPaused = false;
+
 		numpoints = 0;
 		latestlat = 800;
 		latestlgt = 800;
@@ -96,10 +112,14 @@ public class TripData {
 	// Get lat/long extremes, etc, from trip record
 	void populateDetails() {
 
+		pauseStartedTime = RESET_START_TIME; // TODO: maybe put into database.
+		isPaused = false;
+
 		mDb.openReadOnly();
 
 		Cursor tripdetails = mDb.fetchTrip(tripid);
-		startTime = tripdetails.getDouble(tripdetails.getColumnIndex("start"));
+		tripStartTime = tripdetails.getDouble(tripdetails.getColumnIndex("start"));
+		startTime = System.currentTimeMillis();
 		lathigh = tripdetails.getInt(tripdetails.getColumnIndex("lathi"));
 		latlow = tripdetails.getInt(tripdetails.getColumnIndex("latlo"));
 		lgthigh = tripdetails.getInt(tripdetails.getColumnIndex("lgthi"));
@@ -194,10 +214,49 @@ public class TripData {
 	// gpspoints.addOverlay(opoint);
 	// }
 
+	public double getStartTime() {
+		return tripStartTime;
+	}
+
+	public double getEndTime() {
+		return endTime;
+	}
+
+	public void startPause() {
+
+		double currentTime = System.currentTimeMillis();
+		// record the beginning of pause time
+		pauseStartedTime = currentTime;
+		totalTravelTime += (currentTime - startTime);
+		startTime = RESET_START_TIME;
+		isPaused = true;
+
+	}
+
+	public void finishPause() {
+
+		double currentTime = System.currentTimeMillis();
+
+		// calculate time paused and save in trip data
+		if (pauseStartedTime > RESET_START_TIME) { // test for valid pause start time
+			totalPauseTime += (currentTime - pauseStartedTime);
+			pauseStartedTime = RESET_START_TIME; // reset paused start time
+		}
+		startTime = currentTime;
+		isPaused = false;
+	}
+
 	// TODO: Verify this calculation.  Should be tied to whether trip is done or in progress
 	public double getDuration () {
-		return System.currentTimeMillis() - startTime - totalPauseTime;
+
+		if (isPaused) {
+			return totalTravelTime;
+		}
+		else {
+			return  totalTravelTime + (System.currentTimeMillis() - startTime);
+		}
 	}
+
 
 	boolean addPointNow(Location loc, double currentTime, float dst) {
 		int lat = (int) (loc.getLatitude() * 1E6);
@@ -215,7 +274,14 @@ public class TripData {
 				altitude, speed);
 
 		numpoints++;
-		endTime = currentTime - this.totalPauseTime;
+
+		if (isPaused ) {
+			endTime = totalTravelTime;
+		}
+		else {
+			endTime = totalTravelTime + currentTime - startTime;
+		}
+
 		distance = dst;
 
 		latlow = Math.min(latlow, lat);
@@ -236,6 +302,21 @@ public class TripData {
 		return rtn;
 	}
 
+	/**
+	 * Makes final calculation of endTime and
+	 * push trip data to the database
+	 */
+	public void finish() {
+		if (!isFinished) {
+			if (!isPaused ) {
+				totalTravelTime += System.currentTimeMillis() - startTime;
+			}
+			endTime = totalTravelTime;
+			isFinished = true;
+			updateTrip("", "", "", "");
+		}
+	}
+
 	public boolean updateTripStatus(int tripStatus) {
 		boolean rtn;
 		mDb.open();
@@ -244,6 +325,7 @@ public class TripData {
 		return rtn;
 	}
 
+	// TODO: Verify this function.  It looks like it might be a cut and paste error of updateTripStatus function
 	public boolean getStatus(int tripStatus) {
 		boolean rtn;
 		mDb.open();

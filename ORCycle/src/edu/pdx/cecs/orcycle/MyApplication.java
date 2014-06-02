@@ -190,26 +190,13 @@ public class MyApplication extends android.app.Application {
      * finishRecording
      */
     public void finishRecording() {
-
-		if (trip.numpoints > 0) {
-			// Handle pause time gracefully
-			if (trip.pauseStartedAt > 0) {
-				trip.totalPauseTime += (System.currentTimeMillis() - trip.pauseStartedAt);
-			}
-			if (trip.totalPauseTime > 0) {
-				trip.endTime = System.currentTimeMillis() - trip.totalPauseTime;
-			}
-			trip.updateTrip("", "", "", "");
-		}
-		else {
-			cancelRecording();
-		}
+    	recordingService.finishRecording();
    }
 
-   /**
-   * cancelRecording
-   */
-  public void cancelRecording() {
-	  recordingService.cancelRecording();
-  }
+    /**
+     * cancelRecording
+     */
+    public void cancelRecording() {
+    	recordingService.cancelRecording();
+    }
 }

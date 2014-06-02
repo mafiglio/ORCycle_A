@@ -81,6 +81,8 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	public final static int STATE_FULL = 3;
 
 	int state = STATE_IDLE;
+
+
 	private final MyServiceBinder myServiceBinder = new MyServiceBinder();
 
 	// ---SERVICE methods - required! -----------------
@@ -161,6 +163,12 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		return state;
 	}
 
+	/**
+	 * Start the recording process:
+	 *  - reset trip variables
+	 *  - enable location manager updates
+	 *  - enable bike bell timer
+	 */
 	public void startRecording(TripData trip) {
 		this.state = STATE_RECORDING;
 		this.trip = trip;
@@ -189,6 +197,62 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		}, BELL_FIRST_INTERVAL * 60000, BELL_NEXT_INTERVAL * 60000);
 	}
 
+	/**
+	 * Pause the recording process:
+	 *  - disable location manager updates
+	 *  - start recording paused time
+	 */
+	public void pauseRecording() {
+		this.state = STATE_PAUSED;
+		trip.startPause();
+
+		// Stop location service updates
+		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		lm.removeUpdates(this);
+	}
+
+	/**
+	 * Resume recording process:
+	 *  - enable location manager updates
+	 *  - calculate time paused and save in trip data
+	 */
+	public void resumeRecording() {
+		this.state = STATE_RECORDING;
+		trip.finishPause();
+
+		// enable location manager updates
+		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+	}
+
+	/**
+	 * End the recording process:
+	 *  - disable location manager updates
+	 *  - clear notifications
+	 *  - if trip has any points, finalize data collection and push to
+	 *    database, otherwise cancel trip and don't save any data
+	 */
+	public long finishRecording() {
+		this.state = STATE_FULL;
+
+		// Disable location manager updates
+		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		lm.removeUpdates(this);
+
+		// Clear notifications
+		clearNotifications();
+
+		//
+		if (trip.numpoints > 0) {
+			trip.finish(); // makes some final calculations and pushed trip to the database
+		}
+		else {
+			cancelRecording(); // TODO: isn't the tripid invalid at this point? Verify.
+		}
+
+		return trip.tripid;
+	}
+
 	public void cancelRecording() {
 		if (trip != null) {
 			trip.dropTrip();
@@ -201,33 +265,11 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		this.state = STATE_IDLE;
 	}
 
-	public long finishRecording() {
-		this.state = STATE_FULL;
-		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		lm.removeUpdates(this);
-
-		clearNotifications();
-
-		return trip.tripid;
-	}
-
 	public long getCurrentTripID() {
 		if (RecordingService.this.trip != null) {
 			return RecordingService.this.trip.tripid;
 		}
 		return -1;
-	}
-
-	public void pauseRecording() {
-		this.state = STATE_PAUSED;
-		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		lm.removeUpdates(this);
-	}
-
-	public void resumeRecording() {
-		this.state = STATE_RECORDING;
-		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 	}
 
 	public void reset() {
@@ -292,7 +334,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		int icon = R.drawable.icon48;
 		long when = System.currentTimeMillis();
-		int minutes = (int) (when - trip.startTime) / 60000;
+		int minutes = (int) (when - trip.getStartTime()) / 60000;
 		CharSequence tickerText = String.format("Still recording (%d min)",
 				minutes);
 

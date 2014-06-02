@@ -57,7 +57,7 @@ public class TripDetailActivity extends Activity {
 		trip.populateDetails();
 
 		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm");
-		String fancyStartTime = sdfStart.format(trip.startTime);
+		String fancyStartTime = sdfStart.format(trip.getStartTime());
 		Log.v("Jason", "Start: " + fancyStartTime);
 
 		// "3.5 miles in 26 minutes"
@@ -72,8 +72,8 @@ public class TripDetailActivity extends Activity {
 
 		SimpleDateFormat sdfDuration = new SimpleDateFormat("HH:mm:ss");
 		sdfDuration.setTimeZone(TimeZone.getTimeZone("UTC"));
-		Double endTime = trip.endTime;
-		Double startTime = trip.startTime;
+		Double endTime = trip.getEndTime();
+		Double startTime = trip.getStartTime();
 		String duration = sdfDuration.format(endTime - startTime);
 
 		String fancyEndInfo = String.format("%1.1f miles, %s,  %s",
