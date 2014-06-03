@@ -54,7 +54,9 @@ public class FragmentMainInput extends Fragment implements ConnectionCallbacks,
 
 	TextView txtDuration;
 	TextView txtDistance;
-	TextView txtCurSpeed;
+	TextView txtAvgSpeed;
+	TextView txtCO2;
+	TextView txtCalories;
 
 	int zoomFlag = 1;
 
@@ -239,7 +241,9 @@ public class FragmentMainInput extends Fragment implements ConnectionCallbacks,
 		txtDuration = (TextView) rootView
 				.findViewById(R.id.textViewElapsedTime);
 		txtDistance = (TextView) rootView.findViewById(R.id.textViewDistance);
-		txtCurSpeed = (TextView) rootView.findViewById(R.id.textViewSpeed);
+		txtAvgSpeed = (TextView) rootView.findViewById(R.id.textViewSpeed);
+		txtCO2 = (TextView) rootView.findViewById(R.id.textViewCO2);
+		txtCalories= (TextView) rootView.findViewById(R.id.textViewCalories);
 
 		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -266,10 +270,14 @@ public class FragmentMainInput extends Fragment implements ConnectionCallbacks,
 		// txtStat.setText("Waiting for GPS fix...");
 		// }
 
-		txtCurSpeed.setText(String.format("%1.1f mph", spdCurrent));
-
 		float miles = 0.0006212f * distance;
 		txtDistance.setText(String.format("%1.1f miles", miles));
+
+		float lbsCO2 = miles*0.0006212f*0.93f;
+		txtCO2.setText(String.format("%1.1f lbs", lbsCO2));
+
+		float calories = miles*0.0006212f * 49f - 1.69f;
+		txtCalories.setText(String.format("%1.1f kcal", calories));
 	}
 
 	void cancelRecording() {
@@ -300,8 +308,14 @@ public class FragmentMainInput extends Fragment implements ConnectionCallbacks,
 				R.id.textViewDistance);
 		txtDistance.setText("0.0 miles");
 
-		txtCurSpeed = (TextView) getActivity().findViewById(R.id.textViewSpeed);
-		txtCurSpeed.setText("0.0 mph");
+		txtAvgSpeed = (TextView) getActivity().findViewById(R.id.textViewSpeed);
+		txtAvgSpeed.setText("0.0 mph");
+
+		txtCalories = (TextView) getActivity().findViewById(R.id.textViewCalories);
+		txtCalories.setText("0.0 kcal");
+
+		txtCO2 = (TextView) getActivity().findViewById(R.id.textViewCO2);
+		txtCO2.setText("0.0 lbs");
 	}
 
 	void startRecording() {
@@ -467,8 +481,8 @@ public class FragmentMainInput extends Fragment implements ConnectionCallbacks,
 
 			txtDuration.setText(sdf.format(dd));
 
-			// double avgSpeed = 3600.0 * 0.6212 * this.curDistance / dd;
-			// txtAvgSpeed.setText(String.format("%1.1f mph", avgSpeed));
+			double avgSpeed = 3600.0 * 0.6212 * this.curDistance / dd;
+			txtAvgSpeed.setText(String.format("%1.1f mph", avgSpeed));
 		}
 	}
 

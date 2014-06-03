@@ -77,7 +77,7 @@ public class NoteDetailActivity extends Activity {
 
 	public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		bitmap.compress(CompressFormat.JPEG, 0, outputStream);
+		bitmap.compress(CompressFormat.JPEG ,100, outputStream);
 		return outputStream.toByteArray();
 	}
 
