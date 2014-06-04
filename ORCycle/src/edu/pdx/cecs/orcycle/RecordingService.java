@@ -51,7 +51,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class RecordingService extends Service implements IRecordService, LocationListener {
-	FragmentMainInput recordActivity;
+	IRecordServiceListener recordServiceListener;
 	LocationManager lm = null;
 	DbAdapter mDb;
 
@@ -150,7 +150,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 			RecordingService.this.reset();
 		}
 
-		public void setListener(FragmentMainInput mia) {
+		public void setListener(IRecordServiceListener mia) {
 			RecordingService.this.setListener(mia);
 		}
 	}
@@ -276,8 +276,8 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		RecordingService.this.state = STATE_IDLE;
 	}
 
-	public void setListener(FragmentMainInput mia) {
-		RecordingService.this.recordActivity = mia;
+	public void setListener(IRecordServiceListener listener) {
+		RecordingService.this.recordServiceListener = listener;
 		notifyListeners();
 	}
 
@@ -285,10 +285,6 @@ public class RecordingService extends Service implements IRecordService, Locatio
 
 	public TripData getCurrentTripData() {
 		return trip;
-	}
-
-	public void registerUpdates(FragmentMainInput r) {
-		this.recordActivity = r;
 	}
 
 	// LocationListener implementation:
@@ -416,10 +412,13 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	}
 
 	void notifyListeners() {
-		if (recordActivity != null) {
-			Log.v("Jason", "Distance Traveled: hahaha");
-			recordActivity.updateStatus(trip.numpoints, distanceTraveled,
-					curSpeed, maxSpeed);
+		if (null != recordServiceListener) {
+			if (null == trip) {
+				recordServiceListener.updateStatus(0, 0.0f, 0.0f, 0.0f);
+			}
+			else {
+				recordServiceListener.updateStatus(trip.numpoints, distanceTraveled, curSpeed, maxSpeed);
+			}
 		}
 	}
 

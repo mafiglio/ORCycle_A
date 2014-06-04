@@ -48,5 +48,5 @@ public interface IRecordService {
 
 	public void reset();
 
-	public void setListener(FragmentMainInput mia);
+	public void setListener(IRecordServiceListener mia);
 }

@@ -43,7 +43,7 @@ import com.google.android.gms.maps.model.LatLng;
  *
  */
 public class FragmentMainInput extends Fragment
-	implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener,
+	implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener, IRecordServiceListener,
 		OnMyLocationButtonClickListener {
 
 	private static final String MODULE_TAG = "FragmentMainInput";
@@ -287,6 +287,10 @@ public class FragmentMainInput extends Fragment
 		if (mLocationClient != null) {
 			mLocationClient.disconnect();
 		}
+
+		if (recordingService != null) {
+			recordingService.setListener(null);
+		}
 	}
 
 	/**
@@ -384,6 +388,8 @@ public class FragmentMainInput extends Fragment
 
 					Toast.makeText(getActivity(), "Recording service connected...",
 							Toast.LENGTH_SHORT).show();
+
+					recordingService.setListener(FragmentMainInput.this);
 
 					// Setup the UI buttons according to current state
 					setupButtons();

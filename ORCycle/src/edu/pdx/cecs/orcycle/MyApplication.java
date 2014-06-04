@@ -37,7 +37,7 @@ public class MyApplication extends android.app.Application {
     }
 
 	// *********************************************************************************
-	// *
+	// *                   			Application Interface
 	// *********************************************************************************
 
     /**
@@ -102,7 +102,7 @@ public class MyApplication extends android.app.Application {
     }
 
 	// *********************************************************************************
-	// *
+	// *              RecordingService ServiceConnection Interface
 	// *********************************************************************************
 
     /**
@@ -182,8 +182,6 @@ public class MyApplication extends android.app.Application {
 			trip = TripData.fetchTrip(activity, id);
 			break;
 		}
-
-		//recordingService.setListener((FragmentMainInput) getActivity().getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":0"));
     }
 
     /**
