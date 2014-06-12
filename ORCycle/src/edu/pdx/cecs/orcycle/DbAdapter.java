@@ -42,17 +42,20 @@ import android.util.Log;
  * Simple database access helper class. Defines the basic CRUD operations, and
  * gives the ability to list all trips as well as retrieve or modify a specific
  * trip.
- * 
+ *
  * This has been improved from the first version of this tutorial through the
  * addition of better error handling and also using returning a Cursor instead
  * of using a collection of inner classes (which is less scalable and not
  * recommended).
- * 
+ *
  * **This code borrows heavily from Google demo app "Notepad" in the Android
  * SDK**
  */
 public class DbAdapter {
-	private static final int DATABASE_VERSION = 21;
+
+	private static final int DATABASE_VERSION = 22;
+	private static final int DATABASE_VERSION_NOTES = 21;
+	private static final int DATABASE_VERSION_PAUSES = 22;
 
 	public static final String K_TRIP_ROWID = "_id";
 	public static final String K_TRIP_PURP = "purp";
@@ -91,6 +94,12 @@ public class DbAdapter {
 	public static final String K_NOTE_IMGDATA = "noteimagedata";
 	public static final String K_NOTE_STATUS = "notestatus";
 
+	public static final String K_PAUSE_ROWID = "_id";
+	public static final String K_PAUSE_START_TIME = "starttime";
+	public static final String K_PAUSE_END_TIME = "endtime";
+
+
+
 	private static final String TAG = "DbAdapter";
 	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase mDb;
@@ -113,10 +122,21 @@ public class DbAdapter {
 			+ "notefancystart text, notedetails text, noteimageurl text, noteimagedata blob, "
 			+ "notelat int, notelgt int, noteacc float, notealt double, notespeed float, notestatus integer);";
 
+	private static final String TABLE_CREATE_PAUSES = "create table pauses "
+			+ "(_id integer, starttime double, endtime double, "
+			+ "PRIMARY KEY(_id, startTime), "
+			+ "FOREIGN KEY(_id) REFERENCES TRIPS(_id));";
+
+	private static final String TABLE_CREATE_PAUSES2 = "create table pauses "
+			+ "_id integer, starttime double, endtime double, "
+			+ "PRIMARY KEY(_id, startTime), "
+			+ "FOREIGN KEY(_id) REFERENCES TRIPS(_id));";
+
 	private static final String DATABASE_NAME = "data";
 	private static final String DATA_TABLE_TRIPS = "trips";
 	private static final String DATA_TABLE_COORDS = "coords";
 	private static final String DATA_TABLE_NOTES = "notes";
+	private static final String DATA_TABLE_PAUSES = "pauses";
 
 	private final Context mCtx;
 
@@ -132,24 +152,36 @@ public class DbAdapter {
 			db.execSQL(TABLE_CREATE_TRIPS);
 			db.execSQL(TABLE_CREATE_COORDS);
 			db.execSQL(TABLE_CREATE_NOTES);
+			db.execSQL(TABLE_CREATE_PAUSES);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-					+ newVersion + ", which will simply add a new Note table.");
 
-			// Data Migration:
-			// New Install: this function not called. onCreate called.
-			// Upgrading: don't touch trip and coords table, create notes table
-			db.execSQL(TABLE_CREATE_NOTES);
+			try {
+				Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
+						+ newVersion + ", which will simply add a new Note table.");
+
+				// Data Migration:
+				// New Install: this function not called. onCreate called.
+				// Upgrading: don't touch trip and coords table, create notes table
+
+				if (oldVersion < DATABASE_VERSION_NOTES)
+					db.execSQL(TABLE_CREATE_NOTES);
+
+				if (oldVersion < DATABASE_VERSION_PAUSES)
+					db.execSQL(TABLE_CREATE_PAUSES);
+			}
+			catch(Exception ex) {
+				Log.e(TAG, ex.getMessage());
+			}
 		}
 	}
 
 	/**
 	 * Constructor - takes the context to allow the database to be
 	 * opened/created
-	 * 
+	 *
 	 * @param ctx
 	 *            the Context within which to work
 	 */
@@ -161,7 +193,7 @@ public class DbAdapter {
 	 * Open the database. If it cannot be opened, try to create a new instance
 	 * of the database. If it cannot be created, throw an exception to signal
 	 * the failure
-	 * 
+	 *
 	 * @return this (self reference, allowing this to be chained in an
 	 *         initialization call)
 	 * @throws SQLException
@@ -258,7 +290,7 @@ public class DbAdapter {
 
 	/**
 	 * Delete the trip with the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of note to delete
 	 * @return true if deleted, false otherwise
@@ -269,7 +301,7 @@ public class DbAdapter {
 
 	/**
 	 * Return a Cursor over the list of all notes in the database
-	 * 
+	 *
 	 * @return Cursor over all trips
 	 */
 	public Cursor fetchAllTrips() {
@@ -320,7 +352,7 @@ public class DbAdapter {
 
 	/**
 	 * Return a Cursor positioned at the trip that matches the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of trip to retrieve
 	 * @return Cursor positioned to matching trip, if found
@@ -406,7 +438,7 @@ public class DbAdapter {
 
 	/**
 	 * Delete the note with the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of note to delete
 	 * @return true if deleted, false otherwise
@@ -417,7 +449,7 @@ public class DbAdapter {
 
 	/**
 	 * Return a Cursor over the list of all notes in the database
-	 * 
+	 *
 	 * @return Cursor over all notes
 	 */
 	public Cursor fetchAllNotes() {
@@ -468,7 +500,7 @@ public class DbAdapter {
 
 	/**
 	 * Return a Cursor positioned at the note that matches the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of note to retrieve
 	 * @return Cursor positioned to matching note, if found
@@ -519,4 +551,32 @@ public class DbAdapter {
 		return mDb.update(DATA_TABLE_NOTES, initialValues, K_NOTE_ROWID + "="
 				+ noteid, null) > 0;
 	}
+
+	/**
+	 * Insert a row into the 'pauses' table
+	 * @param tripId Trip ID of associated trip
+	 * @param startTime Starting date-time of the pause
+	 * @param endTime Ending date-time of the pause
+	 * @throws SQLException
+	 */
+	public void addPauseToTrip(long tripId, double startTime, double endTime) throws SQLException{
+
+		// Assemble row data
+		ContentValues rowValues = new ContentValues();
+		rowValues.put(K_PAUSE_ROWID, tripId);
+		rowValues.put(K_PAUSE_START_TIME, startTime);
+		rowValues.put(K_PAUSE_END_TIME, endTime);
+
+		// Insert row in table
+		mDb.insertOrThrow(DATA_TABLE_PAUSES, null, rowValues);
+	}
+
+	/**
+	 * Delete pauses with the given trip ID
+	 * @param tripId id of the pauses to delete
+	 */
+	public void deletePauses(long tripId) {
+		mDb.delete(DATA_TABLE_PAUSES, K_PAUSE_ROWID + "=" + tripId, null);
+	}
+
 }

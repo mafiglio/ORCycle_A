@@ -225,45 +225,51 @@ public class FragmentMainInput extends Fragment
 	public void onResume() {
 		super.onResume();
 
-		Log.v(MODULE_TAG, "Cycle: MainInput onResume");
+		try {
 
-		// Use a timer to update the trip duration.
-		timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				mHandler.post(mUpdateTimer);
-			}
-		}, 0, 1000); // every second
+			Log.v(MODULE_TAG, "Cycle: MainInput onResume");
 
-		setUpMapIfNeeded();
-		if (map != null) {
-			// Keep the UI Settings state in sync with the checkboxes.
-			mUiSettings.setZoomControlsEnabled(true);
-			mUiSettings.setCompassEnabled(true);
-			mUiSettings.setMyLocationButtonEnabled(true);
-			map.setMyLocationEnabled(true);
-			mUiSettings.setScrollGesturesEnabled(true);
-			mUiSettings.setZoomGesturesEnabled(true);
-			mUiSettings.setTiltGesturesEnabled(true);
-			mUiSettings.setRotateGesturesEnabled(true);
-		}
-		setUpLocationClientIfNeeded();
-		mLocationClient.connect();
-
-		// Setup wait for service connection timer
-
-		if (null == recordingService) {
-			timerWaitForServiceConnection = new Timer();
-			timerWaitForServiceConnection.scheduleAtFixedRate(new TimerTask() {
+			// Use a timer to update the trip duration.
+			timer = new Timer();
+			timer.scheduleAtFixedRate(new TimerTask() {
 				@Override
 				public void run() {
-					handlerWaitForServiceConnection.post(doServiceConnection);
+					mHandler.post(mUpdateTimer);
 				}
 			}, 0, 1000); // every second
+
+			setUpMapIfNeeded();
+			if (map != null) {
+				// Keep the UI Settings state in sync with the checkboxes.
+				mUiSettings.setZoomControlsEnabled(true);
+				mUiSettings.setCompassEnabled(true);
+				mUiSettings.setMyLocationButtonEnabled(true);
+				map.setMyLocationEnabled(true);
+				mUiSettings.setScrollGesturesEnabled(true);
+				mUiSettings.setZoomGesturesEnabled(true);
+				mUiSettings.setTiltGesturesEnabled(true);
+				mUiSettings.setRotateGesturesEnabled(true);
+			}
+			setUpLocationClientIfNeeded();
+			mLocationClient.connect();
+
+			// Setup wait for service connection timer
+
+			if (null == recordingService) {
+				timerWaitForServiceConnection = new Timer();
+				timerWaitForServiceConnection.scheduleAtFixedRate(new TimerTask() {
+					@Override
+					public void run() {
+						handlerWaitForServiceConnection.post(doServiceConnection);
+					}
+				}, 0, 1000); // every second
+			}
+			else {
+				setupButtons();
+			}
 		}
-		else {
-			setupButtons();
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
 
@@ -274,22 +280,27 @@ public class FragmentMainInput extends Fragment
 	public void onPause() {
 		super.onPause();
 
-		Log.v(MODULE_TAG, "Cycle: MainInput onPause");
+		try {
+			Log.v(MODULE_TAG, "Cycle: MainInput onPause");
 
-		// Background GPS.
-		if (timer != null)
-			timer.cancel();
+			// Background GPS.
+			if (timer != null)
+				timer.cancel();
 
-		// Background GPS.
-		if (timerWaitForServiceConnection != null)
-			timerWaitForServiceConnection.cancel();
+			// Background GPS.
+			if (timerWaitForServiceConnection != null)
+				timerWaitForServiceConnection.cancel();
 
-		if (mLocationClient != null) {
-			mLocationClient.disconnect();
+			if (mLocationClient != null) {
+				mLocationClient.disconnect();
+			}
+
+			if (recordingService != null) {
+				recordingService.setListener(null);
+			}
 		}
-
-		if (recordingService != null) {
-			recordingService.setListener(null);
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
 
@@ -300,8 +311,12 @@ public class FragmentMainInput extends Fragment
 	public void onDestroyView() {
 		super.onDestroyView();
 
-		Log.v(MODULE_TAG, "Cycle: MainInput onDestroyView");
-
+		try {
+			Log.v(MODULE_TAG, "Cycle: MainInput onDestroyView");
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	/**
@@ -344,18 +359,23 @@ public class FragmentMainInput extends Fragment
 	 */
 	private void updateTimer() {
 
-		if (null != recordingService) {
-			ApplicationStatus appStatus = myApp.getStatus();
+		try {
+			if (null != recordingService) {
+				ApplicationStatus appStatus = myApp.getStatus();
 
-			TripData tripData = appStatus.getTripData();
+				TripData tripData = appStatus.getTripData();
 
-			boolean isRecording =
-					((RecordingService.STATE_RECORDING == recordingService.getState()) ||
-					(RecordingService.STATE_PAUSED == recordingService.getState()));
+				boolean isRecording =
+						((RecordingService.STATE_RECORDING == recordingService.getState()) ||
+						(RecordingService.STATE_PAUSED == recordingService.getState()));
 
-			if ((null != tripData) && isRecording) {
-				txtDuration.setText(sdf.format(tripData.getDuration()));
+				if ((null != tripData) && isRecording) {
+					txtDuration.setText(sdf.format(tripData.getDuration()));
+				}
 			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
 
@@ -376,34 +396,39 @@ public class FragmentMainInput extends Fragment
 	final Runnable doServiceConnection = new Runnable() {
 		public void run() {
 
-			Log.v(MODULE_TAG, "doServiceConnection");
+			try {
+				Log.v(MODULE_TAG, "doServiceConnection");
 
-			if (null == recordingService) {
+				if (null == recordingService) {
 
-				// See if a service connection has been established
-				if (null != (recordingService = myApp.getRecordingService())) {
+					// See if a service connection has been established
+					if (null != (recordingService = myApp.getRecordingService())) {
 
-					// We now have connection to the service so cancel the timer
-					timerWaitForServiceConnection.cancel();
+						// We now have connection to the service so cancel the timer
+						timerWaitForServiceConnection.cancel();
 
-					Toast.makeText(getActivity(), "Recording service connected...",
-							Toast.LENGTH_SHORT).show();
+						Toast.makeText(getActivity(), "Recording service connected...",
+								Toast.LENGTH_SHORT).show();
 
-					recordingService.setListener(FragmentMainInput.this);
+						recordingService.setListener(FragmentMainInput.this);
 
-					// Setup the UI buttons according to current state
-					setupButtons();
+						// Setup the UI buttons according to current state
+						setupButtons();
 
-					// If the recorder is has completed a recording, switch
-					// to activity for uploading the trip data
-					int state = recordingService.getState();
-					if (state > RecordingService.STATE_IDLE) {
-						if (state == RecordingService.STATE_FULL) {
-							startActivity(new Intent(getActivity(), TripPurposeActivity.class));
-							getActivity().finish();
+						// If the recorder is has completed a recording, switch
+						// to activity for uploading the trip data
+						int state = recordingService.getState();
+						if (state > RecordingService.STATE_IDLE) {
+							if (state == RecordingService.STATE_FULL) {
+								startActivity(new Intent(getActivity(), TripPurposeActivity.class));
+								getActivity().finish();
+							}
 						}
 					}
 				}
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
 			}
 		} // end of run
 	};
@@ -515,41 +540,46 @@ public class FragmentMainInput extends Fragment
 		 */
 		public void onClick(View v) {
 
-			if (!myApp.getStatus().isProviderEnabled()) {
-				buildAlertMessageNoGps();
-			}
-			else {
-				fi = new Intent(getActivity(), NoteTypeActivity.class);
-				// update note entity
-				NoteData note;
-				note = NoteData.createNote(getActivity());
-
-				fi.putExtra("noteid", note.noteid);
-
-				Log.v("Jason", "Note ID in MainInput: " + note.noteid);
-
-				if (isRecording == true) {
-					fi.putExtra("isRecording", 1);
-				} else {
-					fi.putExtra("isRecording", 0);
-				}
-
-				note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
-
-				double currentTime = System.currentTimeMillis();
-
-				if (currentLocation != null) {
-					note.addPointNow(currentLocation, currentTime);
-
-					// Log.v("Jason", "Note ID: "+note);
-
-					startActivity(fi);
-					getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-					// getActivity().finish();
+			try {
+				if (!myApp.getStatus().isProviderEnabled()) {
+					buildAlertMessageNoGps();
 				}
 				else {
-					Toast.makeText(getActivity(), "No GPS data acquired; nothing to submit.", Toast.LENGTH_SHORT).show();
+					fi = new Intent(getActivity(), NoteTypeActivity.class);
+					// update note entity
+					NoteData note;
+					note = NoteData.createNote(getActivity());
+
+					fi.putExtra("noteid", note.noteid);
+
+					Log.v("Jason", "Note ID in MainInput: " + note.noteid);
+
+					if (isRecording == true) {
+						fi.putExtra("isRecording", 1);
+					} else {
+						fi.putExtra("isRecording", 0);
+					}
+
+					note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
+
+					double currentTime = System.currentTimeMillis();
+
+					if (currentLocation != null) {
+						note.addPointNow(currentLocation, currentTime);
+
+						// Log.v("Jason", "Note ID: "+note);
+
+						startActivity(fi);
+						getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+						// getActivity().finish();
+					}
+					else {
+						Toast.makeText(getActivity(), "No GPS data acquired; nothing to submit.", Toast.LENGTH_SHORT).show();
+					}
 				}
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
 			}
 		}
 	}
@@ -715,21 +745,26 @@ public class FragmentMainInput extends Fragment
 	 */
 	@Override
 	public void onLocationChanged(Location location) {
-		// onMyLocationButtonClick();
-		currentLocation = location;
+		try {
+			// onMyLocationButtonClick();
+			currentLocation = location;
 
-		// Log.v("Jason", "Current Location: "+currentLocation);
+			// Log.v("Jason", "Current Location: "+currentLocation);
 
-		if (zoomFlag == 1) {
-			LatLng myLocation;
+			if (zoomFlag == 1) {
+				LatLng myLocation;
 
-			if (location != null) {
-				myLocation = new LatLng(location.getLatitude(),
-						location.getLongitude());
-				map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
-						16));
-				zoomFlag = 0;
+				if (location != null) {
+					myLocation = new LatLng(location.getLatitude(),
+							location.getLongitude());
+					map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
+							16));
+					zoomFlag = 0;
+				}
 			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
 
@@ -739,7 +774,12 @@ public class FragmentMainInput extends Fragment
 	 */
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		mLocationClient.requestLocationUpdates(REQUEST, this); // LocationListener
+		try {
+			mLocationClient.requestLocationUpdates(REQUEST, this); // LocationListener
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	/**
@@ -748,7 +788,12 @@ public class FragmentMainInput extends Fragment
 	 */
 	@Override
 	public void onDisconnected() {
+		try {
 		// Do nothing
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	/**
@@ -756,16 +801,26 @@ public class FragmentMainInput extends Fragment
 	 */
 	@Override
 	public void onConnectionFailed(ConnectionResult result) {
+		try {
 		// Do nothing
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	@Override
 	public boolean onMyLocationButtonClick() {
+		try {
 		// Toast.makeText(getActivity(), "MyLocation button clicked",
 		// Toast.LENGTH_SHORT).show();
 		// Return false so that we don't consume the event and the default
 		// behavior still occurs
 		// (the camera animates to the user's current position).
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 		return false;
 	}
 

@@ -205,10 +205,6 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	public void pauseRecording() {
 		this.state = STATE_PAUSED;
 		trip.startPause();
-
-		// Stop location service updates
-		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		lm.removeUpdates(this);
 	}
 
 	/**
@@ -219,10 +215,6 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	public void resumeRecording() {
 		this.state = STATE_RECORDING;
 		trip.finishPause();
-
-		// enable location manager updates
-		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 	}
 
 	/**

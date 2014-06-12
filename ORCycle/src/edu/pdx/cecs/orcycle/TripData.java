@@ -35,8 +35,12 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.location.Location;
+import android.util.Log;
 
 public class TripData {
+
+	private static final String MODULE_TAG = "TripData";
+
 	long tripid;
 
 	private final static double RESET_START_TIME = 0.0;
@@ -59,7 +63,7 @@ public class TripData {
 	int status;
 	float distance;
 	String purp, fancystart, info;
-	// private ItemizedOverlayTrack gpspoints;
+
 	private ArrayList<CyclePoint> gpspoints = new ArrayList<CyclePoint>();
 	CyclePoint startpoint, endpoint;
 
@@ -206,14 +210,6 @@ public class TripData {
 		return gpspoints;
 	}
 
-	// private void addPointToSavedMap(int lat, int lgt, double currentTime,
-	// float acc) {
-	// CyclePoint pt = new CyclePoint(lat, lgt, currentTime, acc);
-	//
-	// OverlayItem opoint = new OverlayItem(pt, null, null);
-	// gpspoints.addOverlay(opoint);
-	// }
-
 	public double getStartTime() {
 		return tripStartTime;
 	}
@@ -230,18 +226,28 @@ public class TripData {
 		totalTravelTime += (currentTime - startTime);
 		startTime = RESET_START_TIME;
 		isPaused = true;
-
 	}
 
 	public void finishPause() {
 
 		double currentTime = System.currentTimeMillis();
 
-		// calculate time paused and save in trip data
-		if (pauseStartedTime > RESET_START_TIME) { // test for valid pause start time
-			totalPauseTime += (currentTime - pauseStartedTime);
-			pauseStartedTime = RESET_START_TIME; // reset paused start time
+		// TODO: Assert(pauseStartedTime > RESET_START_TIME);
+
+		// Insert pause data into database
+		try {
+			mDb.open();
+			mDb.addPauseToTrip(tripid, pauseStartedTime, currentTime);
 		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		finally {
+			mDb.close();
+		}
+		totalPauseTime += (currentTime - pauseStartedTime);
+
+		// Re-initialize start time counters
 		startTime = currentTime;
 		isPaused = false;
 	}
@@ -256,7 +262,6 @@ public class TripData {
 			return  totalTravelTime + (System.currentTimeMillis() - startTime);
 		}
 	}
-
 
 	boolean addPointNow(Location loc, double currentTime, float dst) {
 		int lat = (int) (loc.getLatitude() * 1E6);
@@ -308,9 +313,7 @@ public class TripData {
 	 */
 	public void finish() {
 		if (!isFinished) {
-			if (!isPaused ) {
-				totalTravelTime += System.currentTimeMillis() - startTime;
-			}
+			totalTravelTime += System.currentTimeMillis() - startTime;
 			endTime = totalTravelTime;
 			isFinished = true;
 			updateTrip("", "", "", "");
