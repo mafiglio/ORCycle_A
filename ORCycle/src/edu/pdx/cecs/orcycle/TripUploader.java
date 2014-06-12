@@ -51,6 +51,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -69,6 +70,8 @@ import android.widget.Toast;
 public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 	Context mCtx;
 	DbAdapter mDb;
+
+	private static final String MODULE_TAG = "TripUploader";
 
 	public static final int kSaveProtocolVersion = 3;
 
@@ -89,6 +92,9 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 	public static final String TRIP_COORDS_SPEED = "s";
 	public static final String TRIP_COORDS_HACCURACY = "h";
 	public static final String TRIP_COORDS_VACCURACY = "v";
+
+	public static final String PAUSE_START = "ps";
+	public static final String PAUSE_END = "pe";
 
 	public static final String USER_AGE = "age";
 	public static final String USER_EMAIL = "email";
@@ -161,6 +167,41 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		tripCoordsCursor.close();
 		mDb.close();
 		return tripCoords;
+	}
+
+	private JSONArray getPausesJSON(long tripId) throws JSONException {
+
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		mDb.openReadOnly();
+
+		Cursor pausesCursor = mDb.fetchPauses(tripId);
+
+		// Build the map between JSON fieldname and phone db fieldname:
+		Map<String, Integer> fieldMap = new HashMap<String, Integer>();
+		fieldMap.put(PAUSE_START, pausesCursor.getColumnIndex(DbAdapter.K_PAUSE_START_TIME));
+		fieldMap.put(PAUSE_END, pausesCursor.getColumnIndex(DbAdapter.K_PAUSE_END_TIME));
+
+		// Build JSON objects for each coordinate:
+		JSONArray jsonPauses = new JSONArray();
+		while (!pausesCursor.isAfterLast()) {
+
+			JSONObject json = new JSONObject();
+
+			try {
+				json.put(PAUSE_START, df.format(pausesCursor.getDouble(fieldMap.get(PAUSE_START))));
+				json.put(PAUSE_END, df.format(pausesCursor.getDouble(fieldMap.get(PAUSE_END))));
+
+				jsonPauses.put(json);
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			pausesCursor.moveToNext();
+		}
+		pausesCursor.close();
+		mDb.close();
+		return jsonPauses;
 	}
 
 	private JSONObject getUserJSON() throws JSONException {
@@ -292,6 +333,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 
 	private String getPostData(long tripId) throws JSONException {
 		JSONObject coords = getCoordsJSON(tripId);
+		JSONArray pauses = getPausesJSON(tripId);
 		JSONObject user = getUserJSON();
 		String deviceId = getDeviceId();
 		Vector<String> tripData = getTripData(tripId);
@@ -302,20 +344,24 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 		nameValuePairs.add(new BasicNameValuePair("coords", coords.toString()));
+		nameValuePairs.add(new BasicNameValuePair("pauses", pauses.toString()));
 		nameValuePairs.add(new BasicNameValuePair("user", user.toString()));
 		nameValuePairs.add(new BasicNameValuePair("device", deviceId));
 		nameValuePairs.add(new BasicNameValuePair("notes", notes));
 		nameValuePairs.add(new BasicNameValuePair("purpose", purpose));
 		nameValuePairs.add(new BasicNameValuePair("start", startTime));
 		// nameValuePairs.add(new BasicNameValuePair("end", endTime));
-		nameValuePairs.add(new BasicNameValuePair("version", ""
-				+ kSaveProtocolVersion));
+		nameValuePairs.add(new BasicNameValuePair("version", "" + kSaveProtocolVersion));
 
-		String codedPostData = "purpose=" + purpose + "&user="
-				+ user.toString() + "&notes=" + notes + "&coords="
-				+ coords.toString() + "&version="
-				+ String.valueOf(kSaveProtocolVersion) + "&start=" + startTime
-				+ "&device=" + deviceId;
+		String codedPostData =
+				"purpose=" + purpose +
+				"&user=" + user.toString() +
+				"&notes=" + notes +
+				"&coords=" + coords.toString() +
+				"&pauses=" + pauses.toString() +
+				"&version=" + String.valueOf(kSaveProtocolVersion) +
+				"&start=" + startTime +
+				"&device=" + deviceId;
 
 		return codedPostData;
 	}

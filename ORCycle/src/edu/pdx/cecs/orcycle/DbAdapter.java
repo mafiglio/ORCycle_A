@@ -579,4 +579,28 @@ public class DbAdapter {
 		mDb.delete(DATA_TABLE_PAUSES, K_PAUSE_ROWID + "=" + tripId, null);
 	}
 
+	/**
+	 * Return a Cursor positioned at the pause that matches the given rowId
+	 *
+	 * @param rowId
+	 *            id of trip to retrieve
+	 * @return Cursor positioned to matching trip, if found
+	 * @throws SQLException
+	 *             if trip could not be found/retrieved
+	 */
+	public Cursor fetchPauses(long tripId) throws SQLException {
+
+		Cursor cursor;
+
+		String[] columns = new String[] { K_PAUSE_START_TIME, K_PAUSE_END_TIME };
+		String whereClause = K_PAUSE_ROWID + "=" + tripId;
+
+		if (null != (cursor = mDb.query(true, DATA_TABLE_PAUSES, columns, whereClause, null, null, null, null, null))) {
+			cursor.moveToFirst();
+		}
+
+		return cursor;
+	}
+
+
 }
