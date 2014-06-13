@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,154 +16,140 @@
         android:scrollbars="vertical" />
 
     <LinearLayout
+        android:id="@+id/recordStatusLayout"
         android:layout_width="match_parent"
         android:layout_height="53dp"
-        android:background="@drawable/lcdscreen" >
+        android:background="@drawable/lcdscreen"
+        android:gravity="center_horizontal"
+        android:measureWithLargestChild="true" >
 
         <LinearLayout
-            android:layout_width="120dp"
-            android:layout_height="50dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|fill_vertical"
+            android:layout_weight="1"
             android:orientation="vertical" >
 
-            <LinearLayout
-                android:layout_width="120dp"
-                android:layout_height="30dp" >
+            <TextView
+                android:id="@+id/textViewElapsedTime"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="00:00:00"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <TextView
-                    android:id="@+id/textViewElapsedTime"
-                    android:layout_width="140dp"
-                    android:layout_height="40dp"
-                    android:gravity="center"
-                    android:text="00:00:00"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/labelElapsedTime"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:text="elapsed time"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
-            <LinearLayout
-                android:layout_width="120dp"
-                android:layout_height="20dp" >
-
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="140dp"
-                    android:layout_height="20dp"
-                    android:gravity="top|center"
-                    android:text="elapsed time"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="100dp"
-            android:layout_height="50dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill_vertical|center"
+            android:layout_weight="1"
             android:orientation="vertical" >
 
-            <LinearLayout
-                android:layout_width="100dp"
-                android:layout_height="30dp" >
+            <TextView
+                android:id="@+id/textViewDistance"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center|center"
+                android:text="0.0 miles"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+            <TextView
+                android:id="@+id/labelViewDistance"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:text="distance"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                <TextView
-                    android:id="@+id/textViewDistance"
-                    android:layout_width="120dp"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="4dp"
-                    android:gravity="center|center"
-                    android:text="0.0 miles"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="100dp"
-                android:layout_height="20dp" >
-
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="100dp"
-                    android:layout_height="20dp"
-                    android:gravity="top|right"
-                    android:text="distance"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="110dp"
-            android:layout_height="50dp"
-            android:orientation="vertical">
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical" >
 
-            <LinearLayout
-                android:layout_width="110dp"
-                android:layout_height="30dp" >
+            <TextView
+                android:id="@+id/textViewSpeed"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="0.0 mph"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <TextView
-                    android:id="@+id/textViewSpeed"
-                    android:layout_width="110dp"
-                    android:layout_height="40dp"
-                    android:gravity="center|right"
-                    android:text="0.0 mph"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:text="speed"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
-            <LinearLayout
-                android:layout_width="110dp"
-                android:layout_height="20dp" >
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="110dp"
-                    android:layout_height="20dp"
-                    android:gravity="top|right"
-                    android:text="speed"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
         </LinearLayout>
+        
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="75dp" >
-
-            <Button
-                android:id="@+id/buttonNoteThis"
-                android:layout_width="140dp"
-                android:layout_height="40dp"
-                android:background="#474334"
-                android:textColor="#ffffff"
-                android:textStyle="bold"
-                android:text="Note this..." />
-        </LinearLayout>
+         <Button
+             android:id="@+id/buttonNoteThis"
+             android:layout_width="140dp"
+             android:layout_height="40dp"
+             android:layout_below="@id/recordStatusLayout"
+             android:layout_centerInParent="true"
+             android:layout_centerVertical="false"
+             android:layout_marginTop="20dp"
+             android:background="#474334"
+             android:text="Note this..."
+             android:textColor="#ffffff"
+             android:textStyle="bold" />
 
         <LinearLayout
             style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_marginBottom="30dp"
             android:gravity="center|bottom"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:showDividers="none" >
 
             <Button
                 android:id="@+id/buttonStart"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
                 android:background="#6A7F10"
                 android:onClick="OnSave"
+                android:text="@string/btn_lbl_start"
                 android:textColor="#ffffff"
-                android:textStyle="bold" 
-                android:text="@string/btn_lbl_start" />
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/buttonPause"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
                 android:background="#6A7F10"
                 android:text="@string/btn_lbl_pause"
                 android:textColor="#ffffff"
@@ -174,6 +160,8 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
                 android:background="#6A7F10"
                 android:text="@string/btn_lbl_resume"
                 android:textColor="#ffffff"
@@ -184,12 +172,13 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
                 android:background="#6A7F10"
                 android:text="@string/btn_lbl_finish"
                 android:textColor="#ffffff"
                 android:textStyle="bold" />
             
         </LinearLayout>
-    </LinearLayout>
 
-</FrameLayout>
+</RelativeLayout>
