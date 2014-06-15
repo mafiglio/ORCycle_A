@@ -157,6 +157,7 @@ public class TripData {
 	void dropTrip() {
 		mDb.open();
 		mDb.deleteAllCoordsForTrip(tripid);
+		mDb.deletePauses(tripid);
 		mDb.deleteTrip(tripid);
 		mDb.close();
 	}

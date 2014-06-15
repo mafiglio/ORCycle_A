@@ -339,6 +339,7 @@ public class DbAdapter {
 			while (!c.isAfterLast()) {
 				long tripid = c.getInt(0);
 				deleteAllCoordsForTrip(tripid);
+				deletePauses(tripid);
 				c.moveToNext();
 			}
 		}
