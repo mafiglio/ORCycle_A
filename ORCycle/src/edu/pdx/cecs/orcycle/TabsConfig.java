@@ -2,7 +2,6 @@ package edu.pdx.cecs.orcycle;
 
 import java.util.Locale;
 
-import edu.pdx.cecs.orcycle.R;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.pm.ActivityInfo;
@@ -237,7 +236,7 @@ public class TabsConfig extends FragmentActivity implements
 		super.onDestroy();
 		Log.v("Jason", "Cycle: TabsConfig onDestroy");
 	}
-	
+
 	// 2.0 and above
 	@Override
 	public void onBackPressed() {

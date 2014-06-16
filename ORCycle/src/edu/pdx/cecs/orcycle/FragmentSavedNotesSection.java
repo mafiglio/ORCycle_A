@@ -2,7 +2,6 @@ package edu.pdx.cecs.orcycle;
 
 import java.util.ArrayList;
 
-import edu.pdx.cecs.orcycle.R;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -55,7 +54,7 @@ public class FragmentSavedNotesSection extends Fragment {
 		listSavedNotes = (ListView) rootView
 				.findViewById(R.id.listViewSavedNotes);
 		populateNoteList(listSavedNotes);
-		
+
 		final DbAdapter mDb = new DbAdapter(getActivity());
 		mDb.open();
 
@@ -67,7 +66,7 @@ public class FragmentSavedNotesSection extends Fragment {
 					Toast.LENGTH_SHORT).show();
 		}
 		mDb.close();
-		
+
 		noteIdArray.clear();
 
 //		listSavedNotes.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -198,7 +197,7 @@ public class FragmentSavedNotesSection extends Fragment {
 		return rootView;
 	}
 
-	private ActionMode.Callback mActionModeCallbackNote = new ActionMode.Callback() {
+	private final ActionMode.Callback mActionModeCallbackNote = new ActionMode.Callback() {
 
 		// Called when the action mode is created; startActionMode() was called
 		@Override

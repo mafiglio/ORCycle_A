@@ -3,7 +3,6 @@ package edu.pdx.cecs.orcycle;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import edu.pdx.cecs.orcycle.R;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -34,6 +33,8 @@ public class FragmentUserInfo extends Fragment {
 	public final static int PREF_INCOME = 9;
 	public final static int PREF_RIDERTYPE = 10;
 	public final static int PREF_RIDERHISTORY = 11;
+	public final static int PREF_HHSIZE = 12;
+	public final static int PREF_HHVEHICLES = 13;
 
 	private static final String TAG = "UserPrefActivity";
 
@@ -120,6 +121,12 @@ public class FragmentUserInfo extends Fragment {
 				((Spinner) rootView.findViewById(R.id.incomeSpinner))
 						.setSelection(((Integer) p.getValue()).intValue());
 				break;
+			case PREF_HHSIZE:
+				((Spinner)rootView.findViewById(R.id.hhSizeSpinner))
+					.setSelection(((Integer)p.getValue()).intValue());
+			case PREF_HHVEHICLES:
+				((Spinner)rootView.findViewById(R.id.hhVehiclesSpinner))
+				.setSelection(((Integer)p.getValue()).intValue());
 			case PREF_RIDERTYPE:
 				((Spinner) rootView.findViewById(R.id.ridertypeSpinner))
 						.setSelection(((Integer) p.getValue()).intValue());
@@ -193,10 +200,16 @@ public class FragmentUserInfo extends Fragment {
 		editor.putInt("" + PREF_AGE,
 				((Spinner) getActivity().findViewById(R.id.ageSpinner))
 						.getSelectedItemPosition());
-		editor.putInt("" + PREF_ETHNICITY, ((Spinner) getActivity()
-				.findViewById(R.id.ethnicitySpinner)).getSelectedItemPosition());
+		editor.putInt("" + PREF_ETHNICITY, ((Spinner) getActivity().findViewById(R.id.ethnicitySpinner))
+				.getSelectedItemPosition());
 		editor.putInt("" + PREF_INCOME,
 				((Spinner) getActivity().findViewById(R.id.incomeSpinner))
+						.getSelectedItemPosition());
+		editor.putInt("" + PREF_HHSIZE,
+				((Spinner) getActivity().findViewById(R.id.hhSizeSpinner))
+						.getSelectedItemPosition());
+		editor.putInt("" + PREF_HHVEHICLES,
+				((Spinner) getActivity().findViewById(R.id.hhVehiclesSpinner))
 						.getSelectedItemPosition());
 		editor.putInt("" + PREF_RIDERTYPE, ((Spinner) getActivity()
 				.findViewById(R.id.ridertypeSpinner)).getSelectedItemPosition());

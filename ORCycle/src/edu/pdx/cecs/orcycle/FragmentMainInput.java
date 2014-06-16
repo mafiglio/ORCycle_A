@@ -63,6 +63,8 @@ public class FragmentMainInput extends Fragment
 	private TextView txtDuration = null;
 	private TextView txtDistance = null;
 	private TextView txtCurSpeed = null;
+	private TextView txtCO2;
+	private TextView txtCalories;
 
 	Intent fi;
 	boolean isRecording = false;
@@ -70,7 +72,6 @@ public class FragmentMainInput extends Fragment
 	Timer timer;
 	Timer timerWaitForServiceConnection;
 	float curDistance;
-
 	int zoomFlag = 1;
 
 	Location currentLocation = new Location("");
@@ -160,6 +161,8 @@ public class FragmentMainInput extends Fragment
 			txtDuration = (TextView) rootView.findViewById(R.id.textViewElapsedTime);
 			txtDistance = (TextView) rootView.findViewById(R.id.textViewDistance);
 			txtCurSpeed = (TextView) rootView.findViewById(R.id.textViewSpeed);
+			txtCO2 = (TextView) rootView.findViewById(R.id.textViewCO2);
+			txtCalories = (TextView) rootView.findViewById(R.id.textViewCalories);
 		}
 		catch(Exception ex) {
 			Log.e("Jason", ex.getMessage());
@@ -578,6 +581,7 @@ public class FragmentMainInput extends Fragment
 					}
 				}
 			}
+
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
 			}
@@ -595,10 +599,14 @@ public class FragmentMainInput extends Fragment
 
 		this.curDistance = distance;
 
-		txtCurSpeed.setText(String.format("%1.1f mph", spdCurrent));
-
 		float miles = 0.0006212f * distance;
 		txtDistance.setText(String.format("%1.1f miles", miles));
+
+		float lbsCO2 = miles*0.0006212f*0.93f;
+		txtCO2.setText(String.format("%1.1f lbs", lbsCO2));
+
+		float calories = miles*0.0006212f * 49f - 1.69f;
+		txtCalories.setText(String.format("%1.1f kcal", calories));
 	}
 
 	/**
@@ -619,6 +627,12 @@ public class FragmentMainInput extends Fragment
 
 			txtCurSpeed = (TextView) getActivity().findViewById(R.id.textViewSpeed);
 			txtCurSpeed.setText("0.0 mph");
+
+			txtCalories = (TextView) getActivity().findViewById(R.id.textViewCalories);
+			txtCalories.setText("0.0 kcal");
+
+			txtCO2 = (TextView) getActivity().findViewById(R.id.textViewCO2);
+			txtCO2.setText("0.0 lbs");
 
 			setupButtons();
 		}

@@ -59,6 +59,23 @@
         <item>$75,000 to $99,999</item>
         <item>$100,000 or greater</item>
     </string-array>
+     <string-array name="hhSizeArray">
+        <item></item>
+        <item>1 person</item>
+        <item>2 people</item>
+        <item>3 people</item>
+        <item>4 people</item>
+        <item>5 people</item>
+        <item>6 people or more</item>
+    </string-array>
+    <string-array name="hhVehiclesArray">
+        <item></item>
+        <item>0 Vehicles</item>
+        <item>1 Vehicle</item>
+        <item>2 Vehicles</item>
+        <item>3 Vehicles</item>
+        <item>4 or more Vehicles</item>
+    </string-array>
     <string-array name="cyclefreqArray">
         <item></item>
         <item>Less than once a month</item>

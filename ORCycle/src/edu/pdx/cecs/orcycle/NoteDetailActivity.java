@@ -3,7 +3,6 @@ package edu.pdx.cecs.orcycle;
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 
-import edu.pdx.cecs.orcycle.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -67,6 +66,7 @@ public class NoteDetailActivity extends Activity {
 		});
 	}
 
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
 			photo = (Bitmap) data.getExtras().get("data");
@@ -77,7 +77,7 @@ public class NoteDetailActivity extends Activity {
 
 	public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		bitmap.compress(CompressFormat.PNG, 0, outputStream);
+		bitmap.compress(CompressFormat.JPEG ,100, outputStream);
 		return outputStream.toByteArray();
 	}
 
