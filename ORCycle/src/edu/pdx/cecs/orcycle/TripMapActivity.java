@@ -55,8 +55,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import edu.pdx.cecs.orcycle.R;
-
 public class TripMapActivity extends Activity {
 	// private MapView mapView;
 	GoogleMap map;
@@ -80,8 +78,7 @@ public class TripMapActivity extends Activity {
 
 		try {
 			// Set zoom controls
-			map = ((MapFragment) getFragmentManager().findFragmentById(
-					R.id.tripMap)).getMap();
+			map = ((MapFragment) getFragmentManager().findFragmentById(R.id.tripMap)).getMap();
 			// mapView = (MapView) findViewById(R.id.tripMap);
 			// mapView.setBuiltInZoomControls(true);
 
