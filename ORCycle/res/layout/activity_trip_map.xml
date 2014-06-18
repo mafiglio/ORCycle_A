@@ -57,14 +57,29 @@
     
     </RelativeLayout>
 
-    <fragment
+    <RelativeLayout
+        
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/RelativeLayout01"
+        android:layout_gravity="bottom">
+        
+        <fragment
         android:id="@+id/tripMap"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/RelativeLayout01"
         android:layout_gravity="bottom" />
-
+        
+		<ImageView
+			android:id="@+id/crosshairs.png"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/crosshairs"
+			android:layout_centerInParent="true"/>
+    
+        </RelativeLayout>
+    
         <Button
         android:id="@+id/buttonNoteThis"
         android:layout_width="140dp"
