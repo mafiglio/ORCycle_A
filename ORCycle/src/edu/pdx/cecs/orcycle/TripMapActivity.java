@@ -35,18 +35,21 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -54,8 +57,14 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
 
 public class TripMapActivity extends Activity {
+
+	private static final String MODULE_TAG = "TripMapActivity";
+
+	private static final double NOTE_MIN_DISTANCE_FROM_TRIP = 100.0;
+
 	// private MapView mapView;
 	GoogleMap map;
 	// List<Overlay> mapOverlays;
@@ -65,10 +74,16 @@ public class TripMapActivity extends Activity {
 	Polyline polyline;
 
 	private LatLngBounds.Builder bounds;
+	private boolean initialPositionSet = false;
+	private TextView textCrosshair = null;
+	private Button buttonNote = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		initialPositionSet = false;
+
 		// getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_trip_map);
 
@@ -79,6 +94,7 @@ public class TripMapActivity extends Activity {
 		try {
 			// Set zoom controls
 			map = ((MapFragment) getFragmentManager().findFragmentById(R.id.tripMap)).getMap();
+
 			// mapView = (MapView) findViewById(R.id.tripMap);
 			// mapView.setBuiltInZoomControls(true);
 
@@ -95,9 +111,12 @@ public class TripMapActivity extends Activity {
 			TextView t1 = (TextView) findViewById(R.id.TextViewMapPurpose);
 			TextView t2 = (TextView) findViewById(R.id.TextViewMapInfo);
 			TextView t3 = (TextView) findViewById(R.id.TextViewMapFancyStart);
+			textCrosshair = (TextView) findViewById(R.id.TextCrosshair);
 			t1.setText(trip.purp);
 			t2.setText(trip.info);
 			t3.setText(trip.fancystart);
+			buttonNote = (Button) findViewById(R.id.buttonNoteThis);
+			buttonNote.setClickable(false);
 
 			// Center & zoom the map
 			// int latcenter = (trip.lathigh + trip.latlow) / 2;
@@ -183,12 +202,39 @@ public class TripMapActivity extends Activity {
 			map.setOnCameraChangeListener(new OnCameraChangeListener() {
 
 				@Override
-				public void onCameraChange(CameraPosition arg0) {
-					// Move camera.
-					map.moveCamera(CameraUpdateFactory.newLatLngBounds(
-							bounds.build(), 50));
-					// Remove listener to prevent position reset on camera move.
-					map.setOnCameraChangeListener(null);
+				public void onCameraChange(CameraPosition cameraPosition) {
+
+					if (!initialPositionSet) {
+						// Move camera.
+						map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 50));
+						// Remove listener to prevent position reset on camera move.
+						//map.setOnCameraChangeListener(null);
+						initialPositionSet = true;
+					}
+					else {
+						Log.v(MODULE_TAG, "Camera position: " + cameraPosition.target.toString());
+
+					}
+
+					Projection p = map.getProjection();
+					VisibleRegion vr = p.getVisibleRegion();
+
+					LatLng theCenterSpot = new LatLng((vr.latLngBounds.northeast.latitude + vr.latLngBounds.southwest.latitude)/2.0, (vr.latLngBounds.northeast.longitude + vr.latLngBounds.southwest.longitude)/2.0);
+
+					if (null != textCrosshair) {
+						double minDistanceFromTrip = getMinDistanceFromTrip(theCenterSpot);
+						textCrosshair.setText(String.valueOf(minDistanceFromTrip));
+						if (null != buttonNote) {
+							if (minDistanceFromTrip <= NOTE_MIN_DISTANCE_FROM_TRIP) {
+								buttonNote.setClickable(true);
+								buttonNote.setText("  >> Note this <<  ");
+							}
+							else {
+								buttonNote.setClickable(false);
+								buttonNote.setText("  Note this...  ");
+							}
+						}
+					}
 				}
 			});
 
@@ -216,6 +262,30 @@ public class TripMapActivity extends Activity {
 			Log.e("GOT!", e.toString());
 		}
 	}
+
+	private double getMinDistanceFromTrip(LatLng point) {
+
+		float results[] = new float[1];
+
+		LatLng tripPoint = new LatLng(gpspoints.get(1).latitude * 1E-6, gpspoints.get(1).longitude * 1E-6);
+		Location.distanceBetween(point.latitude, point.longitude, tripPoint.latitude, tripPoint.longitude, results);
+
+		double minDistance = results[0];
+
+		for (int i = 1; i < gpspoints.size(); i++) {
+			tripPoint = new LatLng(gpspoints.get(i).latitude * 1E-6, gpspoints.get(i).longitude * 1E-6);
+			Location.distanceBetween(point.latitude, point.longitude, tripPoint.latitude, tripPoint.longitude, results);
+			if (results[0] < minDistance) {
+				minDistance = results[0];
+			}
+			if (minDistance <= NOTE_MIN_DISTANCE_FROM_TRIP) {
+				break;
+			}
+		}
+
+		return minDistance;
+	}
+
 
 	// @Override
 	// protected boolean isRouteDisplayed() {

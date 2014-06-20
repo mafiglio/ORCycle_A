@@ -8,7 +8,7 @@
     <RelativeLayout
         android:id="@+id/RelativeLayout01"
         android:layout_width="match_parent"
-        android:layout_height="61dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/lcdscreen"
         android:baselineAligned="false"
         android:gravity="center_horizontal"
@@ -45,17 +45,29 @@
 	        android:id="@+id/TextViewMapInfo"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentBottom="true"
+	        android:layout_alignParentBottom="false"
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@id/TextViewMapPurpose"
 	        android:layout_marginLeft="4dp"
 	        android:layout_marginTop="8dp"
-	        android:gravity="left|bottom"
+            android:text="Viewmap info:"
 	        android:paddingBottom="8sp" >
-
 	    </TextView>
     
-    </RelativeLayout>
+	    <TextView
+	        android:id="@+id/TextCrosshair"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@id/TextViewMapInfo"
+	        android:layout_marginLeft="4dp"
+	        android:layout_marginTop="8dp"
+	        android:gravity="left|bottom"
+            android:text="Crosshair position:"
+	        android:paddingBottom="8sp" >
+	    </TextView>
+    
+	    </RelativeLayout>
 
     <RelativeLayout
         
@@ -82,14 +94,14 @@
     
         <Button
         android:id="@+id/buttonNoteThis"
-        android:layout_width="140dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/RelativeLayout01"
         android:layout_centerInParent="true"
         android:layout_centerVertical="false"
         android:layout_marginTop="20dp"
         android:background="#474334"
-        android:text="Note this..."
+        android:text="  Note this...  "
         android:textColor="#ffffff"
         android:textStyle="bold" />
 
