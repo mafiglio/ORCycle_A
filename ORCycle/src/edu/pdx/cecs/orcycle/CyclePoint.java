@@ -51,6 +51,14 @@ class CyclePoint {
 		this.accuracy = accuracy;
 	}
 
+	public CyclePoint(int lat, int lgt, double currentTime, float accuracy, double alt) {
+		this.latitude = lat;
+		this.longitude = lgt;
+		this.time = currentTime;
+		this.accuracy = accuracy;
+		this.altitude = alt;
+	}
+
 	public CyclePoint(int lat, int lgt, double currentTime, float accuracy,
 			double altitude, float speed) {
 		this.latitude = lat;

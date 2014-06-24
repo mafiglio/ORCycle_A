@@ -33,6 +33,7 @@ package edu.pdx.cecs.orcycle;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.location.Location;
@@ -42,8 +43,10 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -65,24 +68,24 @@ public class TripMapActivity extends Activity {
 
 	private static final double NOTE_MIN_DISTANCE_FROM_TRIP = 100.0;
 
-	// private MapView mapView;
 	GoogleMap map;
-	// List<Overlay> mapOverlays;
-	// xwDrawable drawable;
 	ArrayList<CyclePoint> gpspoints;
-	// float[] lineCoords;
 	Polyline polyline;
 
 	private LatLngBounds.Builder bounds;
 	private boolean initialPositionSet = false;
 	private TextView textCrosshair = null;
 	private Button buttonNote = null;
+	private boolean crosshairInRangeOfTrip = false;
+	private LatLng crosshairLocation = null;
+	private int indexOfClosestPoint = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		initialPositionSet = false;
+		crosshairInRangeOfTrip = false;
 
 		// getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_trip_map);
@@ -94,13 +97,6 @@ public class TripMapActivity extends Activity {
 		try {
 			// Set zoom controls
 			map = ((MapFragment) getFragmentManager().findFragmentById(R.id.tripMap)).getMap();
-
-			// mapView = (MapView) findViewById(R.id.tripMap);
-			// mapView.setBuiltInZoomControls(true);
-
-			// // Set up the point layer
-			// mapOverlays = mapView.getOverlays();
-			// if (mapOverlays != null) mapOverlays.clear();
 
 			Bundle cmds = getIntent().getExtras();
 			long tripid = cmds.getLong("showtrip");
@@ -116,25 +112,9 @@ public class TripMapActivity extends Activity {
 			t2.setText(trip.info);
 			t3.setText(trip.fancystart);
 			buttonNote = (Button) findViewById(R.id.buttonNoteThis);
-			buttonNote.setClickable(false);
-
-			// Center & zoom the map
-			// int latcenter = (trip.lathigh + trip.latlow) / 2;
-			// int lgtcenter = (trip.lgthigh + trip.lgtlow) / 2;
-			// LatLng center = new LatLng(latcenter, lgtcenter);
-
-			// map.animateCamera(CameraUpdateFactory.newLatLngZoom(center,16));
-
-			// trip = trips[0]; // always get just the first trip
+			buttonNote.setOnClickListener(new ButtonNote_OnClickListener());
 
 			gpspoints = trip.getPoints();
-
-			Log.v("Jason", gpspoints.toString());
-
-			Log.v("Jason", String.valueOf(trip.startpoint.latitude * 1E-6));
-			Log.v("Jason", String.valueOf(trip.startpoint.longitude * 1E-6));
-			Log.v("Jason", String.valueOf(trip.endpoint.latitude * 1E-6));
-			Log.v("Jason", String.valueOf(trip.endpoint.longitude * 1E-6));
 
 			if (trip.startpoint != null) {
 				map.addMarker(new MarkerOptions()
@@ -145,9 +125,6 @@ public class TripMapActivity extends Activity {
 						.position(
 								new LatLng(trip.startpoint.latitude * 1E-6,
 										trip.startpoint.longitude * 1E-6)));
-
-				// mapOverlays.add(new PushPinOverlay(trip.startpoint,
-				// R.drawable.pingreen));
 			}
 			if (trip.endpoint != null) {
 				map.addMarker(new MarkerOptions()
@@ -158,9 +135,6 @@ public class TripMapActivity extends Activity {
 						.position(
 								new LatLng(trip.endpoint.latitude * 1E-6,
 										trip.endpoint.longitude * 1E-6)));
-
-				// mapOverlays.add(new PushPinOverlay(trip.endpoint,
-				// R.drawable.pinpurple));
 			}
 
 			bounds = new LatLngBounds.Builder();
@@ -168,88 +142,50 @@ public class TripMapActivity extends Activity {
 			PolylineOptions rectOptions = new PolylineOptions();
 			rectOptions.geodesic(true).color(Color.BLUE);
 
-			Log.v("Jason", String.valueOf(gpspoints.size()));
-
-			// //startpoint
-			// map.addMarker(new MarkerOptions()
-			// .icon(BitmapDescriptorFactory.fromResource(R.drawable.pingreen))
-			// .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
-			// .position(new LatLng(gpspoints.get(0).latitude*1E-6,
-			// gpspoints.get(0).longitude*1E-6)));
-			//
-			// //endpoint
-			// map.addMarker(new MarkerOptions()
-			// .icon(BitmapDescriptorFactory.fromResource(R.drawable.pinpurple))
-			// .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
-			// .position(new
-			// LatLng(gpspoints.get(gpspoints.size()-1).latitude*1E-6,
-			// gpspoints.get(gpspoints.size()-1).longitude*1E-6)));
-
 			for (int i = 0; i < gpspoints.size(); i++) {
 				LatLng point = new LatLng(gpspoints.get(i).latitude * 1E-6,
 						gpspoints.get(i).longitude * 1E-6);
-				// Log.v("Jason",String.valueOf(gpspoints.get(i).latitude*1E-6));
-				// Log.v("Jason",String.valueOf(gpspoints.get(i).longitude*1E-6));
 				bounds.include(point);
 				rectOptions.add(point);
 			}
 
 			polyline = map.addPolyline(rectOptions);
 
-			// map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(),
-			// 480, 320, 10));
-
 			map.setOnCameraChangeListener(new OnCameraChangeListener() {
 
 				@Override
 				public void onCameraChange(CameraPosition cameraPosition) {
 
+					Projection p;
+					VisibleRegion vr;
+
 					if (!initialPositionSet) {
 						// Move camera.
 						map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 50));
 						// Remove listener to prevent position reset on camera move.
-						//map.setOnCameraChangeListener(null);
 						initialPositionSet = true;
 					}
-					else {
-						Log.v(MODULE_TAG, "Camera position: " + cameraPosition.target.toString());
 
-					}
+					if (null != (p = map.getProjection())) {
+						if (null != (vr = p.getVisibleRegion())) {
 
-					Projection p = map.getProjection();
-					VisibleRegion vr = p.getVisibleRegion();
+							crosshairLocation = new LatLng((vr.latLngBounds.northeast.latitude + vr.latLngBounds.southwest.latitude)/2.0,
+													   (vr.latLngBounds.northeast.longitude + vr.latLngBounds.southwest.longitude)/2.0);
 
-					LatLng theCenterSpot = new LatLng((vr.latLngBounds.northeast.latitude + vr.latLngBounds.southwest.latitude)/2.0, (vr.latLngBounds.northeast.longitude + vr.latLngBounds.southwest.longitude)/2.0);
+							if (null != textCrosshair) {
 
-					if (null != textCrosshair) {
-						double minDistanceFromTrip = getMinDistanceFromTrip(theCenterSpot);
-						textCrosshair.setText(String.valueOf(minDistanceFromTrip));
-						if (null != buttonNote) {
-							if (minDistanceFromTrip <= NOTE_MIN_DISTANCE_FROM_TRIP) {
-								buttonNote.setClickable(true);
-								buttonNote.setText("  >> Note this <<  ");
-							}
-							else {
-								buttonNote.setClickable(false);
-								buttonNote.setText("  Note this...  ");
+								double crosshairDistanceFromTrip = getCrosshairDistanceFromTrip(crosshairLocation);
+
+								textCrosshair.setText(String.valueOf(crosshairDistanceFromTrip));
+
+								if (null != buttonNote) {
+									buttonNote.setText(crosshairInRangeOfTrip ? "  >> Note this... <<  " : "  Note this...  ");
+								}
 							}
 						}
 					}
 				}
 			});
-
-			// MapController mc = mapView.getController();
-			// mc.animateTo(center);
-			// Add 500 to map span, to guarantee pins fit on map
-			// mc.zoomToSpan(500+trip.lathigh - trip.latlow, 500+trip.lgthigh -
-			// trip.lgtlow);
-
-			// if (gpspoints == null) {
-			// AddPointsToMapLayerTask maptask = new AddPointsToMapLayerTask();
-			// maptask.execute(trip);
-			// } else {
-			// mapOverlays.add(gpspoints);
-			// }
 
 			if (trip.status < TripData.STATUS_SENT && cmds != null
 					&& cmds.getBoolean("uploadTrip", false)) {
@@ -263,12 +199,13 @@ public class TripMapActivity extends Activity {
 		}
 	}
 
-	private double getMinDistanceFromTrip(LatLng point) {
+	private double getCrosshairDistanceFromTrip(LatLng point) {
 
 		float results[] = new float[1];
 
-		LatLng tripPoint = new LatLng(gpspoints.get(1).latitude * 1E-6, gpspoints.get(1).longitude * 1E-6);
+		LatLng tripPoint = new LatLng(gpspoints.get(0).latitude * 1E-6, gpspoints.get(0).longitude * 1E-6);
 		Location.distanceBetween(point.latitude, point.longitude, tripPoint.latitude, tripPoint.longitude, results);
+		indexOfClosestPoint = 0;
 
 		double minDistance = results[0];
 
@@ -277,21 +214,14 @@ public class TripMapActivity extends Activity {
 			Location.distanceBetween(point.latitude, point.longitude, tripPoint.latitude, tripPoint.longitude, results);
 			if (results[0] < minDistance) {
 				minDistance = results[0];
-			}
-			if (minDistance <= NOTE_MIN_DISTANCE_FROM_TRIP) {
-				break;
+				indexOfClosestPoint = i;
 			}
 		}
 
+		crosshairInRangeOfTrip = (minDistance <= NOTE_MIN_DISTANCE_FROM_TRIP);
+
 		return minDistance;
 	}
-
-
-	// @Override
-	// protected boolean isRouteDisplayed() {
-	// // Auto-generated method stub
-	// return false;
-	// }
 
 	// Make sure overlays get zapped when we go BACK
 	@Override
@@ -338,129 +268,48 @@ public class TripMapActivity extends Activity {
 		}
 	}
 
-	// private class AddPointsToMapLayerTask extends AsyncTask <TripData,
-	// Integer, ArrayList<CyclePoint>> {
-	// TripData trip;
-	//
-	// @Override
-	// protected ArrayList<CyclePoint> doInBackground(TripData... trips) {
-	// trip = trips[0]; // always get just the first trip
-	//
-	// //drawable = getResources().getDrawable(R.drawable.point);
-	// TripMapActivity.this.gpspoints = trip.getPoints();
-	//
-	// return TripMapActivity.this.gpspoints;
-	// }
-	//
-	// @Override
-	// protected void onPostExecute(ArrayList<CyclePoint> gpspoints) {
-	// // Add the points
-	// mapOverlays.add(ShowMap.this.gpspoints);
-	//
-	// // Add the lines! W00t!
-	// mapOverlays.add(new LineOverlay(ShowMap.this.gpspoints));
-	//
-	// // Add start & end pins
-	// if (trip.startpoint != null) {
-	// mapOverlays.add(new PushPinOverlay(trip.startpoint,
-	// R.drawable.pingreen));
-	// }
-	// if (trip.endpoint != null) {
-	// mapOverlays.add(new PushPinOverlay(trip.endpoint, R.drawable.pinpurple));
-	// }
-	//
-	// // Redraw the map
-	// mapView.invalidate();
-	// }
-	// }
+    /**
+     * Class: ButtonNote_OnClickListener
+     *
+     * Description: Callback to be invoked when buttonNote button is clicked
+     */
+	private final class ButtonNote_OnClickListener implements View.OnClickListener {
 
-	// class LineOverlay extends com.google.android.maps.Overlay
-	// {
-	// ArrayList<CyclePoint> track;
-	//
-	// public LineOverlay(ArrayList<CyclePoint> track) {
-	// super();
-	// this.track = track;
-	// }
-	//
-	// @Override
-	// public boolean draw(Canvas canvas, MapView mapView, boolean shadow, long
-	// when) {
-	// super.draw(canvas, mapView, shadow);
-	//
-	// // Need at least two points to draw a line, duh
-	// if (track.size()<2) return true;
-	//
-	// // Build array of points
-	// float[] points = new float[4 * track.size()];
-	// int segments = 0;
-	// int startx = -1; int starty = -1;
-	//
-	// for (int i=0; i<track.size(); i++) {
-	// CyclePoint z = (CyclePoint) track.get(i);
-	//
-	// // Skip lousy points
-	// if (z.accuracy > 8) {
-	// startx = -1;
-	// continue;
-	// }
-	//
-	// // If this is the beginning of a new segment, great
-	// Point screenPoint = new Point();
-	// mapView.getProjection().toPixels(z, screenPoint);
-	//
-	// if (startx == -1) {
-	// startx = screenPoint.x;
-	// starty = screenPoint.y;
-	// continue;
-	// }
-	// int numpts = segments*4;
-	// points[numpts] = startx;
-	// points[numpts+1] = starty;
-	// points[numpts+2] = startx = screenPoint.x;
-	// points[numpts+3] = starty = screenPoint.y;
-	// segments++;
-	// }
-	//
-	// // Line style
-	// Paint paint = new Paint();
-	// paint.setARGB(255,0,0,255);
-	// paint.setStrokeWidth(5);
-	// paint.setStyle(Style.FILL_AND_STROKE);
-	//
-	// canvas.drawLines(points, 0, segments*4, paint);
-	// return false;
-	// }
-	// }
-	//
-	// class PushPinOverlay extends com.google.android.maps.Overlay
-	// {
-	// LatLng p;
-	// int d;
-	//
-	// public PushPinOverlay(LatLng p, int drawrsrc) {
-	// super();
-	// this.p=p;
-	// this.d=drawrsrc;
-	// }
-	//
-	// @Override
-	// public boolean draw(Canvas canvas, MapView mapView, boolean shadow, long
-	// when) {
-	// super.draw(canvas, mapView, shadow);
-	//
-	// //---translate the GeoPoint to screen pixels---
-	// Point screenPoint = new Point();
-	// mapView.getProjection().toPixels(p, screenPoint);
-	//
-	// //---add the marker---
-	// Bitmap bmp = BitmapFactory.decodeResource(getResources(), d);
-	// int height = bmp.getScaledHeight(canvas);
-	// int width = (int)(0.133333 * bmp.getScaledWidth(canvas)); // 4/30 pixels:
-	// how far right we want the pushpin
-	//
-	// canvas.drawBitmap(bmp, screenPoint.x-width, screenPoint.y-height, null);
-	// return true;
-	// }
-	// }
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+
+			try {
+				if (!crosshairInRangeOfTrip) {
+					Toast.makeText(TripMapActivity.this, "Target must be within 100 meters of bike path.", Toast.LENGTH_SHORT).show();
+				}
+				else {
+					Intent noteTypeIntent = new Intent(TripMapActivity.this, NoteTypeActivity.class);
+					// update note entity
+					NoteData note = NoteData.createNote(TripMapActivity.this);
+
+					noteTypeIntent.putExtra("noteid", note.noteid);
+					noteTypeIntent.putExtra("isRecording", 0);
+					note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
+
+					// Construct notes location
+					Location noteLocation = new Location("");
+					noteLocation.setLatitude(crosshairLocation.latitude);
+					noteLocation.setLongitude(crosshairLocation.longitude);
+					noteLocation.setAccuracy(gpspoints.get(indexOfClosestPoint).accuracy);
+					noteLocation.setAltitude(gpspoints.get(indexOfClosestPoint).altitude);
+					note.setLocationTime(noteLocation, System.currentTimeMillis());
+
+					startActivity(noteTypeIntent);
+					TripMapActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+					// getActivity().finish();
+				}
+			}
+
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
 }

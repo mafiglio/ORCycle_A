@@ -22,8 +22,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import edu.pdx.cecs.orcycle.R;
-
 public class NoteMapActivity extends Activity {
 	GoogleMap map;
 
@@ -72,8 +70,7 @@ public class NoteMapActivity extends Activity {
 			t3.setText(note.notefancystart);
 
 			// Center & zoom the map
-			LatLng center = new LatLng(note.latitude * 1E-6,
-					note.longitude * 1E-6);
+			LatLng center = new LatLng(note.latitude * 1E-6, note.longitude * 1E-6);
 
 			map.animateCamera(CameraUpdateFactory.newLatLngZoom(center, 16));
 

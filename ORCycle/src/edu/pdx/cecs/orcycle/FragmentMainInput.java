@@ -568,7 +568,7 @@ public class FragmentMainInput extends Fragment
 					double currentTime = System.currentTimeMillis();
 
 					if (currentLocation != null) {
-						note.addPointNow(currentLocation, currentTime);
+						note.setLocationTime(currentLocation, currentTime);
 
 						// Log.v("Jason", "Note ID: "+note);
 
