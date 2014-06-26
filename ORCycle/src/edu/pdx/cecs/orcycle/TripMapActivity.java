@@ -74,7 +74,6 @@ public class TripMapActivity extends Activity {
 
 	private LatLngBounds.Builder bounds;
 	private boolean initialPositionSet = false;
-	private TextView textCrosshair = null;
 	private Button buttonNote = null;
 	private boolean crosshairInRangeOfTrip = false;
 	private LatLng crosshairLocation = null;
@@ -107,7 +106,6 @@ public class TripMapActivity extends Activity {
 			TextView t1 = (TextView) findViewById(R.id.TextViewMapPurpose);
 			TextView t2 = (TextView) findViewById(R.id.TextViewMapInfo);
 			TextView t3 = (TextView) findViewById(R.id.TextViewMapFancyStart);
-			textCrosshair = (TextView) findViewById(R.id.TextCrosshair);
 			t1.setText(trip.purp);
 			t2.setText(trip.info);
 			t3.setText(trip.fancystart);
@@ -172,14 +170,20 @@ public class TripMapActivity extends Activity {
 							crosshairLocation = new LatLng((vr.latLngBounds.northeast.latitude + vr.latLngBounds.southwest.latitude)/2.0,
 													   (vr.latLngBounds.northeast.longitude + vr.latLngBounds.southwest.longitude)/2.0);
 
-							if (null != textCrosshair) {
+							double crosshairDistanceFromTrip = getCrosshairDistanceFromTrip(crosshairLocation);
 
-								double crosshairDistanceFromTrip = getCrosshairDistanceFromTrip(crosshairLocation);
+							// textCrosshair.setText(String.valueOf(crosshairDistanceFromTrip)); // Keep for debugging
 
-								textCrosshair.setText(String.valueOf(crosshairDistanceFromTrip));
-
-								if (null != buttonNote) {
-									buttonNote.setText(crosshairInRangeOfTrip ? "  >> Note this... <<  " : "  Note this...  ");
+							if (null != buttonNote) {
+								if (crosshairInRangeOfTrip) {
+									//buttonNote.setText("  --> Note this... <--  ");
+									buttonNote.setTextColor(Color.BLACK);
+									buttonNote.setBackgroundColor(Color.GREEN);
+								}
+								else {
+									//buttonNote.setText("  Note this...  ");
+									buttonNote.setTextColor(Color.WHITE);
+									buttonNote.setBackgroundColor(Color.RED);
 								}
 							}
 						}
@@ -195,7 +199,7 @@ public class TripMapActivity extends Activity {
 			}
 
 		} catch (Exception e) {
-			Log.e("GOT!", e.toString());
+			Log.e(MODULE_TAG, e.toString());
 		}
 	}
 

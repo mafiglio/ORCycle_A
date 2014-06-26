@@ -54,19 +54,6 @@
 	        android:paddingBottom="8sp" >
 	    </TextView>
     
-	    <TextView
-	        android:id="@+id/TextCrosshair"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_below="@id/TextViewMapInfo"
-	        android:layout_marginLeft="4dp"
-	        android:layout_marginTop="8dp"
-	        android:gravity="left|bottom"
-            android:text="Crosshair position:"
-	        android:paddingBottom="8sp" >
-	    </TextView>
-    
 	    </RelativeLayout>
 
     <RelativeLayout
