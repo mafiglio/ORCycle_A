@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,21 +7,26 @@
 
     <RelativeLayout
         android:id="@+id/RelativeLayout01"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="4sp"
-        android:paddingRight="6sp"
-        android:paddingTop="4sp" >
+        android:background="@drawable/lcdscreen"
+        android:baselineAligned="false"
+        android:gravity="center_horizontal"
+        android:measureWithLargestChild="true" >
 
         <TextView
             android:id="@+id/TextViewMapPurpose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="2sp"
-            android:text="Map of your trip:"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="4dp"
+            android:gravity="left|top"
+            android:text="Trip Purpose:"
             android:textSize="18sp"
             android:textStyle="bold" >
+
         </TextView>
 
         <TextView
@@ -29,24 +34,62 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="4dp"
             android:layout_marginTop="4dp"
             android:textSize="15sp" >
+
         </TextView>
-    </RelativeLayout>
+        
+	    <TextView
+	        android:id="@+id/TextViewMapInfo"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentBottom="false"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@id/TextViewMapPurpose"
+	        android:layout_marginLeft="4dp"
+	        android:layout_marginTop="8dp"
+            android:text="Viewmap info:"
+	        android:paddingBottom="8sp" >
+	    </TextView>
+    
+	    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/TextViewMapInfo"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="7sp"
-        android:layout_marginRight="7sp"
-        android:paddingBottom="8sp" >
-    </TextView>
-
-    <fragment
+    <RelativeLayout
+        
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/RelativeLayout01"
+        android:layout_gravity="bottom">
+        
+        <fragment
         android:id="@+id/tripMap"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom" />
+        
+		<ImageView
+			android:id="@+id/crosshairs.png"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/crosshairs"
+			android:layout_centerInParent="true"/>
+    
+        </RelativeLayout>
+    
+        <Button
+        android:id="@+id/buttonNoteThis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/RelativeLayout01"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="false"
+        android:layout_marginTop="20dp"
+        android:background="#474334"
+        android:text="  Note this...  "
+        android:textColor="#ffffff"
+        android:textStyle="bold" />
 
-</LinearLayout>
+</RelativeLayout>

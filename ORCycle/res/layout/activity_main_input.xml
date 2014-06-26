@@ -9,8 +9,8 @@
         android:id="@+id/map"
         android:name="edu.gatech.ppl.cycleatlanta.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_marginTop="53dp"
         android:layout_height="fill_parent"
+        android:layout_below="@+id/recordStatusLayout2"
         android:layout_gravity="bottom"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:scrollbars="vertical" />
@@ -18,11 +18,11 @@
     <LinearLayout
         android:id="@+id/recordStatusLayout"
         android:layout_width="match_parent"
-        android:layout_height="53dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/lcdscreen"
+        android:baselineAligned="false"
         android:gravity="center_horizontal"
-        android:measureWithLargestChild="true" 
-        android:baselineAligned="false">
+        android:measureWithLargestChild="true" >
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -111,7 +111,7 @@
     <LinearLayout
         android:id="@+id/recordStatusLayout2"
         android:layout_width="match_parent"
-        android:layout_height="53dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/recordStatusLayout"
         android:background="@drawable/lcdscreen"
         android:gravity="center_horizontal"

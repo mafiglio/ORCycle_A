@@ -132,7 +132,7 @@ public class NoteData {
 	}
 
 	// from MainInput, add time and location point
-	boolean addPointNow(Location loc, double currentTime) {
+	boolean setLocationTime(Location loc, double currentTime) {
 		int lat = (int) (loc.getLatitude() * 1E6);
 		int lgt = (int) (loc.getLongitude() * 1E6);
 

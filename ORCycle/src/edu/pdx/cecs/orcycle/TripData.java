@@ -175,27 +175,31 @@ public class TripData {
 			mDb.openReadOnly();
 
 			Cursor points = mDb.fetchAllCoordsForTrip(tripid);
-			int COL_LAT = points.getColumnIndex("lat");
-			int COL_LGT = points.getColumnIndex("lgt");
-			int COL_TIME = points.getColumnIndex("time");
+			int COL_LAT = points.getColumnIndex(DbAdapter.K_POINT_LAT);
+			int COL_LGT = points.getColumnIndex(DbAdapter.K_POINT_LGT);
+			int COL_TIME = points.getColumnIndex(DbAdapter.K_POINT_TIME);
 			int COL_ACC = points.getColumnIndex(DbAdapter.K_POINT_ACC);
+			int COL_ALT = points.getColumnIndex(DbAdapter.K_POINT_ALT);
 
 			numpoints = points.getCount();
 
 			points.moveToLast();
 			this.endpoint = new CyclePoint(points.getInt(COL_LAT),
-					points.getInt(COL_LGT), points.getDouble(COL_TIME));
+					points.getInt(COL_LGT), points.getDouble(COL_TIME),
+					points.getFloat(COL_ACC), points.getDouble(COL_ALT));
 
 			points.moveToFirst();
 			this.startpoint = new CyclePoint(points.getInt(COL_LAT),
-					points.getInt(COL_LGT), points.getDouble(COL_TIME));
+					points.getInt(COL_LGT), points.getDouble(COL_TIME),
+					points.getFloat(COL_ACC), points.getDouble(COL_ALT));
 
 			while (!points.isAfterLast()) {
 				int lat = points.getInt(COL_LAT);
 				int lgt = points.getInt(COL_LGT);
 				double time = points.getDouble(COL_TIME);
 				float acc = (float) points.getDouble(COL_ACC);
-				CyclePoint pt = new CyclePoint(lat, lgt, time, acc);
+				double alt = points.getDouble(COL_ALT);
+				CyclePoint pt = new CyclePoint(lat, lgt, time, acc, alt);
 				gpspoints.add(pt);
 				// addPointToSavedMap(lat, lgt, time, acc);
 				points.moveToNext();
