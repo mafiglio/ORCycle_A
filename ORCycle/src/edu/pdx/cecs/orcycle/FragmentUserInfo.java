@@ -148,7 +148,7 @@ public class FragmentUserInfo extends Fragment {
 						.setText((CharSequence) p.getValue());
 				break;
 			case PREF_EMAIL:
-				((EditText) rootView.findViewById(R.id.TextEmail))
+				((EditText) rootView.findViewById(R.id.editEmail))
 						.setText((CharSequence) p.getValue());
 				break;
 			case PREF_CYCLEFREQ:
@@ -173,7 +173,7 @@ public class FragmentUserInfo extends Fragment {
 		}
 
 		final EditText edittextEmail = (EditText) rootView
-				.findViewById(R.id.TextEmail);
+				.findViewById(R.id.editEmail);
 
 		edittextEmail.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
@@ -224,7 +224,7 @@ public class FragmentUserInfo extends Fragment {
 		editor.putString("" + PREF_ZIPSCHOOL, ((EditText) getActivity()
 				.findViewById(R.id.TextZipSchool)).getText().toString());
 		editor.putString("" + PREF_EMAIL, ((EditText) getActivity()
-				.findViewById(R.id.TextEmail)).getText().toString());
+				.findViewById(R.id.editEmail)).getText().toString());
 
 		editor.putInt("" + PREF_CYCLEFREQ, ((Spinner) getActivity()
 				.findViewById(R.id.cyclefreqSpinner)).getSelectedItemPosition());
