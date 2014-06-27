@@ -51,9 +51,11 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class RecordingService extends Service implements IRecordService, LocationListener {
+
+	public final static String MODULE_TAG = "RecordingService";
+
 	IRecordServiceListener recordServiceListener;
 	LocationManager lm = null;
-	DbAdapter mDb;
 
 	// Bike bell variables
 	static int BELL_FIRST_INTERVAL = 20;
@@ -69,11 +71,14 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	};
 
 	// Aspects of the currently recording trip
-	double latestUpdate;
 	Location lastLocation;
-	float distanceTraveled;
-	float curSpeed, maxSpeed;
-	TripData trip;
+	float distanceMeters;   // The distance travelled in meters
+	private TripData trip = null;
+
+	private final static long MIN_TIME_BETWEEN_READINGS_MILLISECONDS = 1000;
+	private final static float MIN_DISTANCE_BETWEEN_READINGS_METERS = 0.0f;
+	private final static int MIN_DESIRED_ACCURACY = 19;
+	private final static float MAX_BELIEVABLE_BIKE_SPEED_MPS = 26.8224f; // In meters per second = 60 Miles per hour
 
 	public final static int STATE_IDLE = 0;
 	public final static int STATE_RECORDING = 1;
@@ -85,7 +90,10 @@ public class RecordingService extends Service implements IRecordService, Locatio
 
 	private final MyServiceBinder myServiceBinder = new MyServiceBinder();
 
-	// ---SERVICE methods - required! -----------------
+	// *********************************************************************************
+	// *                            Service Implementation
+	// *********************************************************************************
+
 	@Override
 	public IBinder onBind(Intent arg0) {
 		return myServiceBinder;
@@ -155,12 +163,32 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		}
 	}
 
-	// ---end SERVICE methods -------------------------
-
-	// --- IRecordService --------------------------
+	// *********************************************************************************
+	// *                       RecordingService Implementation
+	// *********************************************************************************
 
 	public int getState() {
 		return state;
+	}
+
+	public long getCurrentTripID() {
+		if (RecordingService.this.trip != null) {
+			return RecordingService.this.trip.tripid;
+		}
+		return -1;
+	}
+
+	public TripData getCurrentTripData() {
+		return trip;
+	}
+
+	public void setListener(IRecordServiceListener listener) {
+		RecordingService.this.recordServiceListener = listener;
+		//notifyListeners();
+	}
+
+	public void reset() {
+		RecordingService.this.state = STATE_IDLE;
 	}
 
 	/**
@@ -173,7 +201,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		this.state = STATE_RECORDING;
 		this.trip = trip;
 
-		curSpeed = maxSpeed = distanceTraveled = 0.0f;
+		distanceMeters = 0.0f;
 		lastLocation = null;
 
 		// Add the notify bar and blinking light
@@ -181,7 +209,9 @@ public class RecordingService extends Service implements IRecordService, Locatio
 
 		// Start listening for GPS updates!
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+				MIN_TIME_BETWEEN_READINGS_MILLISECONDS,
+				MIN_DISTANCE_BETWEEN_READINGS_METERS, this);
 
 		// Set up timer for bike bell
 		if (timer != null) {
@@ -257,48 +287,33 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		this.state = STATE_IDLE;
 	}
 
-	public long getCurrentTripID() {
-		if (RecordingService.this.trip != null) {
-			return RecordingService.this.trip.tripid;
-		}
-		return -1;
-	}
+	// *********************************************************************************
+	// *                     LocationListener Implementation
+	// *********************************************************************************
 
-	public void reset() {
-		RecordingService.this.state = STATE_IDLE;
-	}
-
-	public void setListener(IRecordServiceListener listener) {
-		RecordingService.this.recordServiceListener = listener;
-		notifyListeners();
-	}
-
-	// --- end IRecordService --------------------------
-
-	public TripData getCurrentTripData() {
-		return trip;
-	}
-
-	// LocationListener implementation:
 	@Override
-	public void onLocationChanged(Location loc) {
-		if (loc != null) {
-			// Only save one beep per second.
-			double currentTime = System.currentTimeMillis();
-			if (currentTime - latestUpdate > 999) {
+	public void onLocationChanged(Location location) {
 
-				latestUpdate = currentTime;
-				updateTripStats(loc);
-				boolean rtn = trip.addPointNow(loc, currentTime,
-						distanceTraveled);
-				Log.v("Jason", "Distance Traveled: " + distanceTraveled);
-				if (!rtn) {
-					// Log.e("FAIL", "Couldn't write to DB");
+		try {
+			if (location != null) {
+
+				// Stats should only be updated if accuracy is decent
+				if (location.getAccuracy() <= MIN_DESIRED_ACCURACY) {
+
+					if (lastLocation != null) {
+						distanceMeters += lastLocation.distanceTo(location);
+					}
+
+					trip.addPointNow(location, System.currentTimeMillis(), distanceMeters);
+
+					// Update the status page every time, if we can.
+					// notifyListeners();
+					lastLocation = location;
 				}
-
-				// Update the status page every time, if we can.
-				notifyListeners();
 			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
 
@@ -314,7 +329,27 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 	}
 
-	// END LocationListener implementation:
+	private void updateTripStats(Location newLocation) {
+
+	}
+
+	void notifyListeners() {
+		if (null != recordServiceListener) {
+			if (null == trip) {
+				recordServiceListener.updateStatus(0.0f, 0.0f);
+			}
+			else {
+				double duration = trip.getDuration() / 1000.0f;
+				float avgSpeedMps = (float) ((duration > 1.0f) ? (distanceMeters / duration): 0);
+
+				recordServiceListener.updateStatus(distanceMeters, avgSpeedMps);
+			}
+		}
+	}
+
+	// *********************************************************************************
+	// *                     Notification Implementation
+	// *********************************************************************************
 
 	public void remindUser() {
 		soundpool.play(bikebell, 1.0f, 1.0f, 1, 0, 1.0f);
@@ -323,8 +358,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		int icon = R.drawable.icon48;
 		long when = System.currentTimeMillis();
 		int minutes = (int) (when - trip.getStartTime()) / 60000;
-		CharSequence tickerText = String.format("Still recording (%d min)",
-				minutes);
+		CharSequence tickerText = String.format("Still recording (%d min)", minutes);
 
 		Notification notification = new Notification(icon, tickerText, when);
 		notification.flags |= Notification.FLAG_ONGOING_EVENT
@@ -383,35 +417,4 @@ public class RecordingService extends Service implements IRecordService, Locatio
 			timer.purge();
 		}
 	}
-
-	private void updateTripStats(Location newLocation) {
-		final float spdConvert = 2.2369f;
-
-		// Stats should only be updated if accuracy is decent
-		if (newLocation.getAccuracy() < 20) {
-			// Speed data is sometimes awful, too:
-			curSpeed = newLocation.getSpeed() * spdConvert;
-			if (curSpeed < 60.0f) {
-				maxSpeed = Math.max(maxSpeed, curSpeed);
-			}
-			if (lastLocation != null) {
-				float segmentDistance = lastLocation.distanceTo(newLocation);
-				distanceTraveled = distanceTraveled + segmentDistance;
-			}
-
-			lastLocation = newLocation;
-		}
-	}
-
-	void notifyListeners() {
-		if (null != recordServiceListener) {
-			if (null == trip) {
-				recordServiceListener.updateStatus(0, 0.0f, 0.0f, 0.0f);
-			}
-			else {
-				recordServiceListener.updateStatus(trip.numpoints, distanceTraveled, curSpeed, maxSpeed);
-			}
-		}
-	}
-
 }
