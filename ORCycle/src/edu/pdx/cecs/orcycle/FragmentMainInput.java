@@ -47,6 +47,11 @@ public class FragmentMainInput extends Fragment
 		OnMyLocationButtonClickListener {
 
 	private static final String MODULE_TAG = "FragmentMainInput";
+	private static final float CF_METERS_TO_MILES = 0.00062137f;  	// Conversion factor meters to miles
+	private static final float CF_MILES_TO_LBS_CO2 = 0.93f;  		// Conversion factor miles to pounds CO2 saved
+	private static final float CF1_MILES_TO_KCALORIES = 49.0f;  	// Conversion factor part 1 miles to Kcalories burned
+	private static final float CF2_MILES_TO_KCALORIES = -1.69f;  	// Conversion factor part 2 miles to Kcalories burned
+	private static final float METERS_PER_SECOND_TO_MILES_PER_HOUR = 2.2369f;
 
 	// Reference to Global application object
 	private MyApplication myApp = null;
@@ -62,9 +67,9 @@ public class FragmentMainInput extends Fragment
 	private Button buttonNote = null;
 	private TextView txtDuration = null;
 	private TextView txtDistance = null;
-	private TextView txtCurSpeed = null;
-	private TextView txtCO2;
-	private TextView txtCalories;
+	private TextView txtAvgSpeed = null;
+	private TextView txtCO2 = null;
+	private TextView txtCalories = null;
 
 	Intent fi;
 	boolean isRecording = false;
@@ -160,7 +165,7 @@ public class FragmentMainInput extends Fragment
 			// Copy from Recording Activity
 			txtDuration = (TextView) rootView.findViewById(R.id.textViewElapsedTime);
 			txtDistance = (TextView) rootView.findViewById(R.id.textViewDistance);
-			txtCurSpeed = (TextView) rootView.findViewById(R.id.textViewSpeed);
+			txtAvgSpeed = (TextView) rootView.findViewById(R.id.textViewAvgSpeed);
 			txtCO2 = (TextView) rootView.findViewById(R.id.textViewCO2);
 			txtCalories = (TextView) rootView.findViewById(R.id.textViewCalories);
 		}
@@ -364,16 +369,24 @@ public class FragmentMainInput extends Fragment
 
 		try {
 			if (null != recordingService) {
-				ApplicationStatus appStatus = myApp.getStatus();
 
-				TripData tripData = appStatus.getTripData();
+				ApplicationStatus appStatus = myApp.getStatus();
 
 				boolean isRecording =
 						((RecordingService.STATE_RECORDING == recordingService.getState()) ||
 						(RecordingService.STATE_PAUSED == recordingService.getState()));
 
-				if ((null != tripData) && isRecording) {
-					txtDuration.setText(sdf.format(tripData.getDuration()));
+				if (isRecording) {
+
+					TripData tripData = appStatus.getTripData();
+
+					if (null != tripData) {
+						txtDuration.setText(sdf.format(tripData.getDuration()));
+						double duration = tripData.getDuration() / 1000.0f;
+						float distance = tripData.getDistance();
+						float avgSpeedMps = (float) ((duration > 1.0f) ? (distance / duration): 0);
+						this.updateStatus(distance, avgSpeedMps);
+					}
 				}
 			}
 		}
@@ -593,20 +606,28 @@ public class FragmentMainInput extends Fragment
 	// *********************************************************************************
 
 	/**
-	 * Update distance and speed user interface elements
+	 * Updates the status of a trip being recorded.
+	 * @param distanceMeters Distance travelled in meters
+	 * @param avgSpeedMps Average speed in meters per second
 	 */
-	public void updateStatus(int points, float distance, float spdCurrent, float spdMax) {
+	public void updateStatus(float distanceMeters, float avgSpeedMps) {
 
-		this.curDistance = distance;
+		this.curDistance = distanceMeters;
 
-		float miles = 0.0006212f * distance;
-		txtDistance.setText(String.format("%1.1f miles", miles));
+		float distanceMiles = distanceMeters * CF_METERS_TO_MILES;
+		txtDistance.setText(String.format("%1.1f miles", distanceMiles));
 
-		float lbsCO2 = miles*0.0006212f*0.93f;
-		txtCO2.setText(String.format("%1.1f lbs", lbsCO2));
+		float avgSpeedMph = avgSpeedMps * METERS_PER_SECOND_TO_MILES_PER_HOUR;
+		txtAvgSpeed.setText(String.format("%1.1f mph", avgSpeedMph));
 
-		float calories = miles*0.0006212f * 49f - 1.69f;
+		float calories = distanceMiles * CF1_MILES_TO_KCALORIES + CF2_MILES_TO_KCALORIES;
+		if (calories < 0.0f) {
+			calories = 0.0f;
+		}
 		txtCalories.setText(String.format("%1.1f kcal", calories));
+
+		float lbsCO2 = distanceMiles * CF_MILES_TO_LBS_CO2;
+		txtCO2.setText(String.format("%1.1f lbs", lbsCO2));
 	}
 
 	/**
@@ -625,8 +646,8 @@ public class FragmentMainInput extends Fragment
 			txtDistance = (TextView) getActivity().findViewById(R.id.textViewDistance);
 			txtDistance.setText("0.0 miles");
 
-			txtCurSpeed = (TextView) getActivity().findViewById(R.id.textViewSpeed);
-			txtCurSpeed.setText("0.0 mph");
+			txtAvgSpeed = (TextView) getActivity().findViewById(R.id.textViewAvgSpeed);
+			txtAvgSpeed.setText("0.0 mph");
 
 			txtCalories = (TextView) getActivity().findViewById(R.id.textViewCalories);
 			txtCalories.setText("0.0 kcal");

@@ -51,8 +51,6 @@ public class TripData {
 
 	private double pauseStartedTime = RESET_START_TIME;
 
-
-	private double totalPauseTime = 0.0f;
 	private double totalTravelTime = 0.0f;
 	private boolean isPaused = false;
 	private boolean isFinished = false;
@@ -95,7 +93,6 @@ public class TripData {
 	void initializeData() {
 		endTime = (startTime = (tripStartTime = System.currentTimeMillis()));
 		pauseStartedTime = RESET_START_TIME;
-		totalPauseTime = 0.0f;
 		totalTravelTime = 0.0f;
 		isPaused = false;
 
@@ -250,7 +247,6 @@ public class TripData {
 		finally {
 			mDb.close();
 		}
-		totalPauseTime += (currentTime - pauseStartedTime);
 
 		// Re-initialize start time counters
 		startTime = currentTime;
@@ -268,6 +264,10 @@ public class TripData {
 		}
 	}
 
+	public float getDistance() {
+		return distance;
+	}
+
 	boolean addPointNow(Location loc, double currentTime, float dst) {
 		int lat = (int) (loc.getLatitude() * 1E6);
 		int lgt = (int) (loc.getLongitude() * 1E6);
@@ -280,8 +280,7 @@ public class TripData {
 		double altitude = loc.getAltitude();
 		float speed = loc.getSpeed();
 
-		CyclePoint pt = new CyclePoint(lat, lgt, currentTime, accuracy,
-				altitude, speed);
+		CyclePoint pt = new CyclePoint(lat, lgt, currentTime, accuracy, altitude, speed);
 
 		numpoints++;
 
@@ -309,6 +308,10 @@ public class TripData {
 						latlow, lgthigh, lgtlow, distance);
 		mDb.close();
 
+		if (!rtn) {
+			Log.e(MODULE_TAG, "Couldn't write trip point to database");
+		}
+
 		return rtn;
 	}
 
@@ -326,15 +329,6 @@ public class TripData {
 	}
 
 	public boolean updateTripStatus(int tripStatus) {
-		boolean rtn;
-		mDb.open();
-		rtn = mDb.updateTripStatus(tripid, tripStatus);
-		mDb.close();
-		return rtn;
-	}
-
-	// TODO: Verify this function.  It looks like it might be a cut and paste error of updateTripStatus function
-	public boolean getStatus(int tripStatus) {
 		boolean rtn;
 		mDb.open();
 		rtn = mDb.updateTripStatus(tripid, tripStatus);
