@@ -2,7 +2,6 @@ package edu.pdx.cecs.orcycle;
 
 import java.text.SimpleDateFormat;
 
-import edu.pdx.cecs.orcycle.R;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
@@ -43,7 +42,7 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 
 		cursor.moveToPosition(position);
 
-		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm");
+		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  h:mm a");
 		// sdfStart.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Double startTime = cursor.getDouble(cursor
 				.getColumnIndex("noterecorded"));
