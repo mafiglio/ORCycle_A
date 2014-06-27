@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
-import edu.pdx.cecs.orcycle.R;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
@@ -51,7 +50,7 @@ public class SavedTripsAdapter extends SimpleCursorAdapter {
 
 		cursor.moveToPosition(position);
 
-		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm");
+		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  h:mm a");
 		// sdfStart.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Double startTime = cursor.getDouble(cursor.getColumnIndex("start"));
 		String start = sdfStart.format(startTime);
@@ -84,7 +83,7 @@ public class SavedTripsAdapter extends SimpleCursorAdapter {
 
 		int status = cursor.getInt(cursor.getColumnIndex("status"));
 		Log.v("Jason", "Status: " + status);
-		
+
 		if (status == 0){
 			//textViewPurpose.setText("In Progress");
 			rowView.setVisibility(View.GONE);
