@@ -18,12 +18,6 @@
             android:paddingTop="@dimen/activity_vertical_margin"
             tools:context=".UserInfo$DummySectionFragment" >
             
-            <EditText
-                android:id="@+id/TextInvisible"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:inputType="textEmailAddress" />
-
             <Button
                 android:id="@+id/buttonGetStarted"
                 android:layout_width="wrap_content"
@@ -34,7 +28,7 @@
                 android:text="Get started with ORCycle" />
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/labelTellUsAboutYourself"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/buttonGetStarted"
@@ -45,11 +39,31 @@
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
-                android:id="@+id/labelElapsedTime"
+                android:id="@+id/labelEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView1"
-                android:layout_below="@+id/textView1"
+                android:layout_alignLeft="@+id/labelTellUsAboutYourself"
+                android:layout_below="@+id/labelTellUsAboutYourself"
+                android:layout_marginTop="15dp"
+                android:text="Email"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <EditText
+                android:id="@+id/editEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/labelEmail"
+                android:layout_toRightOf="@+id/labelTellUsAboutYourself"
+                android:ems="10"
+                android:hint="@string/email_hint"
+                android:inputType="textEmailAddress" />
+
+            <TextView
+                android:id="@+id/labelAge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/labelTellUsAboutYourself"
+                android:layout_below="@+id/labelEmail"
                 android:layout_marginTop="15dp"
                 android:text="Age"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -58,38 +72,17 @@
                 android:id="@+id/ageSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/TextEmail"
-                android:layout_alignRight="@+id/TextEmail"
-                android:layout_alignTop="@+id/textView2"
+                android:layout_alignLeft="@+id/editEmail"
+                android:layout_alignRight="@+id/editEmail"
+                android:layout_alignTop="@id/labelAge"
                 android:entries="@array/ageArray" />
-
-            <TextView
-                android:id="@+id/labelViewDistance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView1"
-                android:layout_below="@+id/ageSpinner"
-                android:layout_marginTop="15dp"
-                android:text="Email"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <EditText
-                android:id="@+id/TextEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/labelViewDistance"
-                android:layout_alignBottom="@+id/labelViewDistance"
-                android:layout_toRightOf="@+id/textView1"
-                android:ems="10"
-                android:hint="@string/email_hint"
-                android:inputType="textEmailAddress" />
 
             <TextView
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView1"
-                android:layout_below="@+id/TextEmail"
+                android:layout_alignLeft="@+id/labelTellUsAboutYourself"
+                android:layout_below="@+id/ageSpinner"
                 android:layout_marginTop="25dp"
                 android:text="Gender"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -100,14 +93,14 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/textView4"
                 android:entries="@array/genderArray" 
-                android:layout_alignLeft="@+id/TextEmail"
-                android:layout_alignRight="@+id/TextEmail"/>
+                android:layout_alignLeft="@+id/editEmail"
+                android:layout_alignRight="@+id/editEmail"/>
                 
             <TextView
                 android:id="@+id/textView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView1"
+                android:layout_alignLeft="@+id/labelTellUsAboutYourself"
                 android:layout_below="@+id/genderSpinner"
                 android:layout_marginTop="15dp"
                 android:text="Ethnicity"
@@ -126,7 +119,7 @@
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/textView1"
+                android:layout_alignLeft="@id/labelTellUsAboutYourself"
                 android:layout_alignRight="@+id/textViewRiderHistory"
                 android:layout_below="@id/ethnicitySpinner"
                 android:layout_marginTop="16dp"
@@ -146,7 +139,7 @@
                 android:id="@+id/textView11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView1"
+                android:layout_alignLeft="@+id/labelTellUsAboutYourself"
                 android:layout_alignRight="@+id/textView6"
                 android:layout_below="@+id/incomeSpinner"
                 android:layout_marginTop="16dp"
@@ -157,7 +150,7 @@
                 android:id="@+id/hhSizeSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/TextEmail"
+                android:layout_alignLeft="@+id/editEmail"
                 android:layout_alignRight="@id/incomeSpinner"
                 android:layout_alignTop="@+id/textView11"
                 android:entries="@array/hhSizeArray" />
@@ -166,7 +159,7 @@
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView1"
+                android:layout_alignLeft="@+id/labelTellUsAboutYourself"
                 android:layout_alignRight="@+id/textView6"
                 android:layout_below="@+id/hhSizeSpinner"
                 android:layout_marginTop="16dp"
@@ -177,7 +170,7 @@
                 android:id="@+id/hhVehiclesSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/TextEmail"
+                android:layout_alignLeft="@+id/editEmail"
                 android:layout_alignRight="@id/hhSizeSpinner"
                 android:layout_alignTop="@+id/textView12"
                 android:entries="@array/hhVehiclesArray" />
@@ -196,7 +189,7 @@
                 android:id="@+id/textViewHomeZip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView1"
+                android:layout_alignLeft="@+id/labelTellUsAboutYourself"
                 android:layout_below="@+id/textView7"
                 android:layout_marginTop="15dp"
                 android:text="Home ZIP"
@@ -218,7 +211,7 @@
                 android:id="@+id/textViewWorkZip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView1"
+                android:layout_alignLeft="@+id/labelTellUsAboutYourself"
                 android:layout_below="@+id/textViewHomeZip"
                 android:layout_marginTop="15dp"
                 android:text="Work ZIP"
@@ -240,7 +233,7 @@
                 android:id="@+id/textViewSchoolZip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView1"
+                android:layout_alignLeft="@+id/labelTellUsAboutYourself"
                 android:layout_below="@+id/textViewWorkZip"
                 android:layout_marginTop="15dp"
                 android:text="School ZIP"
@@ -272,7 +265,7 @@
                 android:id="@+id/textViewCycleFreq"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView1"
+                android:layout_alignLeft="@+id/labelTellUsAboutYourself"
                 android:layout_below="@+id/textView8"
                 android:layout_marginTop="15dp"
                 android:layout_toLeftOf="@+id/cyclefreqSpinner"
@@ -283,8 +276,8 @@
                 android:id="@+id/cyclefreqSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/TextEmail"
-                android:layout_alignRight="@+id/TextEmail"
+                android:layout_alignLeft="@+id/editEmail"
+                android:layout_alignRight="@+id/editEmail"
                 android:layout_alignTop="@+id/textViewCycleFreq"
                 android:entries="@array/cyclefreqArray" />
 
@@ -302,7 +295,7 @@
                 android:id="@+id/textViewRiderType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView1"
+                android:layout_alignLeft="@+id/labelTellUsAboutYourself"
                 android:layout_below="@+id/textView9"
                 android:layout_marginTop="15dp"
                 android:text="Rider Type"
@@ -312,8 +305,8 @@
                 android:id="@+id/ridertypeSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/TextEmail"
-                android:layout_alignRight="@+id/TextEmail"
+                android:layout_alignLeft="@+id/editEmail"
+                android:layout_alignRight="@+id/editEmail"
                 android:layout_alignTop="@+id/textViewRiderType"
                 android:entries="@array/ridertypeArray" />
 
@@ -331,7 +324,7 @@
                 android:id="@+id/textViewRiderHistory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView1"
+                android:layout_alignLeft="@+id/labelTellUsAboutYourself"
                 android:layout_below="@+id/textView10"
                 android:layout_marginTop="15dp"
                 android:text="Rider History"
@@ -341,8 +334,8 @@
                 android:id="@+id/riderhistorySpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/TextEmail"
-                android:layout_alignRight="@+id/TextEmail"
+                android:layout_alignLeft="@+id/editEmail"
+                android:layout_alignRight="@+id/editEmail"
                 android:layout_alignTop="@+id/textViewRiderHistory"
                 android:entries="@array/riderhistoryArray" />
         </RelativeLayout>
