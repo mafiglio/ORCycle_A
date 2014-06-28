@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 public class FragmentSavedNotesSection extends Fragment {
 
+	private static final String MODULE_TAG = "FragmentSavedNotesSection";
+
 	public static final String ARG_SECTION_NUMBER = "section_number";
 
 	ListView listSavedNotes;
@@ -268,15 +270,18 @@ public class FragmentSavedNotesSection extends Fragment {
 		// Called when the user exits the action mode
 		@Override
 		public void onDestroyActionMode(ActionMode mode) {
-			mActionModeNote = null;
-			noteIdArray.clear();
-			for (int i = 0; i < listSavedNotes.getCount(); i++) {
-				// Log.v("Jason", "Count" + listSavedNotes.getCount());
-				// Log.v("Jason", "Count" + listSavedNotes.getChildCount());
-				if (listSavedNotes.getChildCount() != 0) {
-					listSavedNotes.getChildAt(i).setBackgroundColor(
-							Color.parseColor("#80ffffff"));
+			try {
+				int numListViewItems = listSavedNotes.getChildCount();
+				mActionModeNote = null;
+				noteIdArray.clear();
+
+				// Reset all list items to their normal color
+				for (int i = 0; i < numListViewItems; i++) {
+					listSavedNotes.getChildAt(i).setBackgroundColor(Color.parseColor("#80ffffff"));
 				}
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
 			}
 		}
 	};
