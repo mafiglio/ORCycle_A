@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 public class FragmentSavedTripsSection extends Fragment {
 
+	private static final String MODULE_TAG = "FragmentSavedTripsSection";
+
 	public static final String ARG_SECTION_NUMBER = "section_number";
 
 	ListView listSavedTrips;
@@ -267,15 +269,18 @@ public class FragmentSavedTripsSection extends Fragment {
 		// Called when the user exits the action mode
 		@Override
 		public void onDestroyActionMode(ActionMode mode) {
-			mActionMode = null;
-			tripIdArray.clear();
-			for (int i = 0; i < listSavedTrips.getCount(); i++) {
-				// Log.v("Jason", "Count" + listSavedTrips.getCount());
-				// Log.v("Jason", "Count" + listSavedTrips.getChildCount());
-				if (listSavedTrips.getChildCount() != 0) {
-					listSavedTrips.getChildAt(i).setBackgroundColor(
-							Color.parseColor("#80ffffff"));
+			try {
+				int numListViewItems = listSavedTrips.getChildCount();
+				mActionMode = null;
+				tripIdArray.clear();
+
+				// Reset all list items to their normal color
+				for (int i = 0; i < numListViewItems; i++) {
+					listSavedTrips.getChildAt(i).setBackgroundColor(Color.parseColor("#80ffffff"));
 				}
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
 			}
 		}
 	};
