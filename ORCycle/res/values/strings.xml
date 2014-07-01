@@ -18,6 +18,8 @@
     <string name="title_activity_note_detail">Note Details</string>
     <string name="title_activity_note_map">Note Map</string>
     <string name="title_activity_saved_notes">Saved Notes</string>
+    <string name="title_activity_rate_segment">Rate Segment</string>
+    <string name="title_activity_rate_segment_detail">Rating Details</string>
     <string name="post_url">http://orcycle.cecs.pdx.edu/post/</string>
     <string name="btn_lbl_start">Start</string>
     <string name="btn_lbl_pause">Pause</string>
@@ -142,4 +144,20 @@
 	<string name="note_bike_lane_issue_details">The bike lane ends abruptly here or is too narrow to safely ride in.</string>
 	<string name="note_note_issue_details">Anywhere else in need of improvement:want a sharrow, sign, or a bike lane? Share the details.</string>
 
+	<string name="segment_rating_a">A Rating</string>
+	<string name="segment_rating_b">B Rating</string>
+	<string name="segment_rating_c">C Rating</string>
+	<string name="segment_rating_d">D Rating</string>
+	<string name="segment_rating_e">E Rating</string>
+	<string name="segment_rating_f">F Rating</string>
+					
+	<string name="segment_rating_details_a">A Rating Detailed</string>
+	<string name="segment_rating_details_b">B Rating Detailed</string>
+	<string name="segment_rating_details_c">C Rating Detailed</string>
+	<string name="segment_rating_details_d">D Rating Detailed</string>
+	<string name="segment_rating_details_e">E Rating Detailed</string>
+	<string name="segment_rating_details_f">F Rating Detailed</string>
+					
+		
+	
 </resources>

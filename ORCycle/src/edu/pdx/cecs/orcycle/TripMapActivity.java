@@ -75,9 +75,14 @@ public class TripMapActivity extends Activity {
 	private LatLngBounds.Builder bounds;
 	private boolean initialPositionSet = false;
 	private Button buttonNote = null;
+	private Button buttonRateStart = null;
+	private Button buttonRateFinish = null;
 	private boolean crosshairInRangeOfTrip = false;
 	private LatLng crosshairLocation = null;
 	private int indexOfClosestPoint = 0;
+	private int segmentStartIndex = 0;
+	private int segmentEndIndex = 0;
+	private long tripid = -1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -98,7 +103,7 @@ public class TripMapActivity extends Activity {
 			map = ((MapFragment) getFragmentManager().findFragmentById(R.id.tripMap)).getMap();
 
 			Bundle cmds = getIntent().getExtras();
-			long tripid = cmds.getLong("showtrip");
+			tripid = cmds.getLong("showtrip");
 
 			TripData trip = TripData.fetchTrip(this, tripid);
 
@@ -111,6 +116,13 @@ public class TripMapActivity extends Activity {
 			t3.setText(trip.fancystart);
 			buttonNote = (Button) findViewById(R.id.buttonNoteThis);
 			buttonNote.setOnClickListener(new ButtonNote_OnClickListener());
+
+			buttonRateStart = (Button) findViewById(R.id.buttonRateStart);
+			buttonRateStart.setOnClickListener(new ButtonRateStart_OnClickListener());
+
+			buttonRateFinish = (Button) findViewById(R.id.buttonRateFinish);
+			buttonRateFinish.setOnClickListener(new ButtonRateFinish_OnClickListener());
+			buttonRateFinish.setVisibility(View.GONE);
 
 			gpspoints = trip.getPoints();
 
@@ -179,11 +191,19 @@ public class TripMapActivity extends Activity {
 									//buttonNote.setText("  --> Note this... <--  ");
 									buttonNote.setTextColor(Color.BLACK);
 									buttonNote.setBackgroundColor(Color.GREEN);
+									buttonRateStart.setTextColor(Color.BLACK);
+									buttonRateStart.setBackgroundColor(Color.GREEN);
+									buttonRateFinish.setTextColor(Color.BLACK);
+									buttonRateFinish.setBackgroundColor(Color.GREEN);
 								}
 								else {
 									//buttonNote.setText("  Note this...  ");
 									buttonNote.setTextColor(Color.WHITE);
 									buttonNote.setBackgroundColor(Color.RED);
+									buttonRateStart.setTextColor(Color.WHITE);
+									buttonRateStart.setBackgroundColor(Color.RED);
+									buttonRateFinish.setTextColor(Color.WHITE);
+									buttonRateFinish.setBackgroundColor(Color.RED);
 								}
 							}
 						}
@@ -311,6 +331,81 @@ public class TripMapActivity extends Activity {
 				}
 			}
 
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+    /**
+     * Class: ButtonRate_OnClickListener
+     *
+     * Description: Callback to be invoked when buttonRateSegment button is clicked
+     */
+	private final class ButtonRateStart_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+			try {
+				if (!crosshairInRangeOfTrip) {
+					Toast.makeText(TripMapActivity.this, "Target must be within 100 meters of bike path.", Toast.LENGTH_SHORT).show();
+				}
+				else {
+					segmentStartIndex = indexOfClosestPoint;
+
+					buttonNote.setVisibility(View.GONE);
+					buttonRateStart.setVisibility(View.GONE);
+					buttonRateFinish.setVisibility(View.VISIBLE);
+				}
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+    /**
+     * Class: ButtonRateFinish_OnClickListener
+     *
+     * Description: Callback to be invoked when buttonRateFinish button is clicked
+     */
+	private final class ButtonRateFinish_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+
+			try {
+				if (!crosshairInRangeOfTrip) {
+					Toast.makeText(TripMapActivity.this, "Target must be within 100 meters of bike path.", Toast.LENGTH_SHORT).show();
+				}
+				else {
+					segmentEndIndex = indexOfClosestPoint;
+
+					// The user may have selected the start and beginning indexes
+					// in reverse order, so check and swap if necessary
+					if (segmentStartIndex > segmentEndIndex) {
+						int tmp = segmentStartIndex;
+						segmentStartIndex = segmentEndIndex;
+						segmentEndIndex = tmp;
+					}
+
+					buttonNote.setVisibility(View.GONE);
+					buttonRateStart.setVisibility(View.GONE);
+					buttonRateFinish.setVisibility(View.VISIBLE);
+
+					Intent rateSegmentIntent = new Intent(TripMapActivity.this, RateSegmentActivity.class);
+					rateSegmentIntent.putExtra(RateSegmentActivity.EXTRA_TRIP_ID, tripid);
+					rateSegmentIntent.putExtra(RateSegmentActivity.EXTRA_START_INDEX, segmentStartIndex);
+					rateSegmentIntent.putExtra(RateSegmentActivity.EXTRA_END_INDEX, segmentEndIndex);
+
+					startActivity(rateSegmentIntent);
+					TripMapActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+				}
+			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
 			}
