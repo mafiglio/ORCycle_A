@@ -79,17 +79,49 @@
     
         </RelativeLayout>
     
-        <Button
-        android:id="@+id/buttonNoteThis"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/RelativeLayout01"
-        android:layout_centerInParent="true"
-        android:layout_centerVertical="false"
-        android:layout_marginTop="20dp"
-        android:background="#474334"
-        android:text="  Note this...  "
-        android:textColor="#ffffff"
-        android:textStyle="bold" />
+        <LinearLayout
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/RelativeLayout01"
+            android:layout_marginTop="20dp"
+            android:gravity="center|bottom"
+            android:orientation="horizontal"
+            android:showDividers="none" >
+
+		    <Button
+		        android:id="@+id/buttonNoteThis"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+		        android:background="#474334"
+		        android:text="  Note this...  "
+		        android:textColor="#ffffff"
+		        android:textStyle="bold" />
+		
+		    <Button
+		        android:id="@+id/buttonRateStart"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginLeft="4dp"
+		        android:layout_marginRight="4dp"
+		        android:background="#474334"
+		        android:text="  Rate Segment...  "
+		        android:textColor="#ffffff"
+		        android:textStyle="bold" />
+
+		    <Button
+		        android:id="@+id/buttonRateFinish"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginLeft="4dp"
+		        android:layout_marginRight="4dp"
+		        android:background="#474334"
+		        android:text="  Enter end of segment  "
+		        android:textColor="#ffffff"
+		        android:textStyle="bold" />
+
+		    </LinearLayout>
 
 </RelativeLayout>

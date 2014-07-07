@@ -105,8 +105,6 @@ public class NoteData {
 		notetype = noteDetails.getInt(noteDetails.getColumnIndex("notetype"));
 		notedetails = noteDetails.getString(noteDetails
 				.getColumnIndex("notedetails"));
-		notedetails = noteDetails.getString(noteDetails
-				.getColumnIndex("notedetails"));
 		notestatus = noteDetails.getInt(noteDetails
 				.getColumnIndex("notestatus"));
 		noteimageurl = noteDetails.getString(noteDetails
@@ -154,14 +152,6 @@ public class NoteData {
 	}
 
 	public boolean updateNoteStatus(int noteStatus) {
-		boolean rtn;
-		mDb.open();
-		rtn = mDb.updateNoteStatus(noteid, noteStatus);
-		mDb.close();
-		return rtn;
-	}
-
-	public boolean getStatus(int noteStatus) {
 		boolean rtn;
 		mDb.open();
 		rtn = mDb.updateNoteStatus(noteid, noteStatus);

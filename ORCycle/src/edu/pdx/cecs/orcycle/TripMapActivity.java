@@ -70,14 +70,21 @@ public class TripMapActivity extends Activity {
 
 	GoogleMap map;
 	ArrayList<CyclePoint> gpspoints;
+	ArrayList<LatLng> mapPoints;
 	Polyline polyline;
+	Polyline segmentPolyline = null;
 
 	private LatLngBounds.Builder bounds;
 	private boolean initialPositionSet = false;
 	private Button buttonNote = null;
+	private Button buttonRateStart = null;
+	private Button buttonRateFinish = null;
 	private boolean crosshairInRangeOfTrip = false;
 	private LatLng crosshairLocation = null;
 	private int indexOfClosestPoint = 0;
+	private int segmentStartIndex = -1;
+	private int segmentEndIndex = -1;
+	private long tripid = -1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -98,7 +105,7 @@ public class TripMapActivity extends Activity {
 			map = ((MapFragment) getFragmentManager().findFragmentById(R.id.tripMap)).getMap();
 
 			Bundle cmds = getIntent().getExtras();
-			long tripid = cmds.getLong("showtrip");
+			tripid = cmds.getLong("showtrip");
 
 			TripData trip = TripData.fetchTrip(this, tripid);
 
@@ -112,42 +119,32 @@ public class TripMapActivity extends Activity {
 			buttonNote = (Button) findViewById(R.id.buttonNoteThis);
 			buttonNote.setOnClickListener(new ButtonNote_OnClickListener());
 
+			buttonRateStart = (Button) findViewById(R.id.buttonRateStart);
+			buttonRateStart.setOnClickListener(new ButtonRateStart_OnClickListener());
+
+			buttonRateFinish = (Button) findViewById(R.id.buttonRateFinish);
+			buttonRateFinish.setOnClickListener(new ButtonRateFinish_OnClickListener());
+			buttonRateFinish.setVisibility(View.GONE);
+
 			gpspoints = trip.getPoints();
+			mapPoints = new ArrayList<LatLng>();
+
+			LatLng point;
+			bounds = new LatLngBounds.Builder();
+			for (int i = 0; i < gpspoints.size(); i++) {
+				mapPoints.add(point = new LatLng(gpspoints.get(i).latitude * 1E-6, gpspoints.get(i).longitude * 1E-6));
+				bounds.include(point);
+			}
 
 			if (trip.startpoint != null) {
-				map.addMarker(new MarkerOptions()
-						.icon(BitmapDescriptorFactory
-								.fromResource(R.drawable.pingreen))
-						.anchor(0.0f, 1.0f) // Anchors the marker on the bottom
-											// left
-						.position(
-								new LatLng(trip.startpoint.latitude * 1E-6,
-										trip.startpoint.longitude * 1E-6)));
+				addMarker(trip.startpoint, R.drawable.pingreen);
 			}
+
 			if (trip.endpoint != null) {
-				map.addMarker(new MarkerOptions()
-						.icon(BitmapDescriptorFactory
-								.fromResource(R.drawable.pinpurple))
-						.anchor(0.0f, 1.0f) // Anchors the marker on the bottom
-											// left
-						.position(
-								new LatLng(trip.endpoint.latitude * 1E-6,
-										trip.endpoint.longitude * 1E-6)));
+				addMarker(trip.endpoint, R.drawable.pinpurple);
 			}
 
-			bounds = new LatLngBounds.Builder();
-
-			PolylineOptions rectOptions = new PolylineOptions();
-			rectOptions.geodesic(true).color(Color.BLUE);
-
-			for (int i = 0; i < gpspoints.size(); i++) {
-				LatLng point = new LatLng(gpspoints.get(i).latitude * 1E-6,
-						gpspoints.get(i).longitude * 1E-6);
-				bounds.include(point);
-				rectOptions.add(point);
-			}
-
-			polyline = map.addPolyline(rectOptions);
+			polyline = drawMap(0, mapPoints.size() - 1, Color.BLUE);
 
 			map.setOnCameraChangeListener(new OnCameraChangeListener() {
 
@@ -179,11 +176,28 @@ public class TripMapActivity extends Activity {
 									//buttonNote.setText("  --> Note this... <--  ");
 									buttonNote.setTextColor(Color.BLACK);
 									buttonNote.setBackgroundColor(Color.GREEN);
+									buttonRateStart.setTextColor(Color.BLACK);
+									buttonRateStart.setBackgroundColor(Color.GREEN);
+									buttonRateFinish.setTextColor(Color.BLACK);
+									buttonRateFinish.setBackgroundColor(Color.GREEN);
+
+									if ((segmentStartIndex != -1) && (segmentEndIndex == -1)) {
+										// Remove previously drawn line
+										if (null != segmentPolyline)
+											segmentPolyline.remove();
+										// draw the new line
+										segmentPolyline = drawMap(segmentStartIndex, indexOfClosestPoint, Color.MAGENTA);
+									}
+
 								}
 								else {
 									//buttonNote.setText("  Note this...  ");
 									buttonNote.setTextColor(Color.WHITE);
 									buttonNote.setBackgroundColor(Color.RED);
+									buttonRateStart.setTextColor(Color.WHITE);
+									buttonRateStart.setBackgroundColor(Color.RED);
+									buttonRateFinish.setTextColor(Color.WHITE);
+									buttonRateFinish.setBackgroundColor(Color.RED);
 								}
 							}
 						}
@@ -203,21 +217,61 @@ public class TripMapActivity extends Activity {
 		}
 	}
 
-	private double getCrosshairDistanceFromTrip(LatLng point) {
+	private void addMarker(CyclePoint cyclePoint, int resourceId) {
 
-		float results[] = new float[1];
+		MarkerOptions markerOptions = new MarkerOptions();
+		markerOptions.icon(BitmapDescriptorFactory.fromResource(resourceId));
+		markerOptions.anchor(0.0f, 1.0f); // Anchors the marker on the bottom left
+		markerOptions.position(new LatLng(cyclePoint.latitude * 1E-6, cyclePoint.longitude * 1E-6));
 
-		LatLng tripPoint = new LatLng(gpspoints.get(0).latitude * 1E-6, gpspoints.get(0).longitude * 1E-6);
-		Location.distanceBetween(point.latitude, point.longitude, tripPoint.latitude, tripPoint.longitude, results);
+		map.addMarker(markerOptions);
+	}
+
+	private Polyline drawMap(int start, int end, int color) {
+
+		// swap order if out of order
+		if (start > end) {
+			int tmp = start;
+			start = end;
+			end = tmp;
+		}
+
+		PolylineOptions polylineOptions = new PolylineOptions();
+		polylineOptions.geodesic(true).color(color);
+
+		for (int i = start; i <= end; i++) {
+			polylineOptions.add(mapPoints.get(i));
+		}
+
+		return map.addPolyline(polylineOptions);
+	}
+
+
+	/**
+	 * Get shortest distance from trip to crosshairs, and mark index of that point
+	 * @param crosshairs
+	 * @return
+	 */
+	private double getCrosshairDistanceFromTrip(LatLng crosshairs) {
+
+		float distance[] = new float[1];
+
+		// Get the initial point
+		LatLng tripPoint = mapPoints.get(0);
+		// get distance to initial point
+		Location.distanceBetween(crosshairs.latitude, crosshairs.longitude, tripPoint.latitude, tripPoint.longitude, distance);
+		// set index of closest point to initial point
 		indexOfClosestPoint = 0;
 
-		double minDistance = results[0];
+		// Set minimum distance = distance to initial point
+		double minDistance = distance[0];
 
-		for (int i = 1; i < gpspoints.size(); i++) {
-			tripPoint = new LatLng(gpspoints.get(i).latitude * 1E-6, gpspoints.get(i).longitude * 1E-6);
-			Location.distanceBetween(point.latitude, point.longitude, tripPoint.latitude, tripPoint.longitude, results);
-			if (results[0] < minDistance) {
-				minDistance = results[0];
+		// now cycle through remaining points
+		for (int i = 1; i < mapPoints.size(); i++) {
+			tripPoint = mapPoints.get(i);
+			Location.distanceBetween(crosshairs.latitude, crosshairs.longitude, tripPoint.latitude, tripPoint.longitude, distance);
+			if (distance[0] < minDistance) {
+				minDistance = distance[0];
 				indexOfClosestPoint = i;
 			}
 		}
@@ -307,10 +361,96 @@ public class TripMapActivity extends Activity {
 
 					startActivity(noteTypeIntent);
 					TripMapActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+					TripMapActivity.this.finish();
 					// getActivity().finish();
 				}
 			}
 
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+    /**
+     * Class: ButtonRate_OnClickListener
+     *
+     * Description: Callback to be invoked when buttonRateSegment button is clicked
+     */
+	private final class ButtonRateStart_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+			try {
+				if (!crosshairInRangeOfTrip) {
+					Toast.makeText(TripMapActivity.this, "Target must be within 100 meters of bike path.", Toast.LENGTH_SHORT).show();
+				}
+				else {
+					segmentStartIndex = indexOfClosestPoint;
+					addMarker(gpspoints.get(segmentStartIndex), R.drawable.pingreen);
+
+					buttonNote.setVisibility(View.GONE);
+					buttonRateStart.setVisibility(View.GONE);
+					buttonRateFinish.setVisibility(View.VISIBLE);
+				}
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+    /**
+     * Class: ButtonRateFinish_OnClickListener
+     *
+     * Description: Callback to be invoked when buttonRateFinish button is clicked
+     */
+	private final class ButtonRateFinish_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+
+			try {
+				if (!crosshairInRangeOfTrip) {
+					Toast.makeText(TripMapActivity.this,
+							"Target must be within 100 meters of bike path.",
+							Toast.LENGTH_SHORT).show();
+				}
+				else if (indexOfClosestPoint == segmentStartIndex) {
+					Toast.makeText(TripMapActivity.this,
+							"Ending position must be different than starting position.",
+							Toast.LENGTH_SHORT).show();
+				}
+				else {
+					segmentEndIndex = indexOfClosestPoint;
+					addMarker(gpspoints.get(segmentEndIndex), R.drawable.pinpurple);
+
+					// The user may have selected the start and beginning indexes
+					// in reverse order, so check and swap if necessary
+					if (segmentStartIndex > segmentEndIndex) {
+						int tmp = segmentStartIndex;
+						segmentStartIndex = segmentEndIndex;
+						segmentEndIndex = tmp;
+					}
+
+					buttonNote.setVisibility(View.GONE);
+					buttonRateStart.setVisibility(View.GONE);
+					buttonRateFinish.setVisibility(View.VISIBLE);
+
+					Intent rateSegmentIntent = new Intent(TripMapActivity.this, RateSegmentActivity.class);
+					rateSegmentIntent.putExtra(RateSegmentActivity.EXTRA_TRIP_ID, tripid);
+					rateSegmentIntent.putExtra(RateSegmentActivity.EXTRA_START_INDEX, segmentStartIndex);
+					rateSegmentIntent.putExtra(RateSegmentActivity.EXTRA_END_INDEX, segmentEndIndex);
+
+					startActivity(rateSegmentIntent);
+					overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+					finish();
+				}
+			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
 			}

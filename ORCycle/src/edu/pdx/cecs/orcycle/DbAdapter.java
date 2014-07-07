@@ -53,10 +53,13 @@ import android.util.Log;
  */
 public class DbAdapter {
 
-	private static final int DATABASE_VERSION = 22;
+	// Database versions
+	private static final int DATABASE_VERSION = 23;
 	private static final int DATABASE_VERSION_NOTES = 21;
 	private static final int DATABASE_VERSION_PAUSES = 22;
+	private static final int DATABASE_VERSION_SEGMENTS = 23;
 
+	// Trips Table columns
 	public static final String K_TRIP_ROWID = "_id";
 	public static final String K_TRIP_PURP = "purp";
 	public static final String K_TRIP_START = "start";
@@ -71,6 +74,7 @@ public class DbAdapter {
 	public static final String K_TRIP_LGTLO = "lgtlo";
 	public static final String K_TRIP_STATUS = "status";
 
+	// Coords Table columns
 	public static final String K_POINT_ROWID = "_id";
 	public static final String K_POINT_TRIP = "trip";
 	public static final String K_POINT_TIME = "time";
@@ -80,6 +84,7 @@ public class DbAdapter {
 	public static final String K_POINT_ALT = "alt";
 	public static final String K_POINT_SPEED = "speed";
 
+	// Note Table columns
 	public static final String K_NOTE_ROWID = "_id";
 	public static final String K_NOTE_RECORDED = "noterecorded";
 	public static final String K_NOTE_FANCYSTART = "notefancystart";
@@ -94,13 +99,21 @@ public class DbAdapter {
 	public static final String K_NOTE_IMGDATA = "noteimagedata";
 	public static final String K_NOTE_STATUS = "notestatus";
 
+	// Pauses Table columns
 	public static final String K_PAUSE_ROWID = "_id";
 	public static final String K_PAUSE_START_TIME = "starttime";
 	public static final String K_PAUSE_END_TIME = "endtime";
 
+	// Segments Table columns
+	public static final String K_SEGMENT_ID = "_id";
+	public static final String K_SEGMENT_TRIP_ID = "tripid";
+	public static final String K_SEGMENT_RATING = "rating";
+	public static final String K_SEGMENT_DETAILS = "details";
+	public static final String K_SEGMENT_START_INDEX = "startindex";
+	public static final String K_SEGMENT_END_INDEX = "endindex";
+	public static final String K_SEGMENT_STATUS = "status";
 
-
-	private static final String TAG = "DbAdapter";
+	private static final String MODULE_TAG = "DbAdapter";
 	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase mDb;
 
@@ -127,18 +140,25 @@ public class DbAdapter {
 			+ "PRIMARY KEY(_id, startTime), "
 			+ "FOREIGN KEY(_id) REFERENCES TRIPS(_id));";
 
-	private static final String TABLE_CREATE_PAUSES2 = "create table pauses "
-			+ "_id integer, starttime double, endtime double, "
-			+ "PRIMARY KEY(_id, startTime), "
-			+ "FOREIGN KEY(_id) REFERENCES TRIPS(_id));";
+	private static final String TABLE_CREATE_SEGMENTS = "create table segments "
+			+ "(_id integer primary key autoincrement, tripid int, rating int, "
+			+ "details text, startindex int, endindex int, status int, "
+			+ "FOREIGN KEY(tripid) REFERENCES TRIPS(_id));";
+
+	private static final String TABLE_DROP_SEGMENTS = "drop table segments;";
 
 	private static final String DATABASE_NAME = "data";
 	private static final String DATA_TABLE_TRIPS = "trips";
 	private static final String DATA_TABLE_COORDS = "coords";
 	private static final String DATA_TABLE_NOTES = "notes";
 	private static final String DATA_TABLE_PAUSES = "pauses";
+	private static final String DATA_TABLE_SEGMENTS = "segments";
 
 	private final Context mCtx;
+
+	// ************************************************************************
+	// *                         DatabaseHelper
+	// ************************************************************************
 
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -153,13 +173,14 @@ public class DbAdapter {
 			db.execSQL(TABLE_CREATE_COORDS);
 			db.execSQL(TABLE_CREATE_NOTES);
 			db.execSQL(TABLE_CREATE_PAUSES);
+			db.execSQL(TABLE_CREATE_SEGMENTS);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
 			try {
-				Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
+				Log.w(MODULE_TAG, "Upgrading database from version " + oldVersion + " to "
 						+ newVersion + ", which will simply add a new Note table.");
 
 				// Data Migration:
@@ -171,12 +192,26 @@ public class DbAdapter {
 
 				if (oldVersion < DATABASE_VERSION_PAUSES)
 					db.execSQL(TABLE_CREATE_PAUSES);
+
+				if (oldVersion < DATABASE_VERSION_SEGMENTS)
+					db.execSQL(TABLE_CREATE_SEGMENTS);
 			}
 			catch(Exception ex) {
-				Log.e(TAG, ex.getMessage());
+				Log.e(MODULE_TAG, ex.getMessage());
 			}
 		}
+
+		@Override
+		public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			if (newVersion < DATABASE_VERSION_SEGMENTS)
+				db.execSQL(TABLE_DROP_SEGMENTS);
+		}
 	}
+
+
+	// ************************************************************************
+	// *                    DbAdapter table methods
+	// ************************************************************************
 
 	/**
 	 * Constructor - takes the context to allow the database to be
@@ -215,7 +250,9 @@ public class DbAdapter {
 		mDbHelper.close();
 	}
 
-	// #### Coordinate table methods ####
+	// ************************************************************************
+	// *                    Coordinate table methods
+	// ************************************************************************
 
 	public boolean addCoordToTrip(long tripid, CyclePoint pt) {
 		boolean success = true;
@@ -265,7 +302,9 @@ public class DbAdapter {
 		}
 	}
 
-	// #### Trip table methods ####
+	// ************************************************************************
+	// *                       Trip table methods
+	// ************************************************************************
 
 	/**
 	 * Create a new trip using the data provided. If the trip is successfully
@@ -376,10 +415,37 @@ public class DbAdapter {
 		return mCursor;
 	}
 
+	public boolean updateTrip(long tripid, String purp, String fancystart, String fancyinfo, String note) {
+
+		ContentValues contentValues = new ContentValues();
+
+		contentValues.put(K_TRIP_PURP, purp);
+		contentValues.put(K_TRIP_FANCYSTART, fancystart);
+		contentValues.put(K_TRIP_FANCYINFO, fancyinfo);
+		contentValues.put(K_TRIP_NOTE, note);
+
+		return mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null) > 0;
+	}
+
+	public boolean updateTrip(long tripid, int lathigh, int latlow, int lgthigh, int lgtlow, float distance) {
+
+		ContentValues contentValues = new ContentValues();
+
+		contentValues.put(K_TRIP_LATHI, lathigh);
+		contentValues.put(K_TRIP_LATLO, latlow);
+		contentValues.put(K_TRIP_LGTHI, lgthigh);
+		contentValues.put(K_TRIP_LGTLO, lgtlow);
+		contentValues.put(K_TRIP_DISTANCE, distance);
+
+		return mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null) > 0;
+	}
+
 	public boolean updateTrip(long tripid, String purp, double starttime,
 			String fancystart, String fancyinfo, String note, int lathigh,
 			int latlow, int lgthigh, int lgtlow, float distance) {
+
 		ContentValues initialValues = new ContentValues();
+
 		initialValues.put(K_TRIP_PURP, purp);
 		initialValues.put(K_TRIP_START, starttime);
 		initialValues.put(K_TRIP_FANCYSTART, fancystart);
@@ -391,19 +457,19 @@ public class DbAdapter {
 		initialValues.put(K_TRIP_FANCYINFO, fancyinfo);
 		initialValues.put(K_TRIP_DISTANCE, distance);
 
-		return mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "="
-				+ tripid, null) > 0;
+		return mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "=" + tripid, null) > 0;
 	}
 
 	public boolean updateTripStatus(long tripid, int tripStatus) {
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(K_TRIP_STATUS, tripStatus);
 
-		return mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "="
-				+ tripid, null) > 0;
+		return mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "=" + tripid, null) > 0;
 	}
 
-	// #### Notes table methods ####
+	// ************************************************************************
+	// *                       Notes table methods
+	// ************************************************************************
 
 	/**
 	 * Create a new note using the data provided. If the note is successfully
@@ -510,7 +576,7 @@ public class DbAdapter {
 	 */
 	public Cursor fetchNote(long rowId) throws SQLException {
 		Cursor mCursor = mDb.query(true, DATA_TABLE_NOTES,
-				new String[] { K_NOTE_ROWID, K_NOTE_TYPE, K_NOTE_RECORDED,
+				new String[] { K_NOTE_ROWID, K_SEGMENT_TRIP_ID, K_NOTE_RECORDED,
 						K_NOTE_FANCYSTART, K_NOTE_DETAILS, K_NOTE_IMGURL,
 						K_NOTE_IMGDATA, K_NOTE_LAT, K_NOTE_LGT, K_NOTE_ACC,
 						K_NOTE_ALT, K_NOTE_SPEED, K_NOTE_STATUS },
@@ -552,6 +618,10 @@ public class DbAdapter {
 		return mDb.update(DATA_TABLE_NOTES, initialValues, K_NOTE_ROWID + "="
 				+ noteid, null) > 0;
 	}
+
+	// ************************************************************************
+	// *                       Pauses table methods
+	// ************************************************************************
 
 	/**
 	 * Insert a row into the 'pauses' table
@@ -603,5 +673,83 @@ public class DbAdapter {
 		return cursor;
 	}
 
+	// ************************************************************************
+	// *                       Segments table methods
+	// ************************************************************************
+
+	/**
+	 * Return a Cursor positioned at the Segment that matches the given segmentId
+	 *
+	 * @param segmentId id of note to retrieve
+	 * @return Cursor positioned to matching note, if found
+	 * @throws SQLException
+	 *             if note could not be found/retrieved
+	 */
+	public Cursor fetchSegment(long segmentId) throws SQLException {
+		Cursor mCursor = mDb.query(true, DATA_TABLE_SEGMENTS,
+				new String[] { K_SEGMENT_ID, K_SEGMENT_TRIP_ID, K_SEGMENT_RATING,
+				K_SEGMENT_DETAILS, K_SEGMENT_START_INDEX, K_SEGMENT_END_INDEX,
+				K_SEGMENT_STATUS}, K_SEGMENT_ID + "=" + segmentId,
+				null, null, null, null, null);
+
+		if (mCursor != null) {
+			mCursor.moveToFirst();
+		}
+		return mCursor;
+	}
+
+	public long createSegment() {
+		return createSegment(-1, -1, "", -1, -1);
+	}
+
+	/**
+	 * Create a new segment using the data provided. If the segment is successfully
+	 * created return the new rowId for that segment, otherwise return a -1 to
+	 * indicate failure.
+	 */
+
+	public long createSegment(long tripId, int rating, String details, int startIndex, int endIndex) {
+
+		ContentValues initialValues = new ContentValues();
+		initialValues.put(K_SEGMENT_TRIP_ID, tripId);
+		initialValues.put(K_SEGMENT_RATING, rating);
+		initialValues.put(K_SEGMENT_DETAILS, details);
+		initialValues.put(K_SEGMENT_START_INDEX, startIndex);
+		initialValues.put(K_SEGMENT_END_INDEX, endIndex);
+		initialValues.put(K_SEGMENT_STATUS, SegmentData.STATUS_INCOMPLETE);
+
+		long segmentId = mDb.insert(DATA_TABLE_SEGMENTS, null, initialValues);
+		return segmentId;
+	}
+
+	public boolean updateSegmentStatus(long segmentId, int status) {
+		ContentValues initialValues = new ContentValues();
+		initialValues.put(K_SEGMENT_STATUS, status);
+
+		return mDb.update(DATA_TABLE_SEGMENTS, initialValues, K_SEGMENT_ID + "=" + segmentId, null) > 0;
+	}
+
+	public boolean updateSegment(long segmentId, long tripId,
+			int rating, String details, int startIndex, int endIndex) {
+
+		ContentValues initialValues = new ContentValues();
+		initialValues.put(K_SEGMENT_TRIP_ID, tripId);
+		initialValues.put(K_SEGMENT_RATING , rating);
+		initialValues.put(K_SEGMENT_DETAILS, details);
+		initialValues.put(K_SEGMENT_START_INDEX, startIndex);
+		initialValues.put(K_SEGMENT_END_INDEX, endIndex);
+
+		return mDb.update(DATA_TABLE_SEGMENTS, initialValues, K_SEGMENT_ID + "=" + segmentId, null) > 0;
+	}
+
+	public Cursor fetchUnsentSegmentIds() {
+		Cursor c = mDb.query(DATA_TABLE_SEGMENTS, new String[] { K_SEGMENT_ID },
+				K_SEGMENT_STATUS + "=" + SegmentData.STATUS_COMPLETE, null, null,
+				null, null);
+		if (c != null && c.getCount() > 0) {
+			c.moveToFirst();
+		}
+		return c;
+	}
 
 }
