@@ -45,8 +45,8 @@ public class TripData {
 
 	private final static double RESET_START_TIME = 0.0;
 
-	private double tripStartTime = RESET_START_TIME;
 	private double startTime = RESET_START_TIME;
+	private double segmentStartTime = RESET_START_TIME;
 	private double endTime = RESET_START_TIME;
 
 	private double pauseStartedTime = RESET_START_TIME;
@@ -71,27 +71,64 @@ public class TripData {
 	public static int STATUS_COMPLETE = 1;
 	public static int STATUS_SENT = 2;
 
-	public static TripData createTrip(Context c) {
-		TripData t = new TripData(c.getApplicationContext(), 0);
-		t.createTripInDatabase(c);
-		t.initializeData();
+	/**
+	 * Creates a new instance of TripData, and the database
+	 * entry.  This instance is used for collecting trip data.
+	 * @param ctx
+	 * @return
+	 */
+	public static TripData createTrip(Context ctx) {
+		TripData t = new TripData(ctx.getApplicationContext());
 		return t;
 	}
 
-	public static TripData fetchTrip(Context c, long tripid) {
-		TripData t = new TripData(c.getApplicationContext(), tripid);
-		t.populateDetails();
+	/**
+	 * Constructor for a new instance of TripData.  This constructor
+	 * will create a new instance of the data in the database
+	 * @param ctx
+	 */
+	private TripData(Context ctx) {
+		mDb = new DbAdapter(ctx.getApplicationContext());
+		tripid = createTripInDatabase();
+		initializeData();
+	}
+
+	/**
+	 * Fetches an existing instance of TripData from the database
+	 * @param ctx
+	 * @param tripid
+	 * @return
+	 */
+	public static TripData fetchTrip(Context ctx, long tripid) {
+		TripData t = new TripData(ctx.getApplicationContext(), tripid);
 		return t;
 	}
 
-	public TripData(Context ctx, long tripid) {
-		Context context = ctx.getApplicationContext();
+	/**
+	 * Constructor for a new instance of TripData.  This constructor
+	 * will populate the instance with the data already existing in
+	 * the database
+	 * @param ctx
+	 */
+	private TripData(Context ctx, long tripid) {
+		mDb = new DbAdapter(ctx.getApplicationContext());
 		this.tripid = tripid;
-		mDb = new DbAdapter(context);
+		populateDetails();
+	}
+
+	/**
+	 * Creates an entry in the database for a new trip
+	 * @return Returns ID of new trip
+	 */
+	private long createTripInDatabase() {
+		mDb.open();
+		tripid = mDb.createTrip();
+		mDb.close();
+		return tripid;
 	}
 
 	void initializeData() {
-		endTime = (startTime = (tripStartTime = System.currentTimeMillis()));
+		endTime = (segmentStartTime = (startTime = System.currentTimeMillis()));
 		pauseStartedTime = RESET_START_TIME;
 		totalTravelTime = 0.0f;
 		isPaused = false;
@@ -107,7 +144,9 @@ public class TripData {
 		lgthigh = (int) (-180 * 1E6);
 		purp = fancystart = info = "";
 
-		updateTrip();
+		// So that there are not nulls in the database for purpose,
+		// fancyStart, fancyInfo, and notes fields, we set them to blank
+		updateTrip("", "", "", "");
 	}
 
 	// Get lat/long extremes, etc, from trip record
@@ -119,8 +158,8 @@ public class TripData {
 		mDb.openReadOnly();
 
 		Cursor tripdetails = mDb.fetchTrip(tripid);
-		tripStartTime = tripdetails.getDouble(tripdetails.getColumnIndex("start"));
-		startTime = System.currentTimeMillis();
+		startTime = tripdetails.getDouble(tripdetails.getColumnIndex("start"));
+		segmentStartTime = System.currentTimeMillis();
 		lathigh = tripdetails.getInt(tripdetails.getColumnIndex("lathi"));
 		latlow = tripdetails.getInt(tripdetails.getColumnIndex("latlo"));
 		lgthigh = tripdetails.getInt(tripdetails.getColumnIndex("lgthi"));
@@ -130,8 +169,7 @@ public class TripData {
 		distance = tripdetails.getFloat(tripdetails.getColumnIndex("distance"));
 
 		purp = tripdetails.getString(tripdetails.getColumnIndex("purp"));
-		fancystart = tripdetails.getString(tripdetails
-				.getColumnIndex("fancystart"));
+		fancystart = tripdetails.getString(tripdetails.getColumnIndex("fancystart"));
 		info = tripdetails.getString(tripdetails.getColumnIndex("fancyinfo"));
 
 		tripdetails.close();
@@ -142,12 +180,6 @@ public class TripData {
 			points.close();
 		}
 
-		mDb.close();
-	}
-
-	void createTripInDatabase(Context c) {
-		mDb.open();
-		tripid = mDb.createTrip();
 		mDb.close();
 	}
 
@@ -213,7 +245,7 @@ public class TripData {
 	}
 
 	public double getStartTime() {
-		return tripStartTime;
+		return startTime;
 	}
 
 	public double getEndTime() {
@@ -225,8 +257,8 @@ public class TripData {
 		double currentTime = System.currentTimeMillis();
 		// record the beginning of pause time
 		pauseStartedTime = currentTime;
-		totalTravelTime += (currentTime - startTime);
-		startTime = RESET_START_TIME;
+		totalTravelTime += (currentTime - segmentStartTime);
+		segmentStartTime = RESET_START_TIME;
 		isPaused = true;
 	}
 
@@ -249,7 +281,7 @@ public class TripData {
 		}
 
 		// Re-initialize start time counters
-		startTime = currentTime;
+		segmentStartTime = currentTime;
 		isPaused = false;
 	}
 
@@ -260,7 +292,7 @@ public class TripData {
 			return totalTravelTime;
 		}
 		else {
-			return  totalTravelTime + (System.currentTimeMillis() - startTime);
+			return  totalTravelTime + (System.currentTimeMillis() - segmentStartTime);
 		}
 	}
 
@@ -288,7 +320,7 @@ public class TripData {
 			endTime = totalTravelTime;
 		}
 		else {
-			endTime = totalTravelTime + currentTime - startTime;
+			endTime = totalTravelTime + currentTime - segmentStartTime;
 		}
 
 		distance = dst;
@@ -303,9 +335,7 @@ public class TripData {
 
 		mDb.open();
 		boolean rtn = mDb.addCoordToTrip(tripid, pt);
-		rtn = rtn
-				&& mDb.updateTrip(tripid, "", startTime, "", "", "", lathigh,
-						latlow, lgthigh, lgtlow, distance);
+		rtn = rtn && mDb.updateTrip(tripid, lathigh, latlow, lgthigh, lgtlow, distance);
 		mDb.close();
 
 		if (!rtn) {
@@ -321,7 +351,7 @@ public class TripData {
 	 */
 	public void finish() {
 		if (!isFinished) {
-			totalTravelTime += System.currentTimeMillis() - startTime;
+			totalTravelTime += (System.currentTimeMillis() - segmentStartTime);
 			endTime = totalTravelTime;
 			isFinished = true;
 			updateTrip("", "", "", "");
@@ -336,16 +366,10 @@ public class TripData {
 		return rtn;
 	}
 
-	public void updateTrip() {
-		updateTrip("", "", "", "");
-	}
-
-	public void updateTrip(String purpose, String fancyStart, String fancyInfo,
-			String notes) {
+	public void updateTrip(String purpose, String fancyStart, String fancyInfo, String notes) {
 		// Save the trip details to the phone database. W00t!
 		mDb.open();
-		mDb.updateTrip(tripid, purpose, startTime, fancyStart, fancyInfo,
-				notes, lathigh, latlow, lgthigh, lgtlow, distance);
+		mDb.updateTrip(tripid, purpose, fancyStart, fancyInfo, notes);
 		mDb.close();
 	}
 }

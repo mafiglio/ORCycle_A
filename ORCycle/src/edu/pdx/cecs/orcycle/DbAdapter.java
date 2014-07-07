@@ -415,10 +415,37 @@ public class DbAdapter {
 		return mCursor;
 	}
 
+	public boolean updateTrip(long tripid, String purp, String fancystart, String fancyinfo, String note) {
+
+		ContentValues contentValues = new ContentValues();
+
+		contentValues.put(K_TRIP_PURP, purp);
+		contentValues.put(K_TRIP_FANCYSTART, fancystart);
+		contentValues.put(K_TRIP_FANCYINFO, fancyinfo);
+		contentValues.put(K_TRIP_NOTE, note);
+
+		return mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null) > 0;
+	}
+
+	public boolean updateTrip(long tripid, int lathigh, int latlow, int lgthigh, int lgtlow, float distance) {
+
+		ContentValues contentValues = new ContentValues();
+
+		contentValues.put(K_TRIP_LATHI, lathigh);
+		contentValues.put(K_TRIP_LATLO, latlow);
+		contentValues.put(K_TRIP_LGTHI, lgthigh);
+		contentValues.put(K_TRIP_LGTLO, lgtlow);
+		contentValues.put(K_TRIP_DISTANCE, distance);
+
+		return mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null) > 0;
+	}
+
 	public boolean updateTrip(long tripid, String purp, double starttime,
 			String fancystart, String fancyinfo, String note, int lathigh,
 			int latlow, int lgthigh, int lgtlow, float distance) {
+
 		ContentValues initialValues = new ContentValues();
+
 		initialValues.put(K_TRIP_PURP, purp);
 		initialValues.put(K_TRIP_START, starttime);
 		initialValues.put(K_TRIP_FANCYSTART, fancystart);
@@ -430,16 +457,14 @@ public class DbAdapter {
 		initialValues.put(K_TRIP_FANCYINFO, fancyinfo);
 		initialValues.put(K_TRIP_DISTANCE, distance);
 
-		return mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "="
-				+ tripid, null) > 0;
+		return mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "=" + tripid, null) > 0;
 	}
 
 	public boolean updateTripStatus(long tripid, int tripStatus) {
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(K_TRIP_STATUS, tripStatus);
 
-		return mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "="
-				+ tripid, null) > 0;
+		return mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "=" + tripid, null) > 0;
 	}
 
 	// ************************************************************************
