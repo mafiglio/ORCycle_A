@@ -81,6 +81,7 @@ public class FragmentMainInput extends Fragment
 
 	Location currentLocation = new Location("");
 
+	// Format used to show elapsed time to user when recording trips
 	private final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
 	// *********************************************************************************

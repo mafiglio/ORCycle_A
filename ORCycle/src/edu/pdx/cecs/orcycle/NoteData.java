@@ -89,32 +89,31 @@ public class NoteData {
 
 	// Get lat/long extremes, etc, from note record
 	void populateDetails() {
+
 		mDb.openReadOnly();
-
-		Cursor noteDetails = mDb.fetchNote(noteid);
-
-		startTime = noteDetails.getDouble(noteDetails
-				.getColumnIndex("noterecorded"));
-		notefancystart = noteDetails.getString(noteDetails
-				.getColumnIndex("notefancystart"));
-		latitude = noteDetails.getInt(noteDetails.getColumnIndex("notelat"));
-		longitude = noteDetails.getInt(noteDetails.getColumnIndex("notelgt"));
-		accuracy = noteDetails.getFloat(noteDetails.getColumnIndex("noteacc"));
-		altitude = noteDetails.getDouble(noteDetails.getColumnIndex("notealt"));
-		speed = noteDetails.getFloat(noteDetails.getColumnIndex("notespeed"));
-		notetype = noteDetails.getInt(noteDetails.getColumnIndex("notetype"));
-		notedetails = noteDetails.getString(noteDetails
-				.getColumnIndex("notedetails"));
-		notestatus = noteDetails.getInt(noteDetails
-				.getColumnIndex("notestatus"));
-		noteimageurl = noteDetails.getString(noteDetails
-				.getColumnIndex("noteimageurl"));
-		noteimagedata = noteDetails.getBlob(noteDetails
-				.getColumnIndex("noteimagedata"));
-
-		noteDetails.close();
-
-		mDb.close();
+		try {
+			Cursor noteDetails = mDb.fetchNote(noteid);
+			try {
+				startTime = noteDetails.getDouble(noteDetails.getColumnIndex("noterecorded"));
+				notefancystart = noteDetails.getString(noteDetails.getColumnIndex("notefancystart"));
+				latitude = noteDetails.getInt(noteDetails.getColumnIndex("notelat"));
+				longitude = noteDetails.getInt(noteDetails.getColumnIndex("notelgt"));
+				accuracy = noteDetails.getFloat(noteDetails.getColumnIndex("noteacc"));
+				altitude = noteDetails.getDouble(noteDetails.getColumnIndex("notealt"));
+				speed = noteDetails.getFloat(noteDetails.getColumnIndex("notespeed"));
+				notetype = noteDetails.getInt(noteDetails.getColumnIndex("notetype"));
+				notedetails = noteDetails.getString(noteDetails.getColumnIndex("notedetails"));
+				notestatus = noteDetails.getInt(noteDetails.getColumnIndex("notestatus"));
+				noteimageurl = noteDetails.getString(noteDetails.getColumnIndex("noteimageurl"));
+				noteimagedata = noteDetails.getBlob(noteDetails.getColumnIndex("noteimagedata"));
+			}
+			finally {
+				noteDetails.close();
+			}
+		}
+		finally {
+			mDb.close();
+		}
 	}
 
 	void createNoteInDatabase(Context c) {
