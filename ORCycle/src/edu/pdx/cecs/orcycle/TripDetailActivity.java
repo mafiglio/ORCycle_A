@@ -56,7 +56,7 @@ public class TripDetailActivity extends Activity {
 		TripData trip = TripData.fetchTrip(TripDetailActivity.this, tripid);
 		trip.populateDetails();
 
-		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm");
+		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm a");
 		String fancyStartTime = sdfStart.format(trip.getStartTime());
 		Log.v("Jason", "Start: " + fancyStartTime);
 

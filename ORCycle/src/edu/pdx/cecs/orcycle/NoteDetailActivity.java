@@ -87,7 +87,7 @@ public class NoteDetailActivity extends Activity {
 		NoteData note = NoteData.fetchNote(NoteDetailActivity.this, noteid);
 		note.populateDetails();
 
-		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm");
+		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm a");
 		String fancyStartTime = sdfStart.format(note.startTime);
 		Log.v("Jason", "Start: " + fancyStartTime);
 
@@ -105,8 +105,7 @@ public class NoteDetailActivity extends Activity {
 			imageURL = "";
 		}
 
-		note.updateNote(noteType, fancyStartTime, noteDetailsToUpload,
-				imageURL, noteImage);
+		note.updateNote(noteType, fancyStartTime, noteDetailsToUpload, imageURL, noteImage);
 
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 

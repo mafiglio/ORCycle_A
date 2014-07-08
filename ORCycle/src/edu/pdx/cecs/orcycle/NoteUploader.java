@@ -51,27 +51,29 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
-	Context mCtx;
-	DbAdapter mDb;
-	byte[] imageData;
-	Boolean imageDataNull;
+	private final Context mCtx;
+	private final DbAdapter mDb;
+	private byte[] imageData;
+	private Boolean imageDataNull;
 
-	public static final int kSaveNoteProtocolVersion = 4;
+	private static final int kSaveNoteProtocolVersion = 4;
 
-	public static final String NOTE_RECORDED = "r";
-	public static final String NOTE_LAT = "l";
-	public static final String NOTE_LGT = "n";
-	public static final String NOTE_HACC = "h";
-	public static final String NOTE_VACC = "v";
-	public static final String NOTE_ALT = "a";
-	public static final String NOTE_SPEED = "s";
-	public static final String NOTE_TYPE = "t";
-	public static final String NOTE_DETAILS = "d";
-	public static final String NOTE_IMGURL = "i";
+	private static final String NOTE_TRIP_ID = "p";
+	private static final String NOTE_RECORDED = "r";
+	private static final String NOTE_LAT = "l";
+	private static final String NOTE_LGT = "n";
+	private static final String NOTE_HACC = "h";
+	private static final String NOTE_VACC = "v";
+	private static final String NOTE_ALT = "a";
+	private static final String NOTE_SPEED = "s";
+	private static final String NOTE_TYPE = "t";
+	private static final String NOTE_DETAILS = "d";
+	private static final String NOTE_IMGURL = "i";
 
-	String twoHyphens = "--";
-	String boundary = "cycle*******notedata*******atlanta";
-	String lineEnd = "\r\n";
+	private static final String twoHyphens = "--";
+	private static final String boundary = "cycle*******notedata*******atlanta";
+	private static final String lineEnd = "\r\n";
+	private static final String notesep = "--cycle*******notedata*******atlanta\r\n";
 
 	public NoteUploader(Context ctx) {
 		super();
@@ -81,31 +83,28 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 
 	private JSONObject getNoteJSON(long noteId) throws JSONException {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//df.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 		mDb.openReadOnly();
 		Cursor noteCursor = mDb.fetchNote(noteId);
 
 		Map<String, Integer> fieldMap = new HashMap<String, Integer>();
-		fieldMap.put(NOTE_RECORDED,
-				noteCursor.getColumnIndex(DbAdapter.K_NOTE_RECORDED));
+		fieldMap.put(NOTE_TRIP_ID, noteCursor.getColumnIndex(DbAdapter.K_NOTE_TRIP_ID));
+		fieldMap.put(NOTE_RECORDED, noteCursor.getColumnIndex(DbAdapter.K_NOTE_RECORDED));
 		fieldMap.put(NOTE_LAT, noteCursor.getColumnIndex(DbAdapter.K_NOTE_LAT));
 		fieldMap.put(NOTE_LGT, noteCursor.getColumnIndex(DbAdapter.K_NOTE_LGT));
 		fieldMap.put(NOTE_HACC, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ACC));
 		fieldMap.put(NOTE_VACC, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ACC));
 		fieldMap.put(NOTE_ALT, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ALT));
-		fieldMap.put(NOTE_SPEED,
-				noteCursor.getColumnIndex(DbAdapter.K_NOTE_SPEED));
-		fieldMap.put(NOTE_TYPE,
-				noteCursor.getColumnIndex(DbAdapter.K_NOTE_TYPE));
-		fieldMap.put(NOTE_DETAILS,
-				noteCursor.getColumnIndex(DbAdapter.K_NOTE_DETAILS));
-		fieldMap.put(NOTE_IMGURL,
-				noteCursor.getColumnIndex(DbAdapter.K_NOTE_IMGURL));
+		fieldMap.put(NOTE_SPEED, noteCursor.getColumnIndex(DbAdapter.K_NOTE_SPEED));
+		fieldMap.put(NOTE_TYPE, noteCursor.getColumnIndex(DbAdapter.K_NOTE_TYPE));
+		fieldMap.put(NOTE_DETAILS, noteCursor.getColumnIndex(DbAdapter.K_NOTE_DETAILS));
+		fieldMap.put(NOTE_IMGURL, noteCursor.getColumnIndex(DbAdapter.K_NOTE_IMGURL));
 
 		JSONObject note = new JSONObject();
 
-		note.put(NOTE_RECORDED,
-				df.format(noteCursor.getDouble(fieldMap.get(NOTE_RECORDED))));
+		note.put(NOTE_TRIP_ID, noteCursor.getInt(fieldMap.get(NOTE_TRIP_ID)));
+		note.put(NOTE_RECORDED, df.format(noteCursor.getDouble(fieldMap.get(NOTE_RECORDED))));
 		note.put(NOTE_LAT, noteCursor.getDouble(fieldMap.get(NOTE_LAT)) / 1E6);
 		note.put(NOTE_LGT, noteCursor.getDouble(fieldMap.get(NOTE_LGT)) / 1E6);
 		note.put(NOTE_HACC, noteCursor.getDouble(fieldMap.get(NOTE_HACC)));
@@ -234,29 +233,9 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 		boolean result = false;
 		final String postUrl = mCtx.getResources().getString(R.string.post_url);
 
-		// byte[] postBodyDataZipped;
-		//
-		// BasicHttpEntity postBodyEntity;
-		//
-		// List<NameValuePair> nameValuePairs;
-		// try {
-		// postBodyEntity = getPostData(currentNoteId);
-		// } catch (JSONException e) {
-		// e.printStackTrace();
-		// return result;
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// return result;
-		// }
-		//
-		// HttpClient client = new DefaultHttpClient();
-		// // TODO: Server URL
-		// final String postUrl = "http://cycleatlanta.org/post_dev/";
-		// HttpPost postRequest = new HttpPost(postUrl);
-
 		try {
-
 			URL url = new URL(postUrl);
+
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setDoInput(true); // Allow Inputs
 			conn.setDoOutput(true); // Allow Outputs
@@ -264,39 +243,34 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 			conn.setRequestMethod("POST");
 			conn.setRequestProperty("Connection", "Keep-Alive");
 			conn.setRequestProperty("ENCTYPE", "multipart/form-data");
-			conn.setRequestProperty("Content-Type",
-					"multipart/form-data; boundary=" + boundary);
+			conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 			conn.setRequestProperty("Cycleatl-Protocol-Version", "4");
 
 			DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+			try {
+				JSONObject note = getNoteJSON(currentNoteId);
+				String deviceId = getDeviceId();
 
-			JSONObject note = getNoteJSON(currentNoteId);
-			String deviceId = getDeviceId();
+				dos.writeBytes(notesep + ContentField("note") + note.toString() + "\r\n");
+				dos.writeBytes(notesep + ContentField("version") + String.valueOf(kSaveNoteProtocolVersion) + "\r\n");
+				dos.writeBytes(notesep + ContentField("device") + deviceId + "\r\n");
 
-			dos.writeBytes("--cycle*******notedata*******atlanta\r\n"
-					+ "Content-Disposition: form-data; name=\"note\"\r\n\r\n"
-					+ note.toString() + "\r\n");
-			dos.writeBytes("--cycle*******notedata*******atlanta\r\n"
-					+ "Content-Disposition: form-data; name=\"version\"\r\n\r\n"
-					+ String.valueOf(kSaveNoteProtocolVersion) + "\r\n");
-			dos.writeBytes("--cycle*******notedata*******atlanta\r\n"
-					+ "Content-Disposition: form-data; name=\"device\"\r\n\r\n"
-					+ deviceId + "\r\n");
+				if (imageDataNull == false) {
+					dos.writeBytes(notesep
+							+ "Content-Disposition: form-data; name=\"file\"; filename=\""
+							+ deviceId + ".jpg\"\r\n"
+							+ "Content-Type: image/jpeg\r\n\r\n");
+					dos.write(imageData);
+					dos.writeBytes("\r\n");
+				}
 
-			if (imageDataNull == false) {
-				dos.writeBytes("--cycle*******notedata*******atlanta\r\n"
-						+ "Content-Disposition: form-data; name=\"file\"; filename=\""
-						+ deviceId + ".jpg\"\r\n"
-						+ "Content-Type: image/jpeg\r\n\r\n");
-				dos.write(imageData);
-				dos.writeBytes("\r\n");
+				dos.writeBytes(notesep);
+
+				dos.flush();
 			}
-
-			dos.writeBytes("--cycle*******notedata*******atlanta--\r\n");
-
-			dos.flush();
-			dos.close();
-
+			finally {
+				dos.close();
+			}
 			int serverResponseCode = conn.getResponseCode();
 			String serverResponseMessage = conn.getResponseMessage();
 			// JSONObject responseData = new JSONObject(serverResponseMessage);
@@ -319,6 +293,10 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 			return false;
 		}
 		return result;
+	}
+
+	private String ContentField(String type) {
+		return "Content-Disposition: form-data; name=\"" + type + "\"\r\n\r\n";
 	}
 
 	@Override

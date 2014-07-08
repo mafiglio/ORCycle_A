@@ -563,9 +563,11 @@ public class FragmentMainInput extends Fragment
 				}
 				else {
 					fi = new Intent(getActivity(), NoteTypeActivity.class);
+
 					// update note entity
+					long tripid = recordingService.getCurrentTripID();
 					NoteData note;
-					note = NoteData.createNote(getActivity());
+					note = NoteData.createNote(getActivity(), tripid);
 
 					fi.putExtra("noteid", note.noteid);
 
@@ -579,12 +581,9 @@ public class FragmentMainInput extends Fragment
 
 					note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
 
-					double currentTime = System.currentTimeMillis();
-
 					if (currentLocation != null) {
-						note.setLocationTime(currentLocation, currentTime);
 
-						// Log.v("Jason", "Note ID: "+note);
+						note.setLocation(currentLocation);
 
 						startActivity(fi);
 						getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
