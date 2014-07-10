@@ -2,7 +2,6 @@ package edu.pdx.cecs.orcycle;
 
 import java.util.HashMap;
 
-import edu.pdx.cecs.orcycle.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -22,22 +21,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class NoteTypeActivity extends Activity {
-	// HashMap<Integer, ToggleButton> purpButtons = new HashMap<Integer,
-	// ToggleButton>();
-	int noteType;
 
-	long noteid;
+	static public final String EXTRA_NOTE_ID = "noteid";
+	static public final String EXTRA_NOTE_TYPE = "noteType";
+	static public final String EXTRA_IS_RECORDING = "isRecording";
 
-	int isRecording;
+	private int noteType;
+	private long noteid;
+	private boolean isRecording;
 
-	HashMap<Integer, String> noteTypeDescriptions = new HashMap<Integer, String>();
+	private final HashMap<Integer, String> noteTypeDescriptions = new HashMap<Integer, String>();
 
-	String[] values;
+	private String[] values;
 
 	private MenuItem saveMenuItem;
 
 	// Set up the purpose buttons to be one-click only
-	void prepareNoteTypeButtons() {
+	private void prepareNoteTypeButtons() {
 		// Note Issue
 		noteTypeDescriptions.put(0, getResources().getString(R.string.note_pavement_issue_details));
 		noteTypeDescriptions.put(1, getResources().getString(R.string.note_traffic_signal_details));
@@ -58,31 +58,30 @@ public class NoteTypeActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_note_type);
 
+		setContentView(R.layout.activity_note_type);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-		// Set up note type buttons
-		noteType = -1;
+		// get input values for this view
+		Intent myIntent = getIntent();
+		noteid = myIntent.getLongExtra(EXTRA_NOTE_ID, -1);
+		noteType = myIntent.getIntExtra(EXTRA_NOTE_TYPE, -1);
+		isRecording = myIntent.getBooleanExtra(EXTRA_IS_RECORDING, false);
+
 		prepareNoteTypeButtons();
-
-		Intent myIntent = getIntent(); // gets the previously created intent
-		noteid = myIntent.getLongExtra("noteid", 0);
-
-		isRecording = myIntent.getIntExtra("isRecording", -1);
 
 		final ListView listView = (ListView) findViewById(R.id.listViewNoteType);
 		values = new String[] {
-				getResources().getString(R.string.note_pavement_issue), 
+				getResources().getString(R.string.note_pavement_issue),
 				getResources().getString(R.string.note_traffic_signal),
-				getResources().getString(R.string.note_enforcement), 
-				getResources().getString(R.string.note_needs_bike_rack), 
+				getResources().getString(R.string.note_enforcement),
+				getResources().getString(R.string.note_needs_bike_rack),
 				getResources().getString(R.string.note_bike_lane_issue),
-				getResources().getString(R.string.note_note_issue), 
-				getResources().getString(R.string.note_bike_rack), 
+				getResources().getString(R.string.note_note_issue),
+				getResources().getString(R.string.note_bike_rack),
 				getResources().getString(R.string.note_bike_shop),
-				getResources().getString(R.string.note_public_restroom), 
-				getResources().getString(R.string.note_secret_passage), 
+				getResources().getString(R.string.note_public_restroom),
+				getResources().getString(R.string.note_secret_passage),
 				getResources().getString(R.string.note_water_fountain),
 				getResources().getString(R.string.note_note_asset)};
 		// final ArrayList<String> list = new ArrayList<String>();
@@ -153,32 +152,26 @@ public class NoteTypeActivity extends Activity {
 			note.dropNote();
 
 			NoteTypeActivity.this.finish();
-			
+
 			overridePendingTransition(android.R.anim.slide_in_left,
 					android.R.anim.slide_out_right);
 			return true;
+
 		case R.id.action_save_note_type:
-			// move to next view
-			Intent intentToNoteDetail = new Intent(NoteTypeActivity.this,
-					NoteDetailActivity.class);
-			intentToNoteDetail.putExtra("noteType", noteType);
 
-			intentToNoteDetail.putExtra("noteid", noteid);
-
-			Log.v("Jason", "Note ID in NoteType: " + noteid);
-
-			if (isRecording == 1) {
-				intentToNoteDetail.putExtra("isRecording", 1);
-			} else {
-				intentToNoteDetail.putExtra("isRecording", 0);
-			}
+			// move to NoteDetailActivity view
+			Intent intentToNoteDetail = new Intent(this, NoteDetailActivity.class);
+			intentToNoteDetail.putExtra(NoteDetailActivity.EXTRA_NOTE_TYPE, noteType);
+			intentToNoteDetail.putExtra(NoteDetailActivity.EXTRA_NOTE_ID, noteid);
+			intentToNoteDetail.putExtra(NoteDetailActivity.EXTRA_IS_RECORDING, isRecording);
 
 			startActivity(intentToNoteDetail);
-			overridePendingTransition(R.anim.slide_in_right,
-					R.anim.slide_out_left);
-			NoteTypeActivity.this.finish();
+			overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+			this.finish();
 			return true;
+
 		default:
+
 			return super.onOptionsItemSelected(item);
 		}
 	}
@@ -196,7 +189,7 @@ public class NoteTypeActivity extends Activity {
 		note.dropNote();
 
 		NoteTypeActivity.this.finish();
-		
+
 		overridePendingTransition(android.R.anim.slide_in_left,
 				android.R.anim.slide_out_right);
 	}
@@ -215,7 +208,7 @@ public class NoteTypeActivity extends Activity {
 			note.dropNote();
 
 			NoteTypeActivity.this.finish();
-			
+
 			overridePendingTransition(android.R.anim.slide_in_left,
 					android.R.anim.slide_out_right);
 			return true;

@@ -9,7 +9,6 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.os.Bundle;
-import android.provider.Settings.System;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -23,9 +22,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 public class NoteDetailActivity extends Activity {
+
+	public static final String EXTRA_NOTE_ID = "noteid";
+	public static final String EXTRA_NOTE_TYPE = "noteType";
+	public static final String EXTRA_IS_RECORDING = "isRecording";
+
 	long noteid;
 	int noteType = 0;
-	int isRecording;
+	boolean isRecording;
 	EditText noteDetails;
 	ImageButton imageButton;
 	ImageView imageView;
@@ -37,30 +41,33 @@ public class NoteDetailActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_note_detail);
 
+		// get input values for this view
+		Intent myIntent = getIntent();
+		noteType = myIntent.getIntExtra(EXTRA_NOTE_TYPE, -1);
+		noteid = myIntent.getLongExtra(EXTRA_NOTE_ID, -1);
+		isRecording = myIntent.getBooleanExtra(EXTRA_IS_RECORDING, false);
+
+		// TODO: Assert that intent values are not set to -1
+
+		// setup main view
+		setContentView(R.layout.activity_note_detail);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-		Intent myIntent = getIntent();
-		noteType = myIntent.getIntExtra("noteType", -1);
-		noteid = myIntent.getLongExtra("noteid", -1);
-		Log.v("Jason", "Note ID in NoteDetail: " + noteid);
-		Log.v("Jason", "Note Type is: " + noteType);
-		isRecording = myIntent.getIntExtra("isRecording", -1);
-
+		// get references to view widgets
 		noteDetails = (EditText) findViewById(R.id.editTextNoteDetail);
 		imageView = (ImageView) findViewById(R.id.imageView);
 		// imageView.setVisibility(4);
 		imageButton = (ImageButton) findViewById(R.id.imageButton);
-		this.getWindow().setSoftInputMode(
-				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
+		// show input keyboard
+		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+		// setup photo button
 		Button addPhotoButton = (Button) findViewById(R.id.addPhotoButton);
 		addPhotoButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				Log.v("Jason", "Add Photo");
-				Intent cameraIntent = new Intent(
-						android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+				Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 				startActivityForResult(cameraIntent, CAMERA_REQUEST);
 			}
 		});
@@ -82,21 +89,22 @@ public class NoteDetailActivity extends Activity {
 	}
 
 	void submit(String noteDetailsToUpload, byte[] noteImage) {
-		final Intent xi = new Intent(this, NoteMapActivity.class);
 
 		NoteData note = NoteData.fetchNote(NoteDetailActivity.this, noteid);
-		note.populateDetails();
+		//note.populateDetails();
 
+		// date format for displaying in lists
 		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm a");
 		String fancyStartTime = sdfStart.format(note.startTime);
 		Log.v("Jason", "Start: " + fancyStartTime);
 
+		// date format for creating image filenames
 		SimpleDateFormat sdfStart2 = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 		String date = sdfStart2.format(note.startTime);
 
 		// Save the note details to the phone database. W00t!
 
-		String deviceId = getDeviceId();
+		String deviceId = MyApplication.getInstance().getDeviceId();
 		if (photo != null) {
 			noteImage = getBitmapAsByteArray(photo);
 			imageURL = deviceId + "-" + date + "-type-" + noteType;
@@ -105,8 +113,8 @@ public class NoteDetailActivity extends Activity {
 			imageURL = "";
 		}
 
+		// finalize note values and store in local database
 		note.updateNote(noteType, fancyStartTime, noteDetailsToUpload, imageURL, noteImage);
-
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 
 		// Now create the MainInput Activity so BACK btn works properly
@@ -119,45 +127,38 @@ public class NoteDetailActivity extends Activity {
 			uploader.execute(note.noteid);
 		}
 
-		if (isRecording == 1) {
+		Intent intent;
+
+		if (isRecording) {
+			intent = new Intent(this, TabsConfig.class);
+			this.finish();
+			this.startActivity(intent);
 		} else {
-			Intent i = new Intent(getApplicationContext(), TabsConfig.class);
-			startActivity(i);
-
-			// And, show the map!
-			xi.putExtra("shownote", note.noteid);
-			xi.putExtra("uploadNote", true);
-			Log.v("Jason", "Noteid: " + String.valueOf(note.noteid));
-			startActivity(xi);
-			overridePendingTransition(R.anim.slide_in_right,
-					R.anim.slide_out_left);
+			intent = new Intent(this, NoteMapActivity.class);
+			intent.putExtra(NoteMapActivity.EXTRA_NOTE_ID, note.noteid);
+			this.startActivity(intent);
+			this.finish();
+			this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 		}
-
-		NoteDetailActivity.this.finish();
 	}
 
-	public String getDeviceId() {
-		String androidId = System.getString(this.getContentResolver(),
-				System.ANDROID_ID);
-		String androidBase = "androidDeviceId-";
+	/**
+	 * Sets up a transition to the NoteTypeActivity.
+	 */
+	private void TransitionBackToNoteTypeActivity() {
 
-		if (androidId == null) { // This happens when running in the Emulator
-			final String emulatorId = "android-RunningAsTestingDeleteMe";
-			return emulatorId;
-		}
-		String deviceId = androidBase.concat(androidId);
+		// Get intent for transition to NoteTypeActivity.
+		Intent intent = new Intent(this, NoteTypeActivity.class);
 
-		// Fix String Length
-		int a = deviceId.length();
-		if (a < 32) {
-			for (int i = 0; i < 32 - a; i++) {
-				deviceId = deviceId.concat("0");
-			}
-		} else {
-			deviceId = deviceId.substring(0, 32);
-		}
+		// Set values for input to NoteTypeActivity
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_ID, noteid);
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_TYPE, noteType);
+		intent.putExtra(NoteTypeActivity.EXTRA_IS_RECORDING, isRecording);
 
-		return deviceId;
+		// Initiate transition to NoteTypeActivity
+		this.startActivity(intent);
+		this.finish();
+		this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}
 
 	/* Creates the menu items */
@@ -190,16 +191,16 @@ public class NoteDetailActivity extends Activity {
 	// 2.0 and above
 	@Override
 	public void onBackPressed() {
-		// skip
-		submit("", null);
+		// Go back to NoteTypeActivity.
+		TransitionBackToNoteTypeActivity();
 	}
 
 	// Before 2.0
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			// skip
-			submit("", null);
+			// Go back to NoteTypeActivity.
+			TransitionBackToNoteTypeActivity();
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);

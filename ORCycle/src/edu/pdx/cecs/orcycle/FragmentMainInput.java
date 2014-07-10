@@ -7,14 +7,11 @@ import java.util.TimerTask;
 
 import android.app.AlertDialog;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -561,37 +558,20 @@ public class FragmentMainInput extends Fragment
 				if (!myApp.getStatus().isProviderEnabled()) {
 					buildAlertMessageNoGps();
 				}
+				else if (currentLocation == null) {
+					Toast.makeText(getActivity(), "No GPS data acquired; nothing to submit.", Toast.LENGTH_SHORT).show();
+				}
 				else {
-					fi = new Intent(getActivity(), NoteTypeActivity.class);
+					// pause recording of trip data
+					recordingService.pauseRecording();
 
 					// update note entity
 					long tripid = recordingService.getCurrentTripID();
-					NoteData note;
-					note = NoteData.createNote(getActivity(), tripid);
 
-					fi.putExtra("noteid", note.noteid);
-
-					Log.v("Jason", "Note ID in MainInput: " + note.noteid);
-
-					if (isRecording == true) {
-						fi.putExtra("isRecording", 1);
-					} else {
-						fi.putExtra("isRecording", 0);
-					}
-
+					NoteData note = NoteData.createNote(getActivity(), tripid);
 					note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
-
-					if (currentLocation != null) {
-
-						note.setLocation(currentLocation);
-
-						startActivity(fi);
-						getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-						// getActivity().finish();
-					}
-					else {
-						Toast.makeText(getActivity(), "No GPS data acquired; nothing to submit.", Toast.LENGTH_SHORT).show();
-					}
+					note.setLocation(currentLocation);
+					TransitionToNoteTypeActivity(note);
 				}
 			}
 
@@ -600,6 +580,23 @@ public class FragmentMainInput extends Fragment
 			}
 		}
 	}
+
+	private void TransitionToNoteTypeActivity(NoteData note) {
+
+		Intent intent;
+
+		// Setup intent to move to next activity
+		intent = new Intent(getActivity(), NoteTypeActivity.class);
+
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_ID, note.noteid);
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_TYPE, -1);
+		intent.putExtra(NoteTypeActivity.EXTRA_IS_RECORDING, isRecording);
+
+		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		// getActivity().finish();
+	}
+
 
 	// *********************************************************************************
 	// *
@@ -858,72 +855,4 @@ public class FragmentMainInput extends Fragment
 		}
 		return false;
 	}
-
-	// *********************************************************************************
-	// * Dead Code
-	// *********************************************************************************
-
-	/**
-	 * Start recording
-	 */
-	private void XXXstartRecording() {
-
-		// Query the RecordingService to figure out what to do.
-		final Button startButton = (Button) getActivity().findViewById(R.id.buttonStart);
-		Intent rService = new Intent(getActivity(), RecordingService.class);
-		getActivity().startService(rService);
-		ServiceConnection sc = new ServiceConnection() {
-			public void onServiceDisconnected(ComponentName name) {
-			}
-
-			public void onServiceConnected(ComponentName name, IBinder service) {
-				IRecordService rs = (IRecordService) service;
-				TripData trip = myApp.getStatus().getTripData();
-
-				switch (rs.getState()) {
-				case RecordingService.STATE_IDLE:
-					trip = TripData.createTrip(getActivity());
-					rs.startRecording(trip);
-					isRecording = true;
-					startButton.setText("Save");
-					// startButton.setBackgroundColor(0xFF0000);
-					// MainInputActivity.this.pauseButton.setEnabled(true);
-					// MainInputActivity.this
-					// .setTitle("Cycle Atlanta - Recording...");
-					break;
-				case RecordingService.STATE_RECORDING:
-					long id = rs.getCurrentTripID();
-					trip = TripData.fetchTrip(getActivity(), id);
-					isRecording = true;
-					startButton.setText("Save");
-					// startButton.setBackgroundColor(0xFF0000);
-					// MainInputActivity.this.pauseButton.setEnabled(true);
-					// MainInputActivity.this
-					// .setTitle("Cycle Atlanta - Recording...");
-					break;
-				// case RecordingService.STATE_PAUSED:
-				// long tid = rs.getCurrentTrip();
-				// isRecording = false;
-				// trip = TripData.fetchTrip(MainInputActivity.this, tid);
-				// // MainInputActivity.this.pauseButton.setEnabled(true);
-				// // MainInputActivity.this.pauseButton.setText("Resume");
-				// // MainInputActivity.this
-				// // .setTitle("Cycle Atlanta - Paused...");
-				// break;
-				case RecordingService.STATE_FULL:
-					// Should never get here, right?
-					break;
-				}
-				rs.setListener((FragmentMainInput) getActivity()
-						.getSupportFragmentManager().findFragmentByTag(
-								"android:switcher:" + R.id.pager + ":0"));
-				getActivity().unbindService(this);
-			}
-		};
-		getActivity().bindService(rService, sc, Context.BIND_AUTO_CREATE);
-
-		isRecording = true;
-	}
-
-
 }

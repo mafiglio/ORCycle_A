@@ -17,6 +17,8 @@ import android.widget.EditText;
 
 public class TripDetailActivity extends Activity {
 
+	private static final String MODULE_TAG = "TripDetailActivity";
+
 	// Reference to Global application object
 	private MyApplication myApp = null;
 
@@ -31,21 +33,26 @@ public class TripDetailActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Convenient pointer to global application object
-		myApp = MyApplication.getInstance();
-		recordingService = myApp.getRecordingService();
+		try {
+			// Convenient pointer to global application object
+			myApp = MyApplication.getInstance();
+			recordingService = myApp.getRecordingService();
 
-		setContentView(R.layout.activity_trip_detail);
+			setContentView(R.layout.activity_trip_detail);
 
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-		finishRecording();
-		purpose = "";
-		Intent myIntent = getIntent(); // gets the previously created intent
-		purpose = myIntent.getStringExtra("purpose");
-		notes = (EditText) findViewById(R.id.editTextTripDetail);
-		this.getWindow().setSoftInputMode(
-				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+			finishRecording();
+			purpose = "";
+			Intent myIntent = getIntent(); // gets the previously created intent
+			purpose = myIntent.getStringExtra("purpose");
+			notes = (EditText) findViewById(R.id.editTextTripDetail);
+			this.getWindow().setSoftInputMode(
+					WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	// submit btn is only activated after the service.finishedRecording() is
@@ -54,7 +61,6 @@ public class TripDetailActivity extends Activity {
 		final Intent xi = new Intent(this, TripMapActivity.class);
 
 		TripData trip = TripData.fetchTrip(TripDetailActivity.this, tripid);
-		trip.populateDetails();
 
 		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm a");
 		String fancyStartTime = sdfStart.format(trip.getStartTime());
@@ -109,46 +115,68 @@ public class TripDetailActivity extends Activity {
 	/* Creates the menu items */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu items for use in the action bar
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.trip_detail, menu);
-		return super.onCreateOptionsMenu(menu);
+		try {
+			// Inflate the menu items for use in the action bar
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.trip_detail, menu);
+			return super.onCreateOptionsMenu(menu);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return false;
 	}
 
 	/* Handles item selections */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle presses on the action bar items
-		switch (item.getItemId()) {
-		case R.id.action_skip_trip_detail:
-			// skip
-			submit("");
-			return true;
-		case R.id.action_save_trip_detail:
-			// save
-			submit(notes.getEditableText().toString());
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+		try {
+			// Handle presses on the action bar items
+			switch (item.getItemId()) {
+			case R.id.action_skip_trip_detail:
+				// skip
+				submit("");
+				return true;
+			case R.id.action_save_trip_detail:
+				// save
+				submit(notes.getEditableText().toString());
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+			}
 		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return false;
 	}
 
 	// 2.0 and above
 	@Override
 	public void onBackPressed() {
-		// skip
-		submit("");
+		try {
+			// skip
+			submit("");
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	// Before 2.0
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			// skip
-			submit("");
-			return true;
+		try {
+			if (keyCode == KeyEvent.KEYCODE_BACK) {
+				// skip
+				submit("");
+				return true;
+			}
+			return super.onKeyDown(keyCode, event);
 		}
-		return super.onKeyDown(keyCode, event);
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return true;
 	}
-
 }
