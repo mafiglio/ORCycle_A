@@ -5,6 +5,7 @@
     android:orientation="horizontal" >
 
     <LinearLayout
+        android:id="@+id/SavedNotesListItemLinearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10sp"
@@ -15,7 +16,7 @@
             android:id="@+id/TextViewStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@+id/TextView03"
+            android:text="September 27, 2014 11:02 PM"
             android:layout_marginLeft="5sp"
             android:textColor="#ff888888"
             android:textSize="15sp" >
@@ -23,9 +24,9 @@
 
         <TextView
             android:id="@+id/TextViewType"
-            android:layout_width="170dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@+id/TextView01"
+            android:text="Water fountain"
             android:textColor="#ff000000"
             android:layout_marginLeft="4sp"
             android:layout_marginTop="5sp"
@@ -38,9 +39,9 @@
         android:id="@+id/ImageNoteType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/SavedNotesListItemLinearLayout"
         android:layout_alignParentRight="true"
         android:contentDescription="NoteType"
-        android:paddingRight="10dp"
         android:paddingTop="24dp" />
 
 </RelativeLayout>

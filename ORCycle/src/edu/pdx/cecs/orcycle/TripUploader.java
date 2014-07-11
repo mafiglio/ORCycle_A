@@ -254,14 +254,10 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		mDb.openReadOnly();
 		Cursor tripCursor = mDb.fetchTrip(tripId);
 
-		String note = tripCursor.getString(tripCursor
-				.getColumnIndex(DbAdapter.K_TRIP_NOTE));
-		String purpose = tripCursor.getString(tripCursor
-				.getColumnIndex(DbAdapter.K_TRIP_PURP));
-		Double startTime = tripCursor.getDouble(tripCursor
-				.getColumnIndex(DbAdapter.K_TRIP_START));
-		Double endTime = tripCursor.getDouble(tripCursor
-				.getColumnIndex(DbAdapter.K_TRIP_END));
+		String note = tripCursor.getString(tripCursor.getColumnIndex(DbAdapter.K_TRIP_NOTE));
+		String purpose = tripCursor.getString(tripCursor.getColumnIndex(DbAdapter.K_TRIP_PURP));
+		Double startTime = tripCursor.getDouble(tripCursor.getColumnIndex(DbAdapter.K_TRIP_START));
+		Double endTime = tripCursor.getDouble(tripCursor.getColumnIndex(DbAdapter.K_TRIP_END));
 		tripCursor.close();
 		mDb.close();
 
@@ -358,9 +354,11 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		nameValuePairs.add(new BasicNameValuePair("start", startTime));
 		// nameValuePairs.add(new BasicNameValuePair("end", endTime));
 		nameValuePairs.add(new BasicNameValuePair("version", "" + kSaveProtocolVersion));
+		nameValuePairs.add(new BasicNameValuePair("tripid", "" + tripId));
 
 		String codedPostData =
 				"purpose=" + purpose +
+				"&tripid=" + String.valueOf(tripId) +
 				"&user=" + user.toString() +
 				"&notes=" + notes +
 				"&coords=" + coords.toString() +

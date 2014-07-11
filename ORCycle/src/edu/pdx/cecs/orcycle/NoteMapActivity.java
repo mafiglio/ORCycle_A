@@ -23,7 +23,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class NoteMapActivity extends Activity {
-	GoogleMap map;
+
+	public static final String EXTRA_NOTE_ID = "shownote";
+
+	public GoogleMap map;
 
 	private MenuItem saveMenuItem;
 
@@ -50,7 +53,7 @@ public class NoteMapActivity extends Activity {
 					R.id.noteMap)).getMap();
 
 			Bundle cmds = getIntent().getExtras();
-			long noteid = cmds.getLong("shownote");
+			long noteid = cmds.getLong(EXTRA_NOTE_ID);
 
 			NoteData note = NoteData.fetchNote(this, noteid);
 
@@ -130,7 +133,7 @@ public class NoteMapActivity extends Activity {
 		getMenuInflater().inflate(R.menu.note_map, menu);
 		saveMenuItem = menu.getItem(0);
 		Bundle cmds = getIntent().getExtras();
-		long noteid = cmds.getLong("shownote");
+		long noteid = cmds.getLong(EXTRA_NOTE_ID);
 		NoteData note = NoteData.fetchNote(this, noteid);
 		if (note.noteimageurl.equals("")) {
 			saveMenuItem.setVisible(false);

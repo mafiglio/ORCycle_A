@@ -345,7 +345,7 @@ public class TripMapActivity extends Activity {
 				else {
 					Intent noteTypeIntent = new Intent(TripMapActivity.this, NoteTypeActivity.class);
 					// update note entity
-					NoteData note = NoteData.createNote(TripMapActivity.this);
+					NoteData note = NoteData.createNote(TripMapActivity.this, tripid);
 
 					noteTypeIntent.putExtra("noteid", note.noteid);
 					noteTypeIntent.putExtra("isRecording", 0);
@@ -357,7 +357,7 @@ public class TripMapActivity extends Activity {
 					noteLocation.setLongitude(crosshairLocation.longitude);
 					noteLocation.setAccuracy(gpspoints.get(indexOfClosestPoint).accuracy);
 					noteLocation.setAltitude(gpspoints.get(indexOfClosestPoint).altitude);
-					note.setLocationTime(noteLocation, System.currentTimeMillis());
+					note.setLocation(noteLocation);
 
 					startActivity(noteTypeIntent);
 					TripMapActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

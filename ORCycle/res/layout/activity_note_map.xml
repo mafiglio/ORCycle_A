@@ -14,34 +14,38 @@
         android:paddingTop="4sp" >
 
         <TextView
+            android:id="@+id/TextViewMapNoteFancyStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="4dp"
+            android:text="September 27, 2014 11:02 PM"
+            android:textSize="15sp" >
+        </TextView>
+        
+        <TextView
             android:id="@+id/TextViewMapNoteType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="2sp"
-            android:text="Map of your note:"
+            android:layout_below="@id/TextViewMapNoteFancyStart"
+            android:text="Water fountains"
             android:textSize="18sp"
             android:textStyle="bold" >
         </TextView>
 
-        <TextView
-            android:id="@+id/TextViewMapNoteFancyStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="4dp"
-            android:textSize="15sp" >
-        </TextView>
-    </RelativeLayout>
+	    <TextView
+	        android:id="@+id/TextViewMapNoteDetails"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="7sp"
+	        android:layout_marginRight="7sp"
+            android:layout_below="@id/TextViewMapNoteType"
+	        android:paddingBottom="8sp" >
+	    </TextView>
 
-    <TextView
-        android:id="@+id/TextViewMapNoteDetails"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="7sp"
-        android:layout_marginRight="7sp"
-        android:paddingBottom="8sp" >
-    </TextView>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"

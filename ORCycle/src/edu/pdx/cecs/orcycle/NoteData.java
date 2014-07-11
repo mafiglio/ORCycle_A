@@ -54,9 +54,9 @@ public class NoteData {
 	public static int STATUS_COMPLETE = 1;
 	public static int STATUS_SENT = 2;
 
-	public static NoteData createNote(Context c) {
+	public static NoteData createNote(Context c, long tripid) {
 		NoteData t = new NoteData(c.getApplicationContext(), 0);
-		t.createNoteInDatabase(c);
+		t.createNoteInDatabase(c, tripid);
 		t.initializeData();
 		return t;
 	}
@@ -89,64 +89,71 @@ public class NoteData {
 
 	// Get lat/long extremes, etc, from note record
 	void populateDetails() {
+
 		mDb.openReadOnly();
-
-		Cursor noteDetails = mDb.fetchNote(noteid);
-
-		startTime = noteDetails.getDouble(noteDetails
-				.getColumnIndex("noterecorded"));
-		notefancystart = noteDetails.getString(noteDetails
-				.getColumnIndex("notefancystart"));
-		latitude = noteDetails.getInt(noteDetails.getColumnIndex("notelat"));
-		longitude = noteDetails.getInt(noteDetails.getColumnIndex("notelgt"));
-		accuracy = noteDetails.getFloat(noteDetails.getColumnIndex("noteacc"));
-		altitude = noteDetails.getDouble(noteDetails.getColumnIndex("notealt"));
-		speed = noteDetails.getFloat(noteDetails.getColumnIndex("notespeed"));
-		notetype = noteDetails.getInt(noteDetails.getColumnIndex("notetype"));
-		notedetails = noteDetails.getString(noteDetails
-				.getColumnIndex("notedetails"));
-		notestatus = noteDetails.getInt(noteDetails
-				.getColumnIndex("notestatus"));
-		noteimageurl = noteDetails.getString(noteDetails
-				.getColumnIndex("noteimageurl"));
-		noteimagedata = noteDetails.getBlob(noteDetails
-				.getColumnIndex("noteimagedata"));
-
-		noteDetails.close();
-
-		mDb.close();
+		try {
+			Cursor noteDetails = mDb.fetchNote(noteid);
+			try {
+				startTime = noteDetails.getDouble(noteDetails.getColumnIndex("noterecorded"));
+				notefancystart = noteDetails.getString(noteDetails.getColumnIndex("notefancystart"));
+				latitude = noteDetails.getInt(noteDetails.getColumnIndex("notelat"));
+				longitude = noteDetails.getInt(noteDetails.getColumnIndex("notelgt"));
+				accuracy = noteDetails.getFloat(noteDetails.getColumnIndex("noteacc"));
+				altitude = noteDetails.getDouble(noteDetails.getColumnIndex("notealt"));
+				speed = noteDetails.getFloat(noteDetails.getColumnIndex("notespeed"));
+				notetype = noteDetails.getInt(noteDetails.getColumnIndex("notetype"));
+				notedetails = noteDetails.getString(noteDetails.getColumnIndex("notedetails"));
+				notestatus = noteDetails.getInt(noteDetails.getColumnIndex("notestatus"));
+				noteimageurl = noteDetails.getString(noteDetails.getColumnIndex("noteimageurl"));
+				noteimagedata = noteDetails.getBlob(noteDetails.getColumnIndex("noteimagedata"));
+			}
+			finally {
+				noteDetails.close();
+			}
+		}
+		finally {
+			mDb.close();
+		}
 	}
 
-	void createNoteInDatabase(Context c) {
+	void createNoteInDatabase(Context c, long tripid) {
 		mDb.open();
-		noteid = mDb.createNote();
-		mDb.close();
+		try {
+			noteid = mDb.createNote(tripid);
+		}
+		finally {
+			mDb.close();
+		}
 	}
 
 	void dropNote() {
 		mDb.open();
-		mDb.deleteNote(noteid);
-		mDb.close();
+		try {
+			mDb.deleteNote(noteid);
+		}
+		finally {
+			mDb.close();
+		}
 	}
 
 	// from MainInput, add time and location point
-	boolean setLocationTime(Location loc, double currentTime) {
+	boolean setLocation(Location loc) {
+
+		boolean rtn;
+
 		int lat = (int) (loc.getLatitude() * 1E6);
 		int lgt = (int) (loc.getLongitude() * 1E6);
-
 		float accuracy = loc.getAccuracy();
 		double altitude = loc.getAltitude();
 		float speed = loc.getSpeed();
 
-		// pt = new CyclePoint(lat, lgt, currentTime, accuracy, altitude,
-		// speed);
-
-		startTime = currentTime;
-
 		mDb.open();
-		boolean rtn = mDb.updateNote(noteid, currentTime, "", -1, "", "", null,
-				lat, lgt, accuracy, altitude, speed);
-		mDb.close();
+		try {
+			rtn = mDb.updateNote(noteid, lat, lgt, accuracy, altitude, speed);
+		}
+		finally {
+			mDb.close();
+		}
 
 		return rtn;
 	}
@@ -154,22 +161,23 @@ public class NoteData {
 	public boolean updateNoteStatus(int noteStatus) {
 		boolean rtn;
 		mDb.open();
-		rtn = mDb.updateNoteStatus(noteid, noteStatus);
-		mDb.close();
+		try {
+			rtn = mDb.updateNoteStatus(noteid, noteStatus);
+		}
+		finally {
+			mDb.close();
+		}
 		return rtn;
-	}
-
-	public void updateNote() {
-		updateNote(-1, "", "", "", null);
 	}
 
 	public void updateNote(int notetype, String notefancystart,
 			String notedetails, String noteimgurl, byte[] noteimgdata) {
-		// Save the note details to the phone database. W00t!
 		mDb.open();
-		mDb.updateNote(noteid, startTime, notefancystart, notetype,
-				notedetails, noteimgurl, noteimgdata, latitude, longitude,
-				accuracy, altitude, speed);
-		mDb.close();
+		try {
+			mDb.updateNote(noteid, notefancystart, notetype, notedetails, noteimgurl, noteimgdata);
+		}
+		finally {
+			mDb.close();
+		}
 	}
 }

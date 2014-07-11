@@ -54,10 +54,11 @@ import android.util.Log;
 public class DbAdapter {
 
 	// Database versions
-	private static final int DATABASE_VERSION = 23;
+	private static final int DATABASE_VERSION = 24;
 	private static final int DATABASE_VERSION_NOTES = 21;
 	private static final int DATABASE_VERSION_PAUSES = 22;
 	private static final int DATABASE_VERSION_SEGMENTS = 23;
+	private static final int DATABASE_VERSION_NOTES_V2 = 24;
 
 	// Trips Table columns
 	public static final String K_TRIP_ROWID = "_id";
@@ -86,6 +87,7 @@ public class DbAdapter {
 
 	// Note Table columns
 	public static final String K_NOTE_ROWID = "_id";
+	public static final String K_NOTE_TRIP_ID = "tripid";
 	public static final String K_NOTE_RECORDED = "noterecorded";
 	public static final String K_NOTE_FANCYSTART = "notefancystart";
 	public static final String K_NOTE_LAT = "notelat";
@@ -131,7 +133,7 @@ public class DbAdapter {
 			+ "time double, acc float, alt double, speed float);";
 
 	private static final String TABLE_CREATE_NOTES = "create table notes "
-			+ "(_id integer primary key autoincrement, notetype integer, noterecorded double, "
+			+ "(_id integer primary key autoincrement, tripid int, notetype integer, noterecorded double, "
 			+ "notefancystart text, notedetails text, noteimageurl text, noteimagedata blob, "
 			+ "notelat int, notelgt int, noteacc float, notealt double, notespeed float, notestatus integer);";
 
@@ -146,6 +148,7 @@ public class DbAdapter {
 			+ "FOREIGN KEY(tripid) REFERENCES TRIPS(_id));";
 
 	private static final String TABLE_DROP_SEGMENTS = "drop table segments;";
+	private static final String TABLE_NOTES_ADD_COLUMN = "ALTER TABLE notes ADD COLUMN tripid int;";
 
 	private static final String DATABASE_NAME = "data";
 	private static final String DATA_TABLE_TRIPS = "trips";
@@ -179,6 +182,8 @@ public class DbAdapter {
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+			boolean newNotesTable = false;
+
 			try {
 				Log.w(MODULE_TAG, "Upgrading database from version " + oldVersion + " to "
 						+ newVersion + ", which will simply add a new Note table.");
@@ -187,14 +192,20 @@ public class DbAdapter {
 				// New Install: this function not called. onCreate called.
 				// Upgrading: don't touch trip and coords table, create notes table
 
-				if (oldVersion < DATABASE_VERSION_NOTES)
+				if (oldVersion < DATABASE_VERSION_NOTES) {
 					db.execSQL(TABLE_CREATE_NOTES);
+					newNotesTable = true;
+				}
 
 				if (oldVersion < DATABASE_VERSION_PAUSES)
 					db.execSQL(TABLE_CREATE_PAUSES);
 
 				if (oldVersion < DATABASE_VERSION_SEGMENTS)
 					db.execSQL(TABLE_CREATE_SEGMENTS);
+
+				if (oldVersion < DATABASE_VERSION_NOTES_V2 && !newNotesTable) {
+					db.execSQL(TABLE_NOTES_ADD_COLUMN);
+				}
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -255,34 +266,50 @@ public class DbAdapter {
 	// ************************************************************************
 
 	public boolean addCoordToTrip(long tripid, CyclePoint pt) {
-		boolean success = true;
 
 		// Add the latest point
-		ContentValues rowValues = new ContentValues();
-		rowValues.put(K_POINT_TRIP, tripid);
-		rowValues.put(K_POINT_LAT, pt.latitude);
-		rowValues.put(K_POINT_LGT, pt.longitude);
-		rowValues.put(K_POINT_TIME, pt.time);
-		rowValues.put(K_POINT_ACC, pt.accuracy);
-		rowValues.put(K_POINT_ALT, pt.altitude);
-		rowValues.put(K_POINT_SPEED, pt.speed);
+		ContentValues coordValues = new ContentValues();
+		coordValues.put(K_POINT_TRIP, tripid);
+		coordValues.put(K_POINT_LAT, pt.latitude);
+		coordValues.put(K_POINT_LGT, pt.longitude);
+		coordValues.put(K_POINT_TIME, pt.time);
+		coordValues.put(K_POINT_ACC, pt.accuracy);
+		coordValues.put(K_POINT_ALT, pt.altitude);
+		coordValues.put(K_POINT_SPEED, pt.speed);
 
-		success = success
-				&& (mDb.insert(DATA_TABLE_COORDS, null, rowValues) > 0);
+		long rowId = mDb.insert(DATA_TABLE_COORDS, null, coordValues);
+
+		if (rowId == -1) {
+			Log.e(MODULE_TAG, "Insert " + DATA_TABLE_COORDS + ": failed");
+		}
+		else {
+			Log.i(MODULE_TAG, "Insert " + DATA_TABLE_COORDS + "[" + String.valueOf(rowId) + "]("
+					+ K_POINT_TRIP + ", " + K_POINT_LAT + ", " + K_POINT_LGT + ", "
+					+ K_POINT_TIME + ", " + K_POINT_ACC + ", " + K_POINT_ALT + ", "
+					+ K_POINT_SPEED +")");
+		}
 
 		// And update the trip stats
-		rowValues = new ContentValues();
-		rowValues.put(K_TRIP_END, pt.time);
+		ContentValues tripValues = new ContentValues();
+		tripValues.put(K_TRIP_END, pt.time);
 
-		success = success
-				&& (mDb.update(DATA_TABLE_TRIPS, rowValues, K_TRIP_ROWID + "="
-						+ tripid, null) > 0);
+		int numRows = mDb.update(DATA_TABLE_TRIPS, tripValues, K_TRIP_ROWID + "=" + tripid, null);
+
+		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid) +"]("
+				+ K_TRIP_END +"): " + String.valueOf(numRows) + " rows.");
+
+		boolean success = ((rowId != -1) && (numRows > 0));
 
 		return success;
 	}
 
 	public boolean deleteAllCoordsForTrip(long tripid) {
-		return mDb.delete(DATA_TABLE_COORDS, K_POINT_TRIP + "=" + tripid, null) > 0;
+
+		int numRows = mDb.delete(DATA_TABLE_COORDS, K_POINT_TRIP + "=" + tripid, null);
+
+		Log.i(MODULE_TAG, "Deleted " + DATA_TABLE_COORDS + "[" + String.valueOf(tripid) +"]: " + String.valueOf(numRows) + " rows.");
+
+		return numRows > 0;
 	}
 
 	public Cursor fetchAllCoordsForTrip(long tripid) {
@@ -297,7 +324,7 @@ public class DbAdapter {
 			}
 			return mCursor;
 		} catch (Exception e) {
-			// Log.v("GOT!",e.toString());
+			Log.e(MODULE_TAG, e.toString());
 			return null;
 		}
 	}
@@ -311,8 +338,8 @@ public class DbAdapter {
 	 * created return the new rowId for that trip, otherwise return a -1 to
 	 * indicate failure.
 	 */
-	public long createTrip(String purp, double starttime, String fancystart,
-			String note) {
+	public long createTrip(String purp, double starttime, String fancystart, String note) {
+
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(K_TRIP_PURP, purp);
 		initialValues.put(K_TRIP_START, starttime);
@@ -320,7 +347,11 @@ public class DbAdapter {
 		initialValues.put(K_TRIP_NOTE, note);
 		initialValues.put(K_TRIP_STATUS, TripData.STATUS_INCOMPLETE);
 
-		return mDb.insert(DATA_TABLE_TRIPS, null, initialValues);
+		Long rowId = mDb.insert(DATA_TABLE_TRIPS, null, initialValues);
+
+		Log.i(MODULE_TAG, "Insert " + DATA_TABLE_TRIPS + "[" + String.valueOf(rowId) +"]");
+
+		return rowId;
 	}
 
 	public long createTrip() {
@@ -335,7 +366,12 @@ public class DbAdapter {
 	 * @return true if deleted, false otherwise
 	 */
 	public boolean deleteTrip(long rowId) {
-		return mDb.delete(DATA_TABLE_TRIPS, K_TRIP_ROWID + "=" + rowId, null) > 0;
+
+		int numRows = mDb.delete(DATA_TABLE_TRIPS, K_TRIP_ROWID + "=" + rowId, null);
+
+		Log.i(MODULE_TAG, "Deleted " + DATA_TABLE_TRIPS + "[" + String.valueOf(rowId) +"]: " + String.valueOf(numRows) + " rows.");
+
+		return  numRows > 0;
 	}
 
 	/**
@@ -417,6 +453,8 @@ public class DbAdapter {
 
 	public boolean updateTrip(long tripid, String purp, String fancystart, String fancyinfo, String note) {
 
+		int numRows;
+
 		ContentValues contentValues = new ContentValues();
 
 		contentValues.put(K_TRIP_PURP, purp);
@@ -424,10 +462,18 @@ public class DbAdapter {
 		contentValues.put(K_TRIP_FANCYINFO, fancyinfo);
 		contentValues.put(K_TRIP_NOTE, note);
 
-		return mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null) > 0;
+		numRows = mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null);
+
+		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
+				+ "](" + K_TRIP_PURP + ", " + K_TRIP_FANCYSTART + ", " + K_TRIP_FANCYINFO + ", " + K_TRIP_NOTE +"): "
+				+ String.valueOf(numRows) + " rows.");
+
+		return numRows > 0;
 	}
 
 	public boolean updateTrip(long tripid, int lathigh, int latlow, int lgthigh, int lgtlow, float distance) {
+
+		int numRows;
 
 		ContentValues contentValues = new ContentValues();
 
@@ -437,34 +483,27 @@ public class DbAdapter {
 		contentValues.put(K_TRIP_LGTLO, lgtlow);
 		contentValues.put(K_TRIP_DISTANCE, distance);
 
-		return mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null) > 0;
-	}
+		numRows = mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null);
 
-	public boolean updateTrip(long tripid, String purp, double starttime,
-			String fancystart, String fancyinfo, String note, int lathigh,
-			int latlow, int lgthigh, int lgtlow, float distance) {
+		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
+				+ "](" + K_TRIP_LATHI + ", " + K_TRIP_LATLO + ", " + K_TRIP_LGTHI + ", " + K_TRIP_LGTLO + ", " + K_TRIP_DISTANCE +"): " + String.valueOf(numRows) + " rows.");
 
-		ContentValues initialValues = new ContentValues();
-
-		initialValues.put(K_TRIP_PURP, purp);
-		initialValues.put(K_TRIP_START, starttime);
-		initialValues.put(K_TRIP_FANCYSTART, fancystart);
-		initialValues.put(K_TRIP_NOTE, note);
-		initialValues.put(K_TRIP_LATHI, lathigh);
-		initialValues.put(K_TRIP_LATLO, latlow);
-		initialValues.put(K_TRIP_LGTHI, lgthigh);
-		initialValues.put(K_TRIP_LGTLO, lgtlow);
-		initialValues.put(K_TRIP_FANCYINFO, fancyinfo);
-		initialValues.put(K_TRIP_DISTANCE, distance);
-
-		return mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "=" + tripid, null) > 0;
+		return numRows > 0;
 	}
 
 	public boolean updateTripStatus(long tripid, int tripStatus) {
+
+		int numRows;
+
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(K_TRIP_STATUS, tripStatus);
 
-		return mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "=" + tripid, null) > 0;
+		numRows = mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "=" + tripid, null);
+
+		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
+				+ "](" + K_TRIP_STATUS +"): " + String.valueOf(numRows) + " rows.");
+
+		return numRows > 0;
 	}
 
 	// ************************************************************************
@@ -477,10 +516,11 @@ public class DbAdapter {
 	 * indicate failure.
 	 */
 
-	public long createNote(int noteType, double noterecorded,
+	public long createNote(long tripid, int noteType, double noterecorded,
 			String notefancystart, String notedetails, String noteimageurl,
 			byte[] noteimagedata) {
 		ContentValues initialValues = new ContentValues();
+		initialValues.put(K_NOTE_TRIP_ID, tripid);
 		initialValues.put(K_NOTE_TYPE, noteType);
 		initialValues.put(K_NOTE_RECORDED, noterecorded);
 		initialValues.put(K_NOTE_FANCYSTART, notefancystart);
@@ -499,8 +539,8 @@ public class DbAdapter {
 		return mDb.insert(DATA_TABLE_NOTES, null, initialValues);
 	}
 
-	public long createNote() {
-		return createNote(-1, System.currentTimeMillis(), "", "", "", null);
+	public long createNote(long tripid) {
+		return createNote(tripid, -1, System.currentTimeMillis(), "", "", "", null);
 	}
 
 	/**
@@ -521,7 +561,7 @@ public class DbAdapter {
 	 */
 	public Cursor fetchAllNotes() {
 		Cursor c = mDb.query(DATA_TABLE_NOTES,
-				new String[] { K_NOTE_ROWID, K_NOTE_TYPE, K_NOTE_RECORDED,
+				new String[] { K_NOTE_ROWID, K_NOTE_TRIP_ID, K_NOTE_TYPE, K_NOTE_RECORDED,
 						K_NOTE_FANCYSTART, K_NOTE_DETAILS, K_NOTE_IMGURL,
 						K_NOTE_IMGDATA, K_NOTE_LAT, K_NOTE_LGT, K_NOTE_ACC,
 						K_NOTE_ALT, K_NOTE_SPEED, K_NOTE_STATUS }, null, null,
@@ -576,7 +616,7 @@ public class DbAdapter {
 	 */
 	public Cursor fetchNote(long rowId) throws SQLException {
 		Cursor mCursor = mDb.query(true, DATA_TABLE_NOTES,
-				new String[] { K_NOTE_ROWID, K_SEGMENT_TRIP_ID, K_NOTE_RECORDED,
+				new String[] { K_NOTE_ROWID, K_NOTE_TRIP_ID, K_NOTE_TYPE, K_NOTE_RECORDED,
 						K_NOTE_FANCYSTART, K_NOTE_DETAILS, K_NOTE_IMGURL,
 						K_NOTE_IMGDATA, K_NOTE_LAT, K_NOTE_LGT, K_NOTE_ACC,
 						K_NOTE_ALT, K_NOTE_SPEED, K_NOTE_STATUS },
@@ -590,33 +630,59 @@ public class DbAdapter {
 		return mCursor;
 	}
 
-	public boolean updateNote(long noteid, double noterecorded,
-			String notefancystart, int notetype, String notedetails,
-			String noteimgurl, byte[] noteimgdata, int latitude, int longitude,
+	public boolean updateNote(long noteid, int latitude, int longitude,
 			float accuracy, double altitude, float speed) {
-		ContentValues initialValues = new ContentValues();
-		initialValues.put(K_NOTE_RECORDED, noterecorded);
-		initialValues.put(K_NOTE_FANCYSTART, notefancystart);
-		initialValues.put(K_NOTE_LAT, latitude);
-		initialValues.put(K_NOTE_LGT, longitude);
-		initialValues.put(K_NOTE_ACC, accuracy);
-		initialValues.put(K_NOTE_ALT, altitude);
-		initialValues.put(K_NOTE_SPEED, speed);
-		initialValues.put(K_NOTE_TYPE, notetype);
-		initialValues.put(K_NOTE_DETAILS, notedetails);
-		initialValues.put(K_NOTE_IMGURL, noteimgurl);
-		initialValues.put(K_NOTE_IMGDATA, noteimgdata);
 
-		return mDb.update(DATA_TABLE_NOTES, initialValues, K_NOTE_ROWID + "="
-				+ noteid, null) > 0;
+		ContentValues contentValues = new ContentValues();
+
+		contentValues.put(K_NOTE_LAT, latitude);
+		contentValues.put(K_NOTE_LGT, longitude);
+		contentValues.put(K_NOTE_ACC, accuracy);
+		contentValues.put(K_NOTE_ALT, altitude);
+		contentValues.put(K_NOTE_SPEED, speed);
+
+		int numRows = mDb.update(DATA_TABLE_NOTES, contentValues, K_NOTE_ROWID + "=" + noteid, null);
+
+		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_NOTES + "[" + String.valueOf(noteid)
+				+ "](" + K_NOTE_LAT + ", " + K_NOTE_LGT + ", " + K_NOTE_ACC + ", " + K_NOTE_ALT + ", "
+				+ K_NOTE_SPEED +"): " + String.valueOf(numRows) + " rows.");
+
+		return numRows > 0;
 	}
+
+	public boolean updateNote(long noteid, String notefancystart, int notetype,
+			 String notedetails, String noteimgurl, byte[] noteimgdata) {
+
+		ContentValues contentValues = new ContentValues();
+
+		contentValues.put(K_NOTE_FANCYSTART, notefancystart);
+		contentValues.put(K_NOTE_TYPE, notetype);
+		contentValues.put(K_NOTE_DETAILS, notedetails);
+		contentValues.put(K_NOTE_IMGURL, noteimgurl);
+		contentValues.put(K_NOTE_IMGDATA, noteimgdata);
+
+		int numRows = mDb.update(DATA_TABLE_NOTES, contentValues, K_NOTE_ROWID + "=" + noteid, null);
+
+		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_NOTES + "[" + String.valueOf(noteid)
+				+ "](" + K_NOTE_FANCYSTART + ", " + K_NOTE_TYPE + ", " + K_NOTE_DETAILS + ", "
+				+ K_NOTE_IMGURL + ", " + K_NOTE_IMGDATA +"): "
+				+ String.valueOf(numRows) + " rows.");
+
+		return numRows > 0;
+	}
+
+
 
 	public boolean updateNoteStatus(long noteid, int noteStatus) {
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(K_NOTE_STATUS, noteStatus);
 
-		return mDb.update(DATA_TABLE_NOTES, initialValues, K_NOTE_ROWID + "="
-				+ noteid, null) > 0;
+		int numRows = mDb.update(DATA_TABLE_NOTES, initialValues, K_NOTE_ROWID + "=" + noteid, null);
+
+		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_NOTES + "[" + String.valueOf(noteid)
+				+ "](" + K_NOTE_STATUS +"): " + String.valueOf(numRows) + " rows.");
+
+		return numRows > 0;
 	}
 
 	// ************************************************************************

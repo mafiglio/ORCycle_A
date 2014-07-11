@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.os.IBinder;
+import android.provider.Settings.System;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
@@ -197,4 +198,29 @@ public class MyApplication extends android.app.Application {
     public void cancelRecording() {
     	recordingService.cancelRecording();
     }
+
+	public String getDeviceId() {
+		String androidId = System.getString(this.getContentResolver(),
+				System.ANDROID_ID);
+		String androidBase = "androidDeviceId-";
+
+		if (androidId == null) { // This happens when running in the Emulator
+			final String emulatorId = "android-RunningAsTestingDeleteMe";
+			return emulatorId;
+		}
+		String deviceId = androidBase.concat(androidId);
+
+		// Fix String Length
+		int a = deviceId.length();
+		if (a < 32) {
+			for (int i = 0; i < 32 - a; i++) {
+				deviceId = deviceId.concat("0");
+			}
+		} else {
+			deviceId = deviceId.substring(0, 32);
+		}
+
+		return deviceId;
+	}
+
 }

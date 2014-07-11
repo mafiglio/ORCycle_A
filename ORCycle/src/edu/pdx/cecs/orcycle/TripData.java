@@ -157,30 +157,32 @@ public class TripData {
 
 		mDb.openReadOnly();
 
-		Cursor tripdetails = mDb.fetchTrip(tripid);
-		startTime = tripdetails.getDouble(tripdetails.getColumnIndex("start"));
-		segmentStartTime = System.currentTimeMillis();
-		lathigh = tripdetails.getInt(tripdetails.getColumnIndex("lathi"));
-		latlow = tripdetails.getInt(tripdetails.getColumnIndex("latlo"));
-		lgthigh = tripdetails.getInt(tripdetails.getColumnIndex("lgthi"));
-		lgtlow = tripdetails.getInt(tripdetails.getColumnIndex("lgtlo"));
-		status = tripdetails.getInt(tripdetails.getColumnIndex("status"));
-		endTime = tripdetails.getDouble(tripdetails.getColumnIndex("endtime"));
-		distance = tripdetails.getFloat(tripdetails.getColumnIndex("distance"));
+		try {
+			Cursor tripdetails = mDb.fetchTrip(tripid);
+			startTime = tripdetails.getDouble(tripdetails.getColumnIndex(DbAdapter.K_TRIP_START));
+			segmentStartTime = System.currentTimeMillis();
+			lathigh = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_LATHI));
+			latlow = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_LATLO));
+			lgthigh = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_LGTHI));
+			lgtlow = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_LGTLO));
+			status = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_STATUS));
+			endTime = tripdetails.getDouble(tripdetails.getColumnIndex(DbAdapter.K_TRIP_END));
+			distance = tripdetails.getFloat(tripdetails.getColumnIndex(DbAdapter.K_TRIP_DISTANCE));
+			purp = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_PURP));
+			fancystart = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_FANCYSTART));
+			info = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_FANCYINFO));
 
-		purp = tripdetails.getString(tripdetails.getColumnIndex("purp"));
-		fancystart = tripdetails.getString(tripdetails.getColumnIndex("fancystart"));
-		info = tripdetails.getString(tripdetails.getColumnIndex("fancyinfo"));
+			tripdetails.close();
 
-		tripdetails.close();
-
-		Cursor points = mDb.fetchAllCoordsForTrip(tripid);
-		if (points != null) {
-			numpoints = points.getCount();
-			points.close();
+			Cursor points = mDb.fetchAllCoordsForTrip(tripid);
+			if (points != null) {
+				numpoints = points.getCount();
+				points.close();
+			}
 		}
-
-		mDb.close();
+		finally {
+			mDb.close();
+		}
 	}
 
 	void dropTrip() {
@@ -254,12 +256,14 @@ public class TripData {
 
 	public void startPause() {
 
-		double currentTime = System.currentTimeMillis();
-		// record the beginning of pause time
-		pauseStartedTime = currentTime;
-		totalTravelTime += (currentTime - segmentStartTime);
-		segmentStartTime = RESET_START_TIME;
-		isPaused = true;
+		if (!isPaused) {
+			double currentTime = System.currentTimeMillis();
+			// record the beginning of pause time
+			pauseStartedTime = currentTime;
+			totalTravelTime += (currentTime - segmentStartTime);
+			segmentStartTime = RESET_START_TIME;
+			isPaused = true;
+		}
 	}
 
 	public void finishPause() {
