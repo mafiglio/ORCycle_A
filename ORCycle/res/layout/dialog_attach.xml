@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <ImageButton
+        android:id="@+id/attach_stored_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="60dp"
+        android:background="@drawable/digital_camera_128"
+        android:contentDescription="Add Photo"
+        android:scaleType="fitXY" />
+
+    <ImageButton
+        android:id="@+id/attach_camera_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="42dp"
+        android:background="@drawable/digital_camera_128"
+        android:contentDescription="Take Picture Photo"
+        android:scaleType="fitXY" />
+            
+</RelativeLayout>

@@ -13,6 +13,9 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 public class SavedNotesAdapter extends SimpleCursorAdapter {
+
+	private final static String MODULE_TAG = "SavedNotesAdapter";
+
 	private final Context context;
 	private final String[] from;
 	private final int[] to;
@@ -29,81 +32,87 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View rowView = inflater.inflate(R.layout.saved_notes_list_item, parent,
-				false);
-		TextView textViewStart = (TextView) rowView
-				.findViewById(R.id.TextViewStart);
-		TextView textViewType = (TextView) rowView
-				.findViewById(R.id.TextViewType);
-		ImageView imageNoteType = (ImageView) rowView
-				.findViewById(R.id.ImageNoteType);
+		try {
+			LayoutInflater inflater = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View rowView = inflater.inflate(R.layout.saved_notes_list_item, parent,
+					false);
+			TextView textViewStart = (TextView) rowView
+					.findViewById(R.id.TextViewStart);
+			TextView textViewType = (TextView) rowView
+					.findViewById(R.id.TextViewType);
+			ImageView imageNoteType = (ImageView) rowView
+					.findViewById(R.id.ImageNoteType);
 
-		cursor.moveToPosition(position);
+			cursor.moveToPosition(position);
 
-		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  h:mm a");
-		// sdfStart.setTimeZone(TimeZone.getTimeZone("UTC"));
-		Double startTime = cursor.getDouble(cursor
-				.getColumnIndex("noterecorded"));
-		String start = sdfStart.format(startTime);
+			SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  h:mm a");
+			// sdfStart.setTimeZone(TimeZone.getTimeZone("UTC"));
+			Double startTime = cursor.getDouble(cursor
+					.getColumnIndex("noterecorded"));
+			String start = sdfStart.format(startTime);
 
-		textViewStart.setText(start);
+			textViewStart.setText(start);
 
-		String[] noteTypeText = new String[] { "Pavement issue",
-				"Traffic signal", "Enforcement", "Bike parking",
-				"Bike lane issue", "Note this issue", "Bike parking",
-				"Bike shops", "Public restrooms", "Secret passage",
-				"Water fountains", "Note this asset" };
+			String[] noteTypeText = new String[] { "Pavement issue",
+					"Traffic signal", "Enforcement", "Bike parking",
+					"Bike lane issue", "Note this issue", "Bike parking",
+					"Bike shops", "Public restrooms", "Secret passage",
+					"Water fountains", "Note this asset" };
 
-		textViewType.setText(noteTypeText[cursor.getInt(cursor
-				.getColumnIndex("notetype"))]);
+			textViewType.setText(noteTypeText[cursor.getInt(cursor
+					.getColumnIndex("notetype"))]);
 
-		int status = cursor.getInt(cursor.getColumnIndex("notestatus"));
-		Log.v("Jason", "Status: " + status);
+			int status = cursor.getInt(cursor.getColumnIndex("notestatus"));
+			Log.v(MODULE_TAG, "Status: " + status);
 
-		if (status == 2) {
-			switch (cursor.getInt(cursor.getColumnIndex("notetype"))) {
-			case 0:
-				imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-				break;
-			case 1:
-				imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-				break;
-			case 2:
-				imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-				break;
-			case 3:
-				imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-				break;
-			case 4:
-				imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-				break;
-			case 5:
-				imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-				break;
-			case 6:
-				imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
-				break;
-			case 7:
-				imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
-				break;
-			case 8:
-				imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
-				break;
-			case 9:
-				imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
-				break;
-			case 10:
-				imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
-				break;
-			case 11:
-				imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
-				break;
+			if (status == 2) {
+				switch (cursor.getInt(cursor.getColumnIndex("notetype"))) {
+				case 0:
+					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
+					break;
+				case 1:
+					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
+					break;
+				case 2:
+					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
+					break;
+				case 3:
+					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
+					break;
+				case 4:
+					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
+					break;
+				case 5:
+					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
+					break;
+				case 6:
+					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
+					break;
+				case 7:
+					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
+					break;
+				case 8:
+					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
+					break;
+				case 9:
+					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
+					break;
+				case 10:
+					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
+					break;
+				case 11:
+					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
+					break;
+				}
+			} else if (status == 1) {
+				imageNoteType.setImageResource(R.drawable.failedupload_high);
 			}
-		} else if (status == 1) {
-			imageNoteType.setImageResource(R.drawable.failedupload_high);
+			return rowView;
 		}
-		return rowView;
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return null;
 	}
 }

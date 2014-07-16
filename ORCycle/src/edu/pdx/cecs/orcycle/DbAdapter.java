@@ -54,11 +54,12 @@ import android.util.Log;
 public class DbAdapter {
 
 	// Database versions
-	private static final int DATABASE_VERSION = 24;
 	private static final int DATABASE_VERSION_NOTES = 21;
 	private static final int DATABASE_VERSION_PAUSES = 22;
 	private static final int DATABASE_VERSION_SEGMENTS = 23;
 	private static final int DATABASE_VERSION_NOTES_V2 = 24;
+	private static final int DATABASE_VERSION_NOTES_V3 = 25;
+	private static final int DATABASE_VERSION = DATABASE_VERSION_NOTES_V3;
 
 	// Trips Table columns
 	public static final String K_TRIP_ROWID = "_id";
@@ -148,6 +149,8 @@ public class DbAdapter {
 			+ "FOREIGN KEY(tripid) REFERENCES TRIPS(_id));";
 
 	private static final String TABLE_DROP_SEGMENTS = "drop table segments;";
+	private static final String TABLE_DROP_NOTES = "drop table notes;";
+	private static final String TABLE_DROP_PAUSES = "drop table pauses;";
 	private static final String TABLE_NOTES_ADD_COLUMN = "ALTER TABLE notes ADD COLUMN tripid int;";
 
 	private static final String DATABASE_NAME = "data";
@@ -171,7 +174,6 @@ public class DbAdapter {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-
 			db.execSQL(TABLE_CREATE_TRIPS);
 			db.execSQL(TABLE_CREATE_COORDS);
 			db.execSQL(TABLE_CREATE_NOTES);
@@ -182,40 +184,42 @@ public class DbAdapter {
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-			boolean newNotesTable = false;
+			Log.w(MODULE_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
 
-			try {
-				Log.w(MODULE_TAG, "Upgrading database from version " + oldVersion + " to "
-						+ newVersion + ", which will simply add a new Note table.");
-
-				// Data Migration:
-				// New Install: this function not called. onCreate called.
-				// Upgrading: don't touch trip and coords table, create notes table
-
-				if (oldVersion < DATABASE_VERSION_NOTES) {
-					db.execSQL(TABLE_CREATE_NOTES);
-					newNotesTable = true;
-				}
-
-				if (oldVersion < DATABASE_VERSION_PAUSES)
+			if (oldVersion < DATABASE_VERSION_PAUSES)
+				try {
 					db.execSQL(TABLE_CREATE_PAUSES);
-
-				if (oldVersion < DATABASE_VERSION_SEGMENTS)
-					db.execSQL(TABLE_CREATE_SEGMENTS);
-
-				if (oldVersion < DATABASE_VERSION_NOTES_V2 && !newNotesTable) {
-					db.execSQL(TABLE_NOTES_ADD_COLUMN);
 				}
-			}
-			catch(Exception ex) {
-				Log.e(MODULE_TAG, ex.getMessage());
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+
+			if (oldVersion < DATABASE_VERSION_SEGMENTS)
+				try {
+					db.execSQL(TABLE_CREATE_SEGMENTS);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+
+			if (oldVersion < DATABASE_VERSION_NOTES_V3) {
+				try {
+					db.execSQL(TABLE_DROP_NOTES);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+				try {
+					db.execSQL(TABLE_CREATE_NOTES);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
 			}
 		}
 
 		@Override
 		public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			if (newVersion < DATABASE_VERSION_SEGMENTS)
-				db.execSQL(TABLE_DROP_SEGMENTS);
 		}
 	}
 
@@ -560,16 +564,18 @@ public class DbAdapter {
 	 * @return Cursor over all notes
 	 */
 	public Cursor fetchAllNotes() {
-		Cursor c = mDb.query(DATA_TABLE_NOTES,
+
+		Cursor cursor = mDb.query(DATA_TABLE_NOTES,
 				new String[] { K_NOTE_ROWID, K_NOTE_TRIP_ID, K_NOTE_TYPE, K_NOTE_RECORDED,
 						K_NOTE_FANCYSTART, K_NOTE_DETAILS, K_NOTE_IMGURL,
 						K_NOTE_IMGDATA, K_NOTE_LAT, K_NOTE_LGT, K_NOTE_ACC,
 						K_NOTE_ALT, K_NOTE_SPEED, K_NOTE_STATUS }, null, null,
 				null, null, "-" + K_NOTE_RECORDED);
-		if (c != null && c.getCount() > 0) {
-			c.moveToFirst();
+
+		if ((cursor != null) && (cursor.getCount() > 0)) {
+			cursor.moveToFirst();
 		}
-		return c;
+		return cursor;
 	}
 
 	public Cursor fetchUnsentNotes() {
@@ -643,8 +649,8 @@ public class DbAdapter {
 
 		int numRows = mDb.update(DATA_TABLE_NOTES, contentValues, K_NOTE_ROWID + "=" + noteid, null);
 
-		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_NOTES + "[" + String.valueOf(noteid)
-				+ "](" + K_NOTE_LAT + ", " + K_NOTE_LGT + ", " + K_NOTE_ACC + ", " + K_NOTE_ALT + ", "
+		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_NOTES + "[" + String.valueOf(noteid) + "]("
+				+ K_NOTE_LAT + ", " + K_NOTE_LGT + ", " + K_NOTE_ACC + ", " + K_NOTE_ALT + ", "
 				+ K_NOTE_SPEED +"): " + String.valueOf(numRows) + " rows.");
 
 		return numRows > 0;

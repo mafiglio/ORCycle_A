@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +21,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+
 public class FragmentUserInfo extends Fragment {
+
+	public final static String MODULE_TAG = "FragmentUserInfo";
 
 	public final static int PREF_AGE = 1;
 	public final static int PREF_ZIPHOME = 2;
@@ -47,144 +51,119 @@ public class FragmentUserInfo extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		View rootView = inflater.inflate(R.layout.activity_user_info,
-				container, false);
-		// getActivity().getActionBar().setDisplayShowTitleEnabled(true);
-		// getActivity().getActionBar().setDisplayShowHomeEnabled(true);
 
-		// Don't pop up the soft keyboard until user clicks!
-		// this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		Log.v(MODULE_TAG, "onCreateView");
+		View rootView = null;
 
-		// not using seekbar any more
-		// SeekBar sb = (SeekBar) findViewById(R.id.SeekCycleFreq);
-		// sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-		//
-		// @Override
-		// public void onStopTrackingTouch(SeekBar arg0) {
-		// // TODO Auto-generated method stub
-		// }
-		//
-		// @Override
-		// public void onStartTrackingTouch(SeekBar arg0) {
-		// // TODO Auto-generated method stub
-		// }
-		//
-		// @Override
-		// public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
-		// TextView tv = (TextView) findViewById(R.id.TextFreq);
-		// tv.setText(freqDesc[arg1 / 100]);
-		// }
-		// });
+		try {
+			rootView = inflater.inflate(R.layout.activity_user_info,
+					container, false);
 
-		// put on Cycle Atlanta bar
-		// Button btn = (Button) findViewById(R.id.saveButton);
-		// btn.setOnClickListener(new OnClickListener() {
-		// @Override
-		// public void onClick(View arg0) {
-		// Intent intent = new Intent(UserInfoActivity.this,
-		// MainInput.class);
-		// startActivity(intent);
-		// finish();
-		// }
-		//
-		// });
+			final Button GetStarted = (Button) rootView
+					.findViewById(R.id.buttonGetStarted);
+			GetStarted.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					// Toast.makeText(getActivity(), "Get Started Clicked",
+					// Toast.LENGTH_LONG).show();
+					Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri
+							.parse("http://cycleatlanta.org/instructions-v2/"));
+					startActivity(browserIntent);
+				}
+			});
 
-		final Button GetStarted = (Button) rootView
-				.findViewById(R.id.buttonGetStarted);
-		GetStarted.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				// Toast.makeText(getActivity(), "Get Started Clicked",
-				// Toast.LENGTH_LONG).show();
-				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri
-						.parse("http://cycleatlanta.org/instructions-v2/"));
-				startActivity(browserIntent);
-			}
-		});
+			SharedPreferences settings = getActivity().getSharedPreferences(
+					"PREFS", 0);
+			Map<String, ?> prefs = settings.getAll();
+			for (Entry<String, ?> p : prefs.entrySet()) {
+				int key = Integer.parseInt(p.getKey());
+				// CharSequence value = (CharSequence) p.getValue();
 
-		SharedPreferences settings = getActivity().getSharedPreferences(
-				"PREFS", 0);
-		Map<String, ?> prefs = settings.getAll();
-		for (Entry<String, ?> p : prefs.entrySet()) {
-			int key = Integer.parseInt(p.getKey());
-			// CharSequence value = (CharSequence) p.getValue();
-
-			switch (key) {
-			case PREF_AGE:
-				((Spinner) rootView.findViewById(R.id.ageSpinner))
-						.setSelection(((Integer) p.getValue()).intValue());
-				break;
-			case PREF_ETHNICITY:
-				((Spinner) rootView.findViewById(R.id.ethnicitySpinner))
-						.setSelection(((Integer) p.getValue()).intValue());
-				break;
-			case PREF_INCOME:
-				((Spinner) rootView.findViewById(R.id.incomeSpinner))
-						.setSelection(((Integer) p.getValue()).intValue());
-				break;
-			case PREF_HHSIZE:
-				((Spinner)rootView.findViewById(R.id.hhSizeSpinner))
+				switch (key) {
+				case PREF_AGE:
+					((Spinner) rootView.findViewById(R.id.ageSpinner))
+							.setSelection(((Integer) p.getValue()).intValue());
+					break;
+				case PREF_ETHNICITY:
+					((Spinner) rootView.findViewById(R.id.ethnicitySpinner))
+							.setSelection(((Integer) p.getValue()).intValue());
+					break;
+				case PREF_INCOME:
+					((Spinner) rootView.findViewById(R.id.incomeSpinner))
+							.setSelection(((Integer) p.getValue()).intValue());
+					break;
+				case PREF_HHSIZE:
+					((Spinner)rootView.findViewById(R.id.hhSizeSpinner))
+						.setSelection(((Integer)p.getValue()).intValue());
+				case PREF_HHVEHICLES:
+					((Spinner)rootView.findViewById(R.id.hhVehiclesSpinner))
 					.setSelection(((Integer)p.getValue()).intValue());
-			case PREF_HHVEHICLES:
-				((Spinner)rootView.findViewById(R.id.hhVehiclesSpinner))
-				.setSelection(((Integer)p.getValue()).intValue());
-			case PREF_RIDERTYPE:
-				((Spinner) rootView.findViewById(R.id.ridertypeSpinner))
-						.setSelection(((Integer) p.getValue()).intValue());
-				break;
-			case PREF_RIDERHISTORY:
-				((Spinner) rootView.findViewById(R.id.riderhistorySpinner))
-						.setSelection(((Integer) p.getValue()).intValue());
-				break;
-			case PREF_ZIPHOME:
-				((EditText) rootView.findViewById(R.id.TextZipHome))
-						.setText((CharSequence) p.getValue());
-				break;
-			case PREF_ZIPWORK:
-				((EditText) rootView.findViewById(R.id.TextZipWork))
-						.setText((CharSequence) p.getValue());
-				break;
-			case PREF_ZIPSCHOOL:
-				((EditText) rootView.findViewById(R.id.TextZipSchool))
-						.setText((CharSequence) p.getValue());
-				break;
-			case PREF_EMAIL:
-				((EditText) rootView.findViewById(R.id.editEmail))
-						.setText((CharSequence) p.getValue());
-				break;
-			case PREF_CYCLEFREQ:
-				((Spinner) rootView.findViewById(R.id.cyclefreqSpinner))
-						.setSelection(((Integer) p.getValue()).intValue());
-				// ((SeekBar)
-				// findViewById(R.id.SeekCycleFreq)).setProgress(((Integer)
-				// p.getValue()).intValue());
-				break;
-			case PREF_GENDER:
-				((Spinner) rootView.findViewById(R.id.genderSpinner))
-						.setSelection(((Integer) p.getValue()).intValue());
-				break;
-			// int x = ((Integer) p.getValue()).intValue();
-			// if (x == 2) {
-			// ((RadioButton) findViewById(R.id.ButtonMale)).setChecked(true);
-			// } else if (x == 1) {
-			// ((RadioButton) findViewById(R.id.ButtonFemale)).setChecked(true);
-			// }
-			// break;
+				case PREF_RIDERTYPE:
+					((Spinner) rootView.findViewById(R.id.ridertypeSpinner))
+							.setSelection(((Integer) p.getValue()).intValue());
+					break;
+				case PREF_RIDERHISTORY:
+					((Spinner) rootView.findViewById(R.id.riderhistorySpinner))
+							.setSelection(((Integer) p.getValue()).intValue());
+					break;
+				case PREF_ZIPHOME:
+					((EditText) rootView.findViewById(R.id.TextZipHome))
+							.setText((CharSequence) p.getValue());
+					break;
+				case PREF_ZIPWORK:
+					((EditText) rootView.findViewById(R.id.TextZipWork))
+							.setText((CharSequence) p.getValue());
+					break;
+				case PREF_ZIPSCHOOL:
+					((EditText) rootView.findViewById(R.id.TextZipSchool))
+							.setText((CharSequence) p.getValue());
+					break;
+				case PREF_EMAIL:
+					((EditText) rootView.findViewById(R.id.editEmail))
+							.setText((CharSequence) p.getValue());
+					break;
+				case PREF_CYCLEFREQ:
+					((Spinner) rootView.findViewById(R.id.cyclefreqSpinner))
+							.setSelection(((Integer) p.getValue()).intValue());
+					// ((SeekBar)
+					// findViewById(R.id.SeekCycleFreq)).setProgress(((Integer)
+					// p.getValue()).intValue());
+					break;
+				case PREF_GENDER:
+					((Spinner) rootView.findViewById(R.id.genderSpinner))
+							.setSelection(((Integer) p.getValue()).intValue());
+					break;
+				// int x = ((Integer) p.getValue()).intValue();
+				// if (x == 2) {
+				// ((RadioButton) findViewById(R.id.ButtonMale)).setChecked(true);
+				// } else if (x == 1) {
+				// ((RadioButton) findViewById(R.id.ButtonFemale)).setChecked(true);
+				// }
+				// break;
+				}
 			}
+
+			final EditText edittextEmail = (EditText) rootView
+					.findViewById(R.id.editEmail);
+
+			edittextEmail.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+			setHasOptionsMenu(true);
 		}
-
-		final EditText edittextEmail = (EditText) rootView
-				.findViewById(R.id.editEmail);
-
-		edittextEmail.setImeOptions(EditorInfo.IME_ACTION_DONE);
-
-		setHasOptionsMenu(true);
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 		return rootView;
 	}
 
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		// savePreferences();
+		try {
+			// savePreferences();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	public void savePreferences() {
@@ -293,20 +272,36 @@ public class FragmentUserInfo extends Fragment {
 	/* Creates the menu items */
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// Inflate the menu items for use in the action bar
-		inflater.inflate(R.menu.user_info, menu);
-		super.onCreateOptionsMenu(menu, inflater);
+		try {
+			// Inflate the menu items for use in the action bar
+			inflater.inflate(R.menu.user_info, menu);
+			super.onCreateOptionsMenu(menu, inflater);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	/* Handles item selections */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
+
 		case R.id.action_save_user_info:
-			savePreferences();
-			return true;
+
+			try {
+				savePreferences();
+				return true;
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			return false;
+
 		default:
+
 			return super.onOptionsItemSelected(item);
 		}
 	}
