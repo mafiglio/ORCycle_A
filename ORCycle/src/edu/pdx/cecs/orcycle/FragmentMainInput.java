@@ -168,7 +168,7 @@ public class FragmentMainInput extends Fragment
 			txtCalories = (TextView) rootView.findViewById(R.id.textViewCalories);
 		}
 		catch(Exception ex) {
-			Log.e("Jason", ex.getMessage());
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
 
 		return rootView;
@@ -233,14 +233,19 @@ public class FragmentMainInput extends Fragment
 
 		try {
 
-			Log.v(MODULE_TAG, "Cycle: MainInput onResume");
+			Log.v(MODULE_TAG, "onResume()");
 
 			// Use a timer to update the trip duration.
 			timer = new Timer();
 			timer.scheduleAtFixedRate(new TimerTask() {
 				@Override
 				public void run() {
-					mHandler.post(mUpdateTimer);
+					try {
+						mHandler.post(mUpdateTimer);
+					}
+					catch(Exception ex) {
+						Log.e(MODULE_TAG, ex.getMessage());
+					}
 				}
 			}, 0, 1000); // every second
 
@@ -356,7 +361,12 @@ public class FragmentMainInput extends Fragment
 	final Handler mHandler = new Handler();
 	final Runnable mUpdateTimer = new Runnable() {
 		public void run() {
-			updateTimer();
+			try {
+				updateTimer();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 		}
 	};
 
@@ -538,7 +548,12 @@ public class FragmentMainInput extends Fragment
 		 * Description: Handles onClick for view
 		 */
 		public void onClick(View v) {
-			buildAlertMessageSaveClicked();
+			try {
+				buildAlertMessageSaveClicked();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 		}
 	}
 
@@ -708,51 +723,67 @@ public class FragmentMainInput extends Fragment
 		builder.setNegativeButton("Save",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-						// save
-						// If we have points, go to the save-trip activity
-						// trip.numpoints > 0
 
-						myApp.finishRecording();
-						int numTripPoints = myApp.getStatus().getTripData().numpoints;
-						if (numTripPoints > 0) {
-							// Save trip so far (points and extent, but no purpose or notes)
-							fi = new Intent(getActivity(), TripPurposeActivity.class);
+						try {
+							dialog.cancel();
+							// save
+							// If we have points, go to the save-trip activity
+							// trip.numpoints > 0
 
-							startActivity(fi);
-							getActivity().overridePendingTransition(
-									R.anim.slide_in_right,
-									R.anim.slide_out_left);
-							getActivity().finish();
+							myApp.finishRecording();
+							int numTripPoints = myApp.getStatus().getTripData().numpoints;
+							if (numTripPoints > 0) {
+								// Save trip so far (points and extent, but no purpose or notes)
+								fi = new Intent(getActivity(), TripPurposeActivity.class);
+
+								startActivity(fi);
+								getActivity().overridePendingTransition(
+										R.anim.slide_in_right,
+										R.anim.slide_out_left);
+								getActivity().finish();
+							}
+							// Otherwise, cancel and go back to main screen
+							else {
+								Toast.makeText(getActivity(),
+										"No GPS data acquired; nothing to submit.",
+										Toast.LENGTH_SHORT).show();
+
+								cancelRecording();
+							}
+							setupButtons();
 						}
-						// Otherwise, cancel and go back to main screen
-						else {
-							Toast.makeText(getActivity(),
-									"No GPS data acquired; nothing to submit.",
-									Toast.LENGTH_SHORT).show();
-
-							cancelRecording();
+						catch(Exception ex) {
+							Log.e(MODULE_TAG, ex.getMessage());
 						}
-						setupButtons();
 					}
 				});
 
 		builder.setNeutralButton("Discard",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-						// discard
-						cancelRecording();
-						setupButtons();
+						try {
+							dialog.cancel();
+							// discard
+							cancelRecording();
+							setupButtons();
+						}
+						catch(Exception ex) {
+							Log.e(MODULE_TAG, ex.getMessage());
+						}
 					}
 				});
 
 		builder.setPositiveButton("Cancel",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-						// continue
-						setupButtons();
+						try {
+							dialog.cancel();
+							// continue
+							setupButtons();
+						}
+						catch(Exception ex) {
+							Log.e(MODULE_TAG, ex.getMessage());
+						}
 					}
 				});
 		final AlertDialog alert = builder.create();

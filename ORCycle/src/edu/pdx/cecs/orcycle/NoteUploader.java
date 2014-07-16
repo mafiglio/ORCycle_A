@@ -56,6 +56,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 	private byte[] imageData;
 	private Boolean imageDataNull;
 
+	private static final String MODULE_TAG = "NoteUploader";
 	private static final int kSaveNoteProtocolVersion = 4;
 
 	private static final String NOTE_TRIP_ID = "p";
@@ -82,50 +83,71 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 	}
 
 	private JSONObject getNoteJSON(long noteId) throws JSONException {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		//df.setTimeZone(TimeZone.getTimeZone("UTC"));
+		try {
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			//df.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-		mDb.openReadOnly();
-		Cursor noteCursor = mDb.fetchNote(noteId);
+			mDb.openReadOnly();
+			try {
+				Cursor noteCursor = mDb.fetchNote(noteId);
 
-		Map<String, Integer> fieldMap = new HashMap<String, Integer>();
-		fieldMap.put(NOTE_TRIP_ID, noteCursor.getColumnIndex(DbAdapter.K_NOTE_TRIP_ID));
-		fieldMap.put(NOTE_RECORDED, noteCursor.getColumnIndex(DbAdapter.K_NOTE_RECORDED));
-		fieldMap.put(NOTE_LAT, noteCursor.getColumnIndex(DbAdapter.K_NOTE_LAT));
-		fieldMap.put(NOTE_LGT, noteCursor.getColumnIndex(DbAdapter.K_NOTE_LGT));
-		fieldMap.put(NOTE_HACC, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ACC));
-		fieldMap.put(NOTE_VACC, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ACC));
-		fieldMap.put(NOTE_ALT, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ALT));
-		fieldMap.put(NOTE_SPEED, noteCursor.getColumnIndex(DbAdapter.K_NOTE_SPEED));
-		fieldMap.put(NOTE_TYPE, noteCursor.getColumnIndex(DbAdapter.K_NOTE_TYPE));
-		fieldMap.put(NOTE_DETAILS, noteCursor.getColumnIndex(DbAdapter.K_NOTE_DETAILS));
-		fieldMap.put(NOTE_IMGURL, noteCursor.getColumnIndex(DbAdapter.K_NOTE_IMGURL));
+				try {
+					Map<String, Integer> fieldMap = new HashMap<String, Integer>();
+					fieldMap.put(NOTE_TRIP_ID, noteCursor.getColumnIndex(DbAdapter.K_NOTE_TRIP_ID));
+					fieldMap.put(NOTE_RECORDED, noteCursor.getColumnIndex(DbAdapter.K_NOTE_RECORDED));
+					fieldMap.put(NOTE_LAT, noteCursor.getColumnIndex(DbAdapter.K_NOTE_LAT));
+					fieldMap.put(NOTE_LGT, noteCursor.getColumnIndex(DbAdapter.K_NOTE_LGT));
+					fieldMap.put(NOTE_HACC, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ACC));
+					fieldMap.put(NOTE_VACC, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ACC));
+					fieldMap.put(NOTE_ALT, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ALT));
+					fieldMap.put(NOTE_SPEED, noteCursor.getColumnIndex(DbAdapter.K_NOTE_SPEED));
+					fieldMap.put(NOTE_TYPE, noteCursor.getColumnIndex(DbAdapter.K_NOTE_TYPE));
+					fieldMap.put(NOTE_DETAILS, noteCursor.getColumnIndex(DbAdapter.K_NOTE_DETAILS));
+					fieldMap.put(NOTE_IMGURL, noteCursor.getColumnIndex(DbAdapter.K_NOTE_IMGURL));
 
-		JSONObject note = new JSONObject();
+					JSONObject note = new JSONObject();
 
-		note.put(NOTE_TRIP_ID, noteCursor.getInt(fieldMap.get(NOTE_TRIP_ID)));
-		note.put(NOTE_RECORDED, df.format(noteCursor.getDouble(fieldMap.get(NOTE_RECORDED))));
-		note.put(NOTE_LAT, noteCursor.getDouble(fieldMap.get(NOTE_LAT)) / 1E6);
-		note.put(NOTE_LGT, noteCursor.getDouble(fieldMap.get(NOTE_LGT)) / 1E6);
-		note.put(NOTE_HACC, noteCursor.getDouble(fieldMap.get(NOTE_HACC)));
-		note.put(NOTE_VACC, noteCursor.getDouble(fieldMap.get(NOTE_VACC)));
-		note.put(NOTE_ALT, noteCursor.getDouble(fieldMap.get(NOTE_ALT)));
-		note.put(NOTE_SPEED, noteCursor.getDouble(fieldMap.get(NOTE_SPEED)));
-		note.put(NOTE_TYPE, noteCursor.getInt(fieldMap.get(NOTE_TYPE)));
-		note.put(NOTE_DETAILS, noteCursor.getString(fieldMap.get(NOTE_DETAILS)));
-		note.put(NOTE_IMGURL, noteCursor.getString(fieldMap.get(NOTE_IMGURL)));
+					note.put(NOTE_TRIP_ID, noteCursor.getInt(fieldMap.get(NOTE_TRIP_ID)));
+					note.put(NOTE_RECORDED, df.format(noteCursor.getDouble(fieldMap.get(NOTE_RECORDED))));
+					note.put(NOTE_LAT, noteCursor.getDouble(fieldMap.get(NOTE_LAT)) / 1E6);
+					note.put(NOTE_LGT, noteCursor.getDouble(fieldMap.get(NOTE_LGT)) / 1E6);
+					note.put(NOTE_HACC, noteCursor.getDouble(fieldMap.get(NOTE_HACC)));
+					note.put(NOTE_VACC, noteCursor.getDouble(fieldMap.get(NOTE_VACC)));
+					note.put(NOTE_ALT, noteCursor.getDouble(fieldMap.get(NOTE_ALT)));
+					note.put(NOTE_SPEED, noteCursor.getDouble(fieldMap.get(NOTE_SPEED)));
+					note.put(NOTE_TYPE, noteCursor.getInt(fieldMap.get(NOTE_TYPE)));
+					note.put(NOTE_DETAILS, noteCursor.getString(fieldMap.get(NOTE_DETAILS)));
+					note.put(NOTE_IMGURL, noteCursor.getString(fieldMap.get(NOTE_IMGURL)));
 
-		if (noteCursor.getString(fieldMap.get(NOTE_IMGURL)).equals("")) {
-			imageDataNull = true;
-		} else {
-			imageDataNull = false;
-			imageData = noteCursor.getBlob(noteCursor
-					.getColumnIndex(DbAdapter.K_NOTE_IMGDATA));
+					if (noteCursor.getString(fieldMap.get(NOTE_IMGURL)).equals("")) {
+						imageDataNull = true;
+					} else {
+						imageDataNull = false;
+						imageData = noteCursor.getBlob(noteCursor
+								.getColumnIndex(DbAdapter.K_NOTE_IMGDATA));
+					}
+					return note;
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+				finally {
+					noteCursor.close();
+				}
+				return null;
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			finally {
+				mDb.close();
+			}
+			return null;
 		}
-
-		noteCursor.close();
-		mDb.close();
-		return note;
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return null;
 	}
 
 	public String getDeviceId() {
@@ -247,40 +269,44 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 			conn.setRequestProperty("Cycleatl-Protocol-Version", "4");
 
 			DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-			try {
-				JSONObject note = getNoteJSON(currentNoteId);
-				String deviceId = getDeviceId();
+			JSONObject note;
+			if (null != (note = getNoteJSON(currentNoteId))) {
+				try {
+					String deviceId = getDeviceId();
 
-				dos.writeBytes(notesep + ContentField("note") + note.toString() + "\r\n");
-				dos.writeBytes(notesep + ContentField("version") + String.valueOf(kSaveNoteProtocolVersion) + "\r\n");
-				dos.writeBytes(notesep + ContentField("device") + deviceId + "\r\n");
+					dos.writeBytes(notesep + ContentField("note") + note.toString() + "\r\n");
+					dos.writeBytes(notesep + ContentField("version") + String.valueOf(kSaveNoteProtocolVersion) + "\r\n");
+					dos.writeBytes(notesep + ContentField("device") + deviceId + "\r\n");
 
-				if (imageDataNull == false) {
-					dos.writeBytes(notesep
-							+ "Content-Disposition: form-data; name=\"file\"; filename=\""
-							+ deviceId + ".jpg\"\r\n"
-							+ "Content-Type: image/jpeg\r\n\r\n");
-					dos.write(imageData);
-					dos.writeBytes("\r\n");
+					if (imageDataNull == false) {
+						dos.writeBytes(notesep
+								+ "Content-Disposition: form-data; name=\"file\"; filename=\""
+								+ deviceId + ".jpg\"\r\n"
+								+ "Content-Type: image/jpeg\r\n\r\n");
+						dos.write(imageData);
+						dos.writeBytes("\r\n");
+					}
+
+					dos.writeBytes(notesep);
+					dos.flush();
 				}
-
-				dos.writeBytes(notesep);
-
-				dos.flush();
+				finally {
+					dos.close();
+				}
+				int serverResponseCode = conn.getResponseCode();
+				String serverResponseMessage = conn.getResponseMessage();
+				// JSONObject responseData = new JSONObject(serverResponseMessage);
+				Log.v("Jason", "HTTP Response is : " + serverResponseMessage + ": "
+						+ serverResponseCode);
+				if (serverResponseCode == 201 || serverResponseCode == 202) {
+					mDb.open();
+					mDb.updateNoteStatus(currentNoteId, NoteData.STATUS_SENT);
+					mDb.close();
+					result = true;
+				}
 			}
-			finally {
-				dos.close();
-			}
-			int serverResponseCode = conn.getResponseCode();
-			String serverResponseMessage = conn.getResponseMessage();
-			// JSONObject responseData = new JSONObject(serverResponseMessage);
-			Log.v("Jason", "HTTP Response is : " + serverResponseMessage + ": "
-					+ serverResponseCode);
-			if (serverResponseCode == 201 || serverResponseCode == 202) {
-				mDb.open();
-				mDb.updateNoteStatus(currentNoteId, NoteData.STATUS_SENT);
-				mDb.close();
-				result = true;
+			else {
+				result = false;
 			}
 		} catch (IllegalStateException e) {
 			e.printStackTrace();

@@ -25,7 +25,8 @@
     <string name="btn_lbl_pause">Pause</string>
     <string name="btn_lbl_resume">Resume</string>
     <string name="btn_lbl_finish">Finish</string>
-        
+    <string name="chooser_image">Select Image</string>
+    
     <string-array name="ageArray">
         <item></item>
         <item>Less than 18</item>

@@ -47,154 +47,40 @@ public class FragmentSavedNotesSection extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.activity_saved_notes, null);
 
-		Log.v("Jason", "Cycle: SavedNotes onCreateView");
+		View rootView = null;
 
-		setHasOptionsMenu(true);
+		try {
+			rootView = inflater.inflate(R.layout.activity_saved_notes, null);
 
-		listSavedNotes = (ListView) rootView
-				.findViewById(R.id.listViewSavedNotes);
-		populateNoteList(listSavedNotes);
+			Log.v(MODULE_TAG, "Cycle: SavedNotes onCreateView");
 
-		final DbAdapter mDb = new DbAdapter(getActivity());
-		mDb.open();
+			setHasOptionsMenu(true);
 
-		// Clean up any bad notes from crashes
-		int cleanedNotes = mDb.cleanNoteTables();
-		if (cleanedNotes > 0) {
-			Toast.makeText(getActivity(),
-					"" + cleanedNotes + " bad notes(s) removed.",
-					Toast.LENGTH_SHORT).show();
+			listSavedNotes = (ListView) rootView
+					.findViewById(R.id.listViewSavedNotes);
+			populateNoteList(listSavedNotes);
+
+			final DbAdapter mDb = new DbAdapter(getActivity());
+			mDb.open();
+			try {
+				// Clean up any bad notes from crashes
+				int cleanedNotes = mDb.cleanNoteTables();
+				if (cleanedNotes > 0) {
+					Toast.makeText(getActivity(),
+							"" + cleanedNotes + " bad notes(s) removed.",
+							Toast.LENGTH_SHORT).show();
+				}
+			}
+			finally {
+				mDb.close();
+			}
+
+			noteIdArray.clear();
 		}
-		mDb.close();
-
-		noteIdArray.clear();
-
-//		listSavedNotes.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-//		listSavedNotes
-//				.setMultiChoiceModeListener(new MultiChoiceModeListener() {
-//
-//					@Override
-//					public void onItemCheckedStateChanged(ActionMode mode,
-//							int position, long id, boolean checked) {
-//						// Here you can do something when items are
-//						// selected/de-selected,
-//						// such as update the title in the CAB
-//						// highlight
-//
-//						if (noteIdArray.indexOf(id) > -1) {
-//							noteIdArray.remove(id);
-//							listSavedNotes.getChildAt(position)
-//									.setBackgroundColor(
-//											Color.parseColor("#80ffffff"));
-//						} else {
-//							noteIdArray.add(id);
-//							listSavedNotes.getChildAt(position)
-//									.setBackgroundColor(
-//											Color.parseColor("#ff33b5e5"));
-//						}
-//
-//						// Toast.makeText(getActivity(),
-//						// "Selected: " + noteIdArray, Toast.LENGTH_SHORT)
-//						// .show();
-//
-//						if (noteIdArray.size() == 0) {
-//							saveMenuItemDelete.setEnabled(false);
-//						} else {
-//							saveMenuItemDelete.setEnabled(true);
-//						}
-//
-//						mode.setTitle(noteIdArray.size() + " Selected");
-//					}
-//
-//					@Override
-//					public boolean onActionItemClicked(ActionMode mode,
-//							MenuItem item) {
-//						// Respond to clicks on the actions in the CAB
-//						switch (item.getItemId()) {
-//						case R.id.action_delete_saved_notes:
-//							// delete selected notes
-//							for (int i = 0; i < noteIdArray.size(); i++) {
-//								deleteNote(noteIdArray.get(i));
-//							}
-//							mode.finish(); // Action picked, so close the CAB
-//							return true;
-//						case R.id.action_upload_saved_notes:
-//							// upload selected notes
-//							// for (int i = 0; i < noteIdArray.size(); i++) {
-//							// retryNoteUpload(noteIdArray.get(i));
-//							// }
-//							retryNoteUpload(storedID);
-//							mode.finish(); // Action picked, so close the CAB
-//							return true;
-//						default:
-//							return false;
-//						}
-//					}
-//
-//					@Override
-//					public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//						// Inflate the menu for the CAB
-//						MenuInflater inflater = mode.getMenuInflater();
-//						inflater.inflate(R.menu.saved_notes_context_menu, menu);
-//						return true;
-//					}
-//
-//					@Override
-//					public void onDestroyActionMode(ActionMode mode) {
-//						// Here you can make any necessary updates to the
-//						// activity when
-//						// the CAB is removed. By default, selected items are
-//						// deselected/unchecked.
-//						mActionModeNote = null;
-//						noteIdArray.clear();
-//						for (int i = 0; i < listSavedNotes.getCount(); i++) {
-//							Log.v("Jason", "Count" + listSavedNotes.getCount());
-//							Log.v("Jason",
-//									"Count" + listSavedNotes.getChildCount());
-//							if (listSavedNotes.getChildCount() != 0) {
-//								listSavedNotes.getChildAt(i)
-//										.setBackgroundColor(
-//												Color.parseColor("#80ffffff"));
-//							}
-//
-//						}
-//					}
-//
-//					@Override
-//					public boolean onPrepareActionMode(ActionMode mode,
-//							Menu menu) {
-//						// Here you can perform updates to the CAB due to
-//						// an invalidate() request
-//						Log.v("Jason", "Prepare");
-//						saveMenuItemDelete = menu.getItem(0);
-//						saveMenuItemDelete.setEnabled(false);
-//						saveMenuItemUpload = menu.getItem(1);
-//
-//						int flag = 1;
-//						for (int i = 0; i < listSavedNotes.getCount(); i++) {
-//							allNotes.moveToPosition(i);
-//							flag = flag
-//									* (allNotes.getInt(allNotes
-//											.getColumnIndex("notestatus")) - 1);
-//							if (flag == 0) {
-//								storedID = allNotes.getLong(allNotes
-//										.getColumnIndex("_id"));
-//								Log.v("Jason", "" + storedID);
-//								break;
-//							}
-//						}
-//						if (flag == 1) {
-//							saveMenuItemUpload.setEnabled(false);
-//						} else {
-//							saveMenuItemUpload.setEnabled(true);
-//						}
-//
-//						mode.setTitle(noteIdArray.size() + " Selected");
-//						return false;
-//					}
-//				});
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 
 		return rootView;
 	}
@@ -215,7 +101,7 @@ public class FragmentSavedNotesSection extends Fragment {
 		// may be called multiple times if the mode is invalidated.
 		@Override
 		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-			Log.v("Jason", "Prepare");
+			Log.v(MODULE_TAG, "Prepare");
 			saveMenuItemDelete = menu.getItem(0);
 			saveMenuItemDelete.setEnabled(false);
 			saveMenuItemUpload = menu.getItem(1);
@@ -228,7 +114,7 @@ public class FragmentSavedNotesSection extends Fragment {
 								.getColumnIndex("notestatus")) - 1);
 				if (flag == 0) {
 					storedID = allNotes.getLong(allNotes.getColumnIndex("_id"));
-					Log.v("Jason", "" + storedID);
+					Log.v(MODULE_TAG, "" + storedID);
 					break;
 				}
 			}
@@ -245,26 +131,43 @@ public class FragmentSavedNotesSection extends Fragment {
 		// Called when the user selects a contextual menu item
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-			switch (item.getItemId()) {
-			case R.id.action_delete_saved_notes:
-				// delete selected notes
-				for (int i = 0; i < noteIdArray.size(); i++) {
-					deleteNote(noteIdArray.get(i));
+
+			try {
+				switch (item.getItemId()) {
+				case R.id.action_delete_saved_notes:
+					try {
+						// delete selected notes
+						for (int i = 0; i < noteIdArray.size(); i++) {
+							deleteNote(noteIdArray.get(i));
+						}
+					}
+					catch(Exception ex) {
+						Log.e(MODULE_TAG, ex.getMessage());
+					}
+					mode.finish(); // Action picked, so close the CAB
+					return true;
+				case R.id.action_upload_saved_notes:
+					try {
+						// upload selected notes
+						// for (int i = 0; i < noteIdArray.size(); i++) {
+						// retryNoteUpload(noteIdArray.get(i));
+						// }
+						// Log.v("Jason", "" + storedID);
+						retryNoteUpload(storedID);
+					}
+					catch(Exception ex) {
+						Log.e(MODULE_TAG, ex.getMessage());
+					}
+					mode.finish(); // Action picked, so close the CAB
+					return true;
+				default:
+					return false;
 				}
-				mode.finish(); // Action picked, so close the CAB
-				return true;
-			case R.id.action_upload_saved_notes:
-				// upload selected notes
-				// for (int i = 0; i < noteIdArray.size(); i++) {
-				// retryNoteUpload(noteIdArray.get(i));
-				// }
-				// Log.v("Jason", "" + storedID);
-				retryNoteUpload(storedID);
-				mode.finish(); // Action picked, so close the CAB
-				return true;
-			default:
-				return false;
 			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			return false;
 		}
 
 		// Called when the user exits the action mode
@@ -289,8 +192,8 @@ public class FragmentSavedNotesSection extends Fragment {
 	void populateNoteList(ListView lv) {
 		// Get list from the real phone database. W00t!
 		final DbAdapter mDb = new DbAdapter(getActivity());
-		mDb.open();
-
+		//mDb.open();
+		mDb.openReadOnly();
 		try {
 			allNotes = mDb.fetchAllNotes();
 
@@ -303,49 +206,56 @@ public class FragmentSavedNotesSection extends Fragment {
 					CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
 			lv.setAdapter(sna);
-		} catch (SQLException sqle) {
+		} catch (SQLException ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 			// Do nothing, for now!
+		} catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
 		mDb.close();
 
 		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v, int pos,
-					long id) {
-				allNotes.moveToPosition(pos);
-				if (mActionModeNote == null) {
-					if (allNotes.getInt(allNotes.getColumnIndex("notestatus")) == 2) {
-						Intent i = new Intent(getActivity(),
-								NoteMapActivity.class);
-						i.putExtra("shownote", id);
-						startActivity(i);
-					} else if (allNotes.getInt(allNotes
-							.getColumnIndex("notestatus")) == 1) {
-						// Toast.makeText(getActivity(), "Unsent",
+			public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
+				try {
+					allNotes.moveToPosition(pos);
+					if (mActionModeNote == null) {
+						if (allNotes.getInt(allNotes.getColumnIndex("notestatus")) == 2) {
+							Intent i = new Intent(getActivity(),
+									NoteMapActivity.class);
+							i.putExtra("shownote", id);
+							startActivity(i);
+						} else if (allNotes.getInt(allNotes
+								.getColumnIndex("notestatus")) == 1) {
+							// Toast.makeText(getActivity(), "Unsent",
+							// Toast.LENGTH_SHORT).show();
+							buildAlertMessageUnuploadedNoteClicked(id);
+
+							// Log.v("Jason",
+							// ""+allNotes.getLong(allNotes.getColumnIndex("_id")));
+						}
+
+					} else {
+						// highlight
+						if (noteIdArray.indexOf(id) > -1) {
+							noteIdArray.remove(id);
+							v.setBackgroundColor(Color.parseColor("#80ffffff"));
+						} else {
+							noteIdArray.add(id);
+							v.setBackgroundColor(Color.parseColor("#ff33b5e5"));
+						}
+						// Toast.makeText(getActivity(), "Selected: " + noteIdArray,
 						// Toast.LENGTH_SHORT).show();
-						buildAlertMessageUnuploadedNoteClicked(id);
+						if (noteIdArray.size() == 0) {
+							saveMenuItemDelete.setEnabled(false);
+						} else {
+							saveMenuItemDelete.setEnabled(true);
+						}
 
-						// Log.v("Jason",
-						// ""+allNotes.getLong(allNotes.getColumnIndex("_id")));
+						mActionModeNote.setTitle(noteIdArray.size() + " Selected");
 					}
-
-				} else {
-					// highlight
-					if (noteIdArray.indexOf(id) > -1) {
-						noteIdArray.remove(id);
-						v.setBackgroundColor(Color.parseColor("#80ffffff"));
-					} else {
-						noteIdArray.add(id);
-						v.setBackgroundColor(Color.parseColor("#ff33b5e5"));
-					}
-					// Toast.makeText(getActivity(), "Selected: " + noteIdArray,
-					// Toast.LENGTH_SHORT).show();
-					if (noteIdArray.size() == 0) {
-						saveMenuItemDelete.setEnabled(false);
-					} else {
-						saveMenuItemDelete.setEnabled(true);
-					}
-
-					mActionModeNote.setTitle(noteIdArray.size() + " Selected");
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
 				}
 			}
 		});
@@ -354,29 +264,43 @@ public class FragmentSavedNotesSection extends Fragment {
 	}
 
 	private void buildAlertMessageUnuploadedNoteClicked(final long position) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(
-				getActivity());
-		builder.setTitle("Upload Note");
-		builder.setMessage("Do you want to upload this note?");
-		builder.setNegativeButton("Upload",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-						retryNoteUpload(position);
-						// Toast.makeText(getActivity(),"Send Clicked: "+position,
-						// Toast.LENGTH_SHORT).show();
-					}
-				});
+		try {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle("Upload Note");
+			builder.setMessage("Do you want to upload this note?");
+			builder.setNegativeButton("Upload",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							try {
+								dialog.cancel();
+								retryNoteUpload(position);
+								// Toast.makeText(getActivity(),"Send Clicked: "+position,
+								// Toast.LENGTH_SHORT).show();
+							}
+							catch(Exception ex) {
+								Log.e(MODULE_TAG, ex.getMessage());
+							}
+						}
+					});
 
-		builder.setPositiveButton("Cancel",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-						// continue
-					}
-				});
-		final AlertDialog alert = builder.create();
-		alert.show();
+			builder.setPositiveButton("Cancel",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							try {
+								dialog.cancel();
+							// continue
+							}
+							catch(Exception ex) {
+								Log.e(MODULE_TAG, ex.getMessage());
+							}
+						}
+					});
+			final AlertDialog alert = builder.create();
+			alert.show();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	private void retryNoteUpload(long noteId) {
@@ -393,8 +317,12 @@ public class FragmentSavedNotesSection extends Fragment {
 	private void deleteNote(long noteId) {
 		DbAdapter mDbHelper = new DbAdapter(getActivity());
 		mDbHelper.open();
-		mDbHelper.deleteNote(noteId);
-		mDbHelper.close();
+		try {
+			mDbHelper.deleteNote(noteId);
+		}
+		finally {
+			mDbHelper.close();
+		}
 		listSavedNotes.invalidate();
 		populateNoteList(listSavedNotes);
 	}
@@ -403,47 +331,75 @@ public class FragmentSavedNotesSection extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		Log.v("Jason", "Cycle: SavedNotes onResume");
-		populateNoteList(listSavedNotes);
+		try {
+			Log.v(MODULE_TAG, "Cycle: SavedNotes onResume");
+			populateNoteList(listSavedNotes);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		Log.v("Jason", "Cycle: SavedNotes onPause");
+		try {
+			Log.v(MODULE_TAG, "Cycle: SavedNotes onPause");
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		Log.v("Jason", "Cycle: SavedNotes onDestroyView");
+		try {
+			Log.v(MODULE_TAG, "Cycle: SavedNotes onDestroyView");
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	/* Creates the menu items */
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// Inflate the menu items for use in the action bar
-		inflater.inflate(R.menu.saved_notes, menu);
-		super.onCreateOptionsMenu(menu, inflater);
+		try {
+			// Inflate the menu items for use in the action bar
+			inflater.inflate(R.menu.saved_notes, menu);
+			super.onCreateOptionsMenu(menu, inflater);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	/* Handles item selections */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle presses on the action bar items
-		switch (item.getItemId()) {
-		case R.id.action_edit_saved_notes:
-			// edit
-			if (mActionModeNote != null) {
-				return false;
-			}
+		try {
+			// Handle presses on the action bar items
+			switch (item.getItemId()) {
 
-			// Start the CAB using the ActionMode.Callback defined above
-			mActionModeNote = getActivity().startActionMode(
-					mActionModeCallbackNote);
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case R.id.action_edit_saved_notes:
+				// edit
+				if (mActionModeNote != null) {
+					return false;
+				}
+
+				// Start the CAB using the ActionMode.Callback defined above
+				mActionModeNote = getActivity().startActionMode(
+						mActionModeCallbackNote);
+				return true;
+
+			default:
+				return super.onOptionsItemSelected(item);
+			}
 		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return false;
 	}
 }

@@ -1,13 +1,20 @@
 package edu.pdx.cecs.orcycle;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -23,9 +30,16 @@ import android.widget.ImageView;
 
 public class NoteDetailActivity extends Activity {
 
+	public static final String MODULE_TAG = "NoteDetailActivity";
+
 	public static final String EXTRA_NOTE_ID = "noteid";
 	public static final String EXTRA_NOTE_TYPE = "noteType";
 	public static final String EXTRA_IS_RECORDING = "isRecording";
+
+	private static final int CAMERA_REQUEST = 1888;
+	private static final int IMAGE_REQUEST = 1889;
+
+	private Dialog attachDialog;
 
 	long noteid;
 	int noteType = 0;
@@ -36,7 +50,7 @@ public class NoteDetailActivity extends Activity {
 	String imageURL = "";
 	byte[] noteImage;
 	Bitmap photo;
-	private static final int CAMERA_REQUEST = 1888;
+	Uri uri;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,40 +81,154 @@ public class NoteDetailActivity extends Activity {
 		Button addPhotoButton = (Button) findViewById(R.id.addPhotoButton);
 		addPhotoButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-				startActivityForResult(cameraIntent, CAMERA_REQUEST);
+				try {
+					showAttachDialog();
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
 			}
 		});
 	}
 
+	// *********************************************************************************
+	// *                                Attach Dialog
+	// *********************************************************************************
+
+	private void showAttachDialog() {
+
+		attachDialog = new Dialog(this);
+		attachDialog.setContentView(R.layout.dialog_attach);
+		attachDialog.setTitle("chooser_image");
+		attachDialog.setCancelable(true);
+
+		((ImageButton) attachDialog.findViewById(R.id.attach_stored_image))
+			.setOnClickListener(new AttachStoredImage_OnClickListener());
+
+		((ImageButton) attachDialog.findViewById(R.id.attach_camera_photo))
+			.setOnClickListener(new AttachCameraPhoto_OnClickListener());
+
+		attachDialog.show();
+	}
+
+    /**
+     * Class: AttachStoredImage_OnClickListener
+     *
+     * Description: Callback to be invoked when AttachStoredImage button is clicked
+     */
+	private final class AttachStoredImage_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+			try {
+				// initialize global result variables
+				photo = null; uri = null;
+
+				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+				intent.setType("image/*");
+				// assures chooser picks a stream that can be opened
+				intent.addCategory(Intent.CATEGORY_OPENABLE);
+				// assures that the image is local to the device (not internet)
+				intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+
+				startActivityForResult(
+						Intent.createChooser(intent, getResources().getText(R.string.chooser_image)),
+						IMAGE_REQUEST);
+				attachDialog.dismiss();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+    /**
+     * Class: AttachCameraPhoto_OnClickListener
+     *
+     * Description: Callback to be invoked when AttachCameraPhoto button is clicked
+     */
+	private final class AttachCameraPhoto_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+			try {
+				Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+				startActivityForResult(cameraIntent, CAMERA_REQUEST);
+				attachDialog.dismiss();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+	// *********************************************************************************
+	// *                           Image and Camera Results
+	// *********************************************************************************
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-			photo = (Bitmap) data.getExtras().get("data");
-			imageView.setImageBitmap(photo);
-			Log.v("Jason", "Image Photo: " + photo);
+		try {
+			if (resultCode == RESULT_OK) {
+				if (requestCode == CAMERA_REQUEST) {
+					uri = null;
+					photo = (Bitmap) data.getExtras().get("data");
+					imageView.setImageBitmap(photo);
+				}
+				else if (requestCode == IMAGE_REQUEST) {
+					photo = null;
+					uri = data.getData();
+					imageView.setImageURI(uri);
+				}
+			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
 
 	public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
+
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		bitmap.compress(CompressFormat.JPEG ,100, outputStream);
+
+		bitmap.compress(CompressFormat.JPEG, 100, outputStream);
 		return outputStream.toByteArray();
 	}
 
+	public static byte[] getBitmapAsByteArray(Context context, Uri uri) {
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inSampleSize = 16;
+
+	    try {
+	    	InputStream inStream = context.getContentResolver().openInputStream(uri);
+	    	Bitmap bitmap = BitmapFactory.decodeStream(inStream, null, options);
+	    	bitmap.compress(CompressFormat.JPEG, 100, outputStream);
+			return outputStream.toByteArray();
+	    }
+	    catch(FileNotFoundException ex) {
+	    	Log.e(MODULE_TAG, ex.getMessage());
+	    }
+    	return null;
+	}
+
+	@SuppressLint("SimpleDateFormat")
 	void submit(String noteDetailsToUpload, byte[] noteImage) {
 
+		int byteCount;
+
 		NoteData note = NoteData.fetchNote(NoteDetailActivity.this, noteid);
-		//note.populateDetails();
 
-		// date format for displaying in lists
-		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm a");
-		String fancyStartTime = sdfStart.format(note.startTime);
-		Log.v("Jason", "Start: " + fancyStartTime);
+		// format start time displayed in note list
+		String fancyStartTime = (new SimpleDateFormat("MMMM d, y  HH:mm a")).format(note.startTime);
 
-		// date format for creating image filenames
-		SimpleDateFormat sdfStart2 = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-		String date = sdfStart2.format(note.startTime);
+		// format date for creating image filename
+		String date = (new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")).format(note.startTime);
 
 		// Save the note details to the phone database. W00t!
 
@@ -108,12 +236,21 @@ public class NoteDetailActivity extends Activity {
 		if (photo != null) {
 			noteImage = getBitmapAsByteArray(photo);
 			imageURL = deviceId + "-" + date + "-type-" + noteType;
-		} else {
+		}
+		else if (uri != null) {
+			noteImage = getBitmapAsByteArray(this, uri);
+			imageURL = uri.toString();
+			imageURL = uri.getPath();
+		}
+		else {
 			noteImage = null;
 			imageURL = "";
 		}
 
-		// finalize note values and store in local database
+		byteCount = noteImage.length;
+
+
+		// store note details in local database
 		note.updateNote(noteType, fancyStartTime, noteDetailsToUpload, imageURL, noteImage);
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 
@@ -130,10 +267,12 @@ public class NoteDetailActivity extends Activity {
 		Intent intent;
 
 		if (isRecording) {
+			// Intent to go back to recording tab
 			intent = new Intent(this, TabsConfig.class);
 			this.finish();
 			this.startActivity(intent);
 		} else {
+			// Intent to go to Note map
 			intent = new Intent(this, NoteMapActivity.class);
 			intent.putExtra(NoteMapActivity.EXTRA_NOTE_ID, note.noteid);
 			this.startActivity(intent);

@@ -47,154 +47,37 @@ public class FragmentSavedTripsSection extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.activity_saved_trips, null);
 
-		Log.v("Jason", "Cycle: SavedTrips onCreateView");
+		View rootView = null;
 
-		setHasOptionsMenu(true);
+		try {
+			rootView = inflater.inflate(R.layout.activity_saved_trips, null);
 
-		listSavedTrips = (ListView) rootView
-				.findViewById(R.id.listViewSavedTrips);
-		populateTripList(listSavedTrips);
+			Log.v("Jason", "Cycle: SavedTrips onCreateView");
 
-		final DbAdapter mDb = new DbAdapter(getActivity());
-		mDb.open();
+			setHasOptionsMenu(true);
 
-		// Clean up any bad trips & coords from crashes
-		int cleanedTrips = mDb.cleanTripsCoordsTables();
-		if (cleanedTrips > 0) {
-			Toast.makeText(getActivity(),
-					"" + cleanedTrips + " bad trip(s) removed.",
-					Toast.LENGTH_SHORT).show();
+			listSavedTrips = (ListView) rootView
+					.findViewById(R.id.listViewSavedTrips);
+			populateTripList(listSavedTrips);
+
+			final DbAdapter mDb = new DbAdapter(getActivity());
+			mDb.open();
+
+			// Clean up any bad trips & coords from crashes
+			int cleanedTrips = mDb.cleanTripsCoordsTables();
+			if (cleanedTrips > 0) {
+				Toast.makeText(getActivity(),
+						"" + cleanedTrips + " bad trip(s) removed.",
+						Toast.LENGTH_SHORT).show();
+			}
+			mDb.close();
+
+			tripIdArray.clear();
 		}
-		mDb.close();
-
-		tripIdArray.clear();
-
-//		listSavedTrips.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-//		listSavedTrips
-//				.setMultiChoiceModeListener(new MultiChoiceModeListener() {
-//
-//					@Override
-//					public void onItemCheckedStateChanged(ActionMode mode,
-//							int position, long id, boolean checked) {
-//						// Here you can do something when items are
-//						// selected/de-selected,
-//						// such as update the title in the CAB
-//						// highlight
-//
-//						if (tripIdArray.indexOf(id) > -1) {
-//							tripIdArray.remove(id);
-//							listSavedTrips.getChildAt(position)
-//									.setBackgroundColor(
-//											Color.parseColor("#80ffffff"));
-//						} else {
-//							tripIdArray.add(id);
-//							listSavedTrips.getChildAt(position)
-//									.setBackgroundColor(
-//											Color.parseColor("#ff33b5e5"));
-//						}
-//
-//						// Toast.makeText(getActivity(),
-//						// "Selected: " + tripIdArray, Toast.LENGTH_SHORT)
-//						// .show();
-//
-//						if (tripIdArray.size() == 0) {
-//							saveMenuItemDelete.setEnabled(false);
-//						} else {
-//							saveMenuItemDelete.setEnabled(true);
-//						}
-//
-//						mode.setTitle(tripIdArray.size() + " Selected");
-//					}
-//
-//					@Override
-//					public boolean onActionItemClicked(ActionMode mode,
-//							MenuItem item) {
-//						// Respond to clicks on the actions in the CAB
-//						switch (item.getItemId()) {
-//						case R.id.action_delete_saved_trips:
-//							// delete selected trips
-//							for (int i = 0; i < tripIdArray.size(); i++) {
-//								deleteTrip(tripIdArray.get(i));
-//							}
-//							mode.finish(); // Action picked, so close the CAB
-//							return true;
-//						case R.id.action_upload_saved_trips:
-//							// upload selected trips
-//							// for (int i = 0; i < tripIdArray.size(); i++) {
-//							// retryTripUpload(tripIdArray.get(i));
-//							// }
-//							retryTripUpload(storedID);
-//							mode.finish(); // Action picked, so close the CAB
-//							return true;
-//						default:
-//							return false;
-//						}
-//					}
-//
-//					@Override
-//					public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//						// Inflate the menu for the CAB
-//						MenuInflater inflater = mode.getMenuInflater();
-//						inflater.inflate(R.menu.saved_trips_context_menu, menu);
-//						return true;
-//					}
-//
-//					@Override
-//					public void onDestroyActionMode(ActionMode mode) {
-//						// Here you can make any necessary updates to the
-//						// activity when
-//						// the CAB is removed. By default, selected items are
-//						// deselected/unchecked.
-//						mActionMode = null;
-//						tripIdArray.clear();
-//						for (int i = 0; i < listSavedTrips.getCount(); i++) {
-//							Log.v("Jason", "Count" + listSavedTrips.getCount());
-//							Log.v("Jason",
-//									"Count" + listSavedTrips.getChildCount());
-//							if (listSavedTrips.getChildCount() != 0) {
-//								listSavedTrips.getChildAt(i)
-//										.setBackgroundColor(
-//												Color.parseColor("#80ffffff"));
-//							}
-//
-//						}
-//					}
-//
-//					@Override
-//					public boolean onPrepareActionMode(ActionMode mode,
-//							Menu menu) {
-//						// Here you can perform updates to the CAB due to
-//						// an invalidate() request
-//						Log.v("Jason", "Prepare");
-//						saveMenuItemDelete = menu.getItem(0);
-//						saveMenuItemDelete.setEnabled(false);
-//						saveMenuItemUpload = menu.getItem(1);
-//
-//						int flag = 1;
-//						for (int i = 0; i < listSavedTrips.getCount(); i++) {
-//							allTrips.moveToPosition(i);
-//							flag = flag
-//									* (allTrips.getInt(allTrips
-//											.getColumnIndex("status")) - 1);
-//							if (flag == 0) {
-//								storedID = allTrips.getLong(allTrips
-//										.getColumnIndex("_id"));
-//								Log.v("Jason", "" + storedID);
-//								break;
-//							}
-//						}
-//						if (flag == 1) {
-//							saveMenuItemUpload.setEnabled(false);
-//						} else {
-//							saveMenuItemUpload.setEnabled(true);
-//						}
-//
-//						mode.setTitle(tripIdArray.size() + " Selected");
-//						return false;
-//					}
-//				});
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 
 		return rootView;
 	}
@@ -204,10 +87,16 @@ public class FragmentSavedTripsSection extends Fragment {
 		// Called when the action mode is created; startActionMode() was called
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-			// Inflate a menu resource providing context menu items
-			MenuInflater inflater = mode.getMenuInflater();
-			inflater.inflate(R.menu.saved_trips_context_menu, menu);
-			return true;
+			try {
+				// Inflate a menu resource providing context menu items
+				MenuInflater inflater = mode.getMenuInflater();
+				inflater.inflate(R.menu.saved_trips_context_menu, menu);
+				return true;
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			return false;
 		}
 
 		// Called each time the action mode is shown. Always called after
@@ -215,55 +104,77 @@ public class FragmentSavedTripsSection extends Fragment {
 		// may be called multiple times if the mode is invalidated.
 		@Override
 		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-			Log.v("Jason", "Prepare");
-			saveMenuItemDelete = menu.getItem(0);
-			saveMenuItemDelete.setEnabled(false);
-			saveMenuItemUpload = menu.getItem(1);
+			try {
+				Log.v("Jason", "Prepare");
+				saveMenuItemDelete = menu.getItem(0);
+				saveMenuItemDelete.setEnabled(false);
+				saveMenuItemUpload = menu.getItem(1);
 
-			int flag = 1;
-			for (int i = 0; i < listSavedTrips.getCount(); i++) {
-				allTrips.moveToPosition(i);
-				flag = flag
-						* (allTrips.getInt(allTrips.getColumnIndex("status")) - 1);
-				if (flag == 0) {
-					storedID = allTrips.getLong(allTrips.getColumnIndex("_id"));
-					Log.v("Jason", "" + storedID);
-					break;
+				int flag = 1;
+				for (int i = 0; i < listSavedTrips.getCount(); i++) {
+					allTrips.moveToPosition(i);
+					flag = flag
+							* (allTrips.getInt(allTrips.getColumnIndex("status")) - 1);
+					if (flag == 0) {
+						storedID = allTrips.getLong(allTrips.getColumnIndex("_id"));
+						Log.v("Jason", "" + storedID);
+						break;
+					}
 				}
-			}
-			if (flag == 1) {
-				saveMenuItemUpload.setEnabled(false);
-			} else {
-				saveMenuItemUpload.setEnabled(true);
-			}
+				if (flag == 1) {
+					saveMenuItemUpload.setEnabled(false);
+				} else {
+					saveMenuItemUpload.setEnabled(true);
+				}
 
-			mode.setTitle(tripIdArray.size() + " Selected");
+				mode.setTitle(tripIdArray.size() + " Selected");
+				return false; // Return false if nothing is done
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 			return false; // Return false if nothing is done
 		}
 
 		// Called when the user selects a contextual menu item
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-			switch (item.getItemId()) {
-			case R.id.action_delete_saved_trips:
-				// delete selected trips
-				for (int i = 0; i < tripIdArray.size(); i++) {
-					deleteTrip(tripIdArray.get(i));
+			try {
+				switch (item.getItemId()) {
+				case R.id.action_delete_saved_trips:
+					// delete selected trips
+					for (int i = 0; i < tripIdArray.size(); i++) {
+						try {
+							deleteTrip(tripIdArray.get(i));
+						}
+						catch(Exception ex) {
+							Log.e(MODULE_TAG, ex.getMessage());
+						}
+					}
+					mode.finish(); // Action picked, so close the CAB
+					return true;
+				case R.id.action_upload_saved_trips:
+					// upload selected trips
+					// for (int i = 0; i < tripIdArray.size(); i++) {
+					// retryTripUpload(tripIdArray.get(i));
+					// }
+					// Log.v("Jason", "" + storedID);
+					try {
+						retryTripUpload(storedID);
+					}
+					catch(Exception ex) {
+						Log.e(MODULE_TAG, ex.getMessage());
+					}
+					mode.finish(); // Action picked, so close the CAB
+					return true;
+				default:
+					return false;
 				}
-				mode.finish(); // Action picked, so close the CAB
-				return true;
-			case R.id.action_upload_saved_trips:
-				// upload selected trips
-				// for (int i = 0; i < tripIdArray.size(); i++) {
-				// retryTripUpload(tripIdArray.get(i));
-				// }
-				// Log.v("Jason", "" + storedID);
-				retryTripUpload(storedID);
-				mode.finish(); // Action picked, so close the CAB
-				return true;
-			default:
-				return false;
 			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			return false;
 		}
 
 		// Called when the user exits the action mode
@@ -309,43 +220,47 @@ public class FragmentSavedTripsSection extends Fragment {
 		mDb.close();
 
 		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v, int pos,
-					long id) {
-				allTrips.moveToPosition(pos);
-				if (mActionMode == null) {
-					if (allTrips.getInt(allTrips.getColumnIndex("status")) == 2) {
-						Intent i = new Intent(getActivity(),
-								TripMapActivity.class);
-						i.putExtra("showtrip", id);
-						startActivity(i);
-					} else if (allTrips.getInt(allTrips
-							.getColumnIndex("status")) == 1) {
-						// Toast.makeText(getActivity(), "Unsent",
+			public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
+				try {
+					allTrips.moveToPosition(pos);
+					if (mActionMode == null) {
+						if (allTrips.getInt(allTrips.getColumnIndex("status")) == 2) {
+							Intent i = new Intent(getActivity(),
+									TripMapActivity.class);
+							i.putExtra("showtrip", id);
+							startActivity(i);
+						} else if (allTrips.getInt(allTrips
+								.getColumnIndex("status")) == 1) {
+							// Toast.makeText(getActivity(), "Unsent",
+							// Toast.LENGTH_SHORT).show();
+							buildAlertMessageUnuploadedTripClicked(id);
+
+							// Log.v("Jason",
+							// ""+allTrips.getLong(allTrips.getColumnIndex("_id")));
+						}
+
+					} else {
+						// highlight
+						if (tripIdArray.indexOf(id) > -1) {
+							tripIdArray.remove(id);
+							v.setBackgroundColor(Color.parseColor("#80ffffff"));
+						} else {
+							tripIdArray.add(id);
+							v.setBackgroundColor(Color.parseColor("#ff33b5e5"));
+						}
+						// Toast.makeText(getActivity(), "Selected: " + tripIdArray,
 						// Toast.LENGTH_SHORT).show();
-						buildAlertMessageUnuploadedTripClicked(id);
+						if (tripIdArray.size() == 0) {
+							saveMenuItemDelete.setEnabled(false);
+						} else {
+							saveMenuItemDelete.setEnabled(true);
+						}
 
-						// Log.v("Jason",
-						// ""+allTrips.getLong(allTrips.getColumnIndex("_id")));
+						mActionMode.setTitle(tripIdArray.size() + " Selected");
 					}
-
-				} else {
-					// highlight
-					if (tripIdArray.indexOf(id) > -1) {
-						tripIdArray.remove(id);
-						v.setBackgroundColor(Color.parseColor("#80ffffff"));
-					} else {
-						tripIdArray.add(id);
-						v.setBackgroundColor(Color.parseColor("#ff33b5e5"));
-					}
-					// Toast.makeText(getActivity(), "Selected: " + tripIdArray,
-					// Toast.LENGTH_SHORT).show();
-					if (tripIdArray.size() == 0) {
-						saveMenuItemDelete.setEnabled(false);
-					} else {
-						saveMenuItemDelete.setEnabled(true);
-					}
-
-					mActionMode.setTitle(tripIdArray.size() + " Selected");
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
 				}
 			}
 		});
@@ -354,29 +269,43 @@ public class FragmentSavedTripsSection extends Fragment {
 	}
 
 	private void buildAlertMessageUnuploadedTripClicked(final long position) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(
-				getActivity());
-		builder.setTitle("Upload Trip");
-		builder.setMessage("Do you want to upload this trip?");
-		builder.setNegativeButton("Upload",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-						retryTripUpload(position);
-						// Toast.makeText(getActivity(),"Send Clicked: "+position,
-						// Toast.LENGTH_SHORT).show();
-					}
-				});
+		try {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle("Upload Trip");
+			builder.setMessage("Do you want to upload this trip?");
+			builder.setNegativeButton("Upload",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							try {
+								dialog.cancel();
+								retryTripUpload(position);
+								// Toast.makeText(getActivity(),"Send Clicked: "+position,
+								// Toast.LENGTH_SHORT).show();
+							}
+							catch(Exception ex) {
+								Log.e(MODULE_TAG, ex.getMessage());
+							}
+						}
+					});
 
-		builder.setPositiveButton("Cancel",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-						// continue
-					}
-				});
-		final AlertDialog alert = builder.create();
-		alert.show();
+			builder.setPositiveButton("Cancel",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							try {
+								dialog.cancel();
+								// continue
+							}
+							catch(Exception ex) {
+								Log.e(MODULE_TAG, ex.getMessage());
+							}
+						}
+					});
+			final AlertDialog alert = builder.create();
+			alert.show();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	private void retryTripUpload(long tripId) {
@@ -393,10 +322,14 @@ public class FragmentSavedTripsSection extends Fragment {
 	private void deleteTrip(long tripId) {
 		DbAdapter mDbHelper = new DbAdapter(getActivity());
 		mDbHelper.open();
-		mDbHelper.deleteAllCoordsForTrip(tripId);
-		mDbHelper.deletePauses(tripId);
-		mDbHelper.deleteTrip(tripId);
-		mDbHelper.close();
+		try {
+			mDbHelper.deleteAllCoordsForTrip(tripId);
+			mDbHelper.deletePauses(tripId);
+			mDbHelper.deleteTrip(tripId);
+		}
+		finally {
+			mDbHelper.close();
+		}
 		listSavedTrips.invalidate();
 		populateTripList(listSavedTrips);
 	}
@@ -405,46 +338,72 @@ public class FragmentSavedTripsSection extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		Log.v("Jason", "Cycle: SavedTrips onResume");
-		populateTripList(listSavedTrips);
+		try {
+			Log.v("Jason", "Cycle: SavedTrips onResume");
+			populateTripList(listSavedTrips);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		Log.v("Jason", "Cycle: SavedTrips onPause");
+		try {
+			Log.v("Jason", "Cycle: SavedTrips onPause");
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		Log.v("Jason", "Cycle: SavedTrips onDestroyView");
+		try {
+			Log.v("Jason", "Cycle: SavedTrips onDestroyView");
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	/* Creates the menu items */
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		try {
 		// Inflate the menu items for use in the action bar
 		inflater.inflate(R.menu.saved_trips, menu);
 		super.onCreateOptionsMenu(menu, inflater);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	/* Handles item selections */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle presses on the action bar items
-		switch (item.getItemId()) {
-		case R.id.action_edit_saved_trips:
-			// edit
-			if (mActionMode != null) {
-				return false;
-			}
+		try {
+			// Handle presses on the action bar items
+			switch (item.getItemId()) {
+			case R.id.action_edit_saved_trips:
+				// edit
+				if (mActionMode != null) {
+					return false;
+				}
 
-			// Start the CAB using the ActionMode.Callback defined above
-			mActionMode = getActivity().startActionMode(mActionModeCallback);
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+				// Start the CAB using the ActionMode.Callback defined above
+				mActionMode = getActivity().startActionMode(mActionModeCallback);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+			}
 		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return false;
 	}
 }
