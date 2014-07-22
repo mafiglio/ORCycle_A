@@ -444,7 +444,8 @@ public class FragmentMainInput extends Fragment
 						int state = recordingService.getState();
 						if (state > RecordingService.STATE_IDLE) {
 							if (state == RecordingService.STATE_FULL) {
-								startActivity(new Intent(getActivity(), TripPurposeActivity.class));
+								//startActivity(new Intent(getActivity(), TripPurposeActivity.class));
+								startActivity(new Intent(getActivity(), TripQuestionsActivity.class));
 								getActivity().finish();
 							}
 						}
@@ -734,7 +735,8 @@ public class FragmentMainInput extends Fragment
 							int numTripPoints = myApp.getStatus().getTripData().numpoints;
 							if (numTripPoints > 0) {
 								// Save trip so far (points and extent, but no purpose or notes)
-								fi = new Intent(getActivity(), TripPurposeActivity.class);
+								//fi = new Intent(getActivity(), TripPurposeActivity.class);
+								fi = new Intent(getActivity(), TripQuestionsActivity.class);
 
 								startActivity(fi);
 								getActivity().overridePendingTransition(

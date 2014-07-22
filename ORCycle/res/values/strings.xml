@@ -10,6 +10,7 @@
     <string name="title_activity_main_input">Record</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_trip_purpose">Trip Purpose</string>
+    <string name="title_activity_trip_questions">Trip Description</string>
     <string name="title_activity_user_info">User Information</string>
     <string name="title_activity_trip_map">Trip Map</string>
     <string name="title_activity_saved_trips">Saved Trips</string>
@@ -159,6 +160,74 @@
 	<string name="segment_rating_details_e">E Rating Detailed</string>
 	<string name="segment_rating_details_f">F Rating Detailed</string>
 					
-		
-	
+    <string-array name="tripFrequencyArray">
+        <item></item>
+        <item>Several times a week</item>
+        <item>Several times a month</item>
+        <item>Several times a year</item>
+        <item>Once per year or less</item>
+        <item>First time ever</item>
+    </string-array>
+			
+    <string-array name="tripPurposeArray">
+        <item></item>
+        <item>Commute</item>
+        <item>School</item>
+        <item>Work-related</item>
+        <item>Exercise</item>
+        <item>Social/entertainment</item>
+        <item>Shopping/errands</item>
+        <item>Access to transit or a vehicle</item>
+        <item>Other (custom entry)</item>
+        </string-array>
+			
+    <string-array name="tripRouteChoiceArray">
+        <item>It is direct/fast</item>
+        <item>It has good bike facilities</item>
+        <item>It is enjoyable</item>
+        <item>It is good for a workout</item>
+        <item>It has low traffic/low speeds</item>
+        <item>It has few intersections</item>
+        <item>It has few/easy hills</item>
+        <item>It has other riders/people (I’m not alone)</item>
+        <item>It has beautiful scenery/green</item>
+        <item>I have no other reasonable alternative</item>
+        <item>I do not know other route</item>
+        <item>I found it online or using my phone</item>
+        <item>Other (indicate)</item>
+        </string-array>
+			
+    <string-array name="tripComfortArray">
+        <item></item>
+        <item>Very good</item>
+        <item>Good</item>
+        <item>Average</item>
+        <item>Bad</item>
+        <item>Very bad</item>
+        </string-array>
+			
+    <string-array name="tripExperiencedRiderArray">
+        <item></item>
+        <item>Safe/comfortable for families, children or new riders</item>
+        <item>Safe/comfortable for most riders</item>
+        <item>Safe/comfortable for the average confident rider</item>
+        <item>Only for highly experienced and/or confident riders (not necessarily comfortable)</item>
+        <item>Unacceptable</item>
+        </string-array>
+			
+    <string-array name="tripParticipantsArray">
+        <item>Alone</item>
+        <item>With a child under 2</item>
+        <item>With a child between 2-10</item>
+        <item>With a child/teen over 10</item>
+        <item>With 1 adults</item>
+        <item>With 2+ adults</item>
+        </string-array>
+			
+    <string-array name="tripBikeAccessoryArray">
+        <item>Child seat(s)</item>
+        <item>Electric-assist</item>
+        <item>The cargo area</item>
+        </string-array>
+
 </resources>
