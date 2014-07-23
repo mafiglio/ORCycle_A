@@ -91,31 +91,37 @@ public class SavedTripsAdapter extends SimpleCursorAdapter {
 				rowView.setVisibility(View.VISIBLE);
 			}
 
+			int columnIndex;
+			String value;
+
 			if (status == 2) {
-				if (cursor.getString(cursor.getColumnIndex("purp")).equals(
-						"Commute")) {
-					imageTripPurpose.setImageResource(R.drawable.commute_high);
-				} else if (cursor.getString(cursor.getColumnIndex("purp")).equals(
-						"School")) {
-					imageTripPurpose.setImageResource(R.drawable.school_high);
-				} else if (cursor.getString(cursor.getColumnIndex("purp")).equals(
-						"Work-Related")) {
-					imageTripPurpose.setImageResource(R.drawable.workrel_high);
-				} else if (cursor.getString(cursor.getColumnIndex("purp")).equals(
-						"Exercise")) {
-					imageTripPurpose.setImageResource(R.drawable.exercise_high);
-				} else if (cursor.getString(cursor.getColumnIndex("purp")).equals(
-						"Social")) {
-					imageTripPurpose.setImageResource(R.drawable.social_high);
-				} else if (cursor.getString(cursor.getColumnIndex("purp")).equals(
-						"Shopping")) {
-					imageTripPurpose.setImageResource(R.drawable.shopping_high);
-				} else if (cursor.getString(cursor.getColumnIndex("purp")).equals(
-						"Errand")) {
-					imageTripPurpose.setImageResource(R.drawable.errands_high);
-				} else if (cursor.getString(cursor.getColumnIndex("purp")).equals(
-						"Other")) {
-					imageTripPurpose.setImageResource(R.drawable.other_high);
+				if (-1 != (columnIndex = cursor.getColumnIndex("purp"))) {
+					if (null != (value = cursor.getString(columnIndex))) {
+						if (value.equals("Commute")) {
+							imageTripPurpose.setImageResource(R.drawable.commute_high);
+						}
+						else if (value.equals("School")) {
+							imageTripPurpose.setImageResource(R.drawable.school_high);
+						}
+						else if (value.equals("Work-Related")) {
+							imageTripPurpose.setImageResource(R.drawable.workrel_high);
+						}
+						else if (value.equals("Exercise")) {
+							imageTripPurpose.setImageResource(R.drawable.exercise_high);
+						}
+						else if (value.equals("Social")) {
+							imageTripPurpose.setImageResource(R.drawable.social_high);
+						}
+						else if (value.equals("Shopping")) {
+							imageTripPurpose.setImageResource(R.drawable.shopping_high);
+						}
+						else if (value.equals("Errand")) {
+							imageTripPurpose.setImageResource(R.drawable.errands_high);
+						}
+						else if (value.equals("Other")) {
+							imageTripPurpose.setImageResource(R.drawable.other_high);
+						}
+					}
 				}
 			} else if (status == 1) {
 				imageTripPurpose.setImageResource(R.drawable.failedupload_high);
