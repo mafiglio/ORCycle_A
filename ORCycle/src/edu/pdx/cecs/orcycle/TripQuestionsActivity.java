@@ -30,25 +30,24 @@ public class TripQuestionsActivity extends Activity {
 	private MultiSelectionSpinner mspinParticipants;
 	private MultiSelectionSpinner mspinAccessories;
 
-	private static final String PREFS_TRIP_QUESTIONS = "PREFS_TRIP_QUESTIONS";
+	public static final String PREFS_TRIP_QUESTIONS = "PREFS_TRIP_QUESTIONS";
 
-	private static final int PREF_TRIP_FREQUENCY = 1;
-	private static final int PREF_TRIP_PURPOSE = 2;
-	private static final int PREF_ROUTE_CHOICE = 3;
-	private static final int PREF_TRIP_COMFORT = 4;
-	private static final int PREF_EXPERIENCED_RIDER = 5;
-	private static final int PREF_PARTICIPANTS = 6;
-	private static final int PREF_BIKE_ACCESSORY = 7;
+	public static final int PREF_TRIP_FREQUENCY = 1;
+	public static final int PREF_TRIP_PURPOSE = 2;
+	public static final int PREF_ROUTE_PREFS = 3;
+	public static final int PREF_TRIP_COMFORT = 4;
+	public static final int PREF_ROUTE_SAFETY = 5;
+	public static final int PREF_PARTICIPANTS = 6;
+	public static final int PREF_BIKE_ACCESSORY = 7;
 
-	private final int[] tripFreqAnswers = {-1, 1, 2, 3, 4, 5};
-	private final int[] tripPurposeAnswers = {-1, 1, 2, 3, 4, 5, 6, 7, 8};
-	private final int[] routeChoiceAnswers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-	private final int[] tripComfortAnswers = {-1, 1, 2, 3, 4, 5};
-	private final int[] experRiderAnswers = {-1, 1, 2, 3, 4, 5};
-	private final int[] participantsAnswers = {1, 2, 3, 4, 5, 6};
-	private final int[] bikeAccessoryAnswers = {1, 2, 3};
-
-
+	private final int[] tripFreqAnswers = {-1, 88, 89, 90, 91, 92};                  // question_id = 19
+	private final int[] tripPurposeAnswers = {-1, 94, 95, 96, 97, 98, 99, 100, 101}; // question_id = 20
+	private final int[] routeChoiceAnswers = {103, 104, 105, 106, 107, 108, 109,     // question_id = 21
+			                                  110, 111, 112, 113, 114, 115};
+	private final int[] tripComfortAnswers = {-1, 117, 118, 119, 120, 121};          // question_id = 22
+	private final int[] experRiderAnswers = {-1, 123, 124, 125, 126, 127};           // question_id = 23
+	private final int[] participantsAnswers = {129, 130, 131, 132, 133, 134};        // question_id = 24
+	private final int[] bikeAccessoryAnswers = {136, 137, 138};                      // question_id = 25
 
 	// *********************************************************************************
 	// *                              Activity Handlers
@@ -209,8 +208,8 @@ public class TripQuestionsActivity extends Activity {
 
 		case R.id.action_save_trip_questions:
 
-			savePreferences();
-			loadPreferences();
+			savePreferences(); // loadPreferences();
+
 			// move to next view
 			// send purpose with intent
 			intent = new Intent(TripQuestionsActivity.this, TripDetailActivity.class);
@@ -261,6 +260,10 @@ public class TripQuestionsActivity extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 
+	// *********************************************************************************
+	// *                         Saving & Recalling Answers
+	// *********************************************************************************
+
 	/**
 	 * Recalls UI settings from preferences file
 	 */
@@ -287,8 +290,7 @@ public class TripQuestionsActivity extends Activity {
 								loadPrefSpinner(R.id.spinnerTripPurpose, p, tripPurposeAnswers);
 								break;
 
-							case PREF_ROUTE_CHOICE:
-								mspinRouteChoice.setSelection((String) p.getValue());
+							case PREF_ROUTE_PREFS:
 								loadPrefSpinner(mspinRouteChoice, p, routeChoiceAnswers);
 								break;
 
@@ -296,7 +298,7 @@ public class TripQuestionsActivity extends Activity {
 								loadPrefSpinner(R.id.spinnerTripComfort, p, tripComfortAnswers);
 								break;
 
-							case PREF_EXPERIENCED_RIDER:
+							case PREF_ROUTE_SAFETY:
 								loadPrefSpinner(R.id.spinnerExperiencedRider, p, experRiderAnswers);
 								break;
 
@@ -333,9 +335,9 @@ public class TripQuestionsActivity extends Activity {
 			if (null != (editor = settings.edit())) {
 				savePrefSpinner(editor, PREF_TRIP_FREQUENCY,    R.id.spinnerTripFrequency,    tripFreqAnswers      );
 				savePrefSpinner(editor, PREF_TRIP_PURPOSE,      R.id.spinnerTripPurpose,      tripPurposeAnswers   );
-				savePrefSpinner(editor, PREF_ROUTE_CHOICE,      mspinRouteChoice,             routeChoiceAnswers   );
+				savePrefSpinner(editor, PREF_ROUTE_PREFS,      mspinRouteChoice,             routeChoiceAnswers   );
 				savePrefSpinner(editor, PREF_TRIP_COMFORT,      R.id.spinnerTripComfort,      tripComfortAnswers   );
-				savePrefSpinner(editor, PREF_EXPERIENCED_RIDER, R.id.spinnerExperiencedRider, experRiderAnswers    );
+				savePrefSpinner(editor, PREF_ROUTE_SAFETY, R.id.spinnerExperiencedRider, experRiderAnswers    );
 				savePrefSpinner(editor, PREF_PARTICIPANTS,      mspinParticipants,            participantsAnswers  );
 				savePrefSpinner(editor, PREF_BIKE_ACCESSORY,    mspinAccessories,             bikeAccessoryAnswers );
 				editor.commit();

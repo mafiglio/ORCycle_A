@@ -112,6 +112,18 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 	public static final String USER_RIDERTYPE = "rider_type";
 	public static final String USER_RIDERHISTORY = "rider_history";
 
+
+	private static final String FID_QUESTION_ID = "question_id";
+	private static final String FID_ANSWER_ID = "answer_id";
+
+	private static final int QID_TRIP_FREQUENCY = 19; // routeFreq
+	private static final int QID_TRIP_PURPOSE = 20;   // purpose
+	private static final int QID_ROUTE_PREFS = 21;    //routePrefs
+	private static final int QID_TRIP_COMFORT = 22;   // routeComfort
+	private static final int QID_ROUTE_SAFETY = 23;   // routeSafety
+	private static final int QID_PARTICIPANTS = 24;   // ridePassengers
+	private static final int QID_BIKE_ACCESSORY = 25; // rideSpecial
+
 	public TripUploader(Context ctx) {
 		super();
 		this.mCtx = ctx;
@@ -204,6 +216,117 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		pausesCursor.close();
 		mDb.close();
 		return jsonPauses;
+	}
+
+	private JSONArray getTripResponsesJSON() throws JSONException {
+
+		SharedPreferences settings;
+		Map<String, ?> prefs;
+		JSONArray jsonQNA = null;
+
+		try {
+			if (null != (settings = mCtx.getSharedPreferences(TripQuestionsActivity.PREFS_TRIP_QUESTIONS, 0))) {
+				if (null != (prefs = settings.getAll())) {
+
+					jsonQNA = new JSONArray();
+
+					for (Entry<String, ?> p : prefs.entrySet()) {
+						try {
+							int key = Integer.parseInt(p.getKey());
+
+							switch (key) {
+
+							case TripQuestionsActivity.PREF_TRIP_FREQUENCY:
+								putQnaData(jsonQNA, QID_TRIP_FREQUENCY, ((Integer) p.getValue()).intValue());
+								break;
+
+							case TripQuestionsActivity.PREF_TRIP_PURPOSE:
+								putQnaData(jsonQNA, QID_TRIP_PURPOSE, ((Integer) p.getValue()).intValue());
+								break;
+
+							case TripQuestionsActivity.PREF_ROUTE_PREFS:
+								putQnaData(jsonQNA, QID_ROUTE_PREFS, ((String) p.getValue()));
+								break;
+
+							case TripQuestionsActivity.PREF_TRIP_COMFORT:
+								putQnaData(jsonQNA, QID_TRIP_COMFORT, ((Integer) p.getValue()).intValue());
+								break;
+
+							case TripQuestionsActivity.PREF_ROUTE_SAFETY:
+								putQnaData(jsonQNA, QID_ROUTE_SAFETY, ((Integer) p.getValue()).intValue());
+								break;
+
+							case TripQuestionsActivity.PREF_PARTICIPANTS:
+								putQnaData(jsonQNA, QID_PARTICIPANTS, ((String) p.getValue()));
+								break;
+
+							case TripQuestionsActivity.PREF_BIKE_ACCESSORY:
+								putQnaData(jsonQNA, QID_BIKE_ACCESSORY, ((String) p.getValue()));
+								break;
+							}
+						}
+						catch(Exception ex) {
+							Log.e(MODULE_TAG, ex.getMessage());
+						}
+					}
+				}
+			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+
+		return jsonQNA;
+	}
+
+	private void putQnaData(JSONArray jsonQNA, int question_id, int answer_id) {
+
+		if (answer_id > 0) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put(FID_QUESTION_ID, question_id);
+				json.put(FID_ANSWER_ID, answer_id);
+				jsonQNA.put(json);
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+	private void putQnaData(JSONArray jsonQNA, int questionId, String textAnswers) {
+
+		if ((textAnswers == null)|| (textAnswers.equals(""))){
+			return;
+		}
+
+		String[] answerIds = textAnswers.split(",");
+
+		if ((answerIds == null)|| (answerIds.length == 0)){
+			return;
+		}
+
+		JSONObject json;
+
+		for(int i = 0; i < answerIds.length; ++i) {
+			try {
+				int answerId = Integer.valueOf(answerIds[i]);
+				if (answerId > 0) {
+					try {
+						json = new JSONObject();
+						json.put(FID_QUESTION_ID, questionId);
+						json.put(FID_ANSWER_ID, answerId);
+						jsonQNA.put(json);
+					}
+					catch(Exception ex) {
+						Log.e(MODULE_TAG, ex.getMessage());
+					}
+				}
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
 	}
 
 	private JSONObject getUserJSON() throws JSONException {
@@ -337,6 +460,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		JSONObject coords = getCoordsJSON(tripId);
 		JSONArray pauses = getPausesJSON(tripId);
 		JSONObject user = getUserJSON();
+		JSONArray tripResponses = getTripResponsesJSON();
 		String deviceId = getDeviceId();
 		Vector<String> tripData = getTripData(tripId);
 		String notes = tripData.get(0);
@@ -355,6 +479,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		// nameValuePairs.add(new BasicNameValuePair("end", endTime));
 		nameValuePairs.add(new BasicNameValuePair("version", "" + kSaveProtocolVersion));
 		nameValuePairs.add(new BasicNameValuePair("tripid", "" + tripId));
+		nameValuePairs.add(new BasicNameValuePair("tripResponses", tripResponses.toString()));
 
 		String codedPostData =
 				"purpose=" + purpose +
@@ -365,8 +490,8 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 				"&pauses=" + pauses.toString() +
 				"&version=" + String.valueOf(kSaveProtocolVersion) +
 				"&start=" + startTime +
-				"&device=" + deviceId;
-
+				"&device=" + deviceId +
+				"&tripResponses=" + tripResponses.toString();
 		return codedPostData;
 	}
 
