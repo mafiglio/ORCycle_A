@@ -224,7 +224,7 @@ public class MultiSelectionSpinner extends Spinner implements
 		return sb.toString();
 	}
 
-	public String getSelectedIndicesAsString(int[] mappedValues) {
+	public String getSelectedIndicesAsString() {
 
 		StringBuilder sb = new StringBuilder();
 		boolean foundOne = false;
@@ -235,7 +235,7 @@ public class MultiSelectionSpinner extends Spinner implements
 					sb.append(",");
 				}
 				foundOne = true;
-				sb.append(mappedValues[i]);
+				sb.append(i);
 			}
 		}
 		return sb.toString();

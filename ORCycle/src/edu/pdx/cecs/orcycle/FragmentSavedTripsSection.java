@@ -325,6 +325,7 @@ public class FragmentSavedTripsSection extends Fragment {
 		try {
 			mDbHelper.deleteAllCoordsForTrip(tripId);
 			mDbHelper.deletePauses(tripId);
+			mDbHelper.deleteAnswers(tripId);
 			mDbHelper.deleteTrip(tripId);
 		}
 		finally {

@@ -189,6 +189,7 @@ public class TripData {
 		mDb.open();
 		mDb.deleteAllCoordsForTrip(tripid);
 		mDb.deletePauses(tripid);
+		mDb.deleteAnswers(tripid);
 		mDb.deleteTrip(tripid);
 		mDb.close();
 	}

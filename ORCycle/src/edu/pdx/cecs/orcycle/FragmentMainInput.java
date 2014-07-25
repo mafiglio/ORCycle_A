@@ -732,11 +732,14 @@ public class FragmentMainInput extends Fragment
 							// trip.numpoints > 0
 
 							myApp.finishRecording();
-							int numTripPoints = myApp.getStatus().getTripData().numpoints;
-							if (numTripPoints > 0) {
+
+							TripData tripData = myApp.getStatus().getTripData();
+
+							if (tripData.numpoints > 0) {
 								// Save trip so far (points and extent, but no purpose or notes)
 								//fi = new Intent(getActivity(), TripPurposeActivity.class);
 								fi = new Intent(getActivity(), TripQuestionsActivity.class);
+							    fi.putExtra(TripQuestionsActivity.EXTRA_TRIP_ID, tripData.tripid);
 
 								startActivity(fi);
 								getActivity().overridePendingTransition(
