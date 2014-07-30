@@ -477,13 +477,12 @@ public class DbAdapter {
 		return mCursor;
 	}
 
-	public boolean updateTrip(long tripid, String purp, String fancystart, String fancyinfo, String note) {
+	public boolean updateTrip(long tripid, String fancystart, String fancyinfo, String note) {
 
 		int numRows;
 
 		ContentValues contentValues = new ContentValues();
 
-		contentValues.put(K_TRIP_PURP, purp);
 		contentValues.put(K_TRIP_FANCYSTART, fancystart);
 		contentValues.put(K_TRIP_FANCYINFO, fancyinfo);
 		contentValues.put(K_TRIP_NOTE, note);
@@ -491,10 +490,26 @@ public class DbAdapter {
 		numRows = mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null);
 
 		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
-				+ "](" + K_TRIP_PURP + ", " + K_TRIP_FANCYSTART + ", " + K_TRIP_FANCYINFO + ", " + K_TRIP_NOTE +"): "
+				+ "](" + K_TRIP_FANCYSTART + ", " + K_TRIP_FANCYINFO + ", " + K_TRIP_NOTE +"): "
 				+ String.valueOf(numRows) + " rows.");
 
 		return numRows > 0;
+	}
+
+	public void updateTripPurpose(long tripid, String purpose) {
+
+		int numRows;
+
+		ContentValues contentValues = new ContentValues();
+
+		contentValues.put(K_TRIP_PURP, purpose);
+
+		numRows = mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null);
+
+		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
+				+ "](" + K_TRIP_PURP + "): " + String.valueOf(numRows) + " rows.");
+
+		return;
 	}
 
 	public boolean updateTrip(long tripid, int lathigh, int latlow, int lgthigh, int lgtlow, float distance) {

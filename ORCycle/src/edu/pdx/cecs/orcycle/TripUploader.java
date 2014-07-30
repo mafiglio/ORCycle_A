@@ -555,7 +555,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 	@Override
 	protected void onPreExecute() {
 		Toast.makeText(mCtx.getApplicationContext(),
-				"Submitting. Thanks for using Cycle Atlanta!",
+				"Submitting. Thanks for using ORcycle!",
 				Toast.LENGTH_LONG).show();
 	}
 
@@ -600,7 +600,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 			} else {
 				Toast.makeText(
 						mCtx.getApplicationContext(),
-						"Cycle Atlanta couldn't upload the trip, and will retry when your next trip is completed.",
+						"ORcycle couldn't upload the trip, and will retry when your next trip is completed.",
 						Toast.LENGTH_LONG).show();
 			}
 		} catch (Exception e) {

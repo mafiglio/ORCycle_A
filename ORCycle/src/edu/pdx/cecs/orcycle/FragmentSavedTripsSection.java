@@ -48,38 +48,57 @@ public class FragmentSavedTripsSection extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
+		Log.v(MODULE_TAG, "Cycle: onCreateView()");
+
 		View rootView = null;
+		Intent intent;
+		Bundle extras;
 
 		try {
 			rootView = inflater.inflate(R.layout.activity_saved_trips, null);
-
-			Log.v("Jason", "Cycle: SavedTrips onCreateView");
-
 			setHasOptionsMenu(true);
 
-			listSavedTrips = (ListView) rootView
-					.findViewById(R.id.listViewSavedTrips);
+			listSavedTrips = (ListView) rootView.findViewById(R.id.listViewSavedTrips);
 			populateTripList(listSavedTrips);
 
-			final DbAdapter mDb = new DbAdapter(getActivity());
-			mDb.open();
-
-			// Clean up any bad trips & coords from crashes
-			int cleanedTrips = mDb.cleanTripsCoordsTables();
-			if (cleanedTrips > 0) {
-				Toast.makeText(getActivity(),
-						"" + cleanedTrips + " bad trip(s) removed.",
-						Toast.LENGTH_SHORT).show();
+			if (null != (intent = getActivity().getIntent())) {
+				if (null != (extras = intent.getExtras())) {
+					if (!extras.getBoolean(TabsConfig.EXTRA_KEEP_ME, false)) {
+						cleanTrips();
+					}
+				}
 			}
-			mDb.close();
 
 			tripIdArray.clear();
 		}
-		catch(Exception ex) {
+		catch (Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 
 		return rootView;
+	}
+
+	private void cleanTrips() {
+
+		final DbAdapter mDb = new DbAdapter(getActivity());
+
+		mDb.open();
+		try {
+
+			// Clean up any bad trips & coords from crashes
+			int cleanedTrips = 0;
+			// cleanedTrips = mDb.cleanTripsCoordsTables();
+			if (cleanedTrips > 0) {
+				Toast.makeText(getActivity(), "" + cleanedTrips + " bad trip(s) removed.",
+						Toast.LENGTH_SHORT).show();
+			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		finally {
+			mDb.close();
+		}
 	}
 
 	private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -105,7 +124,7 @@ public class FragmentSavedTripsSection extends Fragment {
 		@Override
 		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 			try {
-				Log.v("Jason", "Prepare");
+				Log.v(MODULE_TAG, "Prepare");
 				saveMenuItemDelete = menu.getItem(0);
 				saveMenuItemDelete.setEnabled(false);
 				saveMenuItemUpload = menu.getItem(1);
@@ -117,7 +136,7 @@ public class FragmentSavedTripsSection extends Fragment {
 							* (allTrips.getInt(allTrips.getColumnIndex("status")) - 1);
 					if (flag == 0) {
 						storedID = allTrips.getLong(allTrips.getColumnIndex("_id"));
-						Log.v("Jason", "" + storedID);
+						Log.v(MODULE_TAG, "" + storedID);
 						break;
 					}
 				}
@@ -158,7 +177,7 @@ public class FragmentSavedTripsSection extends Fragment {
 					// for (int i = 0; i < tripIdArray.size(); i++) {
 					// retryTripUpload(tripIdArray.get(i));
 					// }
-					// Log.v("Jason", "" + storedID);
+					// Log.v(MODULE_TAG, "" + storedID);
 					try {
 						retryTripUpload(storedID);
 					}
@@ -225,17 +244,14 @@ public class FragmentSavedTripsSection extends Fragment {
 					allTrips.moveToPosition(pos);
 					if (mActionMode == null) {
 						if (allTrips.getInt(allTrips.getColumnIndex("status")) == 2) {
-							Intent i = new Intent(getActivity(),
-									TripMapActivity.class);
-							i.putExtra("showtrip", id);
-							startActivity(i);
+							transitionToTripMapActivity(id);
 						} else if (allTrips.getInt(allTrips
 								.getColumnIndex("status")) == 1) {
 							// Toast.makeText(getActivity(), "Unsent",
 							// Toast.LENGTH_SHORT).show();
 							buildAlertMessageUnuploadedTripClicked(id);
 
-							// Log.v("Jason",
+							// Log.v(MODULE_TAG,
 							// ""+allTrips.getLong(allTrips.getColumnIndex("_id")));
 						}
 
@@ -340,7 +356,7 @@ public class FragmentSavedTripsSection extends Fragment {
 	public void onResume() {
 		super.onResume();
 		try {
-			Log.v("Jason", "Cycle: SavedTrips onResume");
+			Log.v(MODULE_TAG, "Cycle: SavedTrips onResume");
 			populateTripList(listSavedTrips);
 		}
 		catch(Exception ex) {
@@ -352,7 +368,7 @@ public class FragmentSavedTripsSection extends Fragment {
 	public void onPause() {
 		super.onPause();
 		try {
-			Log.v("Jason", "Cycle: SavedTrips onPause");
+			Log.v(MODULE_TAG, "Cycle: SavedTrips onPause");
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -363,7 +379,7 @@ public class FragmentSavedTripsSection extends Fragment {
 	public void onDestroyView() {
 		super.onDestroyView();
 		try {
-			Log.v("Jason", "Cycle: SavedTrips onDestroyView");
+			Log.v(MODULE_TAG, "Cycle: SavedTrips onDestroyView");
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -406,5 +422,13 @@ public class FragmentSavedTripsSection extends Fragment {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 		return false;
+	}
+
+	private void transitionToTripMapActivity(long tripId) {
+		Intent intent = new Intent(getActivity(), TripMapActivity.class);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(TripMapActivity.EXTRA_IS_NEW_TRIP, false);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_SOURCE, TripMapActivity.EXTRA_TRIP_SOURCE_SAVED_TRIPS);
+		startActivity(intent);
 	}
 }

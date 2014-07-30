@@ -146,7 +146,8 @@ public class TripData {
 
 		// So that there are not nulls in the database for purpose,
 		// fancyStart, fancyInfo, and notes fields, we set them to blank
-		updateTrip("", "", "", "");
+		updateTripPurpose("");
+		updateTrip("", "", "");
 	}
 
 	// Get lat/long extremes, etc, from trip record
@@ -159,20 +160,25 @@ public class TripData {
 
 		try {
 			Cursor tripdetails = mDb.fetchTrip(tripid);
-			startTime = tripdetails.getDouble(tripdetails.getColumnIndex(DbAdapter.K_TRIP_START));
-			segmentStartTime = System.currentTimeMillis();
-			lathigh = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_LATHI));
-			latlow = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_LATLO));
-			lgthigh = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_LGTHI));
-			lgtlow = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_LGTLO));
-			status = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_STATUS));
-			endTime = tripdetails.getDouble(tripdetails.getColumnIndex(DbAdapter.K_TRIP_END));
-			distance = tripdetails.getFloat(tripdetails.getColumnIndex(DbAdapter.K_TRIP_DISTANCE));
-			purp = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_PURP));
-			fancystart = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_FANCYSTART));
-			info = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_FANCYINFO));
-
-			tripdetails.close();
+			if (tripdetails.getCount() > 0) {
+				try {
+					startTime = tripdetails.getDouble(tripdetails.getColumnIndex(DbAdapter.K_TRIP_START));
+					segmentStartTime = System.currentTimeMillis();
+					lathigh = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_LATHI));
+					latlow = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_LATLO));
+					lgthigh = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_LGTHI));
+					lgtlow = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_LGTLO));
+					status = tripdetails.getInt(tripdetails.getColumnIndex(DbAdapter.K_TRIP_STATUS));
+					endTime = tripdetails.getDouble(tripdetails.getColumnIndex(DbAdapter.K_TRIP_END));
+					distance = tripdetails.getFloat(tripdetails.getColumnIndex(DbAdapter.K_TRIP_DISTANCE));
+					purp = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_PURP));
+					fancystart = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_FANCYSTART));
+					info = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_FANCYINFO));
+				}
+				finally {
+					tripdetails.close();
+				}
+			}
 
 			Cursor points = mDb.fetchAllCoordsForTrip(tripid);
 			if (points != null) {
@@ -359,7 +365,8 @@ public class TripData {
 			totalTravelTime += (System.currentTimeMillis() - segmentStartTime);
 			endTime = totalTravelTime;
 			isFinished = true;
-			updateTrip("", "", "", "");
+			updateTripPurpose("");
+			updateTrip("", "", "");
 		}
 	}
 
@@ -371,10 +378,16 @@ public class TripData {
 		return rtn;
 	}
 
-	public void updateTrip(String purpose, String fancyStart, String fancyInfo, String notes) {
+	public void updateTripPurpose(String purpose) {
 		// Save the trip details to the phone database. W00t!
 		mDb.open();
-		mDb.updateTrip(tripid, purpose, fancyStart, fancyInfo, notes);
+		mDb.updateTripPurpose(tripid, purpose);
+		mDb.close();
+	}
+	public void updateTrip(String fancyStart, String fancyInfo, String notes) {
+		// Save the trip details to the phone database. W00t!
+		mDb.open();
+		mDb.updateTrip(tripid, fancyStart, fancyInfo, notes);
 		mDb.close();
 	}
 }

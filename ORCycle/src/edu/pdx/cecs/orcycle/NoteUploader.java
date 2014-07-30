@@ -290,6 +290,10 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 					dos.writeBytes(notesep);
 					dos.flush();
 				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+					return false;
+				}
 				finally {
 					dos.close();
 				}

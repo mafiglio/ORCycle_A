@@ -17,7 +17,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,25 +31,37 @@ public class NoteDetailActivity extends Activity {
 
 	public static final String MODULE_TAG = "NoteDetailActivity";
 
-	public static final String EXTRA_NOTE_ID = "noteid";
+	public static final String EXTRA_NOTE_ID = "noteId";
 	public static final String EXTRA_NOTE_TYPE = "noteType";
-	public static final String EXTRA_IS_RECORDING = "isRecording";
+	public static final String EXTRA_NOTE_SOURCE = "noteSource";
+	public static final int EXTRA_NOTE_SOURCE_UNDEFINED = -1;
+	public static final int EXTRA_NOTE_ID_UNDEFINED = -1;
+	public static final int EXTRA_NOTE_TYPE_UNDEFINED = -1;
+	public static final int EXTRA_NOTE_SOURCE_MAIN_INPUT = 0;
+	public static final int EXTRA_NOTE_SOURCE_TRIP_MAP = 1;
+
+	public static final String EXTRA_TRIP_ID = "EXTRA_TRIP_ID";
+	private static final int EXTRA_TRIP_ID_UNDEFINED = -1;
+	public static final String EXTRA_TRIP_SOURCE = "tripSource";
+	private static final int EXTRA_TRIP_SOURCE_UNDEFINED = -1;
 
 	private static final int CAMERA_REQUEST = 1888;
 	private static final int IMAGE_REQUEST = 1889;
 
-	private Dialog attachDialog;
-
-	long noteid;
+	long noteId;
 	int noteType = 0;
-	boolean isRecording;
-	EditText noteDetails;
-	ImageButton imageButton;
-	ImageView imageView;
-	String imageURL = "";
-	byte[] noteImage;
-	Bitmap photo;
-	Uri uri;
+	int noteSource;
+	private long tripId;
+	private int tripSource;
+
+	private EditText noteDetails;
+	private ImageButton imageButton;
+	private ImageView imageView;
+	private String imageURL = "";
+	private byte[] noteImage;
+	private Bitmap photo;
+	private Uri uri;
+	private Dialog attachDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +69,27 @@ public class NoteDetailActivity extends Activity {
 
 		// get input values for this view
 		Intent myIntent = getIntent();
-		noteType = myIntent.getIntExtra(EXTRA_NOTE_TYPE, -1);
-		noteid = myIntent.getLongExtra(EXTRA_NOTE_ID, -1);
-		isRecording = myIntent.getBooleanExtra(EXTRA_IS_RECORDING, false);
 
-		// TODO: Assert that intent values are not set to -1
+		noteId = myIntent.getLongExtra(EXTRA_NOTE_ID, EXTRA_NOTE_ID_UNDEFINED);
+		if (EXTRA_NOTE_ID_UNDEFINED == noteId) {
+			throw new IllegalArgumentException(MODULE_TAG + ": EXTRA_NOTE_ID undefined.");
+		}
+
+		noteSource = myIntent.getIntExtra(EXTRA_NOTE_SOURCE, EXTRA_NOTE_SOURCE_UNDEFINED);
+		if (!((noteSource == EXTRA_NOTE_SOURCE_MAIN_INPUT) ||(noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP))) {
+			throw new IllegalArgumentException(MODULE_TAG + ": EXTRA_NOTE_SOURCE invalid argument.");
+		}
+
+		noteType = myIntent.getIntExtra(EXTRA_NOTE_TYPE, EXTRA_NOTE_TYPE_UNDEFINED);
+
+		// Note: these extras are used for transitioning back to the TripMapActivity if done
+		if (EXTRA_TRIP_ID_UNDEFINED == (tripId = myIntent.getLongExtra(EXTRA_TRIP_ID, EXTRA_TRIP_ID_UNDEFINED))) {
+			throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_ID");
+		}
+
+		if (EXTRA_TRIP_SOURCE_UNDEFINED == (tripSource = myIntent.getIntExtra(EXTRA_TRIP_SOURCE, EXTRA_TRIP_SOURCE_UNDEFINED))) {
+			throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_SOURCE");
+		}
 
 		// setup main view
 		setContentView(R.layout.activity_note_detail);
@@ -126,16 +153,8 @@ public class NoteDetailActivity extends Activity {
 				// initialize global result variables
 				photo = null; uri = null;
 
-				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-				intent.setType("image/*");
-				// assures chooser picks a stream that can be opened
-				intent.addCategory(Intent.CATEGORY_OPENABLE);
-				// assures that the image is local to the device (not internet)
-				intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+				transitionToGetImageContentActivity();
 
-				startActivityForResult(
-						Intent.createChooser(intent, getResources().getText(R.string.chooser_image)),
-						IMAGE_REQUEST);
 				attachDialog.dismiss();
 			}
 			catch(Exception ex) {
@@ -156,8 +175,7 @@ public class NoteDetailActivity extends Activity {
 		 */
 		public void onClick(View v) {
 			try {
-				Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-				startActivityForResult(cameraIntent, CAMERA_REQUEST);
+				transitionToGetCameraContentActivity();
 				attachDialog.dismiss();
 			}
 			catch(Exception ex) {
@@ -220,9 +238,7 @@ public class NoteDetailActivity extends Activity {
 	@SuppressLint("SimpleDateFormat")
 	void submit(String noteDetailsToUpload, byte[] noteImage) {
 
-		int byteCount;
-
-		NoteData note = NoteData.fetchNote(NoteDetailActivity.this, noteid);
+		NoteData note = NoteData.fetchNote(NoteDetailActivity.this, noteId);
 
 		// format start time displayed in note list
 		String fancyStartTime = (new SimpleDateFormat("MMMM d, y  HH:mm a")).format(note.startTime);
@@ -247,9 +263,6 @@ public class NoteDetailActivity extends Activity {
 			imageURL = "";
 		}
 
-		byteCount = noteImage.length;
-
-
 		// store note details in local database
 		note.updateNote(noteType, fancyStartTime, noteDetailsToUpload, imageURL, noteImage);
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
@@ -264,40 +277,11 @@ public class NoteDetailActivity extends Activity {
 			uploader.execute(note.noteid);
 		}
 
-		Intent intent;
-
-		if (isRecording) {
-			// Intent to go back to recording tab
-			intent = new Intent(this, TabsConfig.class);
-			this.finish();
-			this.startActivity(intent);
+		if (noteSource == EXTRA_NOTE_SOURCE_MAIN_INPUT) {
+			transitionToTabsConfigActivity();
 		} else {
-			// Intent to go to Note map
-			intent = new Intent(this, NoteMapActivity.class);
-			intent.putExtra(NoteMapActivity.EXTRA_NOTE_ID, note.noteid);
-			this.startActivity(intent);
-			this.finish();
-			this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+			transitionToNoteMapActivity();
 		}
-	}
-
-	/**
-	 * Sets up a transition to the NoteTypeActivity.
-	 */
-	private void TransitionBackToNoteTypeActivity() {
-
-		// Get intent for transition to NoteTypeActivity.
-		Intent intent = new Intent(this, NoteTypeActivity.class);
-
-		// Set values for input to NoteTypeActivity
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_ID, noteid);
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_TYPE, noteType);
-		intent.putExtra(NoteTypeActivity.EXTRA_IS_RECORDING, isRecording);
-
-		// Initiate transition to NoteTypeActivity
-		this.startActivity(intent);
-		this.finish();
-		this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}
 
 	/* Creates the menu items */
@@ -331,18 +315,70 @@ public class NoteDetailActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		// Go back to NoteTypeActivity.
-		TransitionBackToNoteTypeActivity();
+		transitionToNoteTypeActivity();
 	}
 
-	// Before 2.0
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			// Go back to NoteTypeActivity.
-			TransitionBackToNoteTypeActivity();
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
+	/**
+	 * Sets up a transition to the NoteTypeActivity.
+	 */
+	private void transitionToNoteTypeActivity() {
+
+		// Get intent for transition to NoteTypeActivity.
+		Intent intent = new Intent(this, NoteTypeActivity.class);
+
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_ID, noteId);
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_TYPE, NoteTypeActivity.EXTRA_NOTE_TYPE_UNDEFINED);
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_SOURCE, NoteTypeActivity.EXTRA_NOTE_SOURCE_TRIP_MAP);
+
+		// the NoteType activity needs these when the back button
+		// is pressed and we have to restart this activity
+		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_SOURCE, tripSource);
+
+		// Initiate transition to NoteTypeActivity
+		finish();
+		startActivity(intent);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+	}
+
+	private void transitionToNoteMapActivity() {
+		// Intent to go to Note map
+		Intent intent = new Intent(this, NoteMapActivity.class);
+		intent.putExtra(NoteMapActivity.EXTRA_NOTE_ID, noteId);
+		this.startActivity(intent);
+		this.finish();
+		this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+	}
+
+	private void transitionToTabsConfigActivity() {
+
+		// Create intent to go back to the recording screen in the Tabsconfig activity
+		Intent intent = new Intent(this, TabsConfig.class);
+		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
+
+		// Exit this activity
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		finish();
+	}
+
+	private void transitionToGetImageContentActivity() {
+
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+		intent.setType("image/*");
+		// assures chooser picks a stream that can be opened
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		// assures that the image is local to the device (not internet)
+		intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+
+		startActivityForResult(
+				Intent.createChooser(intent, getResources().getText(R.string.chooser_image)),
+				IMAGE_REQUEST);
+	}
+
+	private void transitionToGetCameraContentActivity() {
+		Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+		startActivityForResult(cameraIntent, CAMERA_REQUEST);
 	}
 
 }

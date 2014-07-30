@@ -1,12 +1,12 @@
 package edu.pdx.cecs.orcycle;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +25,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class NoteMapActivity extends Activity {
 
 	public static final String EXTRA_NOTE_ID = "shownote";
+	private static final String MODULE_TAG = "NoteMapActivity";
+
 
 	public GoogleMap map;
 
@@ -121,12 +123,15 @@ public class NoteMapActivity extends Activity {
 		}
 	}
 
-	// Make sure overlays get zapped when we go BACK
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		return super.onKeyDown(keyCode, event);
+	public void onBackPressed() {
+		try {
+			transitionToTabsConfigActivity();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -170,6 +175,17 @@ public class NoteMapActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void transitionToTabsConfigActivity() {
+
+		Intent intent = new Intent(NoteMapActivity.this, TabsConfig.class);
+
+		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_SAVED_NOTES);
+
+		startActivity(intent);
+		overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
+		finish();
 	}
 
 }

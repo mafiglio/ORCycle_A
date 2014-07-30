@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -18,13 +20,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 public class TripQuestionsActivity extends Activity {
 
 	private static final String MODULE_TAG = "TripQuestionsActivity";
-
-	private MenuItem saveMenuItem;
 
 	private MultiSelectionSpinner routePrefs;
 	private MultiSelectionSpinner passengers;
@@ -124,6 +123,92 @@ public class TripQuestionsActivity extends Activity {
 		}
 	}
 
+	/* Creates the menu items */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		try {
+			// Inflate the menu items for use in the action bar
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.trip_questions, menu);
+			//menu.getItem(0).setEnabled(true);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	/* Handles item selections */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		try {
+			switch (item.getItemId()) {
+
+			case R.id.action_save_trip_questions:
+
+				if (MandatoryQuestionsAnswered()) {
+					submitAnswers();
+					transitionToTripDetailActivity();
+				}
+				else {
+					AlertUserMandatoryAnswers();
+				}
+				return true;
+			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private boolean MandatoryQuestionsAnswered() {
+		return tripPurpose.getSelectedItemPosition() > 0;
+	}
+
+	private void AlertUserMandatoryAnswers() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Please answer required questions")
+				.setCancelable(true)
+				.setPositiveButton("OK",
+						new DialogInterface.OnClickListener() {
+							public void onClick(final DialogInterface dialog, final int id) {
+								dialog.cancel();
+							}
+						});
+		final AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	// 2.0 and above
+	@Override
+	public void onBackPressed() {
+		try {
+			transitionToPreviousActivity();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
+	// Before 2.0
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			try {
+				transitionToPreviousActivity();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			return true;
+		}
+
+		return super.onKeyDown(keyCode, event);
+	}
+
 	// *********************************************************************************
 	// *                              Button Handlers
 	// *********************************************************************************
@@ -138,8 +223,6 @@ public class TripQuestionsActivity extends Activity {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 			try {
-				if (null != saveMenuItem)
-					saveMenuItem.setEnabled(questionAnswered());
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -149,8 +232,6 @@ public class TripQuestionsActivity extends Activity {
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) {
 			try {
-				if (null != saveMenuItem)
-					saveMenuItem.setEnabled(questionAnswered());
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -171,81 +252,6 @@ public class TripQuestionsActivity extends Activity {
 		}
 
 		return false;
-	}
-
-	/* Creates the menu items */
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu items for use in the action bar
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.trip_questions, menu);
-		saveMenuItem = menu.getItem(1);
-		saveMenuItem.setEnabled(questionAnswered());
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	/* Handles item selections */
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-
-		Intent intent;
-		// Handle presses on the action bar items
-		switch (item.getItemId()) {
-
-		case R.id.action_skip_trip_questions:
-
-			Toast.makeText(getBaseContext(), "Trip discarded.", Toast.LENGTH_SHORT).show();
-
-			intent = new Intent(TripQuestionsActivity.this, TabsConfig.class);
-			intent.putExtra("keepme", true);
-			startActivity(intent);
-			overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-			TripQuestionsActivity.this.finish();
-			return true;
-
-		case R.id.action_save_trip_questions:
-
-			submitAnswers();
-
-			// move to next view
-			intent = new Intent(TripQuestionsActivity.this, TripDetailActivity.class);
-			startActivity(intent);
-			overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-			TripQuestionsActivity.this.finish();
-			return true;
-
-		default:
-
-			return super.onOptionsItemSelected(item);
-		}
-	}
-
-	// 2.0 and above
-	@Override
-	public void onBackPressed() {
-
-		Intent intent = new Intent(TripQuestionsActivity.this, TabsConfig.class);
-		intent.putExtra("keepme", true);
-		startActivity(intent);
-		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-		this.finish();
-	}
-
-	// Before 2.0
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-
-			Intent intent = new Intent(TripQuestionsActivity.this, TabsConfig.class);
-			//i.putExtra("keepme", true);
-			startActivity(intent);
-			overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-			this.finish();
-			return true;
-		}
-
-		return super.onKeyDown(keyCode, event);
 	}
 
 	// *********************************************************************************
@@ -371,6 +377,11 @@ public class TripQuestionsActivity extends Activity {
 
 		DbAdapter dbAdapter = new DbAdapter(this);
 		dbAdapter.open();
+
+		// Remove any previous answers from the local database
+		dbAdapter.deleteAnswers(tripId);
+
+		// Enter the user selections into the local database
 		try {
 			submitSpinnerSelection(tripFrequency,    dbAdapter, DbQuestions.TRIP_FREQUENCY,   DbAnswers.tripFreq       );
 			submitSpinnerSelection(tripPurpose,      dbAdapter, DbQuestions.TRIP_PURPOSE,     DbAnswers.tripPurpose    );
@@ -379,6 +390,8 @@ public class TripQuestionsActivity extends Activity {
 			submitSpinnerSelection(routeSafety,      dbAdapter, DbQuestions.ROUTE_SAFETY,     DbAnswers.routeSafety    );
 			submitSpinnerSelection(passengers,       dbAdapter, DbQuestions.PASSENGERS,       DbAnswers.passengers     );
 			submitSpinnerSelection(bikeAccessories,  dbAdapter, DbQuestions.BIKE_ACCESSORIES, DbAnswers.bikeAccessories);
+
+			updateTripPurpose(tripPurpose, dbAdapter,  DbAnswers.tripPurpose);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -416,5 +429,40 @@ public class TripQuestionsActivity extends Activity {
 		for (int index : selectedIndicies) {
 			dbAdapter.addAnswerToTrip(tripId, question_id, answers[index]);
 		}
+	}
+
+	/**
+	 * Enters the trips purpose into an additional
+	 * tripPurpose field that's in the database
+	 * @param spinner  The spinner widget to obtain the trip purpose selection
+	 * @param dbAdapter The adapter connected to the local database
+	 * @param answer_ids The TripPurpose values corresponding to the spinner selections
+	 */
+	private void updateTripPurpose(Spinner spinner, DbAdapter dbAdapter, int[] answer_ids) {
+		int tripPurposeId = DbAnswers.tripPurpose[spinner.getSelectedItemPosition() - 1];
+		String tripPurposeText = DbAnswers.getTextTripPurpose(tripPurposeId);
+		dbAdapter.updateTripPurpose(tripId, tripPurposeText);
+	}
+
+	// *********************************************************************************
+	// *                    Transitioning to other activities
+	// *********************************************************************************
+
+	private void transitionToTripDetailActivity() {
+		Intent intent = new Intent(TripQuestionsActivity.this, TripDetailActivity.class);
+		intent.putExtra(TripDetailActivity.EXTRA_TRIP_ID, tripId);
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		TripQuestionsActivity.this.finish();
+	}
+
+	private void transitionToPreviousActivity() {
+		Intent intent = new Intent(TripQuestionsActivity.this, TabsConfig.class);
+		// tell the TabsConfig activities to not delete this trip
+		intent.putExtra(TabsConfig.EXTRA_KEEP_ME, true);
+		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
+		startActivity(intent);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		TripQuestionsActivity.this.finish();
 	}
 }

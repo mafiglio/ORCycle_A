@@ -39,7 +39,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -68,6 +67,14 @@ public class TripMapActivity extends Activity {
 
 	private static final double NOTE_MIN_DISTANCE_FROM_TRIP = 100.0;
 
+	public static final String EXTRA_TRIP_ID = "tripId";
+	private static final int EXTRA_TRIP_ID_UNDEFINED = -1;
+	public static final String EXTRA_IS_NEW_TRIP = "isNewTrip";
+	public static final String EXTRA_TRIP_SOURCE = "tripSource";
+	private static final int EXTRA_TRIP_SOURCE_UNDEFINED = -1;
+	public static final int EXTRA_TRIP_SOURCE_MAIN_INPUT = 0;
+	public static final int EXTRA_TRIP_SOURCE_SAVED_TRIPS = 1;
+
 	GoogleMap map;
 	ArrayList<CyclePoint> gpspoints;
 	ArrayList<LatLng> mapPoints;
@@ -84,7 +91,15 @@ public class TripMapActivity extends Activity {
 	private int indexOfClosestPoint = 0;
 	private int segmentStartIndex = -1;
 	private int segmentEndIndex = -1;
-	private long tripid = -1;
+	private long tripId = -1;
+	private boolean isNewTrip = false;
+	private int tripSource = EXTRA_TRIP_SOURCE_UNDEFINED;
+	private boolean selectingSegment = false;
+	private com.google.android.gms.maps.model.Marker segmentStartMarker = null;
+
+	// *********************************************************************************
+	// *
+	// *********************************************************************************
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +107,7 @@ public class TripMapActivity extends Activity {
 
 		initialPositionSet = false;
 		crosshairInRangeOfTrip = false;
+		selectingSegment = false;
 
 		// getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_trip_map);
@@ -104,10 +120,18 @@ public class TripMapActivity extends Activity {
 			// Set zoom controls
 			map = ((MapFragment) getFragmentManager().findFragmentById(R.id.tripMap)).getMap();
 
-			Bundle cmds = getIntent().getExtras();
-			tripid = cmds.getLong("showtrip");
+			Bundle extras = getIntent().getExtras();
+			isNewTrip = extras.getBoolean(EXTRA_IS_NEW_TRIP, false);
 
-			TripData trip = TripData.fetchTrip(this, tripid);
+			if (EXTRA_TRIP_ID_UNDEFINED == (tripId = extras.getLong(EXTRA_TRIP_ID, EXTRA_TRIP_ID_UNDEFINED))) {
+				throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_ID");
+			}
+
+			if (EXTRA_TRIP_SOURCE_UNDEFINED == (tripSource = extras.getInt(EXTRA_TRIP_SOURCE, EXTRA_TRIP_SOURCE_UNDEFINED))) {
+				throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_SOURCE");
+			}
+
+			TripData trip = TripData.fetchTrip(this, tripId);
 
 			// Show trip details
 			TextView t1 = (TextView) findViewById(R.id.TextViewMapPurpose);
@@ -205,8 +229,8 @@ public class TripMapActivity extends Activity {
 				}
 			});
 
-			if (trip.status < TripData.STATUS_SENT && cmds != null
-					&& cmds.getBoolean("uploadTrip", false)) {
+			if ((trip.status < TripData.STATUS_SENT) && (extras != null)
+					&& isNewTrip) {
 				// And upload to the cloud database, too! W00t W00t!
 				TripUploader uploader = new TripUploader(TripMapActivity.this);
 				uploader.execute(trip.tripid);
@@ -217,14 +241,41 @@ public class TripMapActivity extends Activity {
 		}
 	}
 
-	private void addMarker(CyclePoint cyclePoint, int resourceId) {
+	private void setSelectingSegment(boolean value) {
+		if (true == (selectingSegment = value)) {
+			buttonNote.setVisibility(View.GONE);
+			buttonRateStart.setVisibility(View.GONE);
+			buttonRateFinish.setVisibility(View.VISIBLE);
+		}
+		else {
+			buttonNote.setVisibility(View.VISIBLE);
+			buttonRateStart.setVisibility(View.VISIBLE);
+			buttonRateFinish.setVisibility(View.GONE);
+
+			if (null != segmentPolyline)
+				segmentPolyline.remove();
+
+			if (null != segmentStartMarker) {
+				segmentStartMarker.remove();
+			}
+			segmentStartIndex = -1;
+			segmentEndIndex = -1;
+		}
+	}
+
+	private boolean getSelectingSegment() {
+		return selectingSegment;
+	}
+
+	private com.google.android.gms.maps.model.Marker
+	addMarker(CyclePoint cyclePoint, int resourceId) {
 
 		MarkerOptions markerOptions = new MarkerOptions();
 		markerOptions.icon(BitmapDescriptorFactory.fromResource(resourceId));
 		markerOptions.anchor(0.0f, 1.0f); // Anchors the marker on the bottom left
 		markerOptions.position(new LatLng(cyclePoint.latitude * 1E-6, cyclePoint.longitude * 1E-6));
 
-		map.addMarker(markerOptions);
+		return map.addMarker(markerOptions);
 	}
 
 	private Polyline drawMap(int start, int end, int color) {
@@ -245,7 +296,6 @@ public class TripMapActivity extends Activity {
 
 		return map.addPolyline(polylineOptions);
 	}
-
 
 	/**
 	 * Get shortest distance from trip to crosshairs, and mark index of that point
@@ -281,14 +331,26 @@ public class TripMapActivity extends Activity {
 		return minDistance;
 	}
 
-	// Make sure overlays get zapped when we go BACK
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK && map != null) {
-			// map.getOverlays().clear();
-			polyline.remove();
+	public void onBackPressed() {
+		try {
+
+			if(getSelectingSegment()) {
+				setSelectingSegment(false);
+			}
+			else {
+				// Remove polylines if they exist
+				if ((map != null) && (polyline != null)) {
+					polyline.remove();
+				}
+
+				//  Transition to
+				transitionToTabsConfigActivity();
+			}
 		}
-		return super.onKeyDown(keyCode, event);
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	/* Creates the menu items */
@@ -303,28 +365,33 @@ public class TripMapActivity extends Activity {
 	/* Handles item selections */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle presses on the action bar items
-		switch (item.getItemId()) {
-		case R.id.action_close_trip_map:
-			// close -> go back to FragmentMainInput
-			if (map != null) {
-				polyline.remove();
+		try {
+			// Handle presses on the action bar items
+			switch (item.getItemId()) {
+
+			case R.id.action_close_trip_map:
+
+				// close -> go back to FragmentMainInput
+				if ((map != null) && (polyline != null)) {
+					polyline.remove();
+				}
+
+				//onBackPressed();
+				transitionToTabsConfigActivity();
+				return true;
+
+			default:
+				return super.onOptionsItemSelected(item);
 			}
-
-			onBackPressed();
-
-			// Intent i = new Intent(TripMapActivity.this, TabsConfig.class);
-			// //i.putExtra("keepme", true);
-			// startActivity(i);
-			// overridePendingTransition(android.R.anim.fade_in,
-			// R.anim.slide_out_down);
-			// TripMapActivity.this.finish();
-
-			return true;
-		default:
+		}
+		catch(Exception ex) {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
+	// *********************************************************************************
+	// *
+	// *********************************************************************************
 
     /**
      * Class: ButtonNote_OnClickListener
@@ -343,12 +410,8 @@ public class TripMapActivity extends Activity {
 					Toast.makeText(TripMapActivity.this, "Target must be within 100 meters of bike path.", Toast.LENGTH_SHORT).show();
 				}
 				else {
-					Intent noteTypeIntent = new Intent(TripMapActivity.this, NoteTypeActivity.class);
 					// update note entity
-					NoteData note = NoteData.createNote(TripMapActivity.this, tripid);
-
-					noteTypeIntent.putExtra("noteid", note.noteid);
-					noteTypeIntent.putExtra("isRecording", 0);
+					NoteData note = NoteData.createNote(TripMapActivity.this, tripId);
 					note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
 
 					// Construct notes location
@@ -359,10 +422,7 @@ public class TripMapActivity extends Activity {
 					noteLocation.setAltitude(gpspoints.get(indexOfClosestPoint).altitude);
 					note.setLocation(noteLocation);
 
-					startActivity(noteTypeIntent);
-					TripMapActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-					TripMapActivity.this.finish();
-					// getActivity().finish();
+					transitionToNoteTypeActivity(note.noteid);
 				}
 			}
 
@@ -388,12 +448,9 @@ public class TripMapActivity extends Activity {
 					Toast.makeText(TripMapActivity.this, "Target must be within 100 meters of bike path.", Toast.LENGTH_SHORT).show();
 				}
 				else {
+					setSelectingSegment(true);
 					segmentStartIndex = indexOfClosestPoint;
-					addMarker(gpspoints.get(segmentStartIndex), R.drawable.pingreen);
-
-					buttonNote.setVisibility(View.GONE);
-					buttonRateStart.setVisibility(View.GONE);
-					buttonRateFinish.setVisibility(View.VISIBLE);
+					segmentStartMarker = addMarker(gpspoints.get(segmentStartIndex), R.drawable.pingreen);
 				}
 			}
 			catch(Exception ex) {
@@ -441,14 +498,7 @@ public class TripMapActivity extends Activity {
 					buttonRateStart.setVisibility(View.GONE);
 					buttonRateFinish.setVisibility(View.VISIBLE);
 
-					Intent rateSegmentIntent = new Intent(TripMapActivity.this, RateSegmentActivity.class);
-					rateSegmentIntent.putExtra(RateSegmentActivity.EXTRA_TRIP_ID, tripid);
-					rateSegmentIntent.putExtra(RateSegmentActivity.EXTRA_START_INDEX, segmentStartIndex);
-					rateSegmentIntent.putExtra(RateSegmentActivity.EXTRA_END_INDEX, segmentEndIndex);
-
-					startActivity(rateSegmentIntent);
-					overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-					finish();
+					transitionToRateSegmentActivity();
 				}
 			}
 			catch(Exception ex) {
@@ -456,4 +506,60 @@ public class TripMapActivity extends Activity {
 			}
 		}
 	}
+
+	// *********************************************************************************
+	// *
+	// *********************************************************************************
+
+	private void transitionToTabsConfigActivity() {
+
+		Intent intent = new Intent(TripMapActivity.this, TabsConfig.class);
+
+		if (tripSource == EXTRA_TRIP_SOURCE_MAIN_INPUT) {
+			intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
+		}
+		else if (tripSource == EXTRA_TRIP_SOURCE_SAVED_TRIPS){
+			intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_SAVED_TRIPS);
+		}
+		else {
+			throw new IllegalArgumentException(MODULE_TAG + ": tripSource contains invalid value");
+		}
+		startActivity(intent);
+		finish();
+		overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
+	}
+
+	private void transitionToNoteTypeActivity(long noteId) {
+
+		Intent intent = new Intent(this, NoteTypeActivity.class);
+
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_ID, noteId);
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_TYPE, NoteTypeActivity.EXTRA_NOTE_TYPE_UNDEFINED);
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_SOURCE, NoteTypeActivity.EXTRA_NOTE_SOURCE_TRIP_MAP);
+
+		// the NoteType activity needs these when the back button
+		// is pressed and we have to restart this activity
+		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_SOURCE, tripSource);
+
+		// Initiate transition to NoteTypeActivity
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		finish();
+	}
+
+	private void transitionToRateSegmentActivity() {
+
+		Intent intent = new Intent(this, RateSegmentActivity.class);
+
+		intent.putExtra(RateSegmentActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(RateSegmentActivity.EXTRA_TRIP_SOURCE, tripSource);
+		intent.putExtra(RateSegmentActivity.EXTRA_SEGMENT_START_INDEX, segmentStartIndex);
+		intent.putExtra(RateSegmentActivity.EXTRA_SEGMENT_END_INDEX, segmentEndIndex);
+
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		finish();
+	}
+
 }
