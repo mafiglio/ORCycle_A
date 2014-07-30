@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,15 +24,19 @@ public class RateSegmentActivity extends Activity {
 	private static final String MODULE_TAG = "RateSegmentActivity";
 
 	public static final String EXTRA_TRIP_ID = "tripid";
-	public static final String EXTRA_START_INDEX = "start";
-	public static final String EXTRA_END_INDEX = "end";
+	private static final int EXTRA_TRIP_ID_UNDEFINED = -1;
+	public static final String EXTRA_TRIP_SOURCE = "tripSource";
+	private static final int EXTRA_TRIP_SOURCE_UNDEFINED = -1;
+	public static final String EXTRA_SEGMENT_START_INDEX = "start";
+	public static final String EXTRA_SEGMENT_END_INDEX = "end";
+	private static final int EXTRA_SEGMENT_INDEX_UNDEFINED = -1;
+	private static final int RATING_UNDEFINED = -1;
 
-
-	private final long segmentId = -1;
-	private long tripId = -1;
+	private long tripId = EXTRA_TRIP_ID_UNDEFINED;
+	private int tripSource = EXTRA_TRIP_SOURCE_UNDEFINED;
 	private int rating;
-	private int tripStartIndex = -1;
-	private int tripEndIndex = -1;
+	private int segmentStartIndex = EXTRA_SEGMENT_INDEX_UNDEFINED;
+	private int segmentEndIndex = EXTRA_SEGMENT_INDEX_UNDEFINED;
 
 	private final HashMap<Integer, String> rateSegmentDescriptions = new HashMap<Integer, String>();
 
@@ -57,7 +60,6 @@ public class RateSegmentActivity extends Activity {
 
 		try {
 			setContentView(R.layout.activity_rate_segment);
-
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 			// Set up note type buttons
@@ -65,10 +67,24 @@ public class RateSegmentActivity extends Activity {
 
 			// gets the previously created intent
 			Intent myIntent = getIntent();
-			tripId         = myIntent.getLongExtra(RateSegmentActivity.EXTRA_TRIP_ID,     -1);
-			tripStartIndex = myIntent.getIntExtra (RateSegmentActivity.EXTRA_START_INDEX, -1);
-			tripEndIndex   = myIntent.getIntExtra (RateSegmentActivity.EXTRA_END_INDEX,   -1);
-			rating = -1;
+
+			// Note: these extras are used for transitioning back to the TripMapActivity if done
+			if (EXTRA_TRIP_ID_UNDEFINED == (tripId = myIntent.getLongExtra(EXTRA_TRIP_ID, EXTRA_TRIP_ID_UNDEFINED))) {
+				throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_ID");
+			}
+
+			if (EXTRA_TRIP_SOURCE_UNDEFINED == (tripSource = myIntent.getIntExtra(EXTRA_TRIP_SOURCE, EXTRA_TRIP_SOURCE_UNDEFINED))) {
+				throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_SOURCE");
+			}
+
+			if (EXTRA_SEGMENT_INDEX_UNDEFINED == (segmentStartIndex = myIntent.getIntExtra (RateSegmentActivity.EXTRA_SEGMENT_START_INDEX, EXTRA_SEGMENT_INDEX_UNDEFINED))) {
+				throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_SEGMENT_START_INDEX");
+			}
+
+			if (EXTRA_SEGMENT_INDEX_UNDEFINED == (segmentEndIndex = myIntent.getIntExtra (RateSegmentActivity.EXTRA_SEGMENT_END_INDEX,   EXTRA_SEGMENT_INDEX_UNDEFINED))) {
+				throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_SEGMENT_END_INDEX");
+			}
+			rating = RATING_UNDEFINED;
 
 			final ListView listView = (ListView) findViewById(R.id.listViewRateSegment);
 			ratings = new String[] {
@@ -124,29 +140,23 @@ public class RateSegmentActivity extends Activity {
 	/* Handles item selections */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Intent intent;
 		try {
 			// Handle presses on the action bar items
 			switch (item.getItemId()) {
 
 			case R.id.action_cancel_rate_segment:
 
-				// Alert user
-				Toast.makeText(getBaseContext(), "Segment rating discarded.", Toast.LENGTH_SHORT).show();
-
-				// Cancel
-				intent = new Intent(RateSegmentActivity.this, TripMapActivity.class);
-				intent.putExtra("showtrip", tripId);
-				finishActivity(intent);
+				// Cancel segment rating
+				transitionToTripMapActivity();
 				return true;
 
 			case R.id.action_save_rate_segment:
 
-				// Create segment entity
+				// Save segment rating
 				SegmentData segment;
 				if (null != (segment = SegmentData.createSegment(RateSegmentActivity.this))) {
 
-					segment.updateSegment(tripId, rating, "", tripStartIndex, tripEndIndex);
+					segment.updateSegment(tripId, rating, "", segmentStartIndex, segmentEndIndex);
 
 					// Upload segment entity
 					Uploader uploader = new Uploader(RateSegmentActivity.this);
@@ -158,9 +168,7 @@ public class RateSegmentActivity extends Activity {
 				}
 
 				// Create intent for next screen
-				intent = new Intent(RateSegmentActivity.this, RateSegmentDetailActivity.class);
-				intent.putExtra("showtrip", tripId);
-				finishActivity(intent);
+				transitionToRateSegmentDetailActivity();
 				return true;
 
 			default:
@@ -176,25 +184,40 @@ public class RateSegmentActivity extends Activity {
 	// 2.0 and above
 	@Override
 	public void onBackPressed() {
-		finishActivity(null);
-	}
-
-	// Before 2.0
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			finishActivity(null);
-			return true;
+		try {
+			transitionToTripMapActivity();
 		}
-		return super.onKeyDown(keyCode, event);
-	}
-
-	private void finishActivity(Intent intent) {
-		if (null != intent) {
-			startActivity(intent);
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
-		RateSegmentActivity.this.finish();
-		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 	}
 
+	private void transitionToTripMapActivity() {
+
+		// Create intent to go to the TripMapActivity
+		Intent intent = new Intent(this, TripMapActivity.class);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_SOURCE, tripSource);
+
+		// Exit this activity
+		startActivity(intent);
+		finish();
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+	}
+
+	private void transitionToRateSegmentDetailActivity() {
+
+		// Create intent for next screen
+		Intent intent = new Intent(this, RateSegmentDetailActivity.class);
+		intent.putExtra(RateSegmentDetailActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(RateSegmentDetailActivity.EXTRA_TRIP_SOURCE, tripSource);
+		intent.putExtra(RateSegmentDetailActivity.EXTRA_RATING, rating);
+		intent.putExtra(RateSegmentDetailActivity.EXTRA_SEGMENT_START_INDEX, segmentStartIndex);
+		intent.putExtra(RateSegmentDetailActivity.EXTRA_SEGMENT_END_INDEX, segmentEndIndex);
+
+		// Exit this activity
+		startActivity(intent);
+		finish();
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+	}
 }

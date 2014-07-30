@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,17 +17,32 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class NoteTypeActivity extends Activity {
 
-	static public final String EXTRA_NOTE_ID = "noteid";
-	static public final String EXTRA_NOTE_TYPE = "noteType";
-	static public final String EXTRA_IS_RECORDING = "isRecording";
+	private static final String MODULE_TAG = "NoteTypeActivity";
+
+	public static final String EXTRA_NOTE_ID = "noteid";
+	public static final String EXTRA_NOTE_TYPE = "noteType";
+	public static final String EXTRA_NOTE_SOURCE = "noteSource";
+	public static final int EXTRA_NOTE_ID_UNDEFINED = -1;
+	public static final int EXTRA_NOTE_TYPE_UNDEFINED = -1;
+	public static final int EXTRA_NOTE_SOURCE_UNDEFINED = -1;
+	public static final int EXTRA_NOTE_SOURCE_MAIN_INPUT = 0;
+	public static final int EXTRA_NOTE_SOURCE_TRIP_MAP = 1;
+
+	public static final String EXTRA_TRIP_ID = "EXTRA_TRIP_ID";
+	private static final int EXTRA_TRIP_ID_UNDEFINED = -1;
+	public static final String EXTRA_TRIP_SOURCE = "tripSource";
+	private static final int EXTRA_TRIP_SOURCE_UNDEFINED = -1;
+	public static final int EXTRA_TRIP_SOURCE_MAIN_INPUT = 0;
+	public static final int EXTRA_TRIP_SOURCE_SAVED_TRIPS = 1;
 
 	private int noteType;
 	private long noteid;
-	private boolean isRecording;
+	private int noteSource = EXTRA_NOTE_SOURCE_UNDEFINED;
+	private long tripId;
+	private int tripSource = EXTRA_TRIP_SOURCE_UNDEFINED;
 
 	private final HashMap<Integer, String> noteTypeDescriptions = new HashMap<Integer, String>();
 
@@ -64,9 +78,27 @@ public class NoteTypeActivity extends Activity {
 
 		// get input values for this view
 		Intent myIntent = getIntent();
-		noteid = myIntent.getLongExtra(EXTRA_NOTE_ID, -1);
-		noteType = myIntent.getIntExtra(EXTRA_NOTE_TYPE, -1);
-		isRecording = myIntent.getBooleanExtra(EXTRA_IS_RECORDING, false);
+
+		noteid = myIntent.getLongExtra(EXTRA_NOTE_ID, EXTRA_NOTE_ID_UNDEFINED);
+		if (EXTRA_NOTE_ID_UNDEFINED == noteid) {
+			throw new IllegalArgumentException(MODULE_TAG + ": EXTRA_NOTE_ID undefined.");
+		}
+
+		noteSource = myIntent.getIntExtra(EXTRA_NOTE_SOURCE, EXTRA_NOTE_SOURCE_UNDEFINED);
+		if (!((noteSource == EXTRA_NOTE_SOURCE_MAIN_INPUT) ||(noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP))) {
+			throw new IllegalArgumentException(MODULE_TAG + ": EXTRA_NOTE_SOURCE invalid argument.");
+		}
+
+		noteType = myIntent.getIntExtra(EXTRA_NOTE_TYPE, EXTRA_NOTE_TYPE_UNDEFINED);
+
+		// Note: these extras are used for transitioning back to the TripMapActivity if done
+		if (EXTRA_TRIP_ID_UNDEFINED == (tripId = myIntent.getLongExtra(EXTRA_TRIP_ID, EXTRA_TRIP_ID_UNDEFINED))) {
+			throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_ID");
+		}
+
+		if (EXTRA_TRIP_SOURCE_UNDEFINED == (tripSource = myIntent.getIntExtra(EXTRA_TRIP_SOURCE, EXTRA_TRIP_SOURCE_UNDEFINED))) {
+			throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_SOURCE");
+		}
 
 		prepareNoteTypeButtons();
 
@@ -139,35 +171,21 @@ public class NoteTypeActivity extends Activity {
 	/* Handles item selections */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
+
 		case R.id.action_cancel_note_type:
-			// cancel
-			Toast.makeText(getBaseContext(), "Note discarded.",
-					Toast.LENGTH_SHORT).show();
 
-			// Cancel
-			NoteData note = NoteData.fetchNote(NoteTypeActivity.this, noteid);
-			Log.v("Jason", "Note id: " + noteid);
-			note.dropNote();
-
-			NoteTypeActivity.this.finish();
-
-			overridePendingTransition(android.R.anim.slide_in_left,
-					android.R.anim.slide_out_right);
+			// Cancel the note and move to the previous screen
+			cancelNote();
+			transitionToPreviousActivity();
 			return true;
 
 		case R.id.action_save_note_type:
 
-			// move to NoteDetailActivity view
-			Intent intentToNoteDetail = new Intent(this, NoteDetailActivity.class);
-			intentToNoteDetail.putExtra(NoteDetailActivity.EXTRA_NOTE_TYPE, noteType);
-			intentToNoteDetail.putExtra(NoteDetailActivity.EXTRA_NOTE_ID, noteid);
-			intentToNoteDetail.putExtra(NoteDetailActivity.EXTRA_IS_RECORDING, isRecording);
-
-			startActivity(intentToNoteDetail);
-			overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-			this.finish();
+			// move to the next view
+			transitionToNoteDetailActivity();
 			return true;
 
 		default:
@@ -179,41 +197,74 @@ public class NoteTypeActivity extends Activity {
 	// 2.0 and above
 	@Override
 	public void onBackPressed() {
-		// cancel
-		Toast.makeText(getBaseContext(), "Note discarded.", Toast.LENGTH_SHORT)
-				.show();
-
-		// Cancel
-		NoteData note = NoteData.fetchNote(NoteTypeActivity.this, noteid);
-		Log.v("Jason", "Note id: " + noteid);
-		note.dropNote();
-
-		NoteTypeActivity.this.finish();
-
-		overridePendingTransition(android.R.anim.slide_in_left,
-				android.R.anim.slide_out_right);
+		cancelNote();
+		transitionToPreviousActivity();
 	}
 
-	// Before 2.0
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			// cancel
-			Toast.makeText(getBaseContext(), "Note discarded.",
-					Toast.LENGTH_SHORT).show();
-
-			// Cancel
-			NoteData note = NoteData.fetchNote(NoteTypeActivity.this, noteid);
-			Log.v("Jason", "Note id: " + noteid);
-			note.dropNote();
-
-			NoteTypeActivity.this.finish();
-
-			overridePendingTransition(android.R.anim.slide_in_left,
-					android.R.anim.slide_out_right);
-			return true;
+	private void cancelNote() {
+		NoteData note;
+		try {
+			if (null != (note = NoteData.fetchNote(NoteTypeActivity.this, noteid))) {
+				note.dropNote();
+			}
 		}
-		return super.onKeyDown(keyCode, event);
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
+	private void transitionToPreviousActivity() {
+		// Cancel
+		if (noteSource == EXTRA_NOTE_SOURCE_MAIN_INPUT) {
+			transitionToTabsConfigActivity();
+		}
+		else if (noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP) {
+			transitionToTripMapActivity();
+		}
+	}
+
+	private void transitionToNoteDetailActivity() {
+
+		// Create intent to go to the NoteDetailActivity
+		Intent intent = new Intent(this, NoteDetailActivity.class);
+		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_TYPE, noteType);
+		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_ID, noteid);
+		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_SOURCE, noteSource);
+
+		// the NoteType activity needs these when the back button
+		// is pressed and we have to restart this activity
+		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_SOURCE, tripSource);
+
+
+		// Exit this activity
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		finish();
+	}
+
+	private void transitionToTripMapActivity() {
+
+		// Create intent to go back to the TripMapActivity
+		Intent intent = new Intent(this, TripMapActivity.class);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_SOURCE, tripSource);
+
+		// Exit this activity
+		startActivity(intent);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		finish();
+	}
+
+	private void transitionToTabsConfigActivity() {
+
+		// Create intent to go back to the recording screen in the Tabsconfig activity
+		Intent intent = new Intent(this, TabsConfig.class);
+		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
+
+		// Exit this activity
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		finish();
+	}
 }

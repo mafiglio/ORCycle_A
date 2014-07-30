@@ -59,7 +59,8 @@ public class DbAdapter {
 	private static final int DATABASE_VERSION_SEGMENTS = 23;
 	private static final int DATABASE_VERSION_NOTES_V2 = 24;
 	private static final int DATABASE_VERSION_NOTES_V3 = 25;
-	private static final int DATABASE_VERSION = DATABASE_VERSION_NOTES_V3;
+	private static final int DATABASE_VERSION_ANSWERS = 26;
+	private static final int DATABASE_VERSION = DATABASE_VERSION_ANSWERS;
 
 	// Trips Table columns
 	public static final String K_TRIP_ROWID = "_id";
@@ -103,9 +104,14 @@ public class DbAdapter {
 	public static final String K_NOTE_STATUS = "notestatus";
 
 	// Pauses Table columns
-	public static final String K_PAUSE_ROWID = "_id";
+	public static final String K_PAUSE_TRIP_ID = "_id";
 	public static final String K_PAUSE_START_TIME = "starttime";
 	public static final String K_PAUSE_END_TIME = "endtime";
+
+	// Answers Table columns
+	public static final String K_ANSWER_TRIP_ID = "trip_id";
+	public static final String K_ANSWER_QUESTION_ID = "question_id";
+	public static final String K_ANSWER_ANSWER_ID = "answer_id";
 
 	// Segments Table columns
 	public static final String K_SEGMENT_ID = "_id";
@@ -148,9 +154,14 @@ public class DbAdapter {
 			+ "details text, startindex int, endindex int, status int, "
 			+ "FOREIGN KEY(tripid) REFERENCES TRIPS(_id));";
 
+	private static final String TABLE_CREATE_ANSWERS = "create table answers "
+			+ "(trip_id integer, question_id integer, answer_id integer, "
+			+ "FOREIGN KEY(trip_id) REFERENCES TRIPS(_id));";
+
 	private static final String TABLE_DROP_SEGMENTS = "drop table segments;";
 	private static final String TABLE_DROP_NOTES = "drop table notes;";
 	private static final String TABLE_DROP_PAUSES = "drop table pauses;";
+	private static final String TABLE_DROP_ANSWERS = "drop table answers;";
 	private static final String TABLE_NOTES_ADD_COLUMN = "ALTER TABLE notes ADD COLUMN tripid int;";
 
 	private static final String DATABASE_NAME = "data";
@@ -159,6 +170,7 @@ public class DbAdapter {
 	private static final String DATA_TABLE_NOTES = "notes";
 	private static final String DATA_TABLE_PAUSES = "pauses";
 	private static final String DATA_TABLE_SEGMENTS = "segments";
+	private static final String DATA_TABLE_ANSWERS = "answers";
 
 	private final Context mCtx;
 
@@ -179,6 +191,7 @@ public class DbAdapter {
 			db.execSQL(TABLE_CREATE_NOTES);
 			db.execSQL(TABLE_CREATE_PAUSES);
 			db.execSQL(TABLE_CREATE_SEGMENTS);
+			db.execSQL(TABLE_CREATE_ANSWERS);
 		}
 
 		@Override
@@ -216,13 +229,21 @@ public class DbAdapter {
 					Log.e(MODULE_TAG, ex.getMessage());
 				}
 			}
+
+			if (oldVersion < DATABASE_VERSION_ANSWERS) {
+				try {
+					db.execSQL(TABLE_CREATE_ANSWERS);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
 		}
 
 		@Override
 		public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		}
 	}
-
 
 	// ************************************************************************
 	// *                    DbAdapter table methods
@@ -419,6 +440,7 @@ public class DbAdapter {
 				long tripid = c.getInt(0);
 				deleteAllCoordsForTrip(tripid);
 				deletePauses(tripid);
+				deleteAnswers(tripid);
 				c.moveToNext();
 			}
 		}
@@ -455,13 +477,12 @@ public class DbAdapter {
 		return mCursor;
 	}
 
-	public boolean updateTrip(long tripid, String purp, String fancystart, String fancyinfo, String note) {
+	public boolean updateTrip(long tripid, String fancystart, String fancyinfo, String note) {
 
 		int numRows;
 
 		ContentValues contentValues = new ContentValues();
 
-		contentValues.put(K_TRIP_PURP, purp);
 		contentValues.put(K_TRIP_FANCYSTART, fancystart);
 		contentValues.put(K_TRIP_FANCYINFO, fancyinfo);
 		contentValues.put(K_TRIP_NOTE, note);
@@ -469,10 +490,26 @@ public class DbAdapter {
 		numRows = mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null);
 
 		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
-				+ "](" + K_TRIP_PURP + ", " + K_TRIP_FANCYSTART + ", " + K_TRIP_FANCYINFO + ", " + K_TRIP_NOTE +"): "
+				+ "](" + K_TRIP_FANCYSTART + ", " + K_TRIP_FANCYINFO + ", " + K_TRIP_NOTE +"): "
 				+ String.valueOf(numRows) + " rows.");
 
 		return numRows > 0;
+	}
+
+	public void updateTripPurpose(long tripid, String purpose) {
+
+		int numRows;
+
+		ContentValues contentValues = new ContentValues();
+
+		contentValues.put(K_TRIP_PURP, purpose);
+
+		numRows = mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null);
+
+		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
+				+ "](" + K_TRIP_PURP + "): " + String.valueOf(numRows) + " rows.");
+
+		return;
 	}
 
 	public boolean updateTrip(long tripid, int lathigh, int latlow, int lgthigh, int lgtlow, float distance) {
@@ -677,8 +714,6 @@ public class DbAdapter {
 		return numRows > 0;
 	}
 
-
-
 	public boolean updateNoteStatus(long noteid, int noteStatus) {
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(K_NOTE_STATUS, noteStatus);
@@ -706,7 +741,7 @@ public class DbAdapter {
 
 		// Assemble row data
 		ContentValues rowValues = new ContentValues();
-		rowValues.put(K_PAUSE_ROWID, tripId);
+		rowValues.put(K_PAUSE_TRIP_ID, tripId);
 		rowValues.put(K_PAUSE_START_TIME, startTime);
 		rowValues.put(K_PAUSE_END_TIME, endTime);
 
@@ -719,7 +754,7 @@ public class DbAdapter {
 	 * @param tripId id of the pauses to delete
 	 */
 	public void deletePauses(long tripId) {
-		mDb.delete(DATA_TABLE_PAUSES, K_PAUSE_ROWID + "=" + tripId, null);
+		mDb.delete(DATA_TABLE_PAUSES, K_PAUSE_TRIP_ID + "=" + tripId, null);
 	}
 
 	/**
@@ -736,9 +771,62 @@ public class DbAdapter {
 		Cursor cursor;
 
 		String[] columns = new String[] { K_PAUSE_START_TIME, K_PAUSE_END_TIME };
-		String whereClause = K_PAUSE_ROWID + "=" + tripId;
+		String whereClause = K_PAUSE_TRIP_ID + "=" + tripId;
 
 		if (null != (cursor = mDb.query(true, DATA_TABLE_PAUSES, columns, whereClause, null, null, null, null, null))) {
+			cursor.moveToFirst();
+		}
+
+		return cursor;
+	}
+
+	// ************************************************************************
+	// *                       Answers table methods
+	// ************************************************************************
+
+	/**
+	 * Insert a row into the 'answers' table
+	 * @param trip_id Trip ID of associated trip
+	 * @param question_id ID of question being answered
+	 * @param answer_id ID of answer
+	 * @throws SQLException
+	 */
+	public void addAnswerToTrip(long trip_id, int question_id, int answer_id) throws SQLException{
+
+		// Assemble row data
+		ContentValues rowValues = new ContentValues();
+		rowValues.put(K_ANSWER_TRIP_ID, trip_id);
+		rowValues.put(K_ANSWER_QUESTION_ID, question_id);
+		rowValues.put(K_ANSWER_ANSWER_ID, answer_id);
+
+		// Insert row in table
+		mDb.insertOrThrow(DATA_TABLE_ANSWERS, null, rowValues);
+	}
+
+	/**
+	 * Delete answers with the given trip ID
+	 * @param trip_id id of the pauses to delete
+	 */
+	public void deleteAnswers(long trip_id) {
+		mDb.delete(DATA_TABLE_ANSWERS, K_ANSWER_TRIP_ID + "=" + trip_id, null);
+	}
+
+	/**
+	 * Return a Cursor positioned at the answers that matches the given trip_id
+	 *
+	 * @param trip_id ID of trip to retrieve
+	 * @return Cursor positioned to matching trip, if found
+	 * @throws SQLException if trip could not be found/retrieved
+	 */
+	public Cursor fetchAnswers(long trip_id) throws SQLException {
+
+		Cursor cursor;
+
+		String[] columns = new String[] { K_ANSWER_QUESTION_ID, K_ANSWER_ANSWER_ID };
+		String whereClause = K_ANSWER_TRIP_ID + "=" + trip_id;
+
+		if (null != (cursor = mDb.query(true, DATA_TABLE_ANSWERS, columns,
+				whereClause, null, null, null, null, null))) {
 			cursor.moveToFirst();
 		}
 

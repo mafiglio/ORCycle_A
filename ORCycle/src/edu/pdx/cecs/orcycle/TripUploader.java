@@ -116,14 +116,6 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 	private static final String FID_QUESTION_ID = "question_id";
 	private static final String FID_ANSWER_ID = "answer_id";
 
-	private static final int QID_TRIP_FREQUENCY = 19; // routeFreq
-	private static final int QID_TRIP_PURPOSE = 20;   // purpose
-	private static final int QID_ROUTE_PREFS = 21;    //routePrefs
-	private static final int QID_TRIP_COMFORT = 22;   // routeComfort
-	private static final int QID_ROUTE_SAFETY = 23;   // routeSafety
-	private static final int QID_PARTICIPANTS = 24;   // ridePassengers
-	private static final int QID_BIKE_ACCESSORY = 25; // rideSpecial
-
 	public TripUploader(Context ctx) {
 		super();
 		this.mCtx = ctx;
@@ -218,115 +210,47 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		return jsonPauses;
 	}
 
-	private JSONArray getTripResponsesJSON() throws JSONException {
+	private JSONArray getTripResponsesJSON(long tripId) throws JSONException {
 
-		SharedPreferences settings;
-		Map<String, ?> prefs;
-		JSONArray jsonQNA = null;
+		// Create a JSON array to hold all of the answers
+		JSONArray jsonAnswers = new JSONArray();
 
+		mDb.openReadOnly();
 		try {
-			if (null != (settings = mCtx.getSharedPreferences(TripQuestionsActivity.PREFS_TRIP_QUESTIONS, 0))) {
-				if (null != (prefs = settings.getAll())) {
+			Cursor answers = mDb.fetchAnswers(tripId);
 
-					jsonQNA = new JSONArray();
+			int questionColumn = answers.getColumnIndex(DbAdapter.K_ANSWER_QUESTION_ID);
+			int answerColumn = answers.getColumnIndex(DbAdapter.K_ANSWER_ANSWER_ID);
 
-					for (Entry<String, ?> p : prefs.entrySet()) {
-						try {
-							int key = Integer.parseInt(p.getKey());
+			// Cycle thru the database entries
+			while (!answers.isAfterLast()) {
 
-							switch (key) {
+				// For each row, construct a JSON object
+				JSONObject json = new JSONObject();
 
-							case TripQuestionsActivity.PREF_TRIP_FREQUENCY:
-								putQnaData(jsonQNA, QID_TRIP_FREQUENCY, ((Integer) p.getValue()).intValue());
-								break;
+				try {
+					// Place values into the JSON object
+					json.put(FID_QUESTION_ID, answers.getInt(questionColumn));
+					json.put(FID_ANSWER_ID, answers.getInt(answerColumn));
 
-							case TripQuestionsActivity.PREF_TRIP_PURPOSE:
-								putQnaData(jsonQNA, QID_TRIP_PURPOSE, ((Integer) p.getValue()).intValue());
-								break;
-
-							case TripQuestionsActivity.PREF_ROUTE_PREFS:
-								putQnaData(jsonQNA, QID_ROUTE_PREFS, ((String) p.getValue()));
-								break;
-
-							case TripQuestionsActivity.PREF_TRIP_COMFORT:
-								putQnaData(jsonQNA, QID_TRIP_COMFORT, ((Integer) p.getValue()).intValue());
-								break;
-
-							case TripQuestionsActivity.PREF_ROUTE_SAFETY:
-								putQnaData(jsonQNA, QID_ROUTE_SAFETY, ((Integer) p.getValue()).intValue());
-								break;
-
-							case TripQuestionsActivity.PREF_PARTICIPANTS:
-								putQnaData(jsonQNA, QID_PARTICIPANTS, ((String) p.getValue()));
-								break;
-
-							case TripQuestionsActivity.PREF_BIKE_ACCESSORY:
-								putQnaData(jsonQNA, QID_BIKE_ACCESSORY, ((String) p.getValue()));
-								break;
-							}
-						}
-						catch(Exception ex) {
-							Log.e(MODULE_TAG, ex.getMessage());
-						}
-					}
+					// Place JSON objects into the JSON array
+					jsonAnswers.put(json);
 				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+				// Move to next row
+				answers.moveToNext();
 			}
+			answers.close();
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
-
-		return jsonQNA;
-	}
-
-	private void putQnaData(JSONArray jsonQNA, int question_id, int answer_id) {
-
-		if (answer_id > 0) {
-			JSONObject json = new JSONObject();
-			try {
-				json.put(FID_QUESTION_ID, question_id);
-				json.put(FID_ANSWER_ID, answer_id);
-				jsonQNA.put(json);
-			}
-			catch(Exception ex) {
-				Log.e(MODULE_TAG, ex.getMessage());
-			}
+		finally {
+			mDb.close();
 		}
-	}
-
-	private void putQnaData(JSONArray jsonQNA, int questionId, String textAnswers) {
-
-		if ((textAnswers == null)|| (textAnswers.equals(""))){
-			return;
-		}
-
-		String[] answerIds = textAnswers.split(",");
-
-		if ((answerIds == null)|| (answerIds.length == 0)){
-			return;
-		}
-
-		JSONObject json;
-
-		for(int i = 0; i < answerIds.length; ++i) {
-			try {
-				int answerId = Integer.valueOf(answerIds[i]);
-				if (answerId > 0) {
-					try {
-						json = new JSONObject();
-						json.put(FID_QUESTION_ID, questionId);
-						json.put(FID_ANSWER_ID, answerId);
-						jsonQNA.put(json);
-					}
-					catch(Exception ex) {
-						Log.e(MODULE_TAG, ex.getMessage());
-					}
-				}
-			}
-			catch(Exception ex) {
-				Log.e(MODULE_TAG, ex.getMessage());
-			}
-		}
+		return jsonAnswers;
 	}
 
 	private JSONObject getUserJSON() throws JSONException {
@@ -460,7 +384,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		JSONObject coords = getCoordsJSON(tripId);
 		JSONArray pauses = getPausesJSON(tripId);
 		JSONObject user = getUserJSON();
-		JSONArray tripResponses = getTripResponsesJSON();
+		JSONArray tripResponses = getTripResponsesJSON(tripId);
 		String deviceId = getDeviceId();
 		Vector<String> tripData = getTripData(tripId);
 		String notes = tripData.get(0);
@@ -631,7 +555,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 	@Override
 	protected void onPreExecute() {
 		Toast.makeText(mCtx.getApplicationContext(),
-				"Submitting. Thanks for using Cycle Atlanta!",
+				"Submitting. Thanks for using ORcycle!",
 				Toast.LENGTH_LONG).show();
 	}
 
@@ -676,7 +600,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 			} else {
 				Toast.makeText(
 						mCtx.getApplicationContext(),
-						"Cycle Atlanta couldn't upload the trip, and will retry when your next trip is completed.",
+						"ORcycle couldn't upload the trip, and will retry when your next trip is completed.",
 						Toast.LENGTH_LONG).show();
 			}
 		} catch (Exception e) {

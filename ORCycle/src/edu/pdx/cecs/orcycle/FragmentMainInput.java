@@ -68,7 +68,6 @@ public class FragmentMainInput extends Fragment
 	private TextView txtCO2 = null;
 	private TextView txtCalories = null;
 
-	Intent fi;
 	boolean isRecording = false;
 	boolean isPaused = false;
 	Timer timer;
@@ -407,7 +406,6 @@ public class FragmentMainInput extends Fragment
 	// *                     WaitForServiceConnection Tasking
 	// *********************************************************************************
 
-
 	// Need handler for callbacks to the UI thread
 	final Handler handlerWaitForServiceConnection = new Handler();
 
@@ -444,9 +442,10 @@ public class FragmentMainInput extends Fragment
 						int state = recordingService.getState();
 						if (state > RecordingService.STATE_IDLE) {
 							if (state == RecordingService.STATE_FULL) {
-								//startActivity(new Intent(getActivity(), TripPurposeActivity.class));
-								startActivity(new Intent(getActivity(), TripQuestionsActivity.class));
-								getActivity().finish();
+								//TripData tripData = myApp.getStatus().getTripData();
+								//boolean allowSave = (tripData.numpoints > 0);
+								dialogTripFinish(true);
+								//dialogTripFinish();
 							}
 						}
 					}
@@ -462,7 +461,7 @@ public class FragmentMainInput extends Fragment
 	// *                              Button Handlers
 	// *********************************************************************************
 
-    /**
+	/**
      * Class: ButtonStart_OnClickListener
      *
      * Description: Callback to be invoked when startButton button is clicked
@@ -477,7 +476,7 @@ public class FragmentMainInput extends Fragment
 				// Before we go to record, check GPS status
 				if (!myApp.getStatus().isProviderEnabled()) {
 					// Alert user GPS not available
-					buildAlertMessageNoGps();
+					showDialogNoGps();
 				}
 				else {
 					myApp.startRecording(getActivity());
@@ -550,7 +549,21 @@ public class FragmentMainInput extends Fragment
 		 */
 		public void onClick(View v) {
 			try {
-				buildAlertMessageSaveClicked();
+				recordingService.pauseRecording();
+				setupButtons();
+
+				TripData tripData = myApp.getStatus().getTripData();
+				boolean allowSave = (tripData.numpoints > 0);
+				dialogTripFinish(allowSave);
+
+				if (tripData.numpoints > 0) {
+				}
+				else {
+					// Otherwise, cancel and go back to main screen
+					//alertUserNoGPSData();
+					//cancelRecording();
+					//setupButtons();
+				}
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -572,22 +585,22 @@ public class FragmentMainInput extends Fragment
 
 			try {
 				if (!myApp.getStatus().isProviderEnabled()) {
-					buildAlertMessageNoGps();
+					showDialogNoGps();
 				}
 				else if (currentLocation == null) {
-					Toast.makeText(getActivity(), "No GPS data acquired; nothing to submit.", Toast.LENGTH_SHORT).show();
+					alertUserNoGPSData();
 				}
 				else {
 					// pause recording of trip data
 					recordingService.pauseRecording();
 
 					// update note entity
-					long tripid = recordingService.getCurrentTripID();
+					long tripId = recordingService.getCurrentTripID();
 
-					NoteData note = NoteData.createNote(getActivity(), tripid);
+					NoteData note = NoteData.createNote(getActivity(), tripId);
 					note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
 					note.setLocation(currentLocation);
-					TransitionToNoteTypeActivity(note);
+					transitionToNoteTypeActivity(note, tripId);
 				}
 			}
 
@@ -596,23 +609,6 @@ public class FragmentMainInput extends Fragment
 			}
 		}
 	}
-
-	private void TransitionToNoteTypeActivity(NoteData note) {
-
-		Intent intent;
-
-		// Setup intent to move to next activity
-		intent = new Intent(getActivity(), NoteTypeActivity.class);
-
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_ID, note.noteid);
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_TYPE, -1);
-		intent.putExtra(NoteTypeActivity.EXTRA_IS_RECORDING, isRecording);
-
-		startActivity(intent);
-		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		// getActivity().finish();
-	}
-
 
 	// *********************************************************************************
 	// *
@@ -676,13 +672,13 @@ public class FragmentMainInput extends Fragment
 	}
 
 	// *********************************************************************************
-	// *                            Supporting Dialogs
+	// *                            No GPS Dialog
 	// *********************************************************************************
 
 	/**
 	 * Build dialog telling user that the GPS is not available
 	 */
-	private void buildAlertMessageNoGps() {
+	private void showDialogNoGps() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(
 				getActivity());
 		builder.setMessage(
@@ -692,15 +688,7 @@ public class FragmentMainInput extends Fragment
 						new DialogInterface.OnClickListener() {
 							public void onClick(final DialogInterface dialog,
 									final int id) {
-								final ComponentName toLaunch = new ComponentName(
-										"com.android.settings",
-										"com.android.settings.SecuritySettings");
-								final Intent intent = new Intent(
-										Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-								intent.addCategory(Intent.CATEGORY_LAUNCHER);
-								intent.setComponent(toLaunch);
-								intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-								startActivityForResult(intent, 0);
+								transitionToLocationServices();
 							}
 						})
 				.setNegativeButton("Cancel",
@@ -714,82 +702,83 @@ public class FragmentMainInput extends Fragment
 		alert.show();
 	}
 
+	// *********************************************************************************
+	// *                            Trip Finished Dialogs
+	// *********************************************************************************
+
 	/**
 	 * Build dialog telling user to save this trip
 	 */
-	private void buildAlertMessageSaveClicked() {
+	private void dialogTripFinish(boolean allowSave) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle("Save Trip");
-		builder.setMessage("Do you want to save this trip?");
-		builder.setNegativeButton("Save",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-
-						try {
-							dialog.cancel();
-							// save
-							// If we have points, go to the save-trip activity
-							// trip.numpoints > 0
-
-							myApp.finishRecording();
-							int numTripPoints = myApp.getStatus().getTripData().numpoints;
-							if (numTripPoints > 0) {
-								// Save trip so far (points and extent, but no purpose or notes)
-								//fi = new Intent(getActivity(), TripPurposeActivity.class);
-								fi = new Intent(getActivity(), TripQuestionsActivity.class);
-
-								startActivity(fi);
-								getActivity().overridePendingTransition(
-										R.anim.slide_in_right,
-										R.anim.slide_out_left);
-								getActivity().finish();
-							}
-							// Otherwise, cancel and go back to main screen
-							else {
-								Toast.makeText(getActivity(),
-										"No GPS data acquired; nothing to submit.",
-										Toast.LENGTH_SHORT).show();
-
-								cancelRecording();
-							}
-							setupButtons();
-						}
-						catch(Exception ex) {
-							Log.e(MODULE_TAG, ex.getMessage());
-						}
-					}
-				});
-
-		builder.setNeutralButton("Discard",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						try {
-							dialog.cancel();
-							// discard
-							cancelRecording();
-							setupButtons();
-						}
-						catch(Exception ex) {
-							Log.e(MODULE_TAG, ex.getMessage());
-						}
-					}
-				});
-
-		builder.setPositiveButton("Cancel",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						try {
-							dialog.cancel();
-							// continue
-							setupButtons();
-						}
-						catch(Exception ex) {
-							Log.e(MODULE_TAG, ex.getMessage());
-						}
-					}
-				});
+		if (allowSave) {
+			builder.setMessage("Do you want to save this trip?");
+			builder.setNegativeButton("Save", new DialogTripFinish_OnSaveTripClicked());
+		}
+		else {
+			builder.setMessage("No GPS data acquired; nothing to save.");
+		}
+		builder.setNeutralButton("Discard", new DialogTripFinish_OnDiscardTripClicked());
+		builder.setPositiveButton("Resume", new DialogTripFinish_OnContinueTripClicked());
 		final AlertDialog alert = builder.create();
 		alert.show();
+	}
+
+	private final class DialogTripFinish_OnSaveTripClicked implements
+			DialogInterface.OnClickListener {
+		public void onClick(DialogInterface dialog, int id) {
+
+			try {
+				dialog.cancel();
+
+				myApp.finishRecording();
+
+				TripData tripData = myApp.getStatus().getTripData();
+
+				if (tripData.numpoints > 0) {
+					transitionToTripQuestionActivity(tripData.tripid);
+				}
+				// Otherwise, cancel and go back to main screen
+				else {
+					alertUserNoGPSData();
+					cancelRecording();
+				}
+				setupButtons();
+			}
+			catch (Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+	private final class DialogTripFinish_OnDiscardTripClicked implements
+			DialogInterface.OnClickListener {
+		public void onClick(DialogInterface dialog, int id) {
+			try {
+				dialog.cancel();
+				cancelRecording();
+			}
+			catch (Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			} finally {
+				setupButtons();
+			}
+		}
+	}
+
+	private final class DialogTripFinish_OnContinueTripClicked implements
+			DialogInterface.OnClickListener {
+		public void onClick(DialogInterface dialog, int id) {
+			try {
+				dialog.cancel();
+				recordingService.resumeRecording();
+			} catch (Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			} finally {
+				setupButtons();
+			}
+		}
 	}
 
 	// *********************************************************************************
@@ -888,4 +877,48 @@ public class FragmentMainInput extends Fragment
 		}
 		return false;
 	}
+
+	// *********************************************************************************
+	// *                            Misc & Helper Functions
+	// *********************************************************************************
+
+	private void alertUserNoGPSData() {
+		Toast.makeText(getActivity(), "No GPS data acquired; nothing to submit.", Toast.LENGTH_SHORT).show();
+	}
+
+	private void transitionToTripQuestionActivity(long tripId) {
+
+		Intent intent = new Intent(getActivity(), TripQuestionsActivity.class);
+		intent.putExtra(TripQuestionsActivity.EXTRA_TRIP_ID, tripId);
+		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		getActivity().finish();
+	}
+
+	private void transitionToNoteTypeActivity(NoteData note, long tripId) {
+
+		// Setup intent to move to next activity
+		Intent intent = new Intent(getActivity(), NoteTypeActivity.class);
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_ID, note.noteid);
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_TYPE, NoteTypeActivity.EXTRA_NOTE_TYPE_UNDEFINED);
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_SOURCE, NoteTypeActivity.EXTRA_NOTE_SOURCE_MAIN_INPUT);
+		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_SOURCE, NoteTypeActivity.EXTRA_TRIP_SOURCE_MAIN_INPUT);
+
+		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		// getActivity().finish();
+	}
+
+	private void transitionToLocationServices() {
+		final ComponentName toLaunch = new ComponentName(
+				"com.android.settings",
+				"com.android.settings.SecuritySettings");
+		final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+		intent.addCategory(Intent.CATEGORY_LAUNCHER);
+		intent.setComponent(toLaunch);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivityForResult(intent, 0);
+	}
+
 }

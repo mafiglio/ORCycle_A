@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,7 +21,16 @@ import android.view.MenuItem;
 public class TabsConfig extends FragmentActivity implements
 		ActionBar.TabListener {
 
-	public static final String MODULE_TAG = "TabsConfig";
+	private static final String MODULE_TAG = "TabsConfig";
+
+	public static final String EXTRA_KEEP_ME = "EXTRA_KEEP_ME";
+	public static final String EXTRA_SHOW_FRAGMENT = "EXTRA_SHOW_FRAGMENT";
+	public static final int FRAG_INDEX_MAIN_INPUT = 0;
+	public static final int FRAG_INDEX_SAVED_TRIPS = 1;
+	public static final int FRAG_INDEX_SAVED_NOTES = 2;
+	public static final int FRAG_INDEX_USER_INFO = 3;
+
+	private int fragmentToShow = FRAG_INDEX_MAIN_INPUT;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -45,13 +55,17 @@ public class TabsConfig extends FragmentActivity implements
 
 	Fragment fragment4;
 
+	// *********************************************************************************
+	// *                            Fragment Implementation
+	// *********************************************************************************
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
 			setContentView(R.layout.tabs_config);
 
-			Log.v("Jason", "Cycle: TabsConfig onCreate");
+			Log.v(MODULE_TAG, "Cycle: TabsConfig onCreate");
 
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -98,18 +112,66 @@ public class TabsConfig extends FragmentActivity implements
 			}
 
 			mViewPager.setOffscreenPageLimit(4);
+
+			Intent intent;
+			Bundle bundle;
+			if (null != (intent = getIntent())) {
+				if (null != (bundle = intent.getExtras())) {
+					fragmentToShow = bundle.getInt(TabsConfig.EXTRA_SHOW_FRAGMENT, FRAG_INDEX_MAIN_INPUT);
+				}
+			}
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
 
-	// @Override
-	// public boolean onCreateOptionsMenu(Menu menu) {
-	// // Inflate the menu; this adds items to the action bar if it is present.
-	// getMenuInflater().inflate(R.menu.record_trip, menu);
-	// return true;
-	// }
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		Log.v(MODULE_TAG, "Cycle: TabsConfig onResume");
+
+		try {
+			final ActionBar actionBar = getActionBar();
+			actionBar.selectTab(actionBar.getTabAt(fragmentToShow));
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		Log.v(MODULE_TAG, "Cycle: TabsConfig onPause");
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.v(MODULE_TAG, "Cycle: TabsConfig onDestroy");
+	}
+
+	// 2.0 and above
+	@Override
+	public void onBackPressed() {
+	    moveTaskToBack(true);
+	}
+
+	// Before 2.0
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	        moveTaskToBack(true);
+	        return true;
+	    }
+	    return super.onKeyDown(keyCode, event);
+	}
+
+	// *********************************************************************************
+	// *                    ActionBar.TabListener Implementation
+	// *********************************************************************************
 
 	@Override
 	public void onTabSelected(ActionBar.Tab tab,
@@ -182,6 +244,10 @@ public class TabsConfig extends FragmentActivity implements
 			FragmentTransaction fragmentTransaction) {
 	}
 
+	// *********************************************************************************
+	// *                           SectionsPagerAdapter
+	// *********************************************************************************
+
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
 	 * one of the sections/tabs/pages.
@@ -196,13 +262,13 @@ public class TabsConfig extends FragmentActivity implements
 		public Fragment getItem(int position) {
 
 			switch (position) {
-			case 0:
+			case FRAG_INDEX_MAIN_INPUT:
 				return fragment1;
-			case 1:
+			case FRAG_INDEX_SAVED_TRIPS:
 				return fragment2;
-			case 2:
+			case FRAG_INDEX_SAVED_NOTES:
 				return fragment3;
-			case 3:
+			case FRAG_INDEX_USER_INFO:
 				return fragment4;
 			}
 			return null;
@@ -229,39 +295,5 @@ public class TabsConfig extends FragmentActivity implements
 			}
 			return null;
 		}
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		Log.v("Jason", "Cycle: TabsConfig onResume");
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		Log.v("Jason", "Cycle: TabsConfig onPause");
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		Log.v("Jason", "Cycle: TabsConfig onDestroy");
-	}
-
-	// 2.0 and above
-	@Override
-	public void onBackPressed() {
-	    moveTaskToBack(true);
-	}
-
-	// Before 2.0
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	        moveTaskToBack(true);
-	        return true;
-	    }
-	    return super.onKeyDown(keyCode, event);
 	}
 }

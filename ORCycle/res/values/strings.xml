@@ -206,7 +206,7 @@
         <item>Very bad</item>
         </string-array>
 			
-    <string-array name="tripExperiencedRiderArray">
+    <string-array name="tripRouteSafetyArray">
         <item></item>
         <item>Safe/comfortable for families, children or new riders</item>
         <item>Safe/comfortable for most riders</item>

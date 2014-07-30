@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,36 +18,33 @@ public class TripDetailActivity extends Activity {
 
 	private static final String MODULE_TAG = "TripDetailActivity";
 
-	// Reference to Global application object
-	private MyApplication myApp = null;
+	public static final String EXTRA_TRIP_ID = "EXTRA_TRIP_ID";
+	private static final int EXTRA_TRIP_ID_UNDEFINED = -1;
 
 	// Reference to recording service;
 	private IRecordService recordingService = null;
 
-	long tripid;
-	String purpose = "";
-	EditText notes;
+	private long tripId = EXTRA_TRIP_ID_UNDEFINED;
+	private EditText tripComment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		try {
-			// Convenient pointer to global application object
-			myApp = MyApplication.getInstance();
-			recordingService = myApp.getRecordingService();
-
 			setContentView(R.layout.activity_trip_detail);
-
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-			finishRecording();
-			purpose = "";
-			Intent myIntent = getIntent(); // gets the previously created intent
-			purpose = myIntent.getStringExtra("purpose");
-			notes = (EditText) findViewById(R.id.editTextTripDetail);
-			this.getWindow().setSoftInputMode(
-					WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+			// Note: these extras are used for transitioning back to the TripMapActivity if done
+			if (EXTRA_TRIP_ID_UNDEFINED == (tripId = getIntent().getLongExtra(EXTRA_TRIP_ID, EXTRA_TRIP_ID_UNDEFINED))) {
+				throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_ID");
+			}
+
+			// get reference to recording service
+			recordingService = MyApplication.getInstance().getRecordingService();
+
+			tripComment = (EditText) findViewById(R.id.editTextTripDetail);
+			this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -58,58 +54,41 @@ public class TripDetailActivity extends Activity {
 	// submit btn is only activated after the service.finishedRecording() is
 	// completed.
 	void submit(String notesToUpload) {
-		final Intent xi = new Intent(this, TripMapActivity.class);
 
-		TripData trip = TripData.fetchTrip(TripDetailActivity.this, tripid);
+		try {
+			recordingService.finishRecording();
 
-		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm a");
-		String fancyStartTime = sdfStart.format(trip.getStartTime());
-		Log.v("Jason", "Start: " + fancyStartTime);
+			TripData trip = TripData.fetchTrip(TripDetailActivity.this, tripId);
 
-		// "3.5 miles in 26 minutes"
-		/*
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-		char[] tripStart = sdf.format(trip.startTime).toCharArray();
-		char[] tripEnd = sdf.format(trip.endTime).toCharArray();
-		int minStart = (tripStart[0]*10 + tripStart[1])*60 + tripStart[3]*10+tripStart[4];
-		int minEnd = (tripEnd[0]*10 + tripEnd[1])*60 + tripEnd[3]*10+tripEnd[4];
-		int minutes = minEnd - minStart;*/
+			SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm a");
+			String fancyStartTime = sdfStart.format(trip.getStartTime());
+			Log.v(MODULE_TAG, "Start: " + fancyStartTime);
 
-		SimpleDateFormat sdfDuration = new SimpleDateFormat("HH:mm:ss");
-		sdfDuration.setTimeZone(TimeZone.getTimeZone("UTC"));
-		Double endTime = trip.getEndTime();
-		Double startTime = trip.getStartTime();
-		String duration = sdfDuration.format(endTime - startTime);
+			SimpleDateFormat sdfDuration = new SimpleDateFormat("HH:mm:ss");
+			sdfDuration.setTimeZone(TimeZone.getTimeZone("UTC"));
+			Double endTime = trip.getEndTime();
+			Double startTime = trip.getStartTime();
+			String duration = sdfDuration.format(endTime - startTime);
 
-		String fancyEndInfo = String.format("%1.1f miles, %s,  %s",
-				(0.0006212f * trip.distance), duration, notesToUpload);
+			String fancyEndInfo = String.format("%1.1f miles, %s,  %s",
+					(0.0006212f * trip.distance), duration, notesToUpload);
 
-		// Save the trip details to the phone database. W00t!
-		trip.updateTrip(purpose, fancyStartTime, fancyEndInfo, notesToUpload);
-		trip.updateTripStatus(TripData.STATUS_COMPLETE);
-		resetService();
+			// Save the trip details to the phone database. W00t!
+			trip.updateTrip(fancyStartTime, fancyEndInfo, notesToUpload);
+			trip.updateTripStatus(TripData.STATUS_COMPLETE);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		try {
+			recordingService.reset();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 
-		// Now create the MainInput Activity so BACK btn works properly
-		Intent i = new Intent(getApplicationContext(), TabsConfig.class);
-		startActivity(i);
-
-		// And, show the map!
-		xi.putExtra("showtrip", trip.tripid);
-		xi.putExtra("uploadTrip", true);
-		Log.v("Jason", "Tripid: " + String.valueOf(trip.tripid));
-		startActivity(xi);
-		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		TripDetailActivity.this.finish();
-
-	}
-
-	void finishRecording() {
-		tripid = recordingService.finishRecording();
-	}
-
-	void resetService() {
-		recordingService.reset();
+		// Show the map
+		transitionToTripMapActivity();
 	}
 
 	/* Creates the menu items */
@@ -139,7 +118,7 @@ public class TripDetailActivity extends Activity {
 				return true;
 			case R.id.action_save_trip_detail:
 				// save
-				submit(notes.getEditableText().toString());
+				submit(tripComment.getEditableText().toString());
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -156,27 +135,30 @@ public class TripDetailActivity extends Activity {
 	public void onBackPressed() {
 		try {
 			// skip
-			submit("");
+			transitionToTripQuestionActivity();
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
 
-	// Before 2.0
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		try {
-			if (keyCode == KeyEvent.KEYCODE_BACK) {
-				// skip
-				submit("");
-				return true;
-			}
-			return super.onKeyDown(keyCode, event);
-		}
-		catch(Exception ex) {
-			Log.e(MODULE_TAG, ex.getMessage());
-		}
-		return true;
+	private void transitionToTripMapActivity() {
+		Intent intent = new Intent(this, TripMapActivity.class);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(TripMapActivity.EXTRA_IS_NEW_TRIP, true);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_SOURCE, TripMapActivity.EXTRA_TRIP_SOURCE_MAIN_INPUT);
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		finish();
 	}
+
+	private void transitionToTripQuestionActivity() {
+
+		Intent intent = new Intent(this, TripQuestionsActivity.class);
+		intent.putExtra(TripQuestionsActivity.EXTRA_TRIP_ID, tripId);
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		finish();
+	}
+
 }

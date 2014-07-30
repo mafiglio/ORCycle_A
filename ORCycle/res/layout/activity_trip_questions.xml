@@ -52,7 +52,7 @@
                 android:layout_below="@id/spinnerTripFrequency"
                 android:layout_marginTop="15dp"
                 android:background="@color/pressed_color"
-                android:text="What is the main trip purpose?"
+                android:text="*What is the main trip purpose?"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <Spinner
@@ -112,19 +112,19 @@
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <Spinner
-                android:id="@+id/spinnerExperiencedRider"
+                android:id="@+id/spinnerRouteSafety"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@id/labelTripQuestionsHeader"
                 android:layout_below="@id/textView11"
-                android:entries="@array/tripExperiencedRiderArray" />
+                android:entries="@array/tripRouteSafetyArray" />
 
             <TextView
                 android:id="@+id/textView12"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@id/labelTripQuestionsHeader"
-                android:layout_below="@id/spinnerExperiencedRider"
+                android:layout_below="@id/spinnerRouteSafety"
                 android:layout_marginTop="15dp"
                 android:background="@color/pressed_color"
                 android:text="Who accompanied you on this ride?"
@@ -155,6 +155,15 @@
                 android:layout_alignLeft="@id/labelTripQuestionsHeader"
                 android:layout_below="@id/textView8" />
 
-	</RelativeLayout>
+            <TextView
+                android:id="@+id/textView99"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/labelTripQuestionsHeader"
+                android:layout_below="@id/spinnerBikeAccessory"
+                android:layout_marginTop="15dp"
+                android:text="* = must answer these questions"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+            	</RelativeLayout>
 
 </ScrollView>

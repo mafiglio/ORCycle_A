@@ -97,28 +97,28 @@ public class SavedTripsAdapter extends SimpleCursorAdapter {
 			if (status == 2) {
 				if (-1 != (columnIndex = cursor.getColumnIndex("purp"))) {
 					if (null != (value = cursor.getString(columnIndex))) {
-						if (value.equals("Commute")) {
+						if (value.equals(DbAnswers.PURPOSE_COMMUTE)) {
 							imageTripPurpose.setImageResource(R.drawable.commute_high);
 						}
-						else if (value.equals("School")) {
+						else if (value.equals(DbAnswers.PURPOSE_SCHOOL)) {
 							imageTripPurpose.setImageResource(R.drawable.school_high);
 						}
-						else if (value.equals("Work-Related")) {
+						else if (value.equals(DbAnswers.PURPOSE_WORK_RELATED)) {
 							imageTripPurpose.setImageResource(R.drawable.workrel_high);
 						}
-						else if (value.equals("Exercise")) {
+						else if (value.equals(DbAnswers.PURPOSE_EXERCISE)) {
 							imageTripPurpose.setImageResource(R.drawable.exercise_high);
 						}
-						else if (value.equals("Social")) {
+						else if (value.equals(DbAnswers.PURPOSE_SOCIAL)) {
 							imageTripPurpose.setImageResource(R.drawable.social_high);
 						}
-						else if (value.equals("Shopping")) {
+						else if (value.equals(DbAnswers.PURPOSE_SHOPPING)) {
 							imageTripPurpose.setImageResource(R.drawable.shopping_high);
 						}
-						else if (value.equals("Errand")) {
+						else if (value.equals(DbAnswers.PURPOSE_ERRAND)) {
 							imageTripPurpose.setImageResource(R.drawable.errands_high);
 						}
-						else if (value.equals("Other")) {
+						else if (value.equals(DbAnswers.PURPOSE_OTHER)) {
 							imageTripPurpose.setImageResource(R.drawable.other_high);
 						}
 					}

@@ -1,9 +1,12 @@
 package edu.pdx.cecs.orcycle;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -17,37 +20,34 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 public class TripQuestionsActivity extends Activity {
 
 	private static final String MODULE_TAG = "TripQuestionsActivity";
-	// Reference to Global application object
-	private final MyApplication myApp = null;
-	private MenuItem saveMenuItem;
 
-	private MultiSelectionSpinner mspinRouteChoice;
-	private MultiSelectionSpinner mspinParticipants;
-	private MultiSelectionSpinner mspinAccessories;
+	private MultiSelectionSpinner routePrefs;
+	private MultiSelectionSpinner passengers;
+	private MultiSelectionSpinner bikeAccessories;
+	private Spinner tripFrequency;
+	private Spinner tripPurpose;
+	private Spinner tripComfort;
+	private Spinner routeSafety;
 
-	public static final String PREFS_TRIP_QUESTIONS = "PREFS_TRIP_QUESTIONS";
+	public static final String EXTRA_TRIP_ID = "TRIP_ID";
 
-	public static final int PREF_TRIP_FREQUENCY = 1;
-	public static final int PREF_TRIP_PURPOSE = 2;
-	public static final int PREF_ROUTE_PREFS = 3;
-	public static final int PREF_TRIP_COMFORT = 4;
-	public static final int PREF_ROUTE_SAFETY = 5;
-	public static final int PREF_PARTICIPANTS = 6;
-	public static final int PREF_BIKE_ACCESSORY = 7;
+	private static final String PREFS_TRIP_QUESTIONS = "PREFS_TRIP_QUESTIONS";
 
-	private final int[] tripFreqAnswers = {-1, 88, 89, 90, 91, 92};                  // question_id = 19
-	private final int[] tripPurposeAnswers = {-1, 94, 95, 96, 97, 98, 99, 100, 101}; // question_id = 20
-	private final int[] routeChoiceAnswers = {103, 104, 105, 106, 107, 108, 109,     // question_id = 21
-			                                  110, 111, 112, 113, 114, 115};
-	private final int[] tripComfortAnswers = {-1, 117, 118, 119, 120, 121};          // question_id = 22
-	private final int[] experRiderAnswers = {-1, 123, 124, 125, 126, 127};           // question_id = 23
-	private final int[] participantsAnswers = {129, 130, 131, 132, 133, 134};        // question_id = 24
-	private final int[] bikeAccessoryAnswers = {136, 137, 138};                      // question_id = 25
+	private static final int PREF_TRIP_FREQUENCY = 1;
+	private static final int PREF_TRIP_PURPOSE = 2;
+	private static final int PREF_ROUTE_PREFS = 3;
+	private static final int PREF_TRIP_COMFORT = 4;
+	private static final int PREF_ROUTE_SAFETY = 5;
+	private static final int PREF_PARTICIPANTS = 6;
+	private static final int PREF_BIKE_ACCESSORY = 7;
+
+	private final Answer_OnClickListener answer_OnClickListener = new Answer_OnClickListener();
+
+	private long tripId = -1;
 
 	// *********************************************************************************
 	// *                              Activity Handlers
@@ -61,28 +61,36 @@ public class TripQuestionsActivity extends Activity {
 		try {
 			super.onCreate(savedInstanceState);
 
-			Log.v(MODULE_TAG, "Cycle: onCreate()");
+			tripId = getIntent().getExtras().getLong(EXTRA_TRIP_ID);
+
+			Log.v(MODULE_TAG, "Cycle: onCreate() - trip_id = " + tripId);
 
 			setContentView(R.layout.activity_trip_questions);
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-			((Spinner) findViewById(R.id.spinnerTripFrequency))    .setOnItemSelectedListener(new Answer_OnClickListener());
-			((Spinner) findViewById(R.id.spinnerTripPurpose))      .setOnItemSelectedListener(new Answer_OnClickListener());
+			tripFrequency = (Spinner) findViewById(R.id.spinnerTripFrequency);
+			tripFrequency.setOnItemSelectedListener(answer_OnClickListener);
 
-			mspinRouteChoice = (MultiSelectionSpinner) findViewById(R.id.spinnerRouteChoice);
-			mspinRouteChoice.setItems(getResources().getStringArray(R.array.tripRouteChoiceArray));
-			mspinRouteChoice.setOnItemSelectedListener(new Answer_OnClickListener());
+			tripPurpose = (Spinner) findViewById(R.id.spinnerTripPurpose);
+			tripPurpose.setOnItemSelectedListener(answer_OnClickListener);
 
-			((Spinner) findViewById(R.id.spinnerTripComfort))      .setOnItemSelectedListener(new Answer_OnClickListener());
-			((Spinner) findViewById(R.id.spinnerExperiencedRider)) .setOnItemSelectedListener(new Answer_OnClickListener());
+			routePrefs = (MultiSelectionSpinner) findViewById(R.id.spinnerRouteChoice);
+			routePrefs.setItems(getResources().getStringArray(R.array.tripRouteChoiceArray));
+			routePrefs.setOnItemSelectedListener(answer_OnClickListener);
 
-			mspinParticipants = (MultiSelectionSpinner) findViewById(R.id.spinnerParticipants);
-			mspinParticipants.setItems(getResources().getStringArray(R.array.tripParticipantsArray));
-			mspinParticipants.setOnItemSelectedListener(new Answer_OnClickListener());
+			tripComfort = (Spinner) findViewById(R.id.spinnerTripComfort);
+			tripComfort.setOnItemSelectedListener(answer_OnClickListener);
 
-			mspinAccessories = (MultiSelectionSpinner) findViewById(R.id.spinnerBikeAccessory);
-			mspinAccessories.setItems(getResources().getStringArray(R.array.tripBikeAccessoryArray));
-			mspinAccessories.setOnItemSelectedListener(new Answer_OnClickListener());
+			routeSafety = (Spinner) findViewById(R.id.spinnerRouteSafety);
+			routeSafety.setOnItemSelectedListener(answer_OnClickListener);
+
+			passengers = (MultiSelectionSpinner) findViewById(R.id.spinnerParticipants);
+			passengers.setItems(getResources().getStringArray(R.array.tripParticipantsArray));
+			passengers.setOnItemSelectedListener(answer_OnClickListener);
+
+			bikeAccessories = (MultiSelectionSpinner) findViewById(R.id.spinnerBikeAccessory);
+			bikeAccessories.setItems(getResources().getStringArray(R.array.tripBikeAccessoryArray));
+			bikeAccessories.setOnItemSelectedListener(answer_OnClickListener);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -94,7 +102,7 @@ public class TripQuestionsActivity extends Activity {
 		try {
 			super.onRestoreInstanceState(savedInstanceState);
 			Log.v(MODULE_TAG, "Cycle: onRestoreInstanceState()");
-			loadPreferences();
+			recallUiSettings();
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -105,7 +113,7 @@ public class TripQuestionsActivity extends Activity {
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		try {
 			Log.v(MODULE_TAG, "Cycle: onSaveInstanceState()");
-			savePreferences();
+			saveUiSettings();
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -113,6 +121,92 @@ public class TripQuestionsActivity extends Activity {
 		finally {
 			super.onSaveInstanceState(savedInstanceState);
 		}
+	}
+
+	/* Creates the menu items */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		try {
+			// Inflate the menu items for use in the action bar
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.trip_questions, menu);
+			//menu.getItem(0).setEnabled(true);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	/* Handles item selections */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		try {
+			switch (item.getItemId()) {
+
+			case R.id.action_save_trip_questions:
+
+				if (MandatoryQuestionsAnswered()) {
+					submitAnswers();
+					transitionToTripDetailActivity();
+				}
+				else {
+					AlertUserMandatoryAnswers();
+				}
+				return true;
+			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private boolean MandatoryQuestionsAnswered() {
+		return tripPurpose.getSelectedItemPosition() > 0;
+	}
+
+	private void AlertUserMandatoryAnswers() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Please answer required questions")
+				.setCancelable(true)
+				.setPositiveButton("OK",
+						new DialogInterface.OnClickListener() {
+							public void onClick(final DialogInterface dialog, final int id) {
+								dialog.cancel();
+							}
+						});
+		final AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	// 2.0 and above
+	@Override
+	public void onBackPressed() {
+		try {
+			transitionToPreviousActivity();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
+	// Before 2.0
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			try {
+				transitionToPreviousActivity();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			return true;
+		}
+
+		return super.onKeyDown(keyCode, event);
 	}
 
 	// *********************************************************************************
@@ -129,8 +223,6 @@ public class TripQuestionsActivity extends Activity {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 			try {
-				if (null != saveMenuItem)
-					saveMenuItem.setEnabled(atleastOneQuestionAnswered());
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -140,8 +232,6 @@ public class TripQuestionsActivity extends Activity {
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) {
 			try {
-				if (null != saveMenuItem)
-					saveMenuItem.setEnabled(atleastOneQuestionAnswered());
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -149,166 +239,76 @@ public class TripQuestionsActivity extends Activity {
 		}
 	}
 
-	private boolean atleastOneQuestionAnswered() {
+	private boolean questionAnswered() {
 
-		if ((((Spinner) this.findViewById(R.id.spinnerTripFrequency)).getSelectedItemPosition()) > 0) {
-			return true;
-		}
-		if ((((Spinner) this.findViewById(R.id.spinnerTripPurpose)).getSelectedItemPosition()) > 0) {
-			return true;
-		}
-		if (mspinRouteChoice.getSelectedIndicies().size() > 0) {
-			return true;
-		}
-		if ((((Spinner) this.findViewById(R.id.spinnerTripComfort)).getSelectedItemPosition()) > 0) {
-			return true;
-		}
-		if ((((Spinner) this.findViewById(R.id.spinnerExperiencedRider)).getSelectedItemPosition()) > 0) {
-			return true;
-		}
-		if (mspinParticipants.getSelectedIndicies().size() > 0) {
-			return true;
-		}
-		if (mspinAccessories.getSelectedIndicies().size() > 0) {
+		if ((tripFrequency.getSelectedItemPosition()       > 0) ||
+			(tripPurpose.getSelectedItemPosition()         > 0) ||
+			(routePrefs.getSelectedIndicies().size()       > 0) ||
+			(tripComfort.getSelectedItemPosition()         > 0) ||
+			(routeSafety.getSelectedItemPosition()         > 0) ||
+			(passengers.getSelectedIndicies().size()       > 0) ||
+			(bikeAccessories.getSelectedIndicies().size()  > 0)) {
 			return true;
 		}
 
 		return false;
 	}
 
-	/* Creates the menu items */
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu items for use in the action bar
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.trip_questions, menu);
-		saveMenuItem = menu.getItem(1);
-		saveMenuItem.setEnabled(atleastOneQuestionAnswered());
-		return super.onCreateOptionsMenu(menu);
-	}
+	// *********************************************************************************
+	// *                      Saving & Recalling UI Settings
+	// *********************************************************************************
 
-	/* Handles item selections */
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	/**
+	 * Saves UI settings to preferences file
+	 */
+	private void saveUiSettings() {
 
-		Intent intent;
-		// Handle presses on the action bar items
-		switch (item.getItemId()) {
+		SharedPreferences settings;
+		SharedPreferences.Editor editor;
 
-		case R.id.action_skip_trip_questions:
-
-			Toast.makeText(getBaseContext(), "Trip discarded.", Toast.LENGTH_SHORT).show();
-
-			intent = new Intent(TripQuestionsActivity.this, TabsConfig.class);
-			intent.putExtra("keepme", true);
-			startActivity(intent);
-			overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-			TripQuestionsActivity.this.finish();
-			return true;
-
-		case R.id.action_save_trip_questions:
-
-			savePreferences(); // loadPreferences();
-
-			// move to next view
-			// send purpose with intent
-			intent = new Intent(TripQuestionsActivity.this, TripDetailActivity.class);
-			//intent.putExtra("purpose", purpose);
-			startActivity(intent);
-			overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-			TripQuestionsActivity.this.finish();
-			return true;
-
-		default:
-			return super.onOptionsItemSelected(item);
+		if (null != (settings = getSharedPreferences(PREFS_TRIP_QUESTIONS, MODE_PRIVATE))) {
+			if (null != (editor = settings.edit())) {
+				saveSpinnerPosition(editor, tripFrequency,   PREF_TRIP_FREQUENCY );
+				saveSpinnerPosition(editor, tripPurpose,     PREF_TRIP_PURPOSE   );
+				saveSpinnerPosition(editor, routePrefs,      PREF_ROUTE_PREFS    );
+				saveSpinnerPosition(editor, tripComfort,     PREF_TRIP_COMFORT   );
+				saveSpinnerPosition(editor, routeSafety,     PREF_ROUTE_SAFETY   );
+				saveSpinnerPosition(editor, passengers,      PREF_PARTICIPANTS   );
+				saveSpinnerPosition(editor, bikeAccessories, PREF_BIKE_ACCESSORY );
+				editor.commit();
+			}
 		}
 	}
 
-	// 2.0 and above
-	@Override
-	public void onBackPressed() {
-
-		Toast.makeText(getBaseContext(), "Trip discarded.", Toast.LENGTH_SHORT).show();
-
-		//cancelRecording();
-
-		Intent intent = new Intent(TripQuestionsActivity.this, TabsConfig.class);
-		intent.putExtra("keepme", true);
-		startActivity(intent);
-		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-		this.finish();
+	private void saveSpinnerPosition(SharedPreferences.Editor editor, Spinner spinner, int key) {
+		editor.putInt("" + key, spinner.getSelectedItemPosition());
 	}
 
-	// Before 2.0
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-
-			Toast.makeText(getBaseContext(), "Trip discarded.", Toast.LENGTH_SHORT).show();
-
-			//cancelRecording();
-
-			Intent intent = new Intent(TripQuestionsActivity.this, TabsConfig.class);
-			//i.putExtra("keepme", true);
-			startActivity(intent);
-			overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-			this.finish();
-			return true;
-		}
-
-		return super.onKeyDown(keyCode, event);
+	private void saveSpinnerPosition(SharedPreferences.Editor editor, MultiSelectionSpinner spinner, int key) {
+		editor.putString("" + key, spinner.getSelectedIndicesAsString());
 	}
-
-	// *********************************************************************************
-	// *                         Saving & Recalling Answers
-	// *********************************************************************************
 
 	/**
 	 * Recalls UI settings from preferences file
 	 */
-	private void loadPreferences() {
+	private void recallUiSettings() {
 
 		SharedPreferences settings;
 		Map<String, ?> prefs;
 
 		try {
-			if (null != (settings = getSharedPreferences(PREFS_TRIP_QUESTIONS, 0))) {
+			if (null != (settings = getSharedPreferences(PREFS_TRIP_QUESTIONS, MODE_PRIVATE))) {
 				if (null != (prefs = settings.getAll())) {
-					for (Entry<String, ?> p : prefs.entrySet()) {
+					for (Entry<String, ?> entry : prefs.entrySet()) {
 						try {
-							int key = Integer.parseInt(p.getKey());
-							// CharSequence value = (CharSequence) p.getValue();
-
-							switch (key) {
-
-							case PREF_TRIP_FREQUENCY:
-								loadPrefSpinner(R.id.spinnerTripFrequency, p, tripFreqAnswers);
-								break;
-
-							case PREF_TRIP_PURPOSE:
-								loadPrefSpinner(R.id.spinnerTripPurpose, p, tripPurposeAnswers);
-								break;
-
-							case PREF_ROUTE_PREFS:
-								loadPrefSpinner(mspinRouteChoice, p, routeChoiceAnswers);
-								break;
-
-							case PREF_TRIP_COMFORT:
-								loadPrefSpinner(R.id.spinnerTripComfort, p, tripComfortAnswers);
-								break;
-
-							case PREF_ROUTE_SAFETY:
-								loadPrefSpinner(R.id.spinnerExperiencedRider, p, experRiderAnswers);
-								break;
-
-							case PREF_PARTICIPANTS:
-								loadPrefSpinner(mspinParticipants, p, participantsAnswers);
-								break;
-
-							case PREF_BIKE_ACCESSORY:
-								loadPrefSpinner(mspinAccessories, p, bikeAccessoryAnswers);
-								break;
+							switch (Integer.parseInt(entry.getKey())) {
+							case PREF_TRIP_FREQUENCY: setSpinnerSetting(tripFrequency,   entry); break;
+							case PREF_TRIP_PURPOSE:   setSpinnerSetting(tripPurpose,     entry); break;
+							case PREF_ROUTE_PREFS:    setSpinnerSetting(routePrefs,      entry); break;
+							case PREF_TRIP_COMFORT:   setSpinnerSetting(tripComfort,     entry); break;
+							case PREF_ROUTE_SAFETY:   setSpinnerSetting(routeSafety,     entry); break;
+							case PREF_PARTICIPANTS:   setSpinnerSetting(passengers,      entry); break;
+							case PREF_BIKE_ACCESSORY: setSpinnerSetting(bikeAccessories, entry); break;
 							}
 						}
 						catch(Exception ex) {
@@ -324,97 +324,145 @@ public class TripQuestionsActivity extends Activity {
 	}
 
 	/**
-	 * Saves UI settings to preferences file
+	 * Sets spinner setting from a map entry
+	 * @param spinner
+	 * @param p
 	 */
-	private void savePreferences() {
+	private void setSpinnerSetting(Spinner spinner, Entry<String, ?> p) {
+		spinner.setSelection(((Integer) p.getValue()).intValue());
+	}
 
-		SharedPreferences settings;
-		SharedPreferences.Editor editor;
+	/**
+	 * Sets MultiSelectionSpinner settings from a map entry
+	 * @param spinner
+	 * @param p
+	 */
+	private void setSpinnerSetting(MultiSelectionSpinner spinner, Entry<String, ?> p) {
 
-		if (null != (settings = getSharedPreferences(PREFS_TRIP_QUESTIONS, MODE_PRIVATE))) {
-			if (null != (editor = settings.edit())) {
-				savePrefSpinner(editor, PREF_TRIP_FREQUENCY,    R.id.spinnerTripFrequency,    tripFreqAnswers      );
-				savePrefSpinner(editor, PREF_TRIP_PURPOSE,      R.id.spinnerTripPurpose,      tripPurposeAnswers   );
-				savePrefSpinner(editor, PREF_ROUTE_PREFS,      mspinRouteChoice,             routeChoiceAnswers   );
-				savePrefSpinner(editor, PREF_TRIP_COMFORT,      R.id.spinnerTripComfort,      tripComfortAnswers   );
-				savePrefSpinner(editor, PREF_ROUTE_SAFETY, R.id.spinnerExperiencedRider, experRiderAnswers    );
-				savePrefSpinner(editor, PREF_PARTICIPANTS,      mspinParticipants,            participantsAnswers  );
-				savePrefSpinner(editor, PREF_BIKE_ACCESSORY,    mspinAccessories,             bikeAccessoryAnswers );
-				editor.commit();
-			}
+		// Retireve entry value
+		String entry = (String) p.getValue();
+
+		// Check that values exist
+		if ((null == entry) || entry.equals(""))
+			return;
+
+		// Split values apart
+		String[] entries;
+		entries = entry.split(",");
+
+		// Check that values exist
+		if (entries.length < 1)
+			return;
+
+		// Setting multiple spinner selections require an array of ints
+		int[] selections = new int[entries.length];
+
+		// Fill array of ints with settings from entry
+		for (int i = 0; i < entries.length; ++i) {
+			selections[i] = Integer.valueOf(entries[i]);
+		}
+
+		// Set MultiSelectionSpinner spinner control values
+		spinner.setSelection(selections);
+	}
+
+	// *********************************************************************************
+	// *                         Submitting Answers
+	// *********************************************************************************
+
+	/**
+	 * Saves UI settings to database
+	 */
+	private void submitAnswers() {
+
+		DbAdapter dbAdapter = new DbAdapter(this);
+		dbAdapter.open();
+
+		// Remove any previous answers from the local database
+		dbAdapter.deleteAnswers(tripId);
+
+		// Enter the user selections into the local database
+		try {
+			submitSpinnerSelection(tripFrequency,    dbAdapter, DbQuestions.TRIP_FREQUENCY,   DbAnswers.tripFreq       );
+			submitSpinnerSelection(tripPurpose,      dbAdapter, DbQuestions.TRIP_PURPOSE,     DbAnswers.tripPurpose    );
+			submitSpinnerSelection(routePrefs,       dbAdapter, DbQuestions.ROUTE_PREFS,      DbAnswers.routePrefs     );
+			submitSpinnerSelection(tripComfort,      dbAdapter, DbQuestions.TRIP_COMFORT,     DbAnswers.tripComfort    );
+			submitSpinnerSelection(routeSafety,      dbAdapter, DbQuestions.ROUTE_SAFETY,     DbAnswers.routeSafety    );
+			submitSpinnerSelection(passengers,       dbAdapter, DbQuestions.PASSENGERS,       DbAnswers.passengers     );
+			submitSpinnerSelection(bikeAccessories,  dbAdapter, DbQuestions.BIKE_ACCESSORIES, DbAnswers.bikeAccessories);
+
+			updateTripPurpose(tripPurpose, dbAdapter,  DbAnswers.tripPurpose);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		finally {
+			dbAdapter.close();
 		}
 	}
 
-	private void savePrefSpinner(SharedPreferences.Editor editor, int ikey, int spinnerId, int[] answers) {
-
-		Spinner spinner;
-		int selectedAnswer;
-		String key = "" + ikey;
-
-		if (null != (spinner = (Spinner) findViewById(spinnerId))) {
-			if (-1 != (selectedAnswer = spinner.getSelectedItemPosition())) {
-				editor.putInt(key, answers[selectedAnswer]);
-			}
+	/**
+	 * Enters the spinner selection into the database
+	 * @param spinner
+	 * @param dbAdapter
+	 * @param question_id
+	 * @param answers
+	 */
+	private void submitSpinnerSelection(Spinner spinner, DbAdapter dbAdapter, int question_id, int[] answer_ids) {
+		// Note: The first entry is always blank, the array of answers displayed
+		// by the UI is one greater than the number of answers in the database.
+		int answerIndex = spinner.getSelectedItemPosition() - 1;
+		if (answerIndex > -1) {
+			dbAdapter.addAnswerToTrip(tripId, question_id, answer_ids[answerIndex]);
 		}
 	}
 
-	private void savePrefSpinner(SharedPreferences.Editor editor, int ikey, MultiSelectionSpinner spinner, int[] answers) {
-		String key = "" + ikey;
-		String selectedItems = spinner.getSelectedIndicesAsString(answers);
-		editor.putString(key, selectedItems);
-	}
-
-	private void loadPrefSpinner(int spinnerId, Entry<String, ?> p, int[] answers) {
-		Spinner spinner = (Spinner) findViewById(spinnerId);
-		int answer = ((Integer) p.getValue()).intValue();
-
-		if (null != spinner) {
-			for (int i = 0; i < answers.length; ++i) {
-				if (answer == answers[i]) {
-					spinner.setSelection(i);
-					break;
-				}
-			}
+	/**
+	 * Enters the MultiSelectionSpinner selections into the database
+	 * @param spinner
+	 * @param dbAdapter
+	 * @param question_id
+	 * @param answers
+	 */
+	private void submitSpinnerSelection(MultiSelectionSpinner spinner, DbAdapter dbAdapter, int question_id, int[] answers) {
+		List<Integer> selectedIndicies = spinner.getSelectedIndicies();
+		for (int index : selectedIndicies) {
+			dbAdapter.addAnswerToTrip(tripId, question_id, answers[index]);
 		}
 	}
 
-	private void loadPrefSpinner(MultiSelectionSpinner spinner, Entry<String, ?> p, int[] answers) {
-
-		String values = (String) p.getValue();
-
-		if (null != values) {
-			int[] selections = mapAnswers(values, answers);
-			if ((null != selections) && (selections.length != 0))
-				spinner.setSelection(selections);
-		}
+	/**
+	 * Enters the trips purpose into an additional
+	 * tripPurpose field that's in the database
+	 * @param spinner  The spinner widget to obtain the trip purpose selection
+	 * @param dbAdapter The adapter connected to the local database
+	 * @param answer_ids The TripPurpose values corresponding to the spinner selections
+	 */
+	private void updateTripPurpose(Spinner spinner, DbAdapter dbAdapter, int[] answer_ids) {
+		int tripPurposeId = DbAnswers.tripPurpose[spinner.getSelectedItemPosition() - 1];
+		String tripPurposeText = DbAnswers.getTextTripPurpose(tripPurposeId);
+		dbAdapter.updateTripPurpose(tripId, tripPurposeText);
 	}
 
-	private int[] mapAnswers(String text, int[] answers) {
+	// *********************************************************************************
+	// *                    Transitioning to other activities
+	// *********************************************************************************
 
-			int[] selectedIndexes;
-			String[] selectedValues;
+	private void transitionToTripDetailActivity() {
+		Intent intent = new Intent(TripQuestionsActivity.this, TripDetailActivity.class);
+		intent.putExtra(TripDetailActivity.EXTRA_TRIP_ID, tripId);
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		TripQuestionsActivity.this.finish();
+	}
 
-			if ((null == text) || text.equals(""))
-				return null;
-
-			selectedValues = text.split(",");
-			selectedIndexes = new int[selectedValues.length];
-
-			if (selectedIndexes.length > 0) {
-
-				for (int i = 0; i < selectedIndexes.length; ++i) {
-					// get value we are trying to match against
-					int matchValue = Integer.valueOf(selectedValues[i]);
-					// cycle thru all of the answers
-					for (int answerIndex = 0; answerIndex < answers.length; ++answerIndex) {
-						if (answers[answerIndex] == matchValue) {
-							selectedIndexes[i] = answerIndex;
-							break;
-						}
-					}
-				}
-			}
-			return selectedIndexes;
-		}
-
+	private void transitionToPreviousActivity() {
+		Intent intent = new Intent(TripQuestionsActivity.this, TabsConfig.class);
+		// tell the TabsConfig activities to not delete this trip
+		intent.putExtra(TabsConfig.EXTRA_KEEP_ME, true);
+		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
+		startActivity(intent);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		TripQuestionsActivity.this.finish();
+	}
 }

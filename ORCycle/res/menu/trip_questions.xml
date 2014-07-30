@@ -1,10 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/action_skip_trip_questions"
-        android:showAsAction="always"
-          android:title="skip"
-          android:enabled="true"/>
     <item android:id="@+id/action_save_trip_questions"
         android:showAsAction="always"
           android:title="save"
-          android:enabled="false"/>
+          android:enabled="true"/>
 </menu>
