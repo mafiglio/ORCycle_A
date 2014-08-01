@@ -392,7 +392,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		String startTime = tripData.get(2);
 		// String endTime = tripData.get(3);
 
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+		final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 		nameValuePairs.add(new BasicNameValuePair("coords", coords.toString()));
 		nameValuePairs.add(new BasicNameValuePair("pauses", pauses.toString()));
 		nameValuePairs.add(new BasicNameValuePair("user", user.toString()));

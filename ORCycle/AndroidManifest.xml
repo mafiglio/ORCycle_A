@@ -56,6 +56,10 @@
             android:label="@string/title_activity_trip_questions" >
         </activity>
         <activity
+            android:name="edu.pdx.cecs.orcycle.NoteQuestionsActivity"
+            android:label="@string/title_activity_note_questions" >
+        </activity>
+        <activity
             android:name="edu.pdx.cecs.orcycle.TripMapActivity"
             android:label="@string/title_activity_trip_map" >
         </activity>

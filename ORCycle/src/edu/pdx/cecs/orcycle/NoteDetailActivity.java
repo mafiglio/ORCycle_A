@@ -280,7 +280,7 @@ public class NoteDetailActivity extends Activity {
 		if (noteSource == EXTRA_NOTE_SOURCE_MAIN_INPUT) {
 			transitionToTabsConfigActivity();
 		} else {
-			transitionToNoteMapActivity();
+			transitionToTripMapActivity();
 		}
 	}
 
@@ -315,7 +315,7 @@ public class NoteDetailActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		// Go back to NoteTypeActivity.
-		transitionToNoteTypeActivity();
+		transitionToNoteQuestionsActivity();
 	}
 
 	/**
@@ -336,10 +336,40 @@ public class NoteDetailActivity extends Activity {
 		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_SOURCE, tripSource);
 
 		// Initiate transition to NoteTypeActivity
-		finish();
 		startActivity(intent);
 		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		finish();
 	}
+
+	private void transitionToNoteQuestionsActivity() {
+
+		Intent intent = new Intent(this, NoteQuestionsActivity.class);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, noteId);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_TYPE, noteType);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, noteSource);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, tripSource);
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		finish();
+	}
+
+	private void transitionToTripMapActivity() {
+
+		// Create intent to go back to the TripMapActivity
+		Intent intent = new Intent(this, TripMapActivity.class);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_SOURCE, tripSource);
+
+		// Exit this activity
+		startActivity(intent);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		finish();
+	}
+
+
+
+
 
 	private void transitionToNoteMapActivity() {
 		// Intent to go to Note map

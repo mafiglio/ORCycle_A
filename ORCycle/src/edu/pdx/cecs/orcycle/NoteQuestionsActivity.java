@@ -20,33 +20,43 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
 
-public class TripQuestionsActivity extends Activity {
+public class NoteQuestionsActivity extends Activity {
 
-	private static final String MODULE_TAG = "TripQuestionsActivity";
+	private static final String MODULE_TAG = "NoteQuestionsActivity";
 
-	private MultiSelectionSpinner routePrefs;
-	private MultiSelectionSpinner passengers;
-	private MultiSelectionSpinner bikeAccessories;
-	private Spinner tripFrequency;
-	private Spinner tripPurpose;
-	private Spinner tripComfort;
-	private Spinner routeSafety;
+	private Spinner spnSeverity;
+	private Spinner spnIssueType;
+	private MultiSelectionSpinner spnConflict;
 
-	public static final String EXTRA_TRIP_ID = "TRIP_ID";
+	public static final String EXTRA_NOTE_ID = "noteId";
+	public static final String EXTRA_NOTE_TYPE = "noteType";
+	public static final String EXTRA_NOTE_SOURCE = "noteSource";
+	public static final int EXTRA_NOTE_ID_UNDEFINED = -1;
+	public static final int EXTRA_NOTE_TYPE_UNDEFINED = -1;
+	public static final int EXTRA_NOTE_SOURCE_UNDEFINED = -1;
+	public static final int EXTRA_NOTE_SOURCE_MAIN_INPUT = 0;
+	public static final int EXTRA_NOTE_SOURCE_TRIP_MAP = 1;
+
+	public static final String EXTRA_TRIP_ID = "EXTRA_TRIP_ID";
+	private static final int EXTRA_TRIP_ID_UNDEFINED = -1;
+	public static final String EXTRA_TRIP_SOURCE = "tripSource";
+	private static final int EXTRA_TRIP_SOURCE_UNDEFINED = -1;
+	public static final int EXTRA_TRIP_SOURCE_MAIN_INPUT = 0;
+	public static final int EXTRA_TRIP_SOURCE_SAVED_TRIPS = 1;
 
 	private static final String PREFS_TRIP_QUESTIONS = "PREFS_TRIP_QUESTIONS";
 
-	private static final int PREF_TRIP_FREQUENCY = 1;
-	private static final int PREF_TRIP_PURPOSE = 2;
-	private static final int PREF_ROUTE_PREFS = 3;
-	private static final int PREF_TRIP_COMFORT = 4;
-	private static final int PREF_ROUTE_SAFETY = 5;
-	private static final int PREF_PARTICIPANTS = 6;
-	private static final int PREF_BIKE_ACCESSORY = 7;
+	private static final int PREF_SEVERITY = 1;
+	private static final int PREF_CONFLICT = 2;
+	private static final int PREF_ISSUE    = 3;
 
 	private final Answer_OnClickListener answer_OnClickListener = new Answer_OnClickListener();
 
-	private long tripId = -1;
+	private int noteType;
+	private long noteId = -1;
+	private int noteSource = EXTRA_NOTE_SOURCE_UNDEFINED;
+	private long tripId;
+	private int tripSource = EXTRA_TRIP_SOURCE_UNDEFINED;
 
 	// *********************************************************************************
 	// *                              Activity Handlers
@@ -60,36 +70,44 @@ public class TripQuestionsActivity extends Activity {
 		try {
 			super.onCreate(savedInstanceState);
 
-			tripId = getIntent().getExtras().getLong(EXTRA_TRIP_ID);
+			// get input values for this view
+			Intent myIntent = getIntent();
 
-			Log.v(MODULE_TAG, "Cycle: onCreate() - trip_id = " + tripId);
+			noteId = myIntent.getLongExtra(EXTRA_NOTE_ID, EXTRA_NOTE_ID_UNDEFINED);
+			if (EXTRA_NOTE_ID_UNDEFINED == noteId) {
+				throw new IllegalArgumentException(MODULE_TAG + ": EXTRA_NOTE_ID undefined.");
+			}
 
-			setContentView(R.layout.activity_trip_questions);
+			noteSource = myIntent.getIntExtra(EXTRA_NOTE_SOURCE, EXTRA_NOTE_SOURCE_UNDEFINED);
+			if (!((noteSource == EXTRA_NOTE_SOURCE_MAIN_INPUT) ||(noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP))) {
+				throw new IllegalArgumentException(MODULE_TAG + ": EXTRA_NOTE_SOURCE invalid argument.");
+			}
+
+			noteType = myIntent.getIntExtra(EXTRA_NOTE_TYPE, EXTRA_NOTE_TYPE_UNDEFINED);
+
+			// Note: these extras are used for transitioning back to the TripMapActivity if done
+			if (EXTRA_TRIP_ID_UNDEFINED == (tripId = myIntent.getLongExtra(EXTRA_TRIP_ID, EXTRA_TRIP_ID_UNDEFINED))) {
+				throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_ID");
+			}
+
+			if (EXTRA_TRIP_SOURCE_UNDEFINED == (tripSource = myIntent.getIntExtra(EXTRA_TRIP_SOURCE, EXTRA_TRIP_SOURCE_UNDEFINED))) {
+				throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_SOURCE");
+			}
+
+			Log.v(MODULE_TAG, "Cycle: onCreate() - note_id = " + noteId);
+
+			setContentView(R.layout.activity_note_questions);
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-			tripFrequency = (Spinner) findViewById(R.id.spinnerTripFrequency);
-			tripFrequency.setOnItemSelectedListener(answer_OnClickListener);
+			spnSeverity = (Spinner) findViewById(R.id.spnSeverityOfProblem);
+			//spnSeverity.setOnItemSelectedListener(answer_OnClickListener);
 
-			tripPurpose = (Spinner) findViewById(R.id.spinnerTripPurpose);
-			tripPurpose.setOnItemSelectedListener(answer_OnClickListener);
+			spnConflict = (MultiSelectionSpinner) findViewById(R.id.spnConflictType);
+			spnConflict.setItems(getResources().getStringArray(R.array.nqaConflictType));
+			//spnConflict.setOnItemSelectedListener(answer_OnClickListener);
 
-			routePrefs = (MultiSelectionSpinner) findViewById(R.id.spinnerRouteChoice);
-			routePrefs.setItems(getResources().getStringArray(R.array.tripRouteChoiceArray));
-			routePrefs.setOnItemSelectedListener(answer_OnClickListener);
-
-			tripComfort = (Spinner) findViewById(R.id.spinnerTripComfort);
-			tripComfort.setOnItemSelectedListener(answer_OnClickListener);
-
-			routeSafety = (Spinner) findViewById(R.id.spinnerRouteSafety);
-			routeSafety.setOnItemSelectedListener(answer_OnClickListener);
-
-			passengers = (MultiSelectionSpinner) findViewById(R.id.spinnerParticipants);
-			passengers.setItems(getResources().getStringArray(R.array.tripParticipantsArray));
-			passengers.setOnItemSelectedListener(answer_OnClickListener);
-
-			bikeAccessories = (MultiSelectionSpinner) findViewById(R.id.spinnerBikeAccessory);
-			bikeAccessories.setItems(getResources().getStringArray(R.array.tripBikeAccessoryArray));
-			bikeAccessories.setOnItemSelectedListener(answer_OnClickListener);
+			spnIssueType = (Spinner) findViewById(R.id.spnIssueType);
+			//spnIssue.setOnItemSelectedListener(answer_OnClickListener);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -128,8 +146,7 @@ public class TripQuestionsActivity extends Activity {
 		try {
 			// Inflate the menu items for use in the action bar
 			MenuInflater inflater = getMenuInflater();
-			inflater.inflate(R.menu.trip_questions, menu);
-			//menu.getItem(0).setEnabled(true);
+			inflater.inflate(R.menu.note_questions, menu);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -144,11 +161,11 @@ public class TripQuestionsActivity extends Activity {
 		try {
 			switch (item.getItemId()) {
 
-			case R.id.action_save_trip_questions:
+			case R.id.action_save_note_questions:
 
 				if (MandatoryQuestionsAnswered()) {
 					submitAnswers();
-					transitionToTripDetailActivity();
+					transitionToNoteDetailActivity();
 				}
 				else {
 					AlertUserMandatoryAnswers();
@@ -163,7 +180,7 @@ public class TripQuestionsActivity extends Activity {
 	}
 
 	private boolean MandatoryQuestionsAnswered() {
-		return tripPurpose.getSelectedItemPosition() > 0;
+		return spnIssueType.getSelectedItemPosition() > 0;
 	}
 
 	private void AlertUserMandatoryAnswers() {
@@ -222,13 +239,9 @@ public class TripQuestionsActivity extends Activity {
 
 	private boolean questionAnswered() {
 
-		if ((tripFrequency.getSelectedItemPosition()       > 0) ||
-			(tripPurpose.getSelectedItemPosition()         > 0) ||
-			(routePrefs.getSelectedIndicies().size()       > 0) ||
-			(tripComfort.getSelectedItemPosition()         > 0) ||
-			(routeSafety.getSelectedItemPosition()         > 0) ||
-			(passengers.getSelectedIndicies().size()       > 0) ||
-			(bikeAccessories.getSelectedIndicies().size()  > 0)) {
+		if ((spnSeverity.getSelectedItemPosition()    > 0) ||
+			(spnConflict.getSelectedIndicies().size() > 0) ||
+			(spnIssueType.getSelectedItemPosition()   > 0)) {
 			return true;
 		}
 
@@ -249,13 +262,9 @@ public class TripQuestionsActivity extends Activity {
 
 		if (null != (settings = getSharedPreferences(PREFS_TRIP_QUESTIONS, MODE_PRIVATE))) {
 			if (null != (editor = settings.edit())) {
-				saveSpinnerPosition(editor, tripFrequency,   PREF_TRIP_FREQUENCY );
-				saveSpinnerPosition(editor, tripPurpose,     PREF_TRIP_PURPOSE   );
-				saveSpinnerPosition(editor, routePrefs,      PREF_ROUTE_PREFS    );
-				saveSpinnerPosition(editor, tripComfort,     PREF_TRIP_COMFORT   );
-				saveSpinnerPosition(editor, routeSafety,     PREF_ROUTE_SAFETY   );
-				saveSpinnerPosition(editor, passengers,      PREF_PARTICIPANTS   );
-				saveSpinnerPosition(editor, bikeAccessories, PREF_BIKE_ACCESSORY );
+				saveSpinnerPosition(editor, spnSeverity,  PREF_SEVERITY);
+				saveSpinnerPosition(editor, spnConflict,  PREF_CONFLICT);
+				saveSpinnerPosition(editor, spnIssueType, PREF_ISSUE   );
 				editor.commit();
 			}
 		}
@@ -283,13 +292,9 @@ public class TripQuestionsActivity extends Activity {
 					for (Entry<String, ?> entry : prefs.entrySet()) {
 						try {
 							switch (Integer.parseInt(entry.getKey())) {
-							case PREF_TRIP_FREQUENCY: setSpinnerSetting(tripFrequency,   entry); break;
-							case PREF_TRIP_PURPOSE:   setSpinnerSetting(tripPurpose,     entry); break;
-							case PREF_ROUTE_PREFS:    setSpinnerSetting(routePrefs,      entry); break;
-							case PREF_TRIP_COMFORT:   setSpinnerSetting(tripComfort,     entry); break;
-							case PREF_ROUTE_SAFETY:   setSpinnerSetting(routeSafety,     entry); break;
-							case PREF_PARTICIPANTS:   setSpinnerSetting(passengers,      entry); break;
-							case PREF_BIKE_ACCESSORY: setSpinnerSetting(bikeAccessories, entry); break;
+							case PREF_SEVERITY: setSpinnerSetting(spnSeverity,  entry); break;
+							case PREF_CONFLICT: setSpinnerSetting(spnConflict,  entry); break;
+							case PREF_ISSUE:    setSpinnerSetting(spnIssueType, entry); break;
 							}
 						}
 						catch(Exception ex) {
@@ -360,19 +365,14 @@ public class TripQuestionsActivity extends Activity {
 		dbAdapter.open();
 
 		// Remove any previous answers from the local database
-		dbAdapter.deleteAnswers(tripId);
+		dbAdapter.deleteNoteAnswers(noteId);
 
 		// Enter the user selections into the local database
 		try {
-			submitSpinnerSelection(tripFrequency,    dbAdapter, DbQuestions.TRIP_FREQUENCY,   DbAnswers.tripFreq       );
-			submitSpinnerSelection(tripPurpose,      dbAdapter, DbQuestions.TRIP_PURPOSE,     DbAnswers.tripPurpose    );
-			submitSpinnerSelection(routePrefs,       dbAdapter, DbQuestions.ROUTE_PREFS,      DbAnswers.routePrefs     );
-			submitSpinnerSelection(tripComfort,      dbAdapter, DbQuestions.TRIP_COMFORT,     DbAnswers.tripComfort    );
-			submitSpinnerSelection(routeSafety,      dbAdapter, DbQuestions.ROUTE_SAFETY,     DbAnswers.routeSafety    );
-			submitSpinnerSelection(passengers,       dbAdapter, DbQuestions.PASSENGERS,       DbAnswers.passengers     );
-			submitSpinnerSelection(bikeAccessories,  dbAdapter, DbQuestions.BIKE_ACCESSORIES, DbAnswers.bikeAccessories);
-
-			updateTripPurpose(tripPurpose, dbAdapter,  DbAnswers.tripPurpose);
+			submitSpinnerSelection(spnSeverity,  dbAdapter, DbQuestions.NOTE_SEVERITY, DbAnswers.noteSeverity );
+			submitSpinnerSelection(spnConflict,  dbAdapter, DbQuestions.NOTE_CONFLICT, DbAnswers.noteConflict );
+			submitSpinnerSelection(spnIssueType, dbAdapter, DbQuestions.NOTE_ISSUE,    DbAnswers.noteIssue    );
+			updateNoteType(spnIssueType.getSelectedItemPosition() - 1);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -394,7 +394,7 @@ public class TripQuestionsActivity extends Activity {
 		// by the UI is one greater than the number of answers in the database.
 		int answerIndex = spinner.getSelectedItemPosition() - 1;
 		if (answerIndex > -1) {
-			dbAdapter.addAnswerToTrip(tripId, question_id, answer_ids[answerIndex]);
+			dbAdapter.addAnswerToNote(noteId, question_id, answer_ids[answerIndex]);
 		}
 	}
 
@@ -408,42 +408,70 @@ public class TripQuestionsActivity extends Activity {
 	private void submitSpinnerSelection(MultiSelectionSpinner spinner, DbAdapter dbAdapter, int question_id, int[] answers) {
 		List<Integer> selectedIndicies = spinner.getSelectedIndicies();
 		for (int index : selectedIndicies) {
-			dbAdapter.addAnswerToTrip(tripId, question_id, answers[index]);
+			dbAdapter.addAnswerToNote(noteId, question_id, answers[index]);
 		}
 	}
 
-	/**
-	 * Enters the trips purpose into an additional
-	 * tripPurpose field that's in the database
-	 * @param spinner  The spinner widget to obtain the trip purpose selection
-	 * @param dbAdapter The adapter connected to the local database
-	 * @param answer_ids The TripPurpose values corresponding to the spinner selections
-	 */
-	private void updateTripPurpose(Spinner spinner, DbAdapter dbAdapter, int[] answer_ids) {
-		int tripPurposeId = DbAnswers.tripPurpose[spinner.getSelectedItemPosition() - 1];
-		String tripPurposeText = DbAnswers.getTextTripPurpose(tripPurposeId);
-		dbAdapter.updateTripPurpose(tripId, tripPurposeText);
+	private void updateNoteType(int value) {
+		noteType = value;
 	}
 
 	// *********************************************************************************
 	// *                    Transitioning to other activities
 	// *********************************************************************************
 
-	private void transitionToTripDetailActivity() {
-		Intent intent = new Intent(TripQuestionsActivity.this, TripDetailActivity.class);
-		intent.putExtra(TripDetailActivity.EXTRA_TRIP_ID, tripId);
-		startActivity(intent);
-		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		TripQuestionsActivity.this.finish();
+	private void transitionToPreviousActivity() {
+		// Cancel
+		if (noteSource == EXTRA_NOTE_SOURCE_MAIN_INPUT) {
+			transitionToTabsConfigActivity();
+		}
+		else if (noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP) {
+			transitionToTripMapActivity();
+		}
 	}
 
-	private void transitionToPreviousActivity() {
-		Intent intent = new Intent(TripQuestionsActivity.this, TabsConfig.class);
-		// tell the TabsConfig activities to not delete this trip
-		intent.putExtra(TabsConfig.EXTRA_KEEP_ME, true);
-		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
+	private void transitionToNoteDetailActivity() {
+
+		// Create intent to go to the NoteDetailActivity
+		Intent intent = new Intent(this, NoteDetailActivity.class);
+		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_TYPE, noteType);
+		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_ID, noteId);
+		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_SOURCE, noteSource);
+
+		// the NoteType activity needs these when the back button
+		// is pressed and we have to restart this activity
+		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_SOURCE, tripSource);
+
+
+		// Exit this activity
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		finish();
+	}
+
+	private void transitionToTripMapActivity() {
+
+		// Create intent to go back to the TripMapActivity
+		Intent intent = new Intent(this, TripMapActivity.class);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_SOURCE, tripSource);
+
+		// Exit this activity
 		startActivity(intent);
 		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-		TripQuestionsActivity.this.finish();
+		finish();
+	}
+
+	private void transitionToTabsConfigActivity() {
+
+		// Create intent to go back to the recording screen in the Tabsconfig activity
+		Intent intent = new Intent(this, TabsConfig.class);
+		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
+
+		// Exit this activity
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		finish();
 	}
 }

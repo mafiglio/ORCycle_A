@@ -60,7 +60,8 @@ public class DbAdapter {
 	private static final int DATABASE_VERSION_NOTES_V2 = 24;
 	private static final int DATABASE_VERSION_NOTES_V3 = 25;
 	private static final int DATABASE_VERSION_ANSWERS = 26;
-	private static final int DATABASE_VERSION = DATABASE_VERSION_ANSWERS;
+	private static final int DATABASE_VERSION_NOTE_ANSWERS = 27;
+	private static final int DATABASE_VERSION = DATABASE_VERSION_NOTE_ANSWERS;
 
 	// Trips Table columns
 	public static final String K_TRIP_ROWID = "_id";
@@ -108,10 +109,15 @@ public class DbAdapter {
 	public static final String K_PAUSE_START_TIME = "starttime";
 	public static final String K_PAUSE_END_TIME = "endtime";
 
-	// Answers Table columns
+	// Trip Answers Table columns
 	public static final String K_ANSWER_TRIP_ID = "trip_id";
 	public static final String K_ANSWER_QUESTION_ID = "question_id";
 	public static final String K_ANSWER_ANSWER_ID = "answer_id";
+
+	// Note Answers Table columns
+	public static final String K_NOTE_ANSWER_NOTE_ID = "note_id";
+	public static final String K_NOTE_ANSWER_QUESTION_ID = "question_id";
+	public static final String K_NOTE_ANSWER_ANSWER_ID = "answer_id";
 
 	// Segments Table columns
 	public static final String K_SEGMENT_ID = "_id";
@@ -158,10 +164,15 @@ public class DbAdapter {
 			+ "(trip_id integer, question_id integer, answer_id integer, "
 			+ "FOREIGN KEY(trip_id) REFERENCES TRIPS(_id));";
 
+	private static final String TABLE_CREATE_NOTE_ANSWERS = "create table note_answers "
+			+ "(note_id integer, question_id integer, answer_id integer, "
+			+ "FOREIGN KEY(note_id) REFERENCES NOTES(_id));";
+
 	private static final String TABLE_DROP_SEGMENTS = "drop table segments;";
 	private static final String TABLE_DROP_NOTES = "drop table notes;";
 	private static final String TABLE_DROP_PAUSES = "drop table pauses;";
 	private static final String TABLE_DROP_ANSWERS = "drop table answers;";
+	private static final String TABLE_DROP_NOTE_ANSWERS = "drop table note_answers;";
 	private static final String TABLE_NOTES_ADD_COLUMN = "ALTER TABLE notes ADD COLUMN tripid int;";
 
 	private static final String DATABASE_NAME = "data";
@@ -171,6 +182,7 @@ public class DbAdapter {
 	private static final String DATA_TABLE_PAUSES = "pauses";
 	private static final String DATA_TABLE_SEGMENTS = "segments";
 	private static final String DATA_TABLE_ANSWERS = "answers";
+	private static final String DATA_TABLE_NOTE_ANSWERS = "note_answers";
 
 	private final Context mCtx;
 
@@ -192,6 +204,7 @@ public class DbAdapter {
 			db.execSQL(TABLE_CREATE_PAUSES);
 			db.execSQL(TABLE_CREATE_SEGMENTS);
 			db.execSQL(TABLE_CREATE_ANSWERS);
+			db.execSQL(TABLE_CREATE_NOTE_ANSWERS);
 		}
 
 		@Override
@@ -233,6 +246,15 @@ public class DbAdapter {
 			if (oldVersion < DATABASE_VERSION_ANSWERS) {
 				try {
 					db.execSQL(TABLE_CREATE_ANSWERS);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+
+			if (oldVersion < DATABASE_VERSION_NOTE_ANSWERS) {
+				try {
+					db.execSQL(TABLE_CREATE_NOTE_ANSWERS);
 				}
 				catch(Exception ex) {
 					Log.e(MODULE_TAG, ex.getMessage());
@@ -826,6 +848,59 @@ public class DbAdapter {
 		String whereClause = K_ANSWER_TRIP_ID + "=" + trip_id;
 
 		if (null != (cursor = mDb.query(true, DATA_TABLE_ANSWERS, columns,
+				whereClause, null, null, null, null, null))) {
+			cursor.moveToFirst();
+		}
+
+		return cursor;
+	}
+
+	// ************************************************************************
+	// *                     Note Answers table methods
+	// ************************************************************************
+
+	/**
+	 * Insert a row into the 'answers' table
+	 * @param note_id Note ID of associated trip
+	 * @param question_id ID of question being answered
+	 * @param answer_id ID of answer
+	 * @throws SQLException
+	 */
+	public void addAnswerToNote(long note_id, int question_id, int answer_id) throws SQLException{
+
+		// Assemble row data
+		ContentValues rowValues = new ContentValues();
+		rowValues.put(K_NOTE_ANSWER_NOTE_ID, note_id);
+		rowValues.put(K_NOTE_ANSWER_QUESTION_ID, question_id);
+		rowValues.put(K_NOTE_ANSWER_ANSWER_ID, answer_id);
+
+		// Insert row in table
+		mDb.insertOrThrow(DATA_TABLE_NOTE_ANSWERS, null, rowValues);
+	}
+
+	/**
+	 * Delete answers with the given note ID
+	 * @param note_id id of the pauses to delete
+	 */
+	public void deleteNoteAnswers(long note_id) {
+		mDb.delete(DATA_TABLE_NOTE_ANSWERS, K_NOTE_ANSWER_NOTE_ID + "=" + note_id, null);
+	}
+
+	/**
+	 * Return a Cursor positioned at the answers that matches the given note_id
+	 *
+	 * @param note_id ID of trip to retrieve
+	 * @return Cursor positioned to matching trip, if found
+	 * @throws SQLException if trip could not be found/retrieved
+	 */
+	public Cursor fetchNoteAnswers(long note_id) throws SQLException {
+
+		Cursor cursor;
+
+		String[] columns = new String[] { K_NOTE_ANSWER_QUESTION_ID, K_NOTE_ANSWER_ANSWER_ID };
+		String whereClause = K_NOTE_ANSWER_NOTE_ID + "=" + note_id;
+
+		if (null != (cursor = mDb.query(true, DATA_TABLE_NOTE_ANSWERS, columns,
 				whereClause, null, null, null, null, null))) {
 			cursor.moveToFirst();
 		}

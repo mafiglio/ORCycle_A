@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -71,6 +72,9 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 	private static final String NOTE_DETAILS = "d";
 	private static final String NOTE_IMGURL = "i";
 
+	private static final String FID_QUESTION_ID = "question_id";
+	private static final String FID_ANSWER_ID = "answer_id";
+
 	private static final String twoHyphens = "--";
 	private static final String boundary = "cycle*******notedata*******atlanta";
 	private static final String lineEnd = "\r\n";
@@ -101,7 +105,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 					fieldMap.put(NOTE_VACC, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ACC));
 					fieldMap.put(NOTE_ALT, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ALT));
 					fieldMap.put(NOTE_SPEED, noteCursor.getColumnIndex(DbAdapter.K_NOTE_SPEED));
-					fieldMap.put(NOTE_TYPE, noteCursor.getColumnIndex(DbAdapter.K_NOTE_TYPE));
+					//fieldMap.put(NOTE_TYPE, noteCursor.getColumnIndex(DbAdapter.K_NOTE_TYPE));
 					fieldMap.put(NOTE_DETAILS, noteCursor.getColumnIndex(DbAdapter.K_NOTE_DETAILS));
 					fieldMap.put(NOTE_IMGURL, noteCursor.getColumnIndex(DbAdapter.K_NOTE_IMGURL));
 
@@ -115,7 +119,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 					note.put(NOTE_VACC, noteCursor.getDouble(fieldMap.get(NOTE_VACC)));
 					note.put(NOTE_ALT, noteCursor.getDouble(fieldMap.get(NOTE_ALT)));
 					note.put(NOTE_SPEED, noteCursor.getDouble(fieldMap.get(NOTE_SPEED)));
-					note.put(NOTE_TYPE, noteCursor.getInt(fieldMap.get(NOTE_TYPE)));
+					//note.put(NOTE_TYPE, noteCursor.getInt(fieldMap.get(NOTE_TYPE)));
 					note.put(NOTE_DETAILS, noteCursor.getString(fieldMap.get(NOTE_DETAILS)));
 					note.put(NOTE_IMGURL, noteCursor.getString(fieldMap.get(NOTE_IMGURL)));
 
@@ -150,6 +154,49 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 		return null;
 	}
 
+	private JSONArray getNoteResponsesJSON(long noteId) throws JSONException {
+
+		// Create a JSON array to hold all of the answers
+		JSONArray jsonAnswers = new JSONArray();
+
+		mDb.openReadOnly();
+		try {
+			Cursor answers = mDb.fetchNoteAnswers(noteId);
+
+			int questionColumn = answers.getColumnIndex(DbAdapter.K_NOTE_ANSWER_QUESTION_ID);
+			int answerColumn = answers.getColumnIndex(DbAdapter.K_NOTE_ANSWER_ANSWER_ID);
+
+			// Cycle thru the database entries
+			while (!answers.isAfterLast()) {
+
+				// For each row, construct a JSON object
+				JSONObject json = new JSONObject();
+
+				try {
+					// Place values into the JSON object
+					json.put(FID_QUESTION_ID, answers.getInt(questionColumn));
+					json.put(FID_ANSWER_ID, answers.getInt(answerColumn));
+
+					// Place JSON objects into the JSON array
+					jsonAnswers.put(json);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+				// Move to next row
+				answers.moveToNext();
+			}
+			answers.close();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		finally {
+			mDb.close();
+		}
+		return jsonAnswers;
+	}
+
 	public String getDeviceId() {
 		String androidId = System.getString(this.mCtx.getContentResolver(),
 				System.ANDROID_ID);
@@ -174,88 +221,13 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 		return deviceId;
 	}
 
-	// private BasicHttpEntity getPostData(long noteId) throws JSONException,
-	// IOException {
-	// JSONObject note = getNoteJSON(noteId);
-	// String deviceId = getDeviceId();
-	//
-	// List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-	// nameValuePairs.add(new BasicNameValuePair("note", note.toString()));
-	// nameValuePairs.add(new BasicNameValuePair("device", deviceId));
-	// nameValuePairs.add(new BasicNameValuePair("version", ""
-	// + kSaveNoteProtocolVersion));
-	//
-	// ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	// DataOutputStream dos = new DataOutputStream(baos);
-	//
-	// dos.writeBytes("--cycle*******notedata*******atlanta\r\n"
-	// + "Content-Disposition: form-data; name=\"note\"\r\n\r\n"
-	// + note.toString() + "\r\n");
-	// dos.writeBytes("--cycle*******notedata*******atlanta\r\n"
-	// + "Content-Disposition: form-data; name=\"version\"\r\n\r\n"
-	// + String.valueOf(kSaveNoteProtocolVersion) + "\r\n");
-	// dos.writeBytes("--cycle*******notedata*******atlanta\r\n"
-	// + "Content-Disposition: form-data; name=\"device\"\r\n\r\n"
-	// + deviceId + "\r\n");
-	//
-	// if (imageDataNull = false) {
-	// dos.writeBytes("--cycle*******notedata*******atlanta\r\n"
-	// + "Content-Disposition: form-data; name=\"file\"; filename=\""
-	// + deviceId + ".jpg\"\r\n"
-	// + "Content-Type: image/jpeg\r\n\r\n");
-	// dos.write(imageData);
-	// dos.writeBytes("\r\n");
-	// }
-	//
-	// dos.writeBytes("--cycle*******notedata*******atlanta--\r\n");
-	//
-	// dos.flush();
-	// dos.close();
-	//
-	// Log.v("Jason", "" + baos);
-	//
-	// ByteArrayInputStream content = new ByteArrayInputStream(
-	// baos.toByteArray());
-	// BasicHttpEntity entity = new BasicHttpEntity();
-	// entity.setContent(content);
-	//
-	// entity.setContentLength(content.toString().length());
-	//
-	// return entity;
-	// }
-	//
-	// private static String convertStreamToString(InputStream is) {
-	// /*
-	// * To convert the InputStream to String we use the
-	// * BufferedReader.readLine() method. We iterate until the BufferedReader
-	// * return null which means there's no more data to read. Each line will
-	// * appended to a StringBuilder and returned as String.
-	// */
-	// BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-	// StringBuilder sb = new StringBuilder();
-	//
-	// String line = null;
-	// try {
-	// while ((line = reader.readLine()) != null) {
-	// sb.append(line + "\n");
-	// }
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// } finally {
-	// try {
-	// is.close();
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// return sb.toString();
-	// }
-
 	boolean uploadOneNote(long currentNoteId) {
 		boolean result = false;
 		final String postUrl = mCtx.getResources().getString(R.string.post_url);
 
 		try {
+			JSONArray jsonNoteResponses = getNoteResponsesJSON(currentNoteId);
+
 			URL url = new URL(postUrl);
 
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -269,14 +241,15 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 			conn.setRequestProperty("Cycleatl-Protocol-Version", "4");
 
 			DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-			JSONObject note;
-			if (null != (note = getNoteJSON(currentNoteId))) {
+			JSONObject jsonNote;
+			if (null != (jsonNote = getNoteJSON(currentNoteId))) {
 				try {
 					String deviceId = getDeviceId();
 
-					dos.writeBytes(notesep + ContentField("note") + note.toString() + "\r\n");
+					dos.writeBytes(notesep + ContentField("note") + jsonNote.toString() + "\r\n");
 					dos.writeBytes(notesep + ContentField("version") + String.valueOf(kSaveNoteProtocolVersion) + "\r\n");
 					dos.writeBytes(notesep + ContentField("device") + deviceId + "\r\n");
+					dos.writeBytes(notesep + ContentField("noteResponses") + jsonNoteResponses.toString() + "\r\n");
 
 					if (imageDataNull == false) {
 						dos.writeBytes(notesep
