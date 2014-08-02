@@ -879,6 +879,25 @@ public class DbAdapter {
 	}
 
 	/**
+	 * Insert a row into the 'answers' table
+	 * @param note_id Note ID of associated trip
+	 * @param question_id ID of question being answered
+	 * @param answer_id ID of answer
+	 * @throws SQLException
+	 */
+	public void addAnswerToNote(long note_id, int question_id, int answer_id, String other) throws SQLException{
+
+		// Assemble row data
+		ContentValues rowValues = new ContentValues();
+		rowValues.put(K_NOTE_ANSWER_NOTE_ID, note_id);
+		rowValues.put(K_NOTE_ANSWER_QUESTION_ID, question_id);
+		rowValues.put(K_NOTE_ANSWER_ANSWER_ID, answer_id);
+
+		// Insert row in table
+		mDb.insertOrThrow(DATA_TABLE_NOTE_ANSWERS, null, rowValues);
+	}
+
+	/**
 	 * Delete answers with the given note ID
 	 * @param note_id id of the pauses to delete
 	 */

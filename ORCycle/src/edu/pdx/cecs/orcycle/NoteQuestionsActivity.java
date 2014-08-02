@@ -100,14 +100,16 @@ public class NoteQuestionsActivity extends Activity {
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 			spnSeverity = (Spinner) findViewById(R.id.spnSeverityOfProblem);
-			//spnSeverity.setOnItemSelectedListener(answer_OnClickListener);
+			spnSeverity.setOnItemSelectedListener(answer_OnClickListener);
 
 			spnConflict = (MultiSelectionSpinner) findViewById(R.id.spnConflictType);
 			spnConflict.setItems(getResources().getStringArray(R.array.nqaConflictType));
+			spnConflict.setTitle(getResources().getString(R.string.nqaConflictTypeTitle));
+			spnConflict.setOtherIndex(DbAnswers.findIndex(DbAnswers.noteConflict, DbAnswers.noteConflictOther));
 			//spnConflict.setOnItemSelectedListener(answer_OnClickListener);
 
 			spnIssueType = (Spinner) findViewById(R.id.spnIssueType);
-			//spnIssue.setOnItemSelectedListener(answer_OnClickListener);
+			spnIssueType.setOnItemSelectedListener(answer_OnClickListener);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -221,6 +223,7 @@ public class NoteQuestionsActivity extends Activity {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 			try {
+				Log.v(MODULE_TAG, "Item selected(" + position + ") = " + id);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -370,7 +373,7 @@ public class NoteQuestionsActivity extends Activity {
 		// Enter the user selections into the local database
 		try {
 			submitSpinnerSelection(spnSeverity,  dbAdapter, DbQuestions.NOTE_SEVERITY, DbAnswers.noteSeverity );
-			submitSpinnerSelection(spnConflict,  dbAdapter, DbQuestions.NOTE_CONFLICT, DbAnswers.noteConflict );
+			submitSpinnerSelection(spnConflict,  dbAdapter, DbQuestions.NOTE_CONFLICT, DbAnswers.noteConflict, DbAnswers.noteConflictOther );
 			submitSpinnerSelection(spnIssueType, dbAdapter, DbQuestions.NOTE_ISSUE,    DbAnswers.noteIssue    );
 			updateNoteType(spnIssueType.getSelectedItemPosition() - 1);
 		}
@@ -405,10 +408,16 @@ public class NoteQuestionsActivity extends Activity {
 	 * @param question_id
 	 * @param answers
 	 */
-	private void submitSpinnerSelection(MultiSelectionSpinner spinner, DbAdapter dbAdapter, int question_id, int[] answers) {
+	private void submitSpinnerSelection(MultiSelectionSpinner spinner, DbAdapter dbAdapter,
+			int question_id, int[] answers, int answerOther) {
 		List<Integer> selectedIndicies = spinner.getSelectedIndicies();
 		for (int index : selectedIndicies) {
-			dbAdapter.addAnswerToNote(noteId, question_id, answers[index]);
+			if ((answerOther >= 0) && (answers[index] == answerOther)) {
+				dbAdapter.addAnswerToNote(noteId, question_id, answers[index], spinner.getOtherText());
+			}
+			else {
+				dbAdapter.addAnswerToNote(noteId, question_id, answers[index]);
+			}
 		}
 	}
 

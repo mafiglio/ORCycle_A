@@ -240,6 +240,7 @@
         <item>I feel uncomfortable</item>
         </string-array>
 
+	<string name="nqaConflictTypeTitle">Type of conflict/Accident With</string>
     <string-array name="nqaConflictType">
         <item>Auto traffic</item>
         <item>Large commercial vehicles (trucks)</item>
@@ -248,7 +249,7 @@
         <item>Other cyclists</item>
         <item>Pedestrians</item>
         <item>Pole/barrier/infrastructure</item>
-        <item>Other (specify)</item>
+        <item>Other...</item>
         </string-array>
     			
     <string-array name="nqaIssueType">
@@ -264,7 +265,7 @@
         <item>Bus traffic/stop</item>
         <item>Parked vehicles</item>
         <item>Pavement condition</item>
-        <item>Other (specify)</item>
+        <item>Other...</item>
         </string-array>
 			
 </resources>

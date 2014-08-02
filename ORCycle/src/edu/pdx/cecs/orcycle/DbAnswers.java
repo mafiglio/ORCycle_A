@@ -15,6 +15,15 @@ public final class DbAnswers {
 	public static final int[] noteIssue = { 164, 165, 166, 167, 168, 169,               // question_id = 30
 		                                    170, 171, 172, 173, 174, 175};
 
+	public static final int[] userDetailedAnswers = { 12, 58, 81}; // These are answers specified as other
+	public static final int[] tripDetailedAnswers = { 101, 115};   // These are answers specified as other
+	public static final int[] noteDetailedAnswers = { 163, 175};   // These are answers specified as other
+
+	public static final int noteConflictOther = 163;
+	public static final int noteIssueOther = 175;
+
+
+
 	public static final String PURPOSE_COMMUTE = "Commute";
 	public static final String PURPOSE_SCHOOL = "School";
 	public static final String PURPOSE_WORK_RELATED = "Work-Related";
@@ -38,4 +47,14 @@ public final class DbAnswers {
 		default: throw new IllegalArgumentException();
 		}
 	}
+
+	public static final int findIndex(int[] answers, int value) {
+		int index;
+		for (index = 0; index < answers.length; ++index) {
+			if (answers[index] == value)
+				return index;
+		}
+		return -1;
+	}
+
 }
