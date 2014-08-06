@@ -34,11 +34,13 @@ public class SavedTripsAdapter extends SimpleCursorAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-
+		View rowView = null;
 		try {
+			Log.v(MODULE_TAG, "getView(Position): " + position);
+
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-			View rowView = inflater.inflate(R.layout.saved_trips_list_item, parent, false);
+			rowView = inflater.inflate(R.layout.saved_trips_list_item, parent, false);
 			TextView textViewStart = (TextView) rowView.findViewById(R.id.TextViewStart);
 			TextView textViewPurpose = (TextView) rowView.findViewById(R.id.TextViewPurpose);
 			TextView textViewInfo = (TextView) rowView.findViewById(R.id.TextViewInfo);
@@ -131,6 +133,6 @@ public class SavedTripsAdapter extends SimpleCursorAdapter {
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
-		return null;
+		return rowView;
 	}
 }

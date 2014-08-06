@@ -90,9 +90,14 @@ public class FragmentSavedNotesSection extends Fragment {
 		// Called when the action mode is created; startActionMode() was called
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			try {
 			// Inflate a menu resource providing context menu items
 			MenuInflater inflater = mode.getMenuInflater();
 			inflater.inflate(R.menu.saved_notes_context_menu, menu);
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 			return true;
 		}
 
@@ -101,30 +106,35 @@ public class FragmentSavedNotesSection extends Fragment {
 		// may be called multiple times if the mode is invalidated.
 		@Override
 		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-			Log.v(MODULE_TAG, "Prepare");
-			saveMenuItemDelete = menu.getItem(0);
-			saveMenuItemDelete.setEnabled(false);
-			saveMenuItemUpload = menu.getItem(1);
+			try {
+				Log.v(MODULE_TAG, "Prepare");
+				saveMenuItemDelete = menu.getItem(0);
+				saveMenuItemDelete.setEnabled(false);
+				saveMenuItemUpload = menu.getItem(1);
 
-			int flag = 1;
-			for (int i = 0; i < listSavedNotes.getCount(); i++) {
-				allNotes.moveToPosition(i);
-				flag = flag
-						* (allNotes.getInt(allNotes
-								.getColumnIndex("notestatus")) - 1);
-				if (flag == 0) {
-					storedID = allNotes.getLong(allNotes.getColumnIndex("_id"));
-					Log.v(MODULE_TAG, "" + storedID);
-					break;
+				int flag = 1;
+				for (int i = 0; i < listSavedNotes.getCount(); i++) {
+					allNotes.moveToPosition(i);
+					flag = flag
+							* (allNotes.getInt(allNotes
+									.getColumnIndex("notestatus")) - 1);
+					if (flag == 0) {
+						storedID = allNotes.getLong(allNotes.getColumnIndex("_id"));
+						Log.v(MODULE_TAG, "" + storedID);
+						break;
+					}
 				}
-			}
-			if (flag == 1) {
-				saveMenuItemUpload.setEnabled(false);
-			} else {
-				saveMenuItemUpload.setEnabled(true);
-			}
+				if (flag == 1) {
+					saveMenuItemUpload.setEnabled(false);
+				} else {
+					saveMenuItemUpload.setEnabled(true);
+				}
 
-			mode.setTitle(noteIdArray.size() + " Selected");
+				mode.setTitle(noteIdArray.size() + " Selected");
+				}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 			return false; // Return false if nothing is done
 		}
 

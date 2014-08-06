@@ -18,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 public class NoteQuestionsActivity extends Activity {
@@ -27,6 +29,8 @@ public class NoteQuestionsActivity extends Activity {
 	private Spinner spnSeverity;
 	private Spinner spnIssueType;
 	private MultiSelectionSpinner spnConflict;
+
+	private String issueTypeOtherText = null;
 
 	public static final String EXTRA_NOTE_ID = "noteId";
 	public static final String EXTRA_NOTE_TYPE = "noteType";
@@ -50,7 +54,7 @@ public class NoteQuestionsActivity extends Activity {
 	private static final int PREF_CONFLICT = 2;
 	private static final int PREF_ISSUE    = 3;
 
-	private final Answer_OnClickListener answer_OnClickListener = new Answer_OnClickListener();
+	private SpnIssueType_OnClickListener spnIssueType_OnClick = null;
 
 	private int noteType;
 	private long noteId = -1;
@@ -99,17 +103,20 @@ public class NoteQuestionsActivity extends Activity {
 			setContentView(R.layout.activity_note_questions);
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+			spnIssueType_OnClick = new SpnIssueType_OnClickListener();
+
+
 			spnSeverity = (Spinner) findViewById(R.id.spnSeverityOfProblem);
-			spnSeverity.setOnItemSelectedListener(answer_OnClickListener);
 
 			spnConflict = (MultiSelectionSpinner) findViewById(R.id.spnConflictType);
 			spnConflict.setItems(getResources().getStringArray(R.array.nqaConflictType));
 			spnConflict.setTitle(getResources().getString(R.string.nqaConflictTypeTitle));
 			spnConflict.setOtherIndex(DbAnswers.findIndex(DbAnswers.noteConflict, DbAnswers.noteConflictOther));
-			//spnConflict.setOnItemSelectedListener(answer_OnClickListener);
 
 			spnIssueType = (Spinner) findViewById(R.id.spnIssueType);
-			spnIssueType.setOnItemSelectedListener(answer_OnClickListener);
+			spnIssueType_OnClick.setOtherIndex(DbAnswers.findIndex(DbAnswers.noteIssue, DbAnswers.noteIssueOther));
+			spnIssueType_OnClick.setItems(getResources().getStringArray(R.array.nqaIssueType));
+			spnIssueType.setOnItemSelectedListener(spnIssueType_OnClick);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -218,12 +225,45 @@ public class NoteQuestionsActivity extends Activity {
      *
      * Description: Callback to be invoked when startButton button is clicked
      */
-	private final class Answer_OnClickListener implements OnItemSelectedListener {
+	private final class SpnIssueType_OnClickListener implements OnItemSelectedListener {
+
+		private int otherIndex = -1;
+		private final AlertDialog.Builder inputDialog;
+		private final EditText editText;
+		private ArrayAdapter<String> myArrayAdapter = null;
+		private String[] items;
+		private final String DEFAULT_OTHER_TEXT = "Other...";
+		private AdapterView<ArrayAdapter<String>> myAdapterView;
+
+		public SpnIssueType_OnClickListener() {
+
+			inputDialog = new AlertDialog.Builder(NoteQuestionsActivity.this);
+			editText = new EditText(NoteQuestionsActivity.this);
+			inputDialog.setView(editText);
+			inputDialog.setTitle("Specify other...");
+			inputDialog.setPositiveButton("OK", new OtherPositiveButton_OnClickListener());
+			inputDialog.setNegativeButton("Cancel", new OtherNegativeButton_OnClickListener());
+			inputDialog.setCancelable(true);
+		}
 
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 			try {
 				Log.v(MODULE_TAG, "Item selected(" + position + ") = " + id);
+
+				if (otherIndex == position - 1) {
+					myArrayAdapter = null;
+					try {
+						myAdapterView = (AdapterView<ArrayAdapter<String>>) parent;
+						myArrayAdapter = myAdapterView.getAdapter();
+						String item = myArrayAdapter.getItem(position);
+						Log.v(MODULE_TAG, "Item(" + position + ") = <" + item + ">");
+						inputDialog.show();
+					}
+					catch(ClassCastException ex) {
+						Log.e(MODULE_TAG, ex.getMessage());
+					}
+				}
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -236,6 +276,73 @@ public class NoteQuestionsActivity extends Activity {
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+
+		private final class OtherPositiveButton_OnClickListener implements
+				DialogInterface.OnClickListener {
+			@Override
+			public void onClick(DialogInterface dialog, int id) {
+				try {
+					setOtherText(editText.getText().toString());
+				}
+				catch (Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+				finally {
+					dialog.dismiss();
+				}
+			}
+		}
+
+		private final class OtherNegativeButton_OnClickListener implements
+				DialogInterface.OnClickListener {
+			@Override
+			public void onClick(DialogInterface dialog, int id) {
+				try {
+					dialog.dismiss();
+				}
+				catch (Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+		}
+
+		public void setOtherIndex(int index) {
+			this.otherIndex = index;
+		}
+
+		private void setOtherText(String text) {
+
+			if (null == text) {
+				issueTypeOtherText="";
+			}
+			else {
+				issueTypeOtherText = text.trim();
+			}
+
+			// Pick something sane to show the user
+			if (issueTypeOtherText == "") {
+				this.items[otherIndex + 1] = DEFAULT_OTHER_TEXT;
+			}
+			else {
+				this.items[otherIndex + 1] = "Other( \"" +  text + "\" )";
+			}
+
+			// First try
+			//myArrayAdapter.clear();
+			//myArrayAdapter.addAll(this.items);
+			//myArrayAdapter.notifyDataSetChanged();
+
+			// Second try
+			//ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(NoteQuestionsActivity.this, otherIndex);
+			//myAdapterView.setAdapter(arrayAdapter);
+		}
+
+		private void setItems(String[] items) {
+			this.items = new String[items.length];
+			for (int i = 0; i < items.length; ++i) {
+				this.items[i] = new String(items[i]);
 			}
 		}
 	}
@@ -372,9 +479,15 @@ public class NoteQuestionsActivity extends Activity {
 
 		// Enter the user selections into the local database
 		try {
-			submitSpinnerSelection(spnSeverity,  dbAdapter, DbQuestions.NOTE_SEVERITY, DbAnswers.noteSeverity );
-			submitSpinnerSelection(spnConflict,  dbAdapter, DbQuestions.NOTE_CONFLICT, DbAnswers.noteConflict, DbAnswers.noteConflictOther );
-			submitSpinnerSelection(spnIssueType, dbAdapter, DbQuestions.NOTE_ISSUE,    DbAnswers.noteIssue    );
+			submitSpinnerSelection(spnSeverity,  dbAdapter, DbQuestions.NOTE_SEVERITY,
+					DbAnswers.noteSeverity);
+
+			submitSpinnerSelection(spnConflict,  dbAdapter, DbQuestions.NOTE_CONFLICT,
+					DbAnswers.noteConflict, DbAnswers.noteConflictOther );
+
+			submitSpinnerSelection(spnIssueType, dbAdapter, DbQuestions.NOTE_ISSUE,
+					DbAnswers.noteIssue, DbAnswers.noteIssueOther, issueTypeOtherText);
+
 			updateNoteType(spnIssueType.getSelectedItemPosition() - 1);
 		}
 		catch(Exception ex) {
@@ -385,6 +498,10 @@ public class NoteQuestionsActivity extends Activity {
 		}
 	}
 
+	private void submitSpinnerSelection(Spinner spinner, DbAdapter dbAdapter,
+			int question_id, int[] answer_ids) {
+		submitSpinnerSelection(spinner, dbAdapter, question_id, answer_ids, -1, null);
+	}
 	/**
 	 * Enters the spinner selection into the database
 	 * @param spinner
@@ -392,12 +509,20 @@ public class NoteQuestionsActivity extends Activity {
 	 * @param question_id
 	 * @param answers
 	 */
-	private void submitSpinnerSelection(Spinner spinner, DbAdapter dbAdapter, int question_id, int[] answer_ids) {
+	private void submitSpinnerSelection(Spinner spinner, DbAdapter dbAdapter,
+			int question_id, int[] answer_ids, int other_id, String other_text) {
+
 		// Note: The first entry is always blank, the array of answers displayed
 		// by the UI is one greater than the number of answers in the database.
 		int answerIndex = spinner.getSelectedItemPosition() - 1;
-		if (answerIndex > -1) {
-			dbAdapter.addAnswerToNote(noteId, question_id, answer_ids[answerIndex]);
+
+		if (answerIndex >= 0) {
+			if (answer_ids[answerIndex] == other_id) {
+				dbAdapter.addAnswerToNote(noteId, question_id, other_id, other_text);
+			}
+			else {
+				dbAdapter.addAnswerToNote(noteId, question_id, answer_ids[answerIndex]);
+			}
 		}
 	}
 

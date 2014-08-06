@@ -28,21 +28,24 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 		this.from = from;
 		this.to = to;
 		this.cursor = c;
+
+		Log.v(MODULE_TAG, "Note count: " + c.getCount());
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		View rowView = null;
 		try {
+			Log.v(MODULE_TAG, "getView: " + position);
+
+
 			LayoutInflater inflater = (LayoutInflater) context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View rowView = inflater.inflate(R.layout.saved_notes_list_item, parent,
+			rowView = inflater.inflate(R.layout.saved_notes_list_item, parent,
 					false);
-			TextView textViewStart = (TextView) rowView
-					.findViewById(R.id.TextViewStart);
-			TextView textViewType = (TextView) rowView
-					.findViewById(R.id.TextViewType);
-			ImageView imageNoteType = (ImageView) rowView
-					.findViewById(R.id.ImageNoteType);
+			TextView textViewStart = (TextView) rowView.findViewById(R.id.TextViewStart);
+			TextView textViewType = (TextView) rowView.findViewById(R.id.TextViewType);
+			ImageView imageNoteType = (ImageView) rowView.findViewById(R.id.ImageNoteType);
 
 			cursor.moveToPosition(position);
 
@@ -60,8 +63,7 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 					"Bike shops", "Public restrooms", "Secret passage",
 					"Water fountains", "Note this asset" };
 
-			textViewType.setText(noteTypeText[cursor.getInt(cursor
-					.getColumnIndex("notetype"))]);
+			textViewType.setText(noteTypeText[cursor.getInt(cursor.getColumnIndex("notetype"))]);
 
 			int status = cursor.getInt(cursor.getColumnIndex("notestatus"));
 			Log.v(MODULE_TAG, "Status: " + status);
@@ -104,15 +106,21 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 				case 11:
 					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
 					break;
+				default:
+					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
+					break;
 				}
 			} else if (status == 1) {
 				imageNoteType.setImageResource(R.drawable.failedupload_high);
+			}
+			else {
+
 			}
 			return rowView;
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
-		return null;
+		return rowView;
 	}
 }

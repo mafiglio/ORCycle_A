@@ -74,6 +74,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 
 	private static final String FID_QUESTION_ID = "question_id";
 	private static final String FID_ANSWER_ID = "answer_id";
+	private static final String FID_ANSWER_OTHER_TEXT = "other_text";
 
 	private static final String twoHyphens = "--";
 	private static final String boundary = "cycle*******notedata*******atlanta";
@@ -163,8 +164,10 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 		try {
 			Cursor answers = mDb.fetchNoteAnswers(noteId);
 
-			int questionColumn = answers.getColumnIndex(DbAdapter.K_NOTE_ANSWER_QUESTION_ID);
-			int answerColumn = answers.getColumnIndex(DbAdapter.K_NOTE_ANSWER_ANSWER_ID);
+			int questionId = answers.getColumnIndex(DbAdapter.K_NOTE_ANSWER_QUESTION_ID);
+			int answerId = answers.getColumnIndex(DbAdapter.K_NOTE_ANSWER_ANSWER_ID);
+			int otherText = answers.getColumnIndex(DbAdapter.K_NOTE_ANSWER_OTHER_TEXT);
+			String text;
 
 			// Cycle thru the database entries
 			while (!answers.isAfterLast()) {
@@ -174,9 +177,15 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 
 				try {
 					// Place values into the JSON object
-					json.put(FID_QUESTION_ID, answers.getInt(questionColumn));
-					json.put(FID_ANSWER_ID, answers.getInt(answerColumn));
+					json.put(FID_QUESTION_ID, answers.getInt(questionId));
+					json.put(FID_ANSWER_ID, answers.getInt(answerId));
 
+					if (null != (text = answers.getString(otherText))) {
+						text = text.trim();
+						if (!text.equals("")) {
+							json.put(FID_ANSWER_OTHER_TEXT, text);
+						}
+					}
 					// Place JSON objects into the JSON array
 					jsonAnswers.put(json);
 				}
