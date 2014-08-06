@@ -11,6 +11,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_trip_purpose">Trip Purpose</string>
     <string name="title_activity_trip_questions">Trip Description</string>
+    <string name="title_activity_note_questions">Note Description</string>
     <string name="title_activity_user_info">User Information</string>
     <string name="title_activity_trip_map">Trip Map</string>
     <string name="title_activity_saved_trips">Saved Trips</string>
@@ -230,4 +231,41 @@
         <item>The cargo area</item>
         </string-array>
 
+    <string-array name="nqaSeverityOfProblem">
+        <item></item>
+        <item>I have had a major crash/accident</item>
+        <item>I have had a minor crash/accident</item>
+        <item>I have had a near-crash/accident</item>
+        <item>I do not feel safe</item>
+        <item>I feel uncomfortable</item>
+        </string-array>
+
+	<string name="nqaConflictTypeTitle">Type of conflict/Accident With</string>
+    <string-array name="nqaConflictType">
+        <item>Auto traffic</item>
+        <item>Large commercial vehicles (trucks)</item>
+        <item>Public transport (buses, light rail, streetcar)</item>
+        <item>Parked vehicles (being doored)</item>
+        <item>Other cyclists</item>
+        <item>Pedestrians</item>
+        <item>Pole/barrier/infrastructure</item>
+        <item>Other...</item>
+        </string-array>
+    			
+    <string-array name="nqaIssueType">
+        <item></item>
+        <item>Narrow Bike Lane</item>
+        <item>No bike lane or separation</item>
+        <item>High vehicles Speed</item>
+        <item>High traffic</item>
+        <item>Right/left turning vehicles</item>
+        <item>Traffic signal timing</item>
+        <item>No traffic signal detection</item>
+        <item>Truck traffic</item>
+        <item>Bus traffic/stop</item>
+        <item>Parked vehicles</item>
+        <item>Pavement condition</item>
+        <item>Other...</item>
+        </string-array>
+			
 </resources>

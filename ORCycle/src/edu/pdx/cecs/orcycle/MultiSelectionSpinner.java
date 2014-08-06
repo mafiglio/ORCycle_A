@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
@@ -20,11 +22,17 @@ public class MultiSelectionSpinner extends Spinner implements
 		OnMultiChoiceClickListener {
 
 	private static final String MODULE_TAG = "MultiSelectionSpinner";
+	private static final String DEFAULT_OTHER_TEXT = "Other...";
 
-	String[] _items = null;
-	boolean[] mSelection = null;
+	private String[] _items = null;
+	private boolean[] mSelection = null;
+	private String title = null;
+	private int indexOfOther = -1;
+	private String otherText = DEFAULT_OTHER_TEXT;
+	private EditText editText = null;
+	private AlertDialog alertDialog = null;
 
-	ArrayAdapter<String> simple_adapter;
+	private final ArrayAdapter<String> simple_adapter;
 
 	public MultiSelectionSpinner(Context context) {
 		super(context);
@@ -42,24 +50,138 @@ public class MultiSelectionSpinner extends Spinner implements
 		super.setAdapter(simple_adapter);
 	}
 
-	public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-		if (mSelection != null && which < mSelection.length) {
-			mSelection[which] = isChecked;
+	public void onClick(DialogInterface dialog, int index, boolean isChecked) {
 
-			simple_adapter.clear();
-			simple_adapter.add(buildSelectedItemString());
+		if (mSelection != null && index < mSelection.length) {
+			mSelection[index] = isChecked;
+
+			if ((indexOfOther >= 0) && (indexOfOther == index)) {
+				if (isChecked) {
+					performGetOtherText();
+				}
+				else {
+					setOtherText(null);
+				}
+			}
+			else {
+				simple_adapter.clear();
+				simple_adapter.add(buildSelectedItemString());
+			}
+
 		} else {
 			throw new IllegalArgumentException(
-					"Argument 'which' is out of bounds.");
+					"Argument 'index' is out of bounds.");
+		}
+	}
+
+	private void setOtherText(String text) {
+
+		if (null == text)
+			otherText = DEFAULT_OTHER_TEXT;
+		else {
+			text = text.trim();
+			if (text.equals("")) {
+				otherText = DEFAULT_OTHER_TEXT;
+			}
+			else {
+				otherText = "Other( \"" +  text + "\" )";
+			}
+		}
+
+		// change the text in the item array
+		_items[indexOfOther] = otherText;
+
+		//
+		simple_adapter.clear();
+		simple_adapter.add(buildSelectedItemString());
+
+		// get a reference to the ListView widget in the dialog
+		ListView list = alertDialog.getListView();
+
+		// get a reference to the arrayadapter held by the ListView widget
+		ArrayAdapter adapter = (ArrayAdapter)list.getAdapter();
+
+		// Notify the adapter that the underlying dataset has changed
+		adapter.notifyDataSetChanged();
+	}
+
+	private void performGetOtherText() {
+
+		// Create an EditText view to get user input
+		editText = new EditText(getContext());
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+		builder.setTitle("Specify other:");
+		builder.setView(editText); // Here the variable alert is the instance of
+		builder.setPositiveButton("OK", new OtherPositiveButton_OnClickListener());
+		builder.setNegativeButton("Cancel", new OtherNegativeButton_OnClickListener());
+		builder.show();
+	}
+
+	private final class PositiveButton_OnClickListener implements
+			DialogInterface.OnClickListener {
+		@Override
+		public void onClick(DialogInterface dialog, int id) {
+			// ...
+		}
+	}
+
+	private final class NegativeButton_OnClickListener implements
+			DialogInterface.OnClickListener {
+		@Override
+		public void onClick(DialogInterface dialog, int id) {
+			// TODO:
+		}
+	}
+
+	private final class OtherPositiveButton_OnClickListener implements
+			DialogInterface.OnClickListener {
+		@Override
+		public void onClick(DialogInterface dialog, int id) {
+			try {
+				setOtherText(editText.getEditableText().toString());
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+	private final class OtherNegativeButton_OnClickListener implements
+			DialogInterface.OnClickListener {
+		@Override
+		public void onClick(DialogInterface dialog, int id) {
+			// ...
 		}
 	}
 
 	@Override
 	public boolean performClick() {
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		builder.setMultiChoiceItems(_items, mSelection, this);
-		builder.show();
+		builder.setTitle(title);
+		builder.setPositiveButton("OK", new PositiveButton_OnClickListener());
+		builder.setNegativeButton("Cancel", new NegativeButton_OnClickListener());
+
+		alertDialog = builder.create();
+		alertDialog.show();
 		return true;
+
+	}
+
+	public void setTitle(String value) {
+		this.title = value;
+	}
+
+	public String getTitle() {
+		return this.title;
+	}
+
+	public void setOtherIndex(int value) {
+		if (value < 0)
+			value = -1;
+		indexOfOther = value;
 	}
 
 	@Override
@@ -72,7 +194,7 @@ public class MultiSelectionSpinner extends Spinner implements
 		_items = items;
 		mSelection = new boolean[_items.length];
 		simple_adapter.clear();
-		//simple_adapter.add(_items[0]);
+		// simple_adapter.add(_items[0]);
 		Arrays.fill(mSelection, false);
 	}
 
@@ -80,7 +202,7 @@ public class MultiSelectionSpinner extends Spinner implements
 		_items = items.toArray(new String[items.size()]);
 		mSelection = new boolean[_items.length];
 		simple_adapter.clear();
-		//simple_adapter.add(_items[0]);
+		// simple_adapter.add(_items[0]);
 		Arrays.fill(mSelection, false);
 	}
 
@@ -152,24 +274,22 @@ public class MultiSelectionSpinner extends Spinner implements
 		// Set the selections
 		String[] selections = text.split(",");
 
-		for (String selection: selections) {
+		for (String selection : selections) {
 			try {
 				index = Integer.parseInt(selection);
 				if (index >= 0 && index < mSelection.length) {
 					mSelection[index] = true;
+				} else {
+					throw new IllegalArgumentException("Index " + index
+							+ " is out of bounds.");
 				}
-				else {
-					throw new IllegalArgumentException("Index " + index + " is out of bounds.");
-				}
-			}
-			catch(Exception ex) {
+			} catch (Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
 			}
 		}
 		simple_adapter.clear();
 		simple_adapter.add(buildSelectedItemString());
 	}
-
 
 	public List<String> getSelectedStrings() {
 		List<String> selection = new LinkedList<String>();
@@ -201,7 +321,6 @@ public class MultiSelectionSpinner extends Spinner implements
 					sb.append(", ");
 				}
 				foundOne = true;
-
 				sb.append(_items[i]);
 			}
 		}
@@ -241,35 +360,46 @@ public class MultiSelectionSpinner extends Spinner implements
 		return sb.toString();
 	}
 
-    /**
-     * <p>Callback method to be invoked when an item in this view has been
-     * selected. This callback is invoked only when the newly selected
-     * position is different from the previously selected position or if
-     * there was no selected item.</p>
-     *
-     * Impelmenters can call getItemAtPosition(position) if they need to access the
-     * data associated with the selected item.
-     *
-     * @param parent The AdapterView where the selection happened
-     * @param view The view within the AdapterView that was clicked
-     * @param position The position of the view in the adapter
-     * @param id The row id of the item that is selected
-     */
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+	public String getOtherText() {
+		return otherText;
+	}
 
-    }
+	/**
+	 * <p>
+	 * Callback method to be invoked when an item in this view has been
+	 * selected. This callback is invoked only when the newly selected position
+	 * is different from the previously selected position or if there was no
+	 * selected item.
+	 * </p>
+	 *
+	 * Impelmenters can call getItemAtPosition(position) if they need to access
+	 * the data associated with the selected item.
+	 *
+	 * @param parent
+	 *            The AdapterView where the selection happened
+	 * @param view
+	 *            The view within the AdapterView that was clicked
+	 * @param position
+	 *            The position of the view in the adapter
+	 * @param id
+	 *            The row id of the item that is selected
+	 */
+	public void onItemSelected(AdapterView<?> parent, View view, int position,
+			long id) {
+		Log.v(MODULE_TAG, "_onItemSelected: Item selected(" + position + ") = "
+				+ id);
+	}
 
-    /**
-     * Callback method to be invoked when the selection disappears from this
-     * view. The selection can disappear for instance when touch is activated
-     * or when the adapter becomes empty.
-     *
-     * @param parent The AdapterView that now contains no selected item.
-     */
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
-
+	/**
+	 * Callback method to be invoked when the selection disappears from this
+	 * view. The selection can disappear for instance when touch is activated or
+	 * when the adapter becomes empty.
+	 *
+	 * @param parent
+	 *            The AdapterView that now contains no selected item.
+	 */
+	public void onNothingSelected(AdapterView<?> parent) {
+		Log.v(MODULE_TAG, "_onNothingSelected()");
+	}
 
 }

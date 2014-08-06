@@ -10,6 +10,19 @@ public final class DbAnswers {
 	public static final int[] passengers      = { 129, 130, 131, 132, 133, 134};     // question_id = 24
 	public static final int[] bikeAccessories = { 136, 137, 138};                    // question_id = 25
 
+	public static final int[] noteSeverity = { 151, 152, 153, 154, 155};                // question_id = 28
+	public static final int[] noteConflict = { 156, 157, 158, 159, 160, 161, 162, 163}; // question_id = 29
+	public static final int[] noteIssue = { 164, 165, 166, 167, 168, 169,               // question_id = 30
+		                                    170, 171, 172, 173, 174, 175};
+
+	public static final int[] userDetailedAnswers = { 12, 58, 81}; // These are answers specified as other
+	public static final int[] tripDetailedAnswers = { 101, 115};   // These are answers specified as other
+	public static final int[] noteDetailedAnswers = { 163, 175};   // These are answers specified as other
+
+	public static final int noteConflictOther = 163;
+	public static final int noteIssueOther = 175;
+
+
 
 	public static final String PURPOSE_COMMUTE = "Commute";
 	public static final String PURPOSE_SCHOOL = "School";
@@ -34,4 +47,14 @@ public final class DbAnswers {
 		default: throw new IllegalArgumentException();
 		}
 	}
+
+	public static final int findIndex(int[] answers, int value) {
+		int index;
+		for (index = 0; index < answers.length; ++index) {
+			if (answers[index] == value)
+				return index;
+		}
+		return -1;
+	}
+
 }

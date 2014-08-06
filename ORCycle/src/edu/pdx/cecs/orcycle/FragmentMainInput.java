@@ -600,7 +600,8 @@ public class FragmentMainInput extends Fragment
 					NoteData note = NoteData.createNote(getActivity(), tripId);
 					note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
 					note.setLocation(currentLocation);
-					transitionToNoteTypeActivity(note, tripId);
+					//transitionToNoteTypeActivity(note, tripId);
+					transitionToNoteQuestionsActivity(note, tripId);
 				}
 			}
 
@@ -737,7 +738,7 @@ public class FragmentMainInput extends Fragment
 				TripData tripData = myApp.getStatus().getTripData();
 
 				if (tripData.numpoints > 0) {
-					transitionToTripQuestionActivity(tripData.tripid);
+					transitionToTripQuestionsActivity(tripData.tripid);
 				}
 				// Otherwise, cancel and go back to main screen
 				else {
@@ -886,7 +887,7 @@ public class FragmentMainInput extends Fragment
 		Toast.makeText(getActivity(), "No GPS data acquired; nothing to submit.", Toast.LENGTH_SHORT).show();
 	}
 
-	private void transitionToTripQuestionActivity(long tripId) {
+	private void transitionToTripQuestionsActivity(long tripId) {
 
 		Intent intent = new Intent(getActivity(), TripQuestionsActivity.class);
 		intent.putExtra(TripQuestionsActivity.EXTRA_TRIP_ID, tripId);
@@ -908,6 +909,19 @@ public class FragmentMainInput extends Fragment
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 		// getActivity().finish();
+	}
+
+	private void transitionToNoteQuestionsActivity(NoteData note, long tripId) {
+
+		Intent intent = new Intent(getActivity(), NoteQuestionsActivity.class);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, note.noteid);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_TYPE, NoteTypeActivity.EXTRA_NOTE_TYPE_UNDEFINED);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, NoteTypeActivity.EXTRA_NOTE_SOURCE_MAIN_INPUT);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, NoteTypeActivity.EXTRA_TRIP_SOURCE_MAIN_INPUT);
+		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		getActivity().finish();
 	}
 
 	private void transitionToLocationServices() {

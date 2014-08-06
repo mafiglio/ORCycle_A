@@ -39,7 +39,7 @@ public class NoteTypeActivity extends Activity {
 	public static final int EXTRA_TRIP_SOURCE_SAVED_TRIPS = 1;
 
 	private int noteType;
-	private long noteid;
+	private long noteId;
 	private int noteSource = EXTRA_NOTE_SOURCE_UNDEFINED;
 	private long tripId;
 	private int tripSource = EXTRA_TRIP_SOURCE_UNDEFINED;
@@ -79,8 +79,8 @@ public class NoteTypeActivity extends Activity {
 		// get input values for this view
 		Intent myIntent = getIntent();
 
-		noteid = myIntent.getLongExtra(EXTRA_NOTE_ID, EXTRA_NOTE_ID_UNDEFINED);
-		if (EXTRA_NOTE_ID_UNDEFINED == noteid) {
+		noteId = myIntent.getLongExtra(EXTRA_NOTE_ID, EXTRA_NOTE_ID_UNDEFINED);
+		if (EXTRA_NOTE_ID_UNDEFINED == noteId) {
 			throw new IllegalArgumentException(MODULE_TAG + ": EXTRA_NOTE_ID undefined.");
 		}
 
@@ -204,7 +204,7 @@ public class NoteTypeActivity extends Activity {
 	private void cancelNote() {
 		NoteData note;
 		try {
-			if (null != (note = NoteData.fetchNote(NoteTypeActivity.this, noteid))) {
+			if (null != (note = NoteData.fetchNote(NoteTypeActivity.this, noteId))) {
 				note.dropNote();
 			}
 		}
@@ -228,7 +228,7 @@ public class NoteTypeActivity extends Activity {
 		// Create intent to go to the NoteDetailActivity
 		Intent intent = new Intent(this, NoteDetailActivity.class);
 		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_TYPE, noteType);
-		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_ID, noteid);
+		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_ID, noteId);
 		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_SOURCE, noteSource);
 
 		// the NoteType activity needs these when the back button

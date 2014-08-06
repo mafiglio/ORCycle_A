@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -181,7 +180,6 @@ public class TripQuestionsActivity extends Activity {
 		alert.show();
 	}
 
-	// 2.0 and above
 	@Override
 	public void onBackPressed() {
 		try {
@@ -190,23 +188,6 @@ public class TripQuestionsActivity extends Activity {
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
-	}
-
-	// Before 2.0
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			try {
-				transitionToPreviousActivity();
-			}
-			catch(Exception ex) {
-				Log.e(MODULE_TAG, ex.getMessage());
-			}
-			return true;
-		}
-
-		return super.onKeyDown(keyCode, event);
 	}
 
 	// *********************************************************************************

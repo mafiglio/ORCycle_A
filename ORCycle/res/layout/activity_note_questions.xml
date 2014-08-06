@@ -1,0 +1,101 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/NoteQuestionsScrollView"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            tools:context=".UserInfo$DummySectionFragment" >
+
+            <TextView
+                android:id="@+id/tvNoteQuestionsHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Specific Safety Related Questions"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/tvSeverityOfProblem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tvNoteQuestionsHeader"
+                android:layout_below="@id/tvNoteQuestionsHeader"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/lcdscreen"
+                android:text="Severity of the problem?"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <Spinner
+                android:id="@+id/spnSeverityOfProblem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tvNoteQuestionsHeader"
+                android:layout_below="@id/tvSeverityOfProblem"
+                android:layout_marginTop="20dp"
+                android:entries="@array/nqaSeverityOfProblem"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/tvConflictType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tvNoteQuestionsHeader"
+                android:layout_below="@id/spnSeverityOfProblem"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/lcdscreen"
+                android:text="Type of conflict/accident, with ?"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <edu.pdx.cecs.orcycle.MultiSelectionSpinner
+                android:id="@+id/spnConflictType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tvNoteQuestionsHeader"
+                android:layout_below="@id/tvConflictType"
+                android:layout_marginTop="20dp"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/tvIssueType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tvNoteQuestionsHeader"
+                android:layout_below="@id/spnConflictType"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/lcdscreen"
+                android:text=" * Safety issues?"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <Spinner
+                android:id="@+id/spnIssueType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tvNoteQuestionsHeader"
+                android:layout_below="@id/tvIssueType"
+                android:layout_marginTop="20dp"
+                android:entries="@array/nqaIssueType"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tvNoteQuestionsHeader"
+                android:layout_below="@id/spnIssueType"
+                android:layout_marginTop="15dp"
+                android:text="* = required"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            	</RelativeLayout>
+
+</ScrollView>
