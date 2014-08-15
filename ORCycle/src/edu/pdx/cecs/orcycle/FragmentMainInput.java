@@ -600,11 +600,9 @@ public class FragmentMainInput extends Fragment
 					NoteData note = NoteData.createNote(getActivity(), tripId);
 					note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
 					note.setLocation(currentLocation);
-					//transitionToNoteTypeActivity(note, tripId);
 					transitionToNoteQuestionsActivity(note, tripId);
 				}
 			}
-
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
 			}

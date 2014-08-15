@@ -42,7 +42,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@id/tvNoteQuestionsHeader"
                 android:layout_below="@id/tvSeverityOfProblem"
-                android:layout_marginTop="20dp"
                 android:entries="@array/nqaSeverityOfProblem"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -83,7 +82,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@id/tvNoteQuestionsHeader"
                 android:layout_below="@id/tvIssueType"
-                android:layout_marginTop="20dp"
                 android:entries="@array/nqaIssueType"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -93,7 +91,7 @@
                 android:layout_alignLeft="@id/tvNoteQuestionsHeader"
                 android:layout_below="@id/spnIssueType"
                 android:layout_marginTop="15dp"
-                android:text="* = required"
+                android:text="* = Required entry"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             	</RelativeLayout>

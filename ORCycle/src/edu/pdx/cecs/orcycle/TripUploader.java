@@ -36,27 +36,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Vector;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -253,49 +247,6 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		return jsonAnswers;
 	}
 
-	private JSONObject getUserJSON() throws JSONException {
-		JSONObject user = new JSONObject();
-		Map<String, Integer> fieldMap = new HashMap<String, Integer>();
-
-		fieldMap.put(USER_EMAIL, Integer.valueOf(FragmentUserInfo.PREF_EMAIL));
-
-		fieldMap.put(USER_ZIP_HOME,
-				Integer.valueOf(FragmentUserInfo.PREF_ZIPHOME));
-		fieldMap.put(USER_ZIP_WORK,
-				Integer.valueOf(FragmentUserInfo.PREF_ZIPWORK));
-		fieldMap.put(USER_ZIP_SCHOOL,
-				Integer.valueOf(FragmentUserInfo.PREF_ZIPSCHOOL));
-
-		SharedPreferences settings = this.mCtx.getSharedPreferences("PREFS", 0);
-		for (Entry<String, Integer> entry : fieldMap.entrySet()) {
-			user.put(entry.getKey(),
-					settings.getString(entry.getValue().toString(), null));
-		}
-		user.put(USER_AGE, settings.getInt("" + FragmentUserInfo.PREF_AGE, 0));
-		user.put(USER_GENDER,
-				settings.getInt("" + FragmentUserInfo.PREF_GENDER, 0));
-		user.put(USER_CYCLING_FREQUENCY,
-				settings.getInt("" + FragmentUserInfo.PREF_CYCLEFREQ,0));
-		// Integer.parseInt(settings.getString(""+UserInfoActivity.PREF_CYCLEFREQ,
-		// "0"))
-		user.put(USER_ETHNICITY,
-				settings.getInt("" + FragmentUserInfo.PREF_ETHNICITY, 0));
-		user.put(USER_INCOME,
-				settings.getInt("" + FragmentUserInfo.PREF_INCOME, 0));
-		user.put(USER_HHSIZE,
-				settings.getInt("" + FragmentUserInfo.PREF_HHSIZE, 0));
-		user.put(USER_HHVEHICLES,
-				settings.getInt("" + FragmentUserInfo.PREF_HHVEHICLES, 0));
-		user.put(USER_RIDERTYPE,
-				settings.getInt("" + FragmentUserInfo.PREF_RIDERTYPE, 0));
-		user.put(USER_RIDERHISTORY,
-				settings.getInt("" + FragmentUserInfo.PREF_RIDERHISTORY, 0));
-
-		user.put(APP_VERSION, getAppVersion());
-
-		return user;
-	}
-
 	private Vector<String> getTripData(long tripId) {
 		Vector<String> tripData = new Vector<String>();
 		mDb.openReadOnly();
@@ -383,32 +334,18 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 	private String getPostData(long tripId) throws JSONException {
 		JSONObject coords = getCoordsJSON(tripId);
 		JSONArray pauses = getPausesJSON(tripId);
-		JSONObject user = getUserJSON();
+		//JSONObject user = getUserJSON();
 		JSONArray tripResponses = getTripResponsesJSON(tripId);
 		String deviceId = getDeviceId();
 		Vector<String> tripData = getTripData(tripId);
 		String notes = tripData.get(0);
 		String purpose = tripData.get(1);
 		String startTime = tripData.get(2);
-		// String endTime = tripData.get(3);
-
-		final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-		nameValuePairs.add(new BasicNameValuePair("coords", coords.toString()));
-		nameValuePairs.add(new BasicNameValuePair("pauses", pauses.toString()));
-		nameValuePairs.add(new BasicNameValuePair("user", user.toString()));
-		nameValuePairs.add(new BasicNameValuePair("device", deviceId));
-		nameValuePairs.add(new BasicNameValuePair("notes", notes));
-		nameValuePairs.add(new BasicNameValuePair("purpose", purpose));
-		nameValuePairs.add(new BasicNameValuePair("start", startTime));
-		// nameValuePairs.add(new BasicNameValuePair("end", endTime));
-		nameValuePairs.add(new BasicNameValuePair("version", "" + kSaveProtocolVersion));
-		nameValuePairs.add(new BasicNameValuePair("tripid", "" + tripId));
-		nameValuePairs.add(new BasicNameValuePair("tripResponses", tripResponses.toString()));
 
 		String codedPostData =
 				"purpose=" + purpose +
 				"&tripid=" + String.valueOf(tripId) +
-				"&user=" + user.toString() +
+				// "&user=" + user.toString() +
 				"&notes=" + notes +
 				"&coords=" + coords.toString() +
 				"&pauses=" + pauses.toString() +

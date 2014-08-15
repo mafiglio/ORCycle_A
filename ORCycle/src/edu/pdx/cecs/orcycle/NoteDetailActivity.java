@@ -126,7 +126,7 @@ public class NoteDetailActivity extends Activity {
 
 		attachDialog = new Dialog(this);
 		attachDialog.setContentView(R.layout.dialog_attach);
-		attachDialog.setTitle("chooser_image");
+		attachDialog.setTitle("Add Photo");
 		attachDialog.setCancelable(true);
 
 		((ImageButton) attachDialog.findViewById(R.id.attach_stored_image))

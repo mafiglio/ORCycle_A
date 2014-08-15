@@ -27,16 +27,10 @@ public class NoteMapActivity extends Activity {
 	public static final String EXTRA_NOTE_ID = "shownote";
 	private static final String MODULE_TAG = "NoteMapActivity";
 
-
 	public GoogleMap map;
-
 	private MenuItem saveMenuItem;
-
-	ImageView imageView;
-
-	Bitmap photo;
-
-	private Menu menu;
+	private ImageView imageView;
+	private Bitmap photo;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +58,7 @@ public class NoteMapActivity extends Activity {
 			TextView t2 = (TextView) findViewById(R.id.TextViewMapNoteDetails);
 			TextView t3 = (TextView) findViewById(R.id.TextViewMapNoteFancyStart);
 
-			String[] noteTypeText = new String[] { "Pavement issue",
-					"Traffic signal", "Enforcement", "Bike parking",
-					"Bike lane issue", "Note this issue", "Bike parking",
-					"Bike shops", "Public restrooms", "Secret passage",
-					"Water fountains", "Note this asset" };
-
-			t1.setText(noteTypeText[note.notetype]);
+			t1.setText(getNoteTypeText(note.notetype));
 			t2.setText(note.notedetails);
 			t3.setText(note.notefancystart);
 
@@ -132,6 +120,7 @@ public class NoteMapActivity extends Activity {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -186,6 +175,18 @@ public class NoteMapActivity extends Activity {
 		startActivity(intent);
 		overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
 		finish();
+	}
+
+	private String getNoteTypeText(int noteType) {
+
+		String[] noteTypes = getResources().getStringArray(R.array.nqaIssueType);
+
+		int index = DbAnswers.findIndex(DbAnswers.noteIssue, noteType);
+
+		if (-1 != index) {
+			return noteTypes[index + 1];
+		}
+		return "Unknown";
 	}
 
 }

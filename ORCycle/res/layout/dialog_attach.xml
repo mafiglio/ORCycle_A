@@ -11,7 +11,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="60dp"
-        android:background="@drawable/digital_camera_128"
+        android:background="@drawable/gallery128"
         android:contentDescription="Add Photo"
         android:scaleType="fitXY" />
 
@@ -26,4 +26,25 @@
         android:contentDescription="Take Picture Photo"
         android:scaleType="fitXY" />
             
+        <TextView
+            android:id="@+id/tv_attach_stored_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/attach_stored_image"
+            android:layout_below="@id/attach_stored_image"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:text="Image"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/tv_attach_camera_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/attach_camera_photo"
+            android:layout_below="@id/attach_camera_photo"
+            android:layout_marginTop="5dp"
+            android:text="Take Picture"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
 </RelativeLayout>
