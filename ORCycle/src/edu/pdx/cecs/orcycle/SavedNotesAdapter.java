@@ -66,7 +66,7 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 				imageNoteType.setImageResource(R.drawable.failedupload_high);
 			}
 			else {
-				imageNoteType.setImageResource(getNoteTypeImageResourceId(noteType));
+				imageNoteType.setImageResource(DbAnswers.getNoteTypeImageResourceId(noteType));
 			}
 		}
 		catch(Exception ex) {
@@ -85,22 +85,4 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 		return "Unknown";
 	}
 
-	private int getNoteTypeImageResourceId(int noteType) {
-
-		switch (noteType) {
-		case 164: return R.drawable.noteissuepicker_high;
- 		case 165: return R.drawable.noteissuepicker_high;
-		case 166: return R.drawable.noteissuepicker_high;
-		case 167: return R.drawable.noteissuepicker_high;
-		case 168: return R.drawable.noteissuepicker_high;
-		case 169: return R.drawable.noteissuepicker_high;
-		case 170: return R.drawable.noteassetpicker_high;
-		case 171: return R.drawable.noteassetpicker_high;
-		case 172: return R.drawable.noteassetpicker_high;
-		case 173: return R.drawable.noteassetpicker_high;
-		case 174: return R.drawable.noteassetpicker_high;
-		case 175: return R.drawable.noteassetpicker_high;
-		default: return R.drawable.noteissuepicker_high;
-		}
-	}
 }

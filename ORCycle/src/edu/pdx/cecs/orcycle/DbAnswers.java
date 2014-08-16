@@ -81,4 +81,33 @@ public final class DbAnswers {
 		return -1;
 	}
 
+	public static int getNoteTypeImageResourceId(int noteType) {
+
+		switch (noteType) {
+		case 164: return R.drawable.noteissuepicker_high;
+ 		case 165: return R.drawable.noteissuepicker_high;
+		case 166: return R.drawable.noteissuepicker_high;
+		case 167: return R.drawable.noteissuepicker_high;
+		case 168: return R.drawable.noteissuepicker_high;
+		case 169: return R.drawable.noteissuepicker_high;
+		case 170: return R.drawable.noteassetpicker_high;
+		case 171: return R.drawable.noteassetpicker_high;
+		case 172: return R.drawable.noteassetpicker_high;
+		case 173: return R.drawable.noteassetpicker_high;
+		case 174: return R.drawable.noteassetpicker_high;
+		case 175: return R.drawable.noteassetpicker_high;
+		default: return R.drawable.noteissuepicker_high;
+		}
+	}
+
+	public static boolean isNoteIssue(int noteType) {
+		if (noteType >= 164 && noteType <= 169)
+			return true;
+		return false;
+	}
+	public static boolean isNoteAsset(int noteType) {
+		if (noteType >= 170 && noteType <= 175)
+			return true;
+		return false;
+	}
 }

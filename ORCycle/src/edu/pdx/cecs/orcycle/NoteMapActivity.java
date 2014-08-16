@@ -67,33 +67,22 @@ public class NoteMapActivity extends Activity {
 
 			map.animateCamera(CameraUpdateFactory.newLatLngZoom(center, 16));
 
+			// Add note marker to map
 			if (note != null) {
-				if (note.notetype >= 0 && note.notetype <= 5) {
-					map.addMarker(new MarkerOptions()
-							.icon(BitmapDescriptorFactory
-									.fromResource(R.drawable.noteissuemapglyph_high))
-							.anchor(0.0f, 1.0f) // Anchors the marker on the
-												// bottom left
-							.position(
-									new LatLng(note.latitude * 1E-6,
-											note.longitude * 1E-6)));
-				} else if (note.notetype >= 6 && note.notetype <= 11) {
-					map.addMarker(new MarkerOptions()
-							.icon(BitmapDescriptorFactory
-									.fromResource(R.drawable.noteassetmapglyph_high))
-							.anchor(0.0f, 1.0f) // Anchors the marker on the
-												// bottom left
-							.position(
-									new LatLng(note.latitude * 1E-6,
-											note.longitude * 1E-6)));
-				}
+
+				LatLng notePosition = new LatLng(note.latitude * 1E-6, note.longitude * 1E-6);
+
+				int noteDrawable = DbAnswers.isNoteIssue(note.notetype) ?
+						R.drawable.noteissuemapglyph_high : R.drawable.noteassetmapglyph_high;
+
+				map.addMarker(new MarkerOptions()
+					.icon(BitmapDescriptorFactory.fromResource(noteDrawable))
+					.anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
+					.position(notePosition));
 			}
 
-			Log.v("Jason", "Image Photo: " + note.noteimagedata);
-			Log.v("Jason", "Image Photo: " + note.noteimageurl);
-
-			if (note.noteimageurl.equals("")) {
-			} else {
+			// If image exist, add it to the imageView widget
+			if (!note.noteimageurl.equals("")) {
 				// Store photo error, retrieve error
 				photo = BitmapFactory.decodeByteArray(note.noteimagedata, 0,
 						note.noteimagedata.length);
@@ -103,7 +92,6 @@ public class NoteMapActivity extends Activity {
 					imageView.setScaleType(ImageView.ScaleType.FIT_START);
 				}
 				imageView.setImageBitmap(photo);
-				Log.v("Jason", "Image Photo: " + photo);
 			}
 
 		} catch (Exception e) {
