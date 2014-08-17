@@ -97,8 +97,8 @@
    
     <string-array name="qa_03_gender">
         <item></item>
-        <item>Male</item>
         <item>Female</item>
+        <item>Male</item>
         <item>Other</item>
         </string-array>
 
