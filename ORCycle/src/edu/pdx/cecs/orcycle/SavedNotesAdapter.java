@@ -20,6 +20,7 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 	private final String[] from;
 	private final int[] to;
 	Cursor cursor;
+	private final String[] textNoteTypes;
 
 	public SavedNotesAdapter(Context context, int layout, Cursor c,
 			String[] from, int[] to, int flags) {
@@ -28,8 +29,7 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 		this.from = from;
 		this.to = to;
 		this.cursor = c;
-
-		Log.v(MODULE_TAG, "Note count: " + c.getCount());
+		this.textNoteTypes = context.getResources().getStringArray(R.array.nqaIssueType);
 	}
 
 	@Override
@@ -57,70 +57,32 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 
 			textViewStart.setText(start);
 
-			String[] noteTypeText = new String[] { "Pavement issue",
-					"Traffic signal", "Enforcement", "Bike parking",
-					"Bike lane issue", "Note this issue", "Bike parking",
-					"Bike shops", "Public restrooms", "Secret passage",
-					"Water fountains", "Note this asset" };
+			int noteType = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_NOTE_TYPE));
+			int status = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_NOTE_STATUS));
 
-			textViewType.setText(noteTypeText[cursor.getInt(cursor.getColumnIndex("notetype"))]);
+			textViewType.setText(getNoteTypeText(noteType));
 
-			int status = cursor.getInt(cursor.getColumnIndex("notestatus"));
-			Log.v(MODULE_TAG, "Status: " + status);
-
-			if (status == 2) {
-				switch (cursor.getInt(cursor.getColumnIndex("notetype"))) {
-				case 0:
-					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-					break;
-				case 1:
-					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-					break;
-				case 2:
-					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-					break;
-				case 3:
-					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-					break;
-				case 4:
-					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-					break;
-				case 5:
-					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-					break;
-				case 6:
-					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
-					break;
-				case 7:
-					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
-					break;
-				case 8:
-					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
-					break;
-				case 9:
-					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
-					break;
-				case 10:
-					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
-					break;
-				case 11:
-					imageNoteType.setImageResource(R.drawable.noteassetpicker_high);
-					break;
-				default:
-					imageNoteType.setImageResource(R.drawable.noteissuepicker_high);
-					break;
-				}
-			} else if (status == 1) {
+			if (status == 1) {
 				imageNoteType.setImageResource(R.drawable.failedupload_high);
 			}
 			else {
-
+				imageNoteType.setImageResource(DbAnswers.getNoteTypeImageResourceId(noteType));
 			}
-			return rowView;
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 		return rowView;
 	}
+
+	private String getNoteTypeText(int noteType) {
+
+		int noteTypeIndex = DbAnswers.findIndex(DbAnswers.noteIssue, noteType);
+
+		if (-1 != noteTypeIndex) {
+			return textNoteTypes[noteTypeIndex + 1];
+		}
+		return "Unknown";
+	}
+
 }

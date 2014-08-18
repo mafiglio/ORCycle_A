@@ -87,6 +87,10 @@
             android:name="edu.pdx.cecs.orcycle.RateSegmentDetailActivity"
             android:label="@string/title_activity_rate_segment_detail" >
         </activity>
+        <activity
+            android:name="edu.pdx.cecs.orcycle.UserInfoActivity"
+            android:label="@string/title_activity_user_info" >
+        </activity>
         <service
             android:name="edu.pdx.cecs.orcycle.RecordingService"
             android:enabled="true" >

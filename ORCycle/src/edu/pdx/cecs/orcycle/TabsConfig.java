@@ -28,7 +28,7 @@ public class TabsConfig extends FragmentActivity implements
 	public static final int FRAG_INDEX_MAIN_INPUT = 0;
 	public static final int FRAG_INDEX_SAVED_TRIPS = 1;
 	public static final int FRAG_INDEX_SAVED_NOTES = 2;
-	public static final int FRAG_INDEX_USER_INFO = 3;
+	public static final int FRAG_INDEX_SETTINGS = 3;
 
 	private int fragmentToShow = FRAG_INDEX_MAIN_INPUT;
 
@@ -74,7 +74,8 @@ public class TabsConfig extends FragmentActivity implements
 			fragment1 = new FragmentMainInput();
 			fragment2 = new FragmentSavedTripsSection();
 			fragment3 = new FragmentSavedNotesSection();
-			fragment4 = new FragmentUserInfo();
+			//fragment4 = new FragmentUserInfo();
+			fragment4 = new FragmentSettings();
 
 			// Set up the action bar.
 			final ActionBar actionBar = getActionBar();
@@ -82,8 +83,7 @@ public class TabsConfig extends FragmentActivity implements
 
 			// Create the adapter that will return a fragment for each of the four
 			// primary sections of the app.
-			mSectionsPagerAdapter = new SectionsPagerAdapter(
-					getSupportFragmentManager());
+			mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
 			// Set up the ViewPager with the sections adapter.
 			mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -268,7 +268,7 @@ public class TabsConfig extends FragmentActivity implements
 				return fragment2;
 			case FRAG_INDEX_SAVED_NOTES:
 				return fragment3;
-			case FRAG_INDEX_USER_INFO:
+			case FRAG_INDEX_SETTINGS:
 				return fragment4;
 			}
 			return null;

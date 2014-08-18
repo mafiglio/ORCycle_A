@@ -1,0 +1,72 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollView01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            tools:context=".UserInfo$DummySectionFragment" >
+            
+            <TextView
+                android:id="@+id/labelMisc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="10dp"
+                android:text="General"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+            
+            <Button
+                android:id="@+id/buttonUserInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignLeft="@id/labelMisc"
+                android:layout_below="@id/labelMisc"
+                android:text="Tell us about yourself" />
+
+            <Button
+                android:id="@+id/buttonGetStarted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignLeft="@id/labelMisc"
+                android:layout_below="@id/buttonUserInfo"
+                android:text="Get started with ORCycle" />
+
+            <Button
+                android:id="@+id/buttonAbout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignLeft="@id/labelMisc"
+                android:layout_below="@+id/buttonGetStarted"
+                android:text="About ORCycle" />
+
+            <TextView
+                android:id="@+id/labelTellUsAboutYourself"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/buttonAbout"
+                android:layout_marginTop="10dp"
+                android:text="Record Settings"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</ScrollView>

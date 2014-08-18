@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <PreferenceScreen 
+        xmlns:android="http://schemas.android.com/apk/res/android">
+        <PreferenceCategory android:title="General">
+            
+            <PreferenceScreen 
+                android:summary="Send profile information to the ORcycle web site..." 
+                android:title="Tell us about yourself">
+                
+            </PreferenceScreen>
+            <PreferenceScreen 
+                android:title="Go to ORCycle">
+                
+            </PreferenceScreen>
+            <PreferenceScreen 
+                android:title="About ORcycle">
+                
+            </PreferenceScreen>
+        </PreferenceCategory><PreferenceCategory android:title="Record Screen">
+            <CheckBoxPreference android:title="Show general status"/>
+            <CheckBoxPreference android:title="Show Calories and ..."/>
+            <PreferenceScreen 
+                android:summary="System location services..." 
+                android:title="Location Services">
+                <intent android:action="android.settings.DISPLAY_SETTINGS " />
+            </PreferenceScreen>
+        </PreferenceCategory>
+        
+        
+        
+    </PreferenceScreen>

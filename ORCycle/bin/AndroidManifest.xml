@@ -48,24 +48,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="edu.pdx.cecs.orcycle.MainInputActivity"
-            android:label="@string/title_activity_main_input" >
-        </activity>
-        <activity
             android:name="edu.pdx.cecs.orcycle.TripPurposeActivity"
             android:label="@string/title_activity_trip_purpose" >
         </activity>
         <activity
-            android:name="edu.pdx.cecs.orcycle.UserInfoActivity"
-            android:label="@string/title_activity_user_info" >
+            android:name="edu.pdx.cecs.orcycle.TripQuestionsActivity"
+            android:label="@string/title_activity_trip_questions" >
+        </activity>
+        <activity
+            android:name="edu.pdx.cecs.orcycle.NoteQuestionsActivity"
+            android:label="@string/title_activity_note_questions" >
         </activity>
         <activity
             android:name="edu.pdx.cecs.orcycle.TripMapActivity"
             android:label="@string/title_activity_trip_map" >
-        </activity>
-        <activity
-            android:name="edu.pdx.cecs.orcycle.SavedTripsActivity"
-            android:label="@string/title_activity_saved_trips" >
         </activity>
         <activity
             android:name="edu.pdx.cecs.orcycle.TripDetailActivity"
@@ -84,10 +80,6 @@
             android:label="@string/title_activity_note_map" >
         </activity>
         <activity
-            android:name="edu.pdx.cecs.orcycle.SavedNotesActivity"
-            android:label="@string/title_activity_saved_notes" >
-        </activity>
-        <activity
             android:name="edu.pdx.cecs.orcycle.RateSegmentActivity"
             android:label="@string/title_activity_rate_segment" >
         </activity>
@@ -95,18 +87,14 @@
             android:name="edu.pdx.cecs.orcycle.RateSegmentDetailActivity"
             android:label="@string/title_activity_rate_segment_detail" >
         </activity>
-        
+        <activity
+            android:name="edu.pdx.cecs.orcycle.UserInfoActivity"
+            android:label="@string/title_activity_user_info" >
+        </activity>
         <service
             android:name="edu.pdx.cecs.orcycle.RecordingService"
-            android:enabled="true"
-            android:exported="true" >
+            android:enabled="true" >
         </service>
-
-        <activity
-            android:name="edu.pdx.cecs.orcycle.MainActivity"
-            android:label="@string/title_activity_main" >
-        </activity>
-
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDxFJg7uGiIW1kN4OKAOfS3isB9_2FhP94" />

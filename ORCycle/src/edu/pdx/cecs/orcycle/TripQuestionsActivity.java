@@ -27,22 +27,26 @@ public class TripQuestionsActivity extends Activity {
 	private MultiSelectionSpinner routePrefs;
 	private MultiSelectionSpinner passengers;
 	private MultiSelectionSpinner bikeAccessories;
+	private MultiSelectionSpinner routeStressors;
 	private Spinner tripFrequency;
 	private Spinner tripPurpose;
 	private Spinner tripComfort;
 	private Spinner routeSafety;
+	private Spinner rideConflict;
 
 	public static final String EXTRA_TRIP_ID = "TRIP_ID";
 
 	private static final String PREFS_TRIP_QUESTIONS = "PREFS_TRIP_QUESTIONS";
 
-	private static final int PREF_TRIP_FREQUENCY = 1;
-	private static final int PREF_TRIP_PURPOSE = 2;
-	private static final int PREF_ROUTE_PREFS = 3;
-	private static final int PREF_TRIP_COMFORT = 4;
-	private static final int PREF_ROUTE_SAFETY = 5;
-	private static final int PREF_PARTICIPANTS = 6;
-	private static final int PREF_BIKE_ACCESSORY = 7;
+	private static final int PREF_TRIP_FREQUENCY   = 1;
+	private static final int PREF_TRIP_PURPOSE     = 2;
+	private static final int PREF_ROUTE_PREFS      = 3;
+	private static final int PREF_TRIP_COMFORT     = 4;
+	private static final int PREF_ROUTE_SAFETY     = 5;
+	private static final int PREF_PASSENGERS       = 6;
+	private static final int PREF_BIKE_ACCESSORIES = 7;
+	private static final int PREF_RIDE_CONFLICT    = 8;
+	private static final int PREF_ROUTE_STRESSORS  = 9;
 
 	private final Answer_OnClickListener answer_OnClickListener = new Answer_OnClickListener();
 
@@ -67,29 +71,36 @@ public class TripQuestionsActivity extends Activity {
 			setContentView(R.layout.activity_trip_questions);
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-			tripFrequency = (Spinner) findViewById(R.id.spinnerTripFrequency);
+			tripFrequency = (Spinner) findViewById(R.id.spnrTripFrequency);
 			tripFrequency.setOnItemSelectedListener(answer_OnClickListener);
 
-			tripPurpose = (Spinner) findViewById(R.id.spinnerTripPurpose);
+			tripPurpose = (Spinner) findViewById(R.id.spnrTripPurpose);
 			tripPurpose.setOnItemSelectedListener(answer_OnClickListener);
 
-			routePrefs = (MultiSelectionSpinner) findViewById(R.id.spinnerRouteChoice);
-			routePrefs.setItems(getResources().getStringArray(R.array.tripRouteChoiceArray));
+			routePrefs = (MultiSelectionSpinner) findViewById(R.id.spnrRouteChoice);
+			routePrefs.setItems(getResources().getStringArray(R.array.qa_21_routePreferences));
 			routePrefs.setOnItemSelectedListener(answer_OnClickListener);
 
-			tripComfort = (Spinner) findViewById(R.id.spinnerTripComfort);
+			tripComfort = (Spinner) findViewById(R.id.spnrTripComfort);
 			tripComfort.setOnItemSelectedListener(answer_OnClickListener);
 
-			routeSafety = (Spinner) findViewById(R.id.spinnerRouteSafety);
+			routeSafety = (Spinner) findViewById(R.id.spnrRouteSafety);
 			routeSafety.setOnItemSelectedListener(answer_OnClickListener);
 
-			passengers = (MultiSelectionSpinner) findViewById(R.id.spinnerParticipants);
-			passengers.setItems(getResources().getStringArray(R.array.tripParticipantsArray));
+			passengers = (MultiSelectionSpinner) findViewById(R.id.spnrPassengers);
+			passengers.setItems(getResources().getStringArray(R.array.qa_24_ridePassengers));
 			passengers.setOnItemSelectedListener(answer_OnClickListener);
 
-			bikeAccessories = (MultiSelectionSpinner) findViewById(R.id.spinnerBikeAccessory);
-			bikeAccessories.setItems(getResources().getStringArray(R.array.tripBikeAccessoryArray));
+			bikeAccessories = (MultiSelectionSpinner) findViewById(R.id.spnrBikeAccessories);
+			bikeAccessories.setItems(getResources().getStringArray(R.array.qa_25_bikeAccessories));
 			bikeAccessories.setOnItemSelectedListener(answer_OnClickListener);
+
+			rideConflict = (Spinner) findViewById(R.id.spnrRideConflict);
+			rideConflict.setOnItemSelectedListener(answer_OnClickListener);
+
+			routeStressors = (MultiSelectionSpinner) findViewById(R.id.spnrRouteStressor);
+			routeStressors.setItems(getResources().getStringArray(R.array.qa_27_routeStressors));
+			routeStressors.setOnItemSelectedListener(answer_OnClickListener);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -222,13 +233,15 @@ public class TripQuestionsActivity extends Activity {
 
 	private boolean questionAnswered() {
 
-		if ((tripFrequency.getSelectedItemPosition()       > 0) ||
-			(tripPurpose.getSelectedItemPosition()         > 0) ||
-			(routePrefs.getSelectedIndicies().size()       > 0) ||
-			(tripComfort.getSelectedItemPosition()         > 0) ||
-			(routeSafety.getSelectedItemPosition()         > 0) ||
-			(passengers.getSelectedIndicies().size()       > 0) ||
-			(bikeAccessories.getSelectedIndicies().size()  > 0)) {
+		if ((tripFrequency.getSelectedItemPosition()      > 0) ||
+			(tripPurpose.getSelectedItemPosition()        > 0) ||
+			(routePrefs.getSelectedIndicies().size()      > 0) ||
+			(tripComfort.getSelectedItemPosition()        > 0) ||
+			(routeSafety.getSelectedItemPosition()        > 0) ||
+			(passengers.getSelectedIndicies().size()      > 0) ||
+			(bikeAccessories.getSelectedIndicies().size() > 0) ||
+			(rideConflict.getSelectedItemPosition()       > 0) ||
+			(routeStressors.getSelectedIndicies().size()  > 0)) {
 			return true;
 		}
 
@@ -249,13 +262,15 @@ public class TripQuestionsActivity extends Activity {
 
 		if (null != (settings = getSharedPreferences(PREFS_TRIP_QUESTIONS, MODE_PRIVATE))) {
 			if (null != (editor = settings.edit())) {
-				saveSpinnerPosition(editor, tripFrequency,   PREF_TRIP_FREQUENCY );
-				saveSpinnerPosition(editor, tripPurpose,     PREF_TRIP_PURPOSE   );
-				saveSpinnerPosition(editor, routePrefs,      PREF_ROUTE_PREFS    );
-				saveSpinnerPosition(editor, tripComfort,     PREF_TRIP_COMFORT   );
-				saveSpinnerPosition(editor, routeSafety,     PREF_ROUTE_SAFETY   );
-				saveSpinnerPosition(editor, passengers,      PREF_PARTICIPANTS   );
-				saveSpinnerPosition(editor, bikeAccessories, PREF_BIKE_ACCESSORY );
+				saveSpinnerPosition(editor, tripFrequency,   PREF_TRIP_FREQUENCY   );
+				saveSpinnerPosition(editor, tripPurpose,     PREF_TRIP_PURPOSE     );
+				saveSpinnerPosition(editor, routePrefs,      PREF_ROUTE_PREFS      );
+				saveSpinnerPosition(editor, tripComfort,     PREF_TRIP_COMFORT     );
+				saveSpinnerPosition(editor, routeSafety,     PREF_ROUTE_SAFETY     );
+				saveSpinnerPosition(editor, passengers,      PREF_PASSENGERS       );
+				saveSpinnerPosition(editor, bikeAccessories, PREF_BIKE_ACCESSORIES );
+				saveSpinnerPosition(editor, rideConflict,    PREF_RIDE_CONFLICT    );
+				saveSpinnerPosition(editor, routeStressors,  PREF_ROUTE_STRESSORS  );
 				editor.commit();
 			}
 		}
@@ -283,13 +298,15 @@ public class TripQuestionsActivity extends Activity {
 					for (Entry<String, ?> entry : prefs.entrySet()) {
 						try {
 							switch (Integer.parseInt(entry.getKey())) {
-							case PREF_TRIP_FREQUENCY: setSpinnerSetting(tripFrequency,   entry); break;
-							case PREF_TRIP_PURPOSE:   setSpinnerSetting(tripPurpose,     entry); break;
-							case PREF_ROUTE_PREFS:    setSpinnerSetting(routePrefs,      entry); break;
-							case PREF_TRIP_COMFORT:   setSpinnerSetting(tripComfort,     entry); break;
-							case PREF_ROUTE_SAFETY:   setSpinnerSetting(routeSafety,     entry); break;
-							case PREF_PARTICIPANTS:   setSpinnerSetting(passengers,      entry); break;
-							case PREF_BIKE_ACCESSORY: setSpinnerSetting(bikeAccessories, entry); break;
+							case PREF_TRIP_FREQUENCY:   setSpinnerSetting(tripFrequency,   entry); break;
+							case PREF_TRIP_PURPOSE:     setSpinnerSetting(tripPurpose,     entry); break;
+							case PREF_ROUTE_PREFS:      setSpinnerSetting(routePrefs,      entry); break;
+							case PREF_TRIP_COMFORT:     setSpinnerSetting(tripComfort,     entry); break;
+							case PREF_ROUTE_SAFETY:     setSpinnerSetting(routeSafety,     entry); break;
+							case PREF_PASSENGERS:       setSpinnerSetting(passengers,      entry); break;
+							case PREF_BIKE_ACCESSORIES: setSpinnerSetting(bikeAccessories, entry); break;
+							case PREF_RIDE_CONFLICT:    setSpinnerSetting(rideConflict,    entry); break;
+							case PREF_ROUTE_STRESSORS:  setSpinnerSetting(routeStressors,  entry); break;
 							}
 						}
 						catch(Exception ex) {
@@ -364,15 +381,18 @@ public class TripQuestionsActivity extends Activity {
 
 		// Enter the user selections into the local database
 		try {
-			submitSpinnerSelection(tripFrequency,    dbAdapter, DbQuestions.TRIP_FREQUENCY,   DbAnswers.tripFreq       );
-			submitSpinnerSelection(tripPurpose,      dbAdapter, DbQuestions.TRIP_PURPOSE,     DbAnswers.tripPurpose    );
-			submitSpinnerSelection(routePrefs,       dbAdapter, DbQuestions.ROUTE_PREFS,      DbAnswers.routePrefs     );
-			submitSpinnerSelection(tripComfort,      dbAdapter, DbQuestions.TRIP_COMFORT,     DbAnswers.tripComfort    );
-			submitSpinnerSelection(routeSafety,      dbAdapter, DbQuestions.ROUTE_SAFETY,     DbAnswers.routeSafety    );
-			submitSpinnerSelection(passengers,       dbAdapter, DbQuestions.PASSENGERS,       DbAnswers.passengers     );
-			submitSpinnerSelection(bikeAccessories,  dbAdapter, DbQuestions.BIKE_ACCESSORIES, DbAnswers.bikeAccessories);
-
-			updateTripPurpose(tripPurpose, dbAdapter,  DbAnswers.tripPurpose);
+			// Update answer table
+			submitSpinnerSelection( dbAdapter, tripFrequency,    DbQuestions.TRIP_FREQUENCY,   DbAnswers.tripFreq        );
+			submitSpinnerSelection( dbAdapter, tripPurpose,      DbQuestions.TRIP_PURPOSE,     DbAnswers.tripPurpose     );
+			submitSpinnerSelection( dbAdapter, routePrefs,       DbQuestions.ROUTE_PREFS,      DbAnswers.routePrefs      );
+			submitSpinnerSelection( dbAdapter, tripComfort,      DbQuestions.TRIP_COMFORT,     DbAnswers.tripComfort     );
+			submitSpinnerSelection( dbAdapter, routeSafety,      DbQuestions.ROUTE_SAFETY,     DbAnswers.routeSafety     );
+			submitSpinnerSelection( dbAdapter, passengers,       DbQuestions.PASSENGERS,       DbAnswers.passengers      );
+			submitSpinnerSelection( dbAdapter, bikeAccessories,  DbQuestions.BIKE_ACCESSORIES, DbAnswers.bikeAccessories );
+			submitSpinnerSelection( dbAdapter, rideConflict,     DbQuestions.RIDE_CONFLICT,    DbAnswers.rideConflict    );
+			submitSpinnerSelection( dbAdapter, routeStressors,   DbQuestions.ROUTE_STRESSORS,  DbAnswers.routeStressors  );
+			// Update trip table
+			updateTripPurpose(dbAdapter, tripPurpose, DbAnswers.tripPurpose);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -389,7 +409,7 @@ public class TripQuestionsActivity extends Activity {
 	 * @param question_id
 	 * @param answers
 	 */
-	private void submitSpinnerSelection(Spinner spinner, DbAdapter dbAdapter, int question_id, int[] answer_ids) {
+	private void submitSpinnerSelection(DbAdapter dbAdapter, Spinner spinner, int question_id, int[] answer_ids) {
 		// Note: The first entry is always blank, the array of answers displayed
 		// by the UI is one greater than the number of answers in the database.
 		int answerIndex = spinner.getSelectedItemPosition() - 1;
@@ -405,7 +425,7 @@ public class TripQuestionsActivity extends Activity {
 	 * @param question_id
 	 * @param answers
 	 */
-	private void submitSpinnerSelection(MultiSelectionSpinner spinner, DbAdapter dbAdapter, int question_id, int[] answers) {
+	private void submitSpinnerSelection(DbAdapter dbAdapter, MultiSelectionSpinner spinner, int question_id, int[] answers) {
 		List<Integer> selectedIndicies = spinner.getSelectedIndicies();
 		for (int index : selectedIndicies) {
 			dbAdapter.addAnswerToTrip(tripId, question_id, answers[index]);
@@ -419,7 +439,7 @@ public class TripQuestionsActivity extends Activity {
 	 * @param dbAdapter The adapter connected to the local database
 	 * @param answer_ids The TripPurpose values corresponding to the spinner selections
 	 */
-	private void updateTripPurpose(Spinner spinner, DbAdapter dbAdapter, int[] answer_ids) {
+	private void updateTripPurpose(DbAdapter dbAdapter, Spinner spinner, int[] answer_ids) {
 		int tripPurposeId = DbAnswers.tripPurpose[spinner.getSelectedItemPosition() - 1];
 		String tripPurposeText = DbAnswers.getTextTripPurpose(tripPurposeId);
 		dbAdapter.updateTripPurpose(tripId, tripPurposeText);

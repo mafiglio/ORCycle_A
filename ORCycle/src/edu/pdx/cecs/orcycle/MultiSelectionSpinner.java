@@ -74,7 +74,7 @@ public class MultiSelectionSpinner extends Spinner implements
 		}
 	}
 
-	private void setOtherText(String text) {
+	public void setOtherText(String text) {
 
 		if (null == text)
 			otherText = DEFAULT_OTHER_TEXT;
@@ -95,14 +95,16 @@ public class MultiSelectionSpinner extends Spinner implements
 		simple_adapter.clear();
 		simple_adapter.add(buildSelectedItemString());
 
-		// get a reference to the ListView widget in the dialog
-		ListView list = alertDialog.getListView();
+		if (null != alertDialog) {
+			// get a reference to the ListView widget in the dialog
+			ListView list = alertDialog.getListView();
 
-		// get a reference to the arrayadapter held by the ListView widget
-		ArrayAdapter adapter = (ArrayAdapter)list.getAdapter();
+			// get a reference to the arrayadapter held by the ListView widget
+			ArrayAdapter adapter = (ArrayAdapter)list.getAdapter();
 
-		// Notify the adapter that the underlying dataset has changed
-		adapter.notifyDataSetChanged();
+			// Notify the adapter that the underlying dataset has changed
+			adapter.notifyDataSetChanged();
+		}
 	}
 
 	private void performGetOtherText() {

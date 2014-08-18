@@ -146,6 +146,10 @@ public class TripMapActivity extends Activity {
 			buttonRateStart = (Button) findViewById(R.id.buttonRateStart);
 			buttonRateStart.setOnClickListener(new ButtonRateStart_OnClickListener());
 
+			// the next two lines will temporarily disable the RateSegment functionality
+			//buttonRateStart.setOnClickListener(new ButtonRateStart_OnClickListener());
+			buttonRateStart.setVisibility(View.GONE);
+
 			buttonRateFinish = (Button) findViewById(R.id.buttonRateFinish);
 			buttonRateFinish.setOnClickListener(new ButtonRateFinish_OnClickListener());
 			buttonRateFinish.setVisibility(View.GONE);
@@ -249,7 +253,11 @@ public class TripMapActivity extends Activity {
 		}
 		else {
 			buttonNote.setVisibility(View.VISIBLE);
-			buttonRateStart.setVisibility(View.VISIBLE);
+
+			// this line will temporarily disable the RateSegment functionality
+			//buttonRateStart.setVisibility(View.VISIBLE);
+			buttonRateStart.setVisibility(View.GONE);
+
 			buttonRateFinish.setVisibility(View.GONE);
 
 			if (null != segmentPolyline)

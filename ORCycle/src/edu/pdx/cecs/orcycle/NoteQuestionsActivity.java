@@ -48,7 +48,7 @@ public class NoteQuestionsActivity extends Activity {
 	public static final int EXTRA_TRIP_SOURCE_MAIN_INPUT = 0;
 	public static final int EXTRA_TRIP_SOURCE_SAVED_TRIPS = 1;
 
-	private static final String PREFS_TRIP_QUESTIONS = "PREFS_TRIP_QUESTIONS";
+	private static final String PREFS_NOTE_QUESTIONS = "PREFS_NOTE_QUESTIONS";
 
 	private static final int PREF_SEVERITY = 1;
 	private static final int PREF_CONFLICT = 2;
@@ -370,7 +370,7 @@ public class NoteQuestionsActivity extends Activity {
 		SharedPreferences settings;
 		SharedPreferences.Editor editor;
 
-		if (null != (settings = getSharedPreferences(PREFS_TRIP_QUESTIONS, MODE_PRIVATE))) {
+		if (null != (settings = getSharedPreferences(PREFS_NOTE_QUESTIONS, MODE_PRIVATE))) {
 			if (null != (editor = settings.edit())) {
 				saveSpinnerPosition(editor, spnSeverity,  PREF_SEVERITY);
 				saveSpinnerPosition(editor, spnConflict,  PREF_CONFLICT);
@@ -397,7 +397,7 @@ public class NoteQuestionsActivity extends Activity {
 		Map<String, ?> prefs;
 
 		try {
-			if (null != (settings = getSharedPreferences(PREFS_TRIP_QUESTIONS, MODE_PRIVATE))) {
+			if (null != (settings = getSharedPreferences(PREFS_NOTE_QUESTIONS, MODE_PRIVATE))) {
 				if (null != (prefs = settings.getAll())) {
 					for (Entry<String, ?> entry : prefs.entrySet()) {
 						try {
@@ -488,7 +488,7 @@ public class NoteQuestionsActivity extends Activity {
 			submitSpinnerSelection(spnIssueType, dbAdapter, DbQuestions.NOTE_ISSUE,
 					DbAnswers.noteIssue, DbAnswers.noteIssueOther, issueTypeOtherText);
 
-			updateNoteType(spnIssueType.getSelectedItemPosition() - 1);
+			updateNoteType(spnIssueType, DbAnswers.noteIssue);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -546,8 +546,15 @@ public class NoteQuestionsActivity extends Activity {
 		}
 	}
 
-	private void updateNoteType(int value) {
-		noteType = value;
+	private void updateNoteType(Spinner spinner, int[] answer_ids) {
+		int answerIndex = spinner.getSelectedItemPosition() - 1;
+
+		if (answerIndex >= 0) {
+			noteType = answer_ids[answerIndex];
+		}
+		else {
+			noteType = -1;
+		}
 	}
 
 	// *********************************************************************************

@@ -27,16 +27,10 @@ public class NoteMapActivity extends Activity {
 	public static final String EXTRA_NOTE_ID = "shownote";
 	private static final String MODULE_TAG = "NoteMapActivity";
 
-
 	public GoogleMap map;
-
 	private MenuItem saveMenuItem;
-
-	ImageView imageView;
-
-	Bitmap photo;
-
-	private Menu menu;
+	private ImageView imageView;
+	private Bitmap photo;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +58,7 @@ public class NoteMapActivity extends Activity {
 			TextView t2 = (TextView) findViewById(R.id.TextViewMapNoteDetails);
 			TextView t3 = (TextView) findViewById(R.id.TextViewMapNoteFancyStart);
 
-			String[] noteTypeText = new String[] { "Pavement issue",
-					"Traffic signal", "Enforcement", "Bike parking",
-					"Bike lane issue", "Note this issue", "Bike parking",
-					"Bike shops", "Public restrooms", "Secret passage",
-					"Water fountains", "Note this asset" };
-
-			t1.setText(noteTypeText[note.notetype]);
+			t1.setText(getNoteTypeText(note.notetype));
 			t2.setText(note.notedetails);
 			t3.setText(note.notefancystart);
 
@@ -79,33 +67,22 @@ public class NoteMapActivity extends Activity {
 
 			map.animateCamera(CameraUpdateFactory.newLatLngZoom(center, 16));
 
+			// Add note marker to map
 			if (note != null) {
-				if (note.notetype >= 0 && note.notetype <= 5) {
-					map.addMarker(new MarkerOptions()
-							.icon(BitmapDescriptorFactory
-									.fromResource(R.drawable.noteissuemapglyph_high))
-							.anchor(0.0f, 1.0f) // Anchors the marker on the
-												// bottom left
-							.position(
-									new LatLng(note.latitude * 1E-6,
-											note.longitude * 1E-6)));
-				} else if (note.notetype >= 6 && note.notetype <= 11) {
-					map.addMarker(new MarkerOptions()
-							.icon(BitmapDescriptorFactory
-									.fromResource(R.drawable.noteassetmapglyph_high))
-							.anchor(0.0f, 1.0f) // Anchors the marker on the
-												// bottom left
-							.position(
-									new LatLng(note.latitude * 1E-6,
-											note.longitude * 1E-6)));
-				}
+
+				LatLng notePosition = new LatLng(note.latitude * 1E-6, note.longitude * 1E-6);
+
+				int noteDrawable = DbAnswers.isNoteIssue(note.notetype) ?
+						R.drawable.noteissuemapglyph_high : R.drawable.noteassetmapglyph_high;
+
+				map.addMarker(new MarkerOptions()
+					.icon(BitmapDescriptorFactory.fromResource(noteDrawable))
+					.anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
+					.position(notePosition));
 			}
 
-			Log.v("Jason", "Image Photo: " + note.noteimagedata);
-			Log.v("Jason", "Image Photo: " + note.noteimageurl);
-
-			if (note.noteimageurl.equals("")) {
-			} else {
+			// If image exist, add it to the imageView widget
+			if (!note.noteimageurl.equals("")) {
 				// Store photo error, retrieve error
 				photo = BitmapFactory.decodeByteArray(note.noteimagedata, 0,
 						note.noteimagedata.length);
@@ -115,7 +92,6 @@ public class NoteMapActivity extends Activity {
 					imageView.setScaleType(ImageView.ScaleType.FIT_START);
 				}
 				imageView.setImageBitmap(photo);
-				Log.v("Jason", "Image Photo: " + photo);
 			}
 
 		} catch (Exception e) {
@@ -132,6 +108,7 @@ public class NoteMapActivity extends Activity {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -186,6 +163,18 @@ public class NoteMapActivity extends Activity {
 		startActivity(intent);
 		overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
 		finish();
+	}
+
+	private String getNoteTypeText(int noteType) {
+
+		String[] noteTypes = getResources().getStringArray(R.array.nqaIssueType);
+
+		int index = DbAnswers.findIndex(DbAnswers.noteIssue, noteType);
+
+		if (-1 != index) {
+			return noteTypes[index + 1];
+		}
+		return "Unknown";
 	}
 
 }

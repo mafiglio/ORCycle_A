@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ORCycle</string>
-    <string name="title_section4">User Info</string>
+    <string name="app_name">ORcycle</string>
+    <string name="title_section4">Settings</string>
     <string name="title_section3">My Notes</string>
     <string name="title_section2">My Trips</string>
     <string name="title_section1">Record</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main_input">Record</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_main">ORcycle</string>
     <string name="title_activity_trip_purpose">Trip Purpose</string>
     <string name="title_activity_trip_questions">Trip Description</string>
     <string name="title_activity_note_questions">Note Description</string>
-    <string name="title_activity_user_info">User Information</string>
     <string name="title_activity_trip_map">Trip Map</string>
     <string name="title_activity_saved_trips">Saved Trips</string>
     <string name="title_activity_trip_detail">Trip Details</string>
@@ -22,103 +22,14 @@
     <string name="title_activity_saved_notes">Saved Notes</string>
     <string name="title_activity_rate_segment">Rate Segment</string>
     <string name="title_activity_rate_segment_detail">Rating Details</string>
+    <string name="title_activity_user_info">Tell us about yourself…</string>
     <string name="post_url">http://orcycle.cecs.pdx.edu/post/</string>
     <string name="btn_lbl_start">Start</string>
     <string name="btn_lbl_pause">Pause</string>
     <string name="btn_lbl_resume">Resume</string>
     <string name="btn_lbl_finish">Finish</string>
     <string name="chooser_image">Select Image</string>
-    
-    <string-array name="ageArray">
-        <item></item>
-        <item>Less than 18</item>
-        <item>18–24</item>
-        <item>25–34</item>
-        <item>35–44</item>
-        <item>45–54</item>
-        <item>55–64</item>
-        <item>65+</item>
-    </string-array>
-    <string-array name="genderArray">
-        <item></item>
-        <item>Female</item>
-        <item>Male</item>
-    </string-array>
-    <string-array name="ethnicityArray">
-        <item></item>
-        <item>White</item>
-        <item>African American</item>
-        <item>Asian</item>
-        <item>Native American</item>
-        <item>Pacific Islander</item>
-        <item>Multi-racial</item>
-        <item>Hispanic / Mexican / Latino</item>
-        <item>Other</item>
-    </string-array>
-    <string-array name="incomeArray">
-        <item></item>
-        <item>Less than $20,000</item>
-        <item>$20,000 to $39,999</item>
-        <item>$40,000 to $59,999</item>
-        <item>$60,000 to $74,999</item>
-        <item>$75,000 to $99,999</item>
-        <item>$100,000 or greater</item>
-    </string-array>
-     <string-array name="hhSizeArray">
-        <item></item>
-        <item>1 person</item>
-        <item>2 people</item>
-        <item>3 people</item>
-        <item>4 people</item>
-        <item>5 people</item>
-        <item>6 people or more</item>
-    </string-array>
-    <string-array name="hhVehiclesArray">
-        <item></item>
-        <item>0 Vehicles</item>
-        <item>1 Vehicle</item>
-        <item>2 Vehicles</item>
-        <item>3 Vehicles</item>
-        <item>4 or more Vehicles</item>
-    </string-array>
-    <string-array name="cyclefreqArray">
-        <item></item>
-        <item>Less than once a month</item>
-        <item>Several times a month</item>
-        <item>Several times per week</item>
-        <item>Daily</item>
-    </string-array>
-    <string-array name="ridertypeArray">
-        <item></item>
-        <item><![CDATA[Strong & fearless]]></item>
-        <item><![CDATA[Enthused & confident]]></item>
-        <item>Comfortable, but cautious</item>
-        <item>Interested, but concerned</item>
-    </string-array>
-    <string-array name="riderhistoryArray">
-        <item></item>
-        <item>Since childhood</item>
-        <item>Several years</item>
-        <item>One year or less</item>
-        <item>Just trying it out / just started</item>
-    </string-array>
 
-    <string name="email_hint">name@domain</string>
-    <string name="zip_hint">12345</string>
-
-    <string-array name="trippurposeArray">
-        <item>Commute</item>
-        <item>School</item>
-        <item>Work-Related</item>
-        <item>Exercise</item>
-        <item>Social</item>
-        <item>Shopping</item>
-        <item>Errand</item>
-        <item>Other</item>
-    </string-array>
-
-    <string name="title_activity_main">ORCycle</string>
-    
     <string name="note_note_asset">Note this asset</string>
 	<string name="note_water_fountain">Water fountain</string>
 	<string name="note_secret_passage">Secret passage</string>
@@ -161,7 +72,163 @@
 	<string name="segment_rating_details_e">E Rating Detailed</string>
 	<string name="segment_rating_details_f">F Rating Detailed</string>
 					
-    <string-array name="tripFrequencyArray">
+    <string name="atq_email_hint">name@domain</string>
+    <string name="atq_requiredEntries">* = Required entries</string>
+    
+    <!-- ********************************************************* -->
+    <!-- *            User Information Questions                 * -->
+    <!-- ********************************************************* -->
+
+    <string name="q01_age">What is your age group?</string>
+   
+    <string-array name="qa_01_age">
+        <item></item>
+        <item>Less than 18</item>
+        <item>18–24</item>
+        <item>25–34</item>
+        <item>35–44</item>
+        <item>45–54</item>
+        <item>55–64</item>
+        <item>65+</item>
+    </string-array>
+
+    <string name="q02_email">E-Mail:</string>
+    <string name="q03_gender">What is your gender?</string>
+   
+    <string-array name="qa_03_gender">
+        <item></item>
+        <item>Female</item>
+        <item>Male</item>
+        <item>Other</item>
+        </string-array>
+
+    <string name="q04_ethnicity">What is your ethnicity?</string>
+   
+    <string-array name="qa_04_ethnicity">
+        <item></item>
+        <item>African American</item>
+        <item>Asian American</item>
+        <item>Hispanic</item>
+        <item>Native American</item>
+        <item>White American</item>
+        <item>Other</item>
+    </string-array>
+    
+    <string name="q05_occupation">What best describes your occupation or working status?</string>
+    
+    <string-array name="qa_05_occupation">
+        <item></item>
+        <item>Employed</item>
+        <item>Student</item>
+        <item>Retired</item>
+        <item>Homemaker</item>
+        <item>Other</item>
+    </string-array>
+    
+    <string name="q06_income">What is your approximate household income?</string>
+   
+    <string-array name="qa_06_income">
+        <item></item>
+        <item>0 to $14,999</item>
+        <item>$15,000 to $24,999</item>
+        <item>$25,000 to $34,999</item>
+        <item>$35,000 to $49,999</item>
+        <item>$50,000 to $74,999</item>
+        <item>$75,000 to $99,999</item>
+        <item>$100,000 to $149,999</item>
+        <item>$150,000 or greater</item>
+        </string-array>
+    
+    <string name="q07_hhWorkers">Number of people employed full-time in your household:</string>
+   
+    <string-array name="qa_07_hhWorkers">
+        <item></item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3 or more</item>
+    </string-array>
+
+    <string name="q08_hhVehicles">Vehicles available in your household:</string>
+   
+    <string-array name="qa_08_hhVehicles">
+        <item></item>
+        <item>0 Vehicles</item>
+        <item>1 Vehicle</item>
+        <item>2 Vehicles</item>
+        <item>3 or more Vehicles</item>
+    </string-array>
+    
+    <string name="q09_numBikes">How many bicycles do you own/ride?</string>
+    <string-array name="qa_09_numBikes">
+        <item></item>
+        <item>None</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4 or more</item>
+    </string-array>
+
+    <string name="q10_bikeTypes">What type of bicycles do you own?\n(you can select more than one)</string>
+    
+    <string-array name="qa_10_bikeTypes">
+        <item>Commuter (with gears)</item>
+        <item>Commuter (single speed)</item>
+        <item>Racing road</item>
+        <item>Cycle cross/mountain</item>
+        <item>Cargo bike</item>
+        <item>Recumbent</item>
+        <item>Other&#8230;</item>
+    </string-array>
+
+    <string name="q14_cyclingFrequency">How often do you cycle?</string>
+    
+    <string-array name="qa_14_cyclingFrequency">
+        <item></item>
+        <item>Almost every day</item>
+        <item>Several times a week</item>
+        <item>Several times a month</item>
+        <item>Several times a year</item>
+    </string-array>
+    
+    <string name="q15_cyclingWeather">Weather I cycle in:</string>
+    
+    <string-array name="qa_15_cyclingWeather">
+        <item></item>
+        <item>In any kind of weather</item>
+        <item>When it does not rain</item>
+        <item>Usually with dry and warm weather</item>
+        <item>Only with dry and warm weather</item>
+    </string-array>
+    
+    <string name="qa_16_riderAbility">How would you rate your overall skill and experience level regarding cycling?</string>
+    
+    <string-array name="qa_16_riderAbility">
+        <item></item>
+        <item>Very high</item>
+        <item>High</item>
+        <item>Average</item>
+        <item>Low</item>
+        <item>Very low</item>
+        </string-array>
+    
+    <string name="q17_ridertype">I cycle mostly:</string>
+    <string-array name="qa_17_ridertype">
+        <item></item>
+        <item>For almost all my trips</item>
+        <item>To/from work</item>
+        <item>For recreation/exercise in my free time</item>
+        <item>For shopping/errands/visiting friends</item>
+        <item>Mainly to/from work but occasionally for exercise, shopping, etc.</item>
+        <item>Other&#8230;</item>
+        </string-array>
+
+    <!-- ********************************************************* -->
+    <!-- *                     Trip Questions                    * -->
+    <!-- ********************************************************* -->
+
+    <string name="q19_TripFrequency">How often do you ride this route?</string>
+    <string-array name="qa_19_routeFrequency">
         <item></item>
         <item>Several times a week</item>
         <item>Several times a month</item>
@@ -170,7 +237,8 @@
         <item>First time ever</item>
     </string-array>
 			
-    <string-array name="tripPurposeArray">
+    <string name="q20_TripPurpose">*What is the main trip purpose?</string>
+	<string-array name="qa_20_tripPurpose">
         <item></item>
         <item>Commute</item>
         <item>School</item>
@@ -182,7 +250,8 @@
         <item>Other (custom entry)</item>
         </string-array>
 			
-    <string-array name="tripRouteChoiceArray">
+    <string name="q21_routePreferences">I chose this route because…</string>
+	<string-array name="qa_21_routePreferences">
         <item>It is direct/fast</item>
         <item>It has good bike facilities</item>
         <item>It is enjoyable</item>
@@ -193,12 +262,13 @@
         <item>It has other riders/people (I’m not alone)</item>
         <item>It has beautiful scenery/green</item>
         <item>I have no other reasonable alternative</item>
-        <item>I do not know other route</item>
+        <item>I do not know another route</item>
         <item>I found it online or using my phone</item>
-        <item>Other (indicate)</item>
+        <item>Other...</item>
         </string-array>
 			
-    <string-array name="tripComfortArray">
+    <string name="q22_routeComfort">In terms of comfort, this route is…</string>
+	<string-array name="qa_22_routeComfort">
         <item></item>
         <item>Very good</item>
         <item>Good</item>
@@ -207,7 +277,8 @@
         <item>Very bad</item>
         </string-array>
 			
-    <string-array name="tripRouteSafetyArray">
+    <string name="q23_RouteSafety">How safe/comfortable was this ride?</string>
+	<string-array name="qa_23_RouteSafety">
         <item></item>
         <item>Safe/comfortable for families, children or new riders</item>
         <item>Safe/comfortable for most riders</item>
@@ -216,22 +287,51 @@
         <item>Unacceptable</item>
         </string-array>
 			
-    <string-array name="tripParticipantsArray">
+    <string name="q24_ridePassengers">Who accompanied you on this ride?</string>
+	<string-array name="qa_24_ridePassengers">
         <item>Alone</item>
         <item>With a child under 2</item>
-        <item>With a child between 2-10</item>
+        <item>With a child between 2&#8211;10</item>
         <item>With a child/teen over 10</item>
         <item>With 1 adults</item>
         <item>With 2+ adults</item>
         </string-array>
 			
-    <string-array name="tripBikeAccessoryArray">
+    <string name="q25_bikeAccessories">What bike accessories did you use?</string>
+	<string-array name="qa_25_bikeAccessories">
+        <item>None</item>
         <item>Child seat(s)</item>
         <item>Electric-assist</item>
         <item>The cargo area</item>
+        <item>Other...</item>
         </string-array>
 
-    <string-array name="nqaSeverityOfProblem">
+    <string name="q26_rideConflict">On this route indicate what best fits your experience:</string>
+	<string-array name="qa_26_rideConflict">
+        <item></item>
+        <item>I have had a crash/accident</item>
+        <item>I have had a near-crash/accident</item>
+        <item>I never had a near-crash but I did not feel safe</item>
+        <item>I did feel safe</item>
+        </string-array>
+
+    <string name="q27_routeStressors">Along this route, you are mostly concerned about conflicts/crashes with:</string>
+	<string-array name="qa_27_routeStressors">
+        <item>Not concerned about conflicts/crashes along this route</item>
+        <item>Auto traffic</item>
+        <item>Large commercial vehicles (trucks)</item>
+        <item>Public transport (buses, light rail, streetcar)</item>
+        <item>Parked vehicles (being doored)</item>
+        <item>Other cyclist</item>
+        <item>Pedestrians</item>
+        <item>Other…</item>
+        </string-array>
+
+	<!-- ********************************************************* -->
+    <!-- *                      Note Questions                   * -->
+    <!-- ********************************************************* -->
+
+	<string-array name="nqaSeverityOfProblem">
         <item></item>
         <item>I have had a major crash/accident</item>
         <item>I have had a minor crash/accident</item>
@@ -249,7 +349,7 @@
         <item>Other cyclists</item>
         <item>Pedestrians</item>
         <item>Pole/barrier/infrastructure</item>
-        <item>Other...</item>
+        <item>Other…</item>
         </string-array>
     			
     <string-array name="nqaIssueType">
@@ -265,7 +365,7 @@
         <item>Bus traffic/stop</item>
         <item>Parked vehicles</item>
         <item>Pavement condition</item>
-        <item>Other...</item>
+        <item>Other…</item>
         </string-array>
 			
 </resources>
