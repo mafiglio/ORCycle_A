@@ -1,5 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/action_close_trip_map"
+    <item android:id="@+id/action_trip_map_view_info"
+          android:showAsAction="always"
+          android:title="info"/>
+    <item android:id="@+id/action_trip_map_view_map"
+          android:showAsAction="always"
+          android:title="map"/>
+    <item android:id="@+id/action_trip_map_close"
           android:showAsAction="always"
           android:title="close"/>
 </menu>

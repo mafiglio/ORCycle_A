@@ -35,12 +35,12 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -63,6 +63,8 @@ import com.google.android.gms.maps.model.VisibleRegion;
 
 public class TripMapActivity extends Activity {
 
+	private enum TripMapView { info, map};
+
 	private static final String MODULE_TAG = "TripMapActivity";
 
 	private static final double NOTE_MIN_DISTANCE_FROM_TRIP = 100.0;
@@ -75,7 +77,7 @@ public class TripMapActivity extends Activity {
 	public static final int EXTRA_TRIP_SOURCE_MAIN_INPUT = 0;
 	public static final int EXTRA_TRIP_SOURCE_SAVED_TRIPS = 1;
 
-	GoogleMap map;
+	GoogleMap mapView;
 	ArrayList<CyclePoint> gpspoints;
 	ArrayList<LatLng> mapPoints;
 	Polyline polyline;
@@ -96,6 +98,22 @@ public class TripMapActivity extends Activity {
 	private int tripSource = EXTRA_TRIP_SOURCE_UNDEFINED;
 	private boolean selectingSegment = false;
 	private com.google.android.gms.maps.model.Marker segmentStartMarker = null;
+	private View questionsView;
+	private View llTmButtons;
+
+	private MenuItem mnuInfo;
+	private MenuItem mnuMap;
+	private TripMapView currentView = TripMapView.map;
+
+	private TextView tvTmTripFrequency;
+	private TextView tvTmTripPurpose;
+	private TextView tvTmRouteChoice;
+	private TextView tvTmTripComfort;
+	private TextView tvTmRouteSafety;
+	private TextView tvTmPassengers;
+	private TextView tvTmBikeAccessories;
+	private TextView tvTmRideConflict;
+	private TextView tvTmRouteStressor;
 
 	// *********************************************************************************
 	// *
@@ -105,20 +123,27 @@ public class TripMapActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		initialPositionSet = false;
-		crosshairInRangeOfTrip = false;
-		selectingSegment = false;
-
-		// getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.activity_trip_map);
-
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-		// Toast.makeText(this, "trip map", Toast.LENGTH_LONG).show();
-
 		try {
+
+			initialPositionSet = false;
+			crosshairInRangeOfTrip = false;
+			selectingSegment = false;
+
+			// getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+			setContentView(R.layout.activity_trip_map);
+
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+			// Toast.makeText(this, "trip map", Toast.LENGTH_LONG).show();
+
 			// Set zoom controls
-			map = ((MapFragment) getFragmentManager().findFragmentById(R.id.tripMap)).getMap();
+			mapView = ((MapFragment) getFragmentManager().findFragmentById(R.id.tripMap)).getMap();
+			llTmButtons = findViewById(R.id.llTmButtons);
+			llTmButtons.setVisibility(View.VISIBLE);
+
+			questionsView = findViewById(R.id.tripQuestionsRootView);
+			questionsView.setVisibility(View.INVISIBLE);
+
 
 			Bundle extras = getIntent().getExtras();
 			isNewTrip = extras.getBoolean(EXTRA_IS_NEW_TRIP, false);
@@ -140,6 +165,20 @@ public class TripMapActivity extends Activity {
 			t1.setText(trip.purp);
 			t2.setText(trip.info);
 			t3.setText(trip.fancystart);
+
+			// Trip questions
+			tvTmTripFrequency   = (TextView) findViewById(R.id.tvTmTripFrequency);
+			tvTmTripPurpose     = (TextView) findViewById(R.id.tvTmTripPurpose);
+			tvTmRouteChoice     = (TextView) findViewById(R.id.tvTmRouteChoice);
+			tvTmTripComfort     = (TextView) findViewById(R.id.tvTmTripComfort);
+			tvTmRouteSafety     = (TextView) findViewById(R.id.tvTmRouteSafety);
+			tvTmPassengers      = (TextView) findViewById(R.id.tvTmPassengers);
+			tvTmBikeAccessories = (TextView) findViewById(R.id.tvTmBikeAccessories);
+			tvTmRideConflict    = (TextView) findViewById(R.id.tvTmRideConflict);
+			tvTmRouteStressor   = (TextView) findViewById(R.id.tvTmRouteStressor);
+
+			getTripResponses(tripId);
+
 			buttonNote = (Button) findViewById(R.id.buttonNoteThis);
 			buttonNote.setOnClickListener(new ButtonNote_OnClickListener());
 
@@ -174,7 +213,7 @@ public class TripMapActivity extends Activity {
 
 			polyline = drawMap(0, mapPoints.size() - 1, Color.BLUE);
 
-			map.setOnCameraChangeListener(new OnCameraChangeListener() {
+			mapView.setOnCameraChangeListener(new OnCameraChangeListener() {
 
 				@Override
 				public void onCameraChange(CameraPosition cameraPosition) {
@@ -184,12 +223,12 @@ public class TripMapActivity extends Activity {
 
 					if (!initialPositionSet) {
 						// Move camera.
-						map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 50));
+						mapView.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 50));
 						// Remove listener to prevent position reset on camera move.
 						initialPositionSet = true;
 					}
 
-					if (null != (p = map.getProjection())) {
+					if (null != (p = mapView.getProjection())) {
 						if (null != (vr = p.getVisibleRegion())) {
 
 							crosshairLocation = new LatLng((vr.latLngBounds.northeast.latitude + vr.latLngBounds.southwest.latitude)/2.0,
@@ -243,6 +282,141 @@ public class TripMapActivity extends Activity {
 		} catch (Exception e) {
 			Log.e(MODULE_TAG, e.toString());
 		}
+		currentView = TripMapView.map;
+	}
+
+	private void getTripResponses(long tripId) {
+
+		DbAdapter mDb = new DbAdapter(this);
+
+		mDb.openReadOnly();
+		try {
+			Cursor answers = mDb.fetchAnswers(tripId);
+
+			int questionCol = answers.getColumnIndex(DbAdapter.K_ANSWER_QUESTION_ID);
+			int answerCol = answers.getColumnIndex(DbAdapter.K_ANSWER_ANSWER_ID);
+			int otherCol = answers.getColumnIndex(DbAdapter.K_ANSWER_OTHER_TEXT);
+
+			// Variables for collecting responses
+			StringBuilder sbTripFrequency = new StringBuilder();
+			StringBuilder sbTripPurpose = new StringBuilder();
+			StringBuilder sbRoutePrefs = new StringBuilder();
+			StringBuilder sbTripComfort = new StringBuilder();
+			StringBuilder sbRouteSafety = new StringBuilder();
+			StringBuilder sbPassengers = new StringBuilder();
+			StringBuilder sbBikeAccessories = new StringBuilder();
+			StringBuilder sbRideConflict = new StringBuilder();
+			StringBuilder sbRouteStressor = new StringBuilder();
+
+			int questionId;
+			int answerId;
+			String otherText;
+
+			// Cycle thru the database entries
+			while (!answers.isAfterLast()) {
+
+				questionId = answers.getInt(questionCol);
+				answerId = answers.getInt(answerCol);
+				if (-1 == otherCol) {
+					otherText = null;
+				}
+				else if (null != (otherText = answers.getString(otherCol))) {
+					otherText = otherText.trim();
+				}
+				else {
+					otherText = null;
+				}
+
+				try {
+					switch(questionId) {
+
+					case DbQuestions.TRIP_FREQUENCY:
+						append(sbTripFrequency, R.array.qa_19_routeFrequency, DbAnswers.tripFreq, answerId);
+						break;
+
+					case DbQuestions.TRIP_PURPOSE:
+						append(sbTripPurpose, R.array.qa_20_tripPurpose, DbAnswers.tripPurpose, answerId, otherText);
+						break;
+
+					case DbQuestions.ROUTE_PREFS:
+						append(sbRoutePrefs, R.array.qa_21_routePreferences, DbAnswers.routePrefs, answerId, otherText);
+						break;
+
+					case DbQuestions.TRIP_COMFORT:
+						append(sbTripComfort, R.array.qa_22_routeComfort, DbAnswers.tripComfort, answerId);
+						break;
+
+					case DbQuestions.ROUTE_SAFETY:
+						append(sbRouteSafety, R.array.qa_23_RouteSafety, DbAnswers.routeSafety, answerId);
+						break;
+
+					case DbQuestions.PASSENGERS:
+						append(sbPassengers, R.array.qa_24_ridePassengers, DbAnswers.passengers, answerId);
+						break;
+
+					case DbQuestions.BIKE_ACCESSORIES:
+						append(sbBikeAccessories, R.array.qa_25_bikeAccessories, DbAnswers.bikeAccessories, answerId, otherText);
+						break;
+
+					case DbQuestions.RIDE_CONFLICT:
+						append(sbRideConflict, R.array.qa_26_rideConflict, DbAnswers.rideConflict, answerId);
+						break;
+
+					case DbQuestions.ROUTE_STRESSORS:
+						append(sbRouteStressor, R.array.qa_27_routeStressors, DbAnswers.routeStressors, answerId, otherText);
+						break;
+					}
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+				// Move to next row
+				answers.moveToNext();
+			}
+			answers.close();
+
+			// Show trip details
+			tvTmTripFrequency.setText(sbTripFrequency.toString());
+			tvTmTripPurpose.setText(sbTripPurpose.toString());
+			tvTmRouteChoice.setText(sbRoutePrefs.toString());
+			tvTmTripComfort.setText(sbTripComfort.toString());
+			tvTmRouteSafety.setText(sbRouteSafety.toString());
+			tvTmPassengers.setText(sbPassengers.toString());
+			tvTmBikeAccessories.setText(sbBikeAccessories.toString());
+			tvTmRideConflict.setText(sbRideConflict.toString());
+			tvTmRouteStressor.setText(sbRouteStressor.toString());
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		finally {
+			mDb.close();
+		}
+	}
+
+	private void append(StringBuilder sb, int textArrayId, int[] answers, int answerId) {
+		sb.append(DbAnswers.getAnswerText(this, textArrayId, answers, answerId)).append("\r\n");
+	}
+
+	private void append(StringBuilder sb, int textArrayId, int[] answers, int answerId, String otherText) {
+		if ((null == otherText) || otherText.equals("")) {
+			sb.append(DbAnswers.getAnswerText(this, textArrayId, answers, answerId)).append("\r\n");
+		}
+		else {
+			sb.append(otherText).append("\r\n");
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		try {
+			setCurrentView(currentView);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	private void setSelectingSegment(boolean value) {
@@ -283,7 +457,7 @@ public class TripMapActivity extends Activity {
 		markerOptions.anchor(0.0f, 1.0f); // Anchors the marker on the bottom left
 		markerOptions.position(new LatLng(cyclePoint.latitude * 1E-6, cyclePoint.longitude * 1E-6));
 
-		return map.addMarker(markerOptions);
+		return mapView.addMarker(markerOptions);
 	}
 
 	private Polyline drawMap(int start, int end, int color) {
@@ -302,7 +476,7 @@ public class TripMapActivity extends Activity {
 			polylineOptions.add(mapPoints.get(i));
 		}
 
-		return map.addPolyline(polylineOptions);
+		return mapView.addPolyline(polylineOptions);
 	}
 
 	/**
@@ -348,7 +522,7 @@ public class TripMapActivity extends Activity {
 			}
 			else {
 				// Remove polylines if they exist
-				if ((map != null) && (polyline != null)) {
+				if ((mapView != null) && (polyline != null)) {
 					polyline.remove();
 				}
 
@@ -364,9 +538,17 @@ public class TripMapActivity extends Activity {
 	/* Creates the menu items */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu items for use in the action bar
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.trip_map, menu);
+		try {
+			// Inflate the menu items for use in the action bar
+			getMenuInflater().inflate(R.menu.trip_map, menu);
+
+			mnuInfo = menu.getItem(0);
+			mnuMap = menu.getItem(1);
+			setCurrentView(currentView);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -377,10 +559,18 @@ public class TripMapActivity extends Activity {
 			// Handle presses on the action bar items
 			switch (item.getItemId()) {
 
-			case R.id.action_close_trip_map:
+			case R.id.action_trip_map_view_info:
+				setCurrentView(TripMapView.info);
+				return true;
+
+			case R.id.action_trip_map_view_map:
+				setCurrentView(TripMapView.map);
+				return true;
+
+			case R.id.action_trip_map_close:
 
 				// close -> go back to FragmentMainInput
-				if ((map != null) && (polyline != null)) {
+				if ((mapView != null) && (polyline != null)) {
 					polyline.remove();
 				}
 
@@ -393,8 +583,36 @@ public class TripMapActivity extends Activity {
 			}
 		}
 		catch(Exception ex) {
-			return super.onOptionsItemSelected(item);
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void setCurrentView(TripMapView tripMapView) {
+
+		switch (tripMapView) {
+
+		case info:
+
+			questionsView.setVisibility(View.VISIBLE);
+			llTmButtons.setVisibility(View.INVISIBLE);
+			if ((null != mnuInfo) && (null != mnuMap)) {
+				mnuInfo.setVisible(false);
+				mnuMap.setVisible(true);
+			}
+			break;
+
+		case map:
+
+			questionsView.setVisibility(View.INVISIBLE);
+			llTmButtons.setVisibility(View.VISIBLE);
+			if ((null != mnuInfo) && (null != mnuMap)) {
+				mnuInfo.setVisible(true);
+				mnuMap.setVisible(false);
+			}
+			break;
+		}
+		currentView = tripMapView;
 	}
 
 	// *********************************************************************************

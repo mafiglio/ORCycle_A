@@ -1,5 +1,7 @@
 package edu.pdx.cecs.orcycle;
 
+import android.content.Context;
+
 public final class DbAnswers {
 
 	// Answers for UserInfoActivity
@@ -109,5 +111,34 @@ public final class DbAnswers {
 		if (noteType >= 170 && noteType <= 175)
 			return true;
 		return false;
+	}
+
+	/**
+	 * Returns the text of the answer
+	 * @param arrayId The resource ID of the array conting the answer strings
+	 * @param answers An array containing the answer values as is in the server's database
+	 * @param answer The database ID of the answer
+	 * @param isMultipleChoiceAnswer For single choice answers, the array is offset by 1
+	 * @return
+	 */
+	public static String getAnswerText(Context context, int arrayId, int[] answers, int answer) {
+
+		// get array containing answer strings
+		String[] textAnswers = context.getResources().getStringArray(arrayId);
+
+		// The proper function of this routine is predicated on the knowledge that
+		// text arrays with a blank first index are meant for single choice spinner
+		// widgets, and so the first index needs to be offset by 1.  Arrays without
+		// a blank first choice are meant for multi selection widgets, and do not need
+		// to be offset
+
+		boolean isBlankFirstIndex = ((null == textAnswers[0]) || textAnswers[0].equals(""));
+
+		int index = DbAnswers.findIndex(answers, answer);
+
+		if (index >= 0) {
+			return textAnswers[isBlankFirstIndex ? index + 1 : index];
+		}
+		return "Unknown";
 	}
 }

@@ -6,52 +6,51 @@
     tools:context=".RecordTrip$DummySectionFragment" >
 
     <RelativeLayout
-        android:id="@+id/RelativeLayout01"
+        android:id="@+id/rlTripMapHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/lcdscreen"
+        android:background="#6A7F10"
         android:baselineAligned="false"
         android:gravity="center_horizontal"
         android:measureWithLargestChild="true" >
 
         <TextView
-            android:id="@+id/TextViewMapPurpose"
+            android:id="@+id/TextViewMapFancyStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="4dp"
             android:layout_marginTop="4dp"
-            android:gravity="left|top"
-            android:text="Trip Purpose:"
-            android:textSize="18sp"
-            android:textStyle="bold" >
-
-        </TextView>
-
-        <TextView
-            android:id="@+id/TextViewMapFancyStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="4dp"
+            android:text="September 27, 2014 11:02 PM"
+            android:textColor="#E6DC8F"
             android:textSize="15sp" >
-
         </TextView>
         
+        <TextView
+            android:id="@+id/TextViewMapPurpose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_below="@id/TextViewMapFancyStart"
+            android:text="Trip Purpose:"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            android:textStyle="bold" >
+        </TextView>
+
 	    <TextView
 	        android:id="@+id/TextViewMapInfo"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentBottom="false"
-	        android:layout_alignParentLeft="true"
-	        android:layout_below="@id/TextViewMapPurpose"
 	        android:layout_marginLeft="4dp"
-	        android:layout_marginTop="8dp"
-            android:text="Viewmap info:"
-	        android:paddingBottom="8sp" >
+	        android:layout_marginTop="4dp"
+	        android:layout_below="@id/TextViewMapPurpose"
+	        android:paddingBottom="8dp"
+	        android:text="Trip info: The quick brown fox jumps over the lazy dog"
+	        android:textColor="#E6DC8F" >
+
 	    </TextView>
     
 	    </RelativeLayout>
@@ -60,7 +59,7 @@
         
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/RelativeLayout01"
+        android:layout_below="@id/rlTripMapHeader"
         android:layout_gravity="bottom">
         
         <fragment
@@ -76,18 +75,369 @@
 			android:layout_height="wrap_content"
 			android:src="@drawable/crosshairs"
 			android:layout_centerInParent="true"/>
-    
+
+		<ScrollView
+		    android:id="@+id/tripQuestionsRootView"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:background="#474334"
+		    android:visibility="visible" >
+
+			<LinearLayout
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:orientation="vertical" >
+	
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+				    <TextView
+			            android:id="@+id/tvTmqTripFrequency"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_alignParentLeft="true"
+		                android:layout_alignParentRight="true"
+		                android:layout_alignParentTop="true"
+		                android:layout_marginTop="0dp"
+			            android:text="@string/q19_TripFrequency"
+			            android:textAppearance="?android:attr/textAppearanceMedium" 
+			            android:textColor="#A33F1F" />
+			
+			        <TextView
+			            android:id="@+id/tvTmTripFrequency"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignLeft="@id/tvNmSeverityOfProblem"
+			            android:layout_below="@id/tvTmqTripFrequency"
+			            android:layout_marginTop="12dp"
+			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+	
+				</RelativeLayout>
+		
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+			        <TextView
+			            android:id="@+id/tvTmqTripPurpose"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_alignParentLeft="true"
+		                android:layout_alignParentRight="true"
+		                android:layout_alignParentTop="true"
+		                android:layout_marginTop="0dp"
+			            android:text="@string/q20_TripPurpose"
+			            android:textAppearance="?android:attr/textAppearanceMedium" 
+			            android:textColor="#A33F1F" />
+			
+			        <TextView
+			            android:id="@+id/tvTmTripPurpose"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_below="@id/tvTmqTripPurpose"
+			            android:layout_marginTop="12dp"
+			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+		
+				</RelativeLayout>
+		
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+			        <TextView
+			            android:id="@+id/tvTmqRouteChoice"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_alignParentLeft="true"
+		                android:layout_alignParentRight="true"
+		                android:layout_alignParentTop="true"
+		                android:layout_marginTop="0dp"
+			            android:text="@string/q21_routePreferences"
+			            android:textAppearance="?android:attr/textAppearanceMedium" 
+			            android:textColor="#A33F1F" />
+			
+			        <TextView
+			            android:id="@+id/tvTmRouteChoice"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_below="@id/tvTmqRouteChoice"
+			            android:layout_marginTop="12dp"
+			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+		
+				</RelativeLayout>
+		
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+			        <TextView
+			            android:id="@+id/tvTmqTripComfort"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_alignParentLeft="true"
+		                android:layout_alignParentRight="true"
+		                android:layout_alignParentTop="true"
+		                android:layout_marginTop="0dp"
+			            android:text="@string/q22_routeComfort"
+			            android:textAppearance="?android:attr/textAppearanceMedium" 
+			            android:textColor="#A33F1F" />
+			
+			        <TextView
+			            android:id="@+id/tvTmTripComfort"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_below="@id/tvTmqTripComfort"
+			            android:layout_marginTop="12dp"
+			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+		
+				</RelativeLayout>
+		
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+			        <TextView
+			            android:id="@+id/tvTmqRouteSafety"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_alignParentLeft="true"
+		                android:layout_alignParentRight="true"
+		                android:layout_alignParentTop="true"
+		                android:layout_marginTop="0dp"
+			            android:text="@string/q23_RouteSafety"
+			            android:textAppearance="?android:attr/textAppearanceMedium" 
+			            android:textColor="#A33F1F" />
+			
+			        <TextView
+			            android:id="@+id/tvTmRouteSafety"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_below="@id/tvTmqRouteSafety"
+			            android:layout_marginTop="12dp"
+			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+		
+				</RelativeLayout>
+		
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+			        <TextView
+			            android:id="@+id/tvTmqRidePassengers"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_alignParentLeft="true"
+		                android:layout_alignParentRight="true"
+		                android:layout_alignParentTop="true"
+		                android:layout_marginTop="0dp"
+			            android:text="@string/q24_ridePassengers"
+			            android:textAppearance="?android:attr/textAppearanceMedium" 
+			            android:textColor="#A33F1F" />
+			
+			        <TextView
+			            android:id="@+id/tvTmPassengers"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_below="@id/tvTmqRidePassengers"
+			            android:layout_marginTop="12dp"
+			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+		
+				</RelativeLayout>
+		
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+			        <TextView
+			            android:id="@+id/tvTmqBikeAccessories"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_alignParentLeft="true"
+		                android:layout_alignParentRight="true"
+		                android:layout_alignParentTop="true"
+		                android:layout_marginTop="0dp"
+			            android:text="@string/q25_bikeAccessories"
+			            android:textAppearance="?android:attr/textAppearanceMedium" 
+			            android:textColor="#A33F1F" />
+			
+			        <TextView
+			            android:id="@+id/tvTmBikeAccessories"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_below="@id/tvTmqBikeAccessories"
+			            android:layout_marginTop="12dp"
+			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+		
+				</RelativeLayout>
+		
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+			        <TextView
+			            android:id="@+id/tvTmqRideConflict"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_alignParentLeft="true"
+		                android:layout_alignParentRight="true"
+		                android:layout_alignParentTop="true"
+		                android:layout_marginTop="0dp"
+			            android:text="@string/q26_rideConflict"
+			            android:textAppearance="?android:attr/textAppearanceMedium" 
+			            android:textColor="#A33F1F" />
+			
+			        <TextView
+			            android:id="@+id/tvTmRideConflict"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_below="@id/tvTmqRideConflict"
+			            android:layout_marginTop="12dp"
+			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+		
+				</RelativeLayout>
+		
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+			        <TextView
+			            android:id="@+id/tvTmqRouteStressor"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_alignParentLeft="true"
+		                android:layout_alignParentRight="true"
+		                android:layout_alignParentTop="true"
+		                android:layout_marginTop="0dp"
+			            android:text="@string/q27_routeStressors"
+			            android:textAppearance="?android:attr/textAppearanceMedium" 
+			            android:textColor="#A33F1F" />
+			
+			        <TextView
+			            android:id="@+id/tvTmRouteStressor"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_below="@id/tvTmqRouteStressor"
+			            android:layout_marginTop="12dp"
+			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+			    		
+		        </RelativeLayout>
+		        
+			</LinearLayout>
+			
+		</ScrollView>
+		    		
         </RelativeLayout>
     
         <LinearLayout
+            android:id="@+id/llTmButtons"
             style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/RelativeLayout01"
+            android:layout_below="@id/rlTripMapHeader"
             android:layout_marginTop="20dp"
             android:gravity="center|bottom"
             android:orientation="horizontal"
-            android:showDividers="none" >
+            android:showDividers="none"
+            android:visibility="visible" >
 
 		    <Button
 		        android:id="@+id/buttonNoteThis"

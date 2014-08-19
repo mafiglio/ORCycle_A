@@ -60,7 +60,7 @@ public class TripDetailActivity extends Activity {
 
 			TripData trip = TripData.fetchTrip(TripDetailActivity.this, tripId);
 
-			SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  HH:mm a");
+			SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  h:mm a");
 			String fancyStartTime = sdfStart.format(trip.getStartTime());
 			Log.v(MODULE_TAG, "Start: " + fancyStartTime);
 
