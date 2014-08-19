@@ -1,8 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/action_switch_note_view"
+    <item android:id="@+id/action_note_map_view_info"
+          android:showAsAction="always"
+          android:title="info"/>
+    <item android:id="@+id/action_note_map_view_image"
           android:showAsAction="always"
           android:title="image"/>
-    <item android:id="@+id/action_close_note_map"
+    <item android:id="@+id/action_note_map_view_map"
+          android:showAsAction="always"
+          android:title="map"/>
+    <item android:id="@+id/action_note_map_close"
           android:showAsAction="always"
           android:title="close"/>
 </menu>

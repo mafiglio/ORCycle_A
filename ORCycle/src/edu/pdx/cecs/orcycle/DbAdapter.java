@@ -113,6 +113,7 @@ public class DbAdapter {
 	public static final String K_ANSWER_TRIP_ID = "trip_id";
 	public static final String K_ANSWER_QUESTION_ID = "question_id";
 	public static final String K_ANSWER_ANSWER_ID = "answer_id";
+	public static final String K_ANSWER_OTHER_TEXT = "other_text";
 
 	// Note Answers Table columns
 	public static final String K_NOTE_ANSWER_NOTE_ID = "note_id";
