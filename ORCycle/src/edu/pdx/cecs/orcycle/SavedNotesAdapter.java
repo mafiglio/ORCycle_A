@@ -45,7 +45,7 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 					false);
 			TextView textViewStart = (TextView) rowView.findViewById(R.id.TextViewStart);
 			TextView textViewType = (TextView) rowView.findViewById(R.id.TextViewType);
-			ImageView imageNoteType = (ImageView) rowView.findViewById(R.id.ImageNoteType);
+			ImageView ivNoteIcon = (ImageView) rowView.findViewById(R.id.ImageNoteType);
 
 			cursor.moveToPosition(position);
 
@@ -63,10 +63,10 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 			textViewType.setText(getNoteTypeText(noteType));
 
 			if (status == 1) {
-				imageNoteType.setImageResource(R.drawable.failedupload_high);
+				ivNoteIcon.setImageResource(R.drawable.failedupload_high);
 			}
 			else {
-				imageNoteType.setImageResource(DbAnswers.getNoteTypeImageResourceId(noteType));
+				ivNoteIcon.setImageResource(DbAnswers.getNoteTypeImageResourceId(noteType));
 			}
 		}
 		catch(Exception ex) {

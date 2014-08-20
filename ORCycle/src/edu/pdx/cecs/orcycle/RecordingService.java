@@ -396,7 +396,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 				| Notification.FLAG_NO_CLEAR;
 
 		Context context = this;
-		CharSequence contentTitle = "Cycle Atlanta - Recording";
+		CharSequence contentTitle = "ORcycle - Recording";
 		CharSequence contentText = "Tap to see your ongoing trip";
 		Intent notificationIntent = new Intent(context, FragmentMainInput.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,

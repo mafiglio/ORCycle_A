@@ -73,7 +73,7 @@ public class FragmentMainInput extends Fragment
 	Timer timer;
 	Timer timerWaitForServiceConnection;
 	float curDistance;
-	int zoomFlag = 1;
+	boolean cameraPositionInitialized = false;
 
 	Location currentLocation = new Location("");
 
@@ -347,7 +347,6 @@ public class FragmentMainInput extends Fragment
 				map.setMyLocationEnabled(true);
 				map.setOnMyLocationButtonClickListener(this);
 				mUiSettings = map.getUiSettings();
-				// centerMapOnMyLocation();
 			}
 		}
 	}
@@ -799,26 +798,28 @@ public class FragmentMainInput extends Fragment
 	@Override
 	public void onLocationChanged(Location location) {
 		try {
-			// onMyLocationButtonClick();
 			currentLocation = location;
-
-			// Log.v("Jason", "Current Location: "+currentLocation);
-
-			if (zoomFlag == 1) {
-				LatLng myLocation;
-
+			if (!cameraPositionInitialized) {
 				if (location != null) {
-					myLocation = new LatLng(location.getLatitude(),
-							location.getLongitude());
-					map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
-							16));
-					zoomFlag = 0;
+					//moveCameraToMyLocation(location);
+					moveCameraToOregon();
+					cameraPositionInitialized = true;
 				}
 			}
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
+	}
+
+	private void moveCameraToMyLocation(Location location) {
+		LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+		map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 16));
+	}
+
+	private void moveCameraToOregon() {
+		LatLng myLocation = new LatLng(43.8041334 , -120.55420119999996 );
+		map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 6));
 	}
 
 	/**

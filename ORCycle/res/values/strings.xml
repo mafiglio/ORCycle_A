@@ -28,6 +28,7 @@
     <string name="btn_lbl_pause">Pause</string>
     <string name="btn_lbl_resume">Resume</string>
     <string name="btn_lbl_finish">Finish</string>
+    <string name="btn_lbl_mark_safety_problem">Mark safety problem</string>
     <string name="chooser_image">Select Image</string>
 
     <string name="note_note_asset">Note this asset</string>

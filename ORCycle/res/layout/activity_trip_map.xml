@@ -443,10 +443,10 @@
 		        android:id="@+id/buttonNoteThis"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
+		        android:layout_marginLeft="4dp"
+		        android:layout_marginRight="4dp"
 		        android:background="#474334"
-		        android:text="  Note this...  "
+		        android:text="@string/btn_lbl_mark_safety_problem"
 		        android:textColor="#ffffff"
 		        android:textStyle="bold" />
 		
