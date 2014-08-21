@@ -21,7 +21,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="4dp"
-            android:text="September 27, 2014 11:02 PM"
+            android:text="@string/misc_longest_date_string"
             android:textColor="#E6DC8F"
             android:textSize="15sp" >
         </TextView>
@@ -34,7 +34,7 @@
             android:layout_marginLeft="4dp"
             android:layout_marginTop="4dp"
             android:layout_below="@id/TextViewMapFancyStart"
-            android:text="Trip Purpose:"
+            android:text="@string/atm_trip_purpose"
             android:textColor="#ffffff"
             android:textSize="18sp"
             android:textStyle="bold" >
@@ -48,7 +48,7 @@
 	        android:layout_marginTop="4dp"
 	        android:layout_below="@id/TextViewMapPurpose"
 	        android:paddingBottom="8dp"
-	        android:text="Trip info: The quick brown fox jumps over the lazy dog"
+	        android:text="@string/atm_trip_info_long_string"
 	        android:textColor="#E6DC8F" >
 
 	    </TextView>
@@ -70,11 +70,12 @@
         android:layout_gravity="bottom" />
         
 		<ImageView
-			android:id="@+id/crosshairs.png"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:src="@drawable/crosshairs"
-			android:layout_centerInParent="true"/>
+		    android:id="@+id/crosshairs.png"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerInParent="true"
+		    android:contentDescription="@string/atm_crosshair_image_description"
+		    android:src="@drawable/crosshairs" />
 
 		<ScrollView
 		    android:id="@+id/tripQuestionsRootView"
@@ -85,7 +86,7 @@
 
 			<LinearLayout
 			    android:layout_width="match_parent"
-			    android:layout_height="match_parent"
+			    android:layout_height="wrap_content"
 			    android:orientation="vertical" >
 	
 		        <RelativeLayout
@@ -119,7 +120,7 @@
 			            android:layout_alignLeft="@id/tvNmSeverityOfProblem"
 			            android:layout_below="@id/tvTmqTripFrequency"
 			            android:layout_marginTop="12dp"
-			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:text="@string/misc_generally_long_text_string"
 			            android:textAppearance="?android:attr/textAppearanceMedium"
 			            android:textColor="#474334" />
 	
@@ -156,7 +157,7 @@
 			            android:layout_alignParentLeft="true"
 			            android:layout_below="@id/tvTmqTripPurpose"
 			            android:layout_marginTop="12dp"
-			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:text="@string/misc_generally_long_text_string"
 			            android:textAppearance="?android:attr/textAppearanceMedium"
 			            android:textColor="#474334" />
 		
@@ -193,7 +194,7 @@
 			            android:layout_alignParentLeft="true"
 			            android:layout_below="@id/tvTmqRouteChoice"
 			            android:layout_marginTop="12dp"
-			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:text="@string/misc_generally_long_text_string"
 			            android:textAppearance="?android:attr/textAppearanceMedium"
 			            android:textColor="#474334" />
 		
@@ -230,7 +231,7 @@
 			            android:layout_alignParentLeft="true"
 			            android:layout_below="@id/tvTmqTripComfort"
 			            android:layout_marginTop="12dp"
-			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:text="@string/misc_generally_long_text_string"
 			            android:textAppearance="?android:attr/textAppearanceMedium"
 			            android:textColor="#474334" />
 		
@@ -267,7 +268,7 @@
 			            android:layout_alignParentLeft="true"
 			            android:layout_below="@id/tvTmqRouteSafety"
 			            android:layout_marginTop="12dp"
-			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:text="@string/misc_generally_long_text_string"
 			            android:textAppearance="?android:attr/textAppearanceMedium"
 			            android:textColor="#474334" />
 		
@@ -304,7 +305,7 @@
 			            android:layout_alignParentLeft="true"
 			            android:layout_below="@id/tvTmqRidePassengers"
 			            android:layout_marginTop="12dp"
-			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:text="@string/misc_generally_long_text_string"
 			            android:textAppearance="?android:attr/textAppearanceMedium"
 			            android:textColor="#474334" />
 		
@@ -341,7 +342,7 @@
 			            android:layout_alignParentLeft="true"
 			            android:layout_below="@id/tvTmqBikeAccessories"
 			            android:layout_marginTop="12dp"
-			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:text="@string/misc_generally_long_text_string"
 			            android:textAppearance="?android:attr/textAppearanceMedium"
 			            android:textColor="#474334" />
 		
@@ -378,7 +379,7 @@
 			            android:layout_alignParentLeft="true"
 			            android:layout_below="@id/tvTmqRideConflict"
 			            android:layout_marginTop="12dp"
-			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:text="@string/misc_generally_long_text_string"
 			            android:textAppearance="?android:attr/textAppearanceMedium"
 			            android:textColor="#474334" />
 		
@@ -415,7 +416,7 @@
 			            android:layout_alignParentLeft="true"
 			            android:layout_below="@id/tvTmqRouteStressor"
 			            android:layout_marginTop="12dp"
-			            android:text="The quick brown fox jumps over the lazy dog"
+			            android:text="@string/misc_generally_long_text_string"
 			            android:textAppearance="?android:attr/textAppearanceMedium"
 			            android:textColor="#474334" />
 			    		
@@ -441,35 +442,38 @@
 
 		    <Button
 		        android:id="@+id/buttonNoteThis"
+                style="?android:attr/buttonBarButtonStyle"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_marginLeft="4dp"
 		        android:layout_marginRight="4dp"
-		        android:background="#474334"
+		        android:background="@color/user_button_background"
 		        android:text="@string/btn_lbl_mark_safety_problem"
-		        android:textColor="#ffffff"
+		        android:textColor="@color/user_button_text"
 		        android:textStyle="bold" />
 		
 		    <Button
 		        android:id="@+id/buttonRateStart"
+                style="?android:attr/buttonBarButtonStyle"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_marginLeft="4dp"
 		        android:layout_marginRight="4dp"
-		        android:background="#474334"
-		        android:text="  Rate Segment...  "
-		        android:textColor="#ffffff"
+                android:background="@color/user_button_background"
+		        android:text="@string/btn_lbl_rate_segment_start"
+		        android:textColor="@color/user_button_text"
 		        android:textStyle="bold" />
 
 		    <Button
 		        android:id="@+id/buttonRateFinish"
+                style="?android:attr/buttonBarButtonStyle"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_marginLeft="4dp"
 		        android:layout_marginRight="4dp"
-		        android:background="#474334"
-		        android:text="  Enter end of segment  "
-		        android:textColor="#ffffff"
+                android:background="@color/user_button_background"
+		        android:text="@string/btn_lbl_rate_segment_finish"
+		        android:textColor="@color/user_button_text"
 		        android:textStyle="bold" />
 
 		    </LinearLayout>

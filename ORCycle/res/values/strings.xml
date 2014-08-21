@@ -3,8 +3,8 @@
 
     <string name="app_name">ORcycle</string>
     <string name="title_section4">Settings</string>
-    <string name="title_section3">My Notes</string>
-    <string name="title_section2">My Trips</string>
+    <string name="title_section3">Safety-Markers</string>
+    <string name="title_section2">Trips</string>
     <string name="title_section1">Record</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main_input">Record</string>
@@ -28,9 +28,29 @@
     <string name="btn_lbl_pause">Pause</string>
     <string name="btn_lbl_resume">Resume</string>
     <string name="btn_lbl_finish">Finish</string>
-    <string name="btn_lbl_mark_safety_problem">Mark safety problem</string>
+    <string name="btn_lbl_mark_safety_problem">Mark Safety Problem</string>
+    <string name="btn_lbl_rate_segment_start">Rate segment&#8230;</string>
+    <string name="btn_lbl_rate_segment_finish">Enter end of segment</string>
     <string name="chooser_image">Select Image</string>
 
+    <string name="ami_elapsed_time">Elapsed time</string>
+    <string name="ami_initial_elapsed_time">00:00:00</string>
+    <string name="ami_initial_miles">0.0 miles</string>
+    <string name="ami_initial_mph">0.0 mph</string>
+    <string name="ami_distance">Distance</string>
+    <string name="ami_avg_speed">Avg. Speed</string>
+    <string name="ami_calories">Calories</string>
+    <string name="ami_initial_calories">0.0 kcal</string>
+    <string name="ami_co2">CO2 Offset</string>
+    <string name="ami_initial_co2">0.0 lbs</string>
+    
+    <string name="misc_generally_long_text_string">The quick brown fox jumps over the lazy dog</string>
+    <string name="misc_longest_date_string">September 27, 2014 11:02 PM</string>
+    
+    <string name="atm_trip_purpose">Trip Purpose:</string>
+    <string name="atm_trip_info_long_string">Trip info: The quick brown fox jumps over the lazy dog</string>
+    <string name="atm_crosshair_image_description">Map Crosshairs</string>
+    
     <string name="note_note_asset">Note this asset</string>
 	<string name="note_water_fountain">Water fountain</string>
 	<string name="note_secret_passage">Secret passage</string>
@@ -265,7 +285,7 @@
         <item>I have no other reasonable alternative</item>
         <item>I do not know another route</item>
         <item>I found it online or using my phone</item>
-        <item>Other...</item>
+        <item>Other&#8230;</item>
         </string-array>
 			
     <string name="q22_routeComfort">In terms of comfort, this route is…</string>
@@ -304,7 +324,7 @@
         <item>Child seat(s)</item>
         <item>Electric-assist</item>
         <item>The cargo area</item>
-        <item>Other...</item>
+        <item>Other&#8230;</item>
         </string-array>
 
     <string name="q26_rideConflict">On this route indicate what best fits your experience:</string>
