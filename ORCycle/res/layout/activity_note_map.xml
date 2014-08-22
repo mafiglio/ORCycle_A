@@ -9,7 +9,7 @@
         android:id="@+id/rlNoteMapHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#6A7F10"
+        android:background="@color/psu_green"
         android:paddingLeft="4sp"
         android:paddingRight="6sp"
         android:paddingTop="4sp" >
@@ -22,7 +22,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="4dp"
             android:text="September 27, 2014 11:02 PM"
-            android:textColor="#E6DC8F"
+            android:textColor="@color/psu_yellow"
             android:textSize="15sp" >
         </TextView>
         
@@ -35,7 +35,7 @@
             android:layout_marginTop="4dp"
             android:layout_below="@id/TextViewMapNoteFancyStart"
             android:text="Water fountains"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/text_white"
             android:textSize="18sp"
             android:textStyle="bold" >
         </TextView>
@@ -49,7 +49,7 @@
 	        android:layout_below="@id/TextViewMapNoteType"
 	        android:paddingBottom="8dp"
 	        android:text="Note info: The quick brown fox jumps over the lazy dog"
-	        android:textColor="#E6DC8F" >
+	        android:textColor="@color/psu_yellow" >
 
 	    </TextView>
 

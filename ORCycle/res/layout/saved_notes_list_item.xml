@@ -22,7 +22,7 @@
             android:layout_marginLeft="4dp"
             android:layout_marginTop="4dp"
             android:text="@string/misc_longest_date_string"
-            android:textColor="#ff888888"
+            android:textColor="@color/text_light_gray"
             android:textSize="15sp" >
 
         </TextView>
@@ -34,8 +34,8 @@
             android:layout_marginLeft="4dp"
             android:layout_marginTop="2dp"
             android:text="@string/note_traffic_signal"
-            android:textColor="#ff000000"
-            android:textSize="20sp"
+            android:textColor="@color/psu_sienna"
+            android:textSize="18sp"
             android:textStyle="bold" >
         </TextView>
     </LinearLayout>

@@ -4,4 +4,18 @@
     <color name="default_color">#ffffff</color>
     <color name="user_button_background">#6A7F10</color>
     <color name="user_button_text">#ffffff</color>
+    <color name="psu_green">#6A7F10</color>
+    <color name="psu_accent_green">#A8B400</color>
+    <color name="psu_brown">#60351D</color>
+    <color name="psu_sienna">#A33F1F</color>
+    <color name="psu_red">#D2492A</color>
+    <color name="psu_orange">#DC9B32</color>
+    <color name="psu_yellow">#E6DC8F</color>
+    <color name="psu_tan">#E8D3A2</color>
+    <color name="psu_gray">#474334</color>
+    <color name="psu_purple">#650360</color>
+    <color name="psu_blue">#00759A</color>
+    <color name="psu_light_blue">#DFF2F5</color>
+    <color name="text_light_gray">#ff000000</color>
+    <color name="text_white">#FFFFFF</color>
 </resources>
