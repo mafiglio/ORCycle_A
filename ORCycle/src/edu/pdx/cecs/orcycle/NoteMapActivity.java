@@ -72,7 +72,7 @@ public class NoteMapActivity extends Activity {
 			TextView t2 = (TextView) findViewById(R.id.TextViewMapNoteDetails);
 			TextView t3 = (TextView) findViewById(R.id.TextViewMapNoteFancyStart);
 
-			t1.setText(DbAnswers.getAnswerText(this, R.array.nqaIssueType, DbAnswers.noteIssue, note.notetype));
+			t1.setText(DbAnswers.getAnswerText(this, R.array.nqaIssueType, DbAnswers.noteIssue, note.noteType));
 			t2.setText(note.notedetails);
 			t3.setText(note.notefancystart);
 
@@ -87,8 +87,7 @@ public class NoteMapActivity extends Activity {
 
 				LatLng notePosition = new LatLng(note.latitude * 1E-6, note.longitude * 1E-6);
 
-				int noteDrawable = DbAnswers.isNoteIssue(note.notetype) ?
-						R.drawable.noteissuemapglyph_high : R.drawable.noteassetmapglyph_high;
+				int noteDrawable = DbAnswers.getNoteSeverityImageResourceId(note.noteSeverity);
 
 				map.addMarker(new MarkerOptions()
 					.icon(BitmapDescriptorFactory.fromResource(noteDrawable))
@@ -111,7 +110,7 @@ public class NoteMapActivity extends Activity {
 				imageView.setImageBitmap(photo);
 			}
 
-			getNoteResponses(note.noteid);
+			getNoteResponses(note.noteId);
 
 		} catch (Exception ex) {
 			Log.e(MODULE_TAG, ex.toString());

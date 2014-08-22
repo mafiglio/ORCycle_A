@@ -777,7 +777,7 @@ public class TripMapActivity extends Activity {
 	private void transitionToNoteQuestionsActivity(NoteData note, long tripId) {
 
 		Intent intent = new Intent(this, NoteQuestionsActivity.class);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, note.noteid);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, note.noteId);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_TYPE, NoteTypeActivity.EXTRA_NOTE_TYPE_UNDEFINED);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, NoteTypeActivity.EXTRA_NOTE_SOURCE_TRIP_MAP);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);

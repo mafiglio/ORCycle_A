@@ -35,13 +35,14 @@ import android.database.Cursor;
 import android.location.Location;
 
 public class NoteData {
-	long noteid;
+	long noteId;
 	double startTime = 0;
 	Location noteLocation = new Location("");
-	int notetype;
+	int noteType;
+	int noteSeverity;
 	String notefancystart, notedetails, noteimageurl;
 	byte[] noteimagedata;
-	int notestatus;
+	int noteStatus;
 
 	DbAdapter mDb;
 
@@ -69,15 +70,15 @@ public class NoteData {
 
 	public NoteData(Context ctx, long noteid) {
 		Context context = ctx.getApplicationContext();
-		this.noteid = noteid;
+		this.noteId = noteid;
 		mDb = new DbAdapter(context);
 	}
 
 	void initializeData() {
 		startTime = System.currentTimeMillis();
-		notetype = -1;
+		noteType = -1;
+		noteSeverity = -1;
 		notefancystart = notedetails = "";
-
 		latitude = 0;
 		longitude = 0;
 		accuracy = 0;
@@ -92,20 +93,21 @@ public class NoteData {
 
 		mDb.openReadOnly();
 		try {
-			Cursor noteDetails = mDb.fetchNote(noteid);
+			Cursor noteDetails = mDb.fetchNote(noteId);
 			try {
-				startTime = noteDetails.getDouble(noteDetails.getColumnIndex("noterecorded"));
-				notefancystart = noteDetails.getString(noteDetails.getColumnIndex("notefancystart"));
-				latitude = noteDetails.getInt(noteDetails.getColumnIndex("notelat"));
-				longitude = noteDetails.getInt(noteDetails.getColumnIndex("notelgt"));
-				accuracy = noteDetails.getFloat(noteDetails.getColumnIndex("noteacc"));
-				altitude = noteDetails.getDouble(noteDetails.getColumnIndex("notealt"));
-				speed = noteDetails.getFloat(noteDetails.getColumnIndex("notespeed"));
-				notetype = noteDetails.getInt(noteDetails.getColumnIndex("notetype"));
-				notedetails = noteDetails.getString(noteDetails.getColumnIndex("notedetails"));
-				notestatus = noteDetails.getInt(noteDetails.getColumnIndex("notestatus"));
-				noteimageurl = noteDetails.getString(noteDetails.getColumnIndex("noteimageurl"));
-				noteimagedata = noteDetails.getBlob(noteDetails.getColumnIndex("noteimagedata"));
+				startTime      = noteDetails.getDouble(noteDetails.getColumnIndex(DbAdapter.K_NOTE_RECORDED   ));
+				notefancystart = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_FANCYSTART ));
+				latitude       = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_LAT        ));
+				longitude      = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_LGT        ));
+				accuracy       = noteDetails.getFloat (noteDetails.getColumnIndex(DbAdapter.K_NOTE_ACC        ));
+				altitude       = noteDetails.getDouble(noteDetails.getColumnIndex(DbAdapter.K_NOTE_ALT        ));
+				speed          = noteDetails.getFloat (noteDetails.getColumnIndex(DbAdapter.K_NOTE_SPEED      ));
+				noteType       = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_TYPE       ));
+				noteSeverity   = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_SEVERITY   ));
+				notedetails    = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_DETAILS    ));
+				noteStatus     = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_STATUS     ));
+				noteimageurl   = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_IMGURL     ));
+				noteimagedata  = noteDetails.getBlob  (noteDetails.getColumnIndex(DbAdapter.K_NOTE_IMGDATA    ));
 			}
 			finally {
 				noteDetails.close();
@@ -119,7 +121,7 @@ public class NoteData {
 	void createNoteInDatabase(Context c, long tripid) {
 		mDb.open();
 		try {
-			noteid = mDb.createNote(tripid);
+			noteId = mDb.createNote(tripid);
 		}
 		finally {
 			mDb.close();
@@ -129,7 +131,7 @@ public class NoteData {
 	void dropNote() {
 		mDb.open();
 		try {
-			mDb.deleteNote(noteid);
+			mDb.deleteNote(noteId);
 		}
 		finally {
 			mDb.close();
@@ -149,7 +151,7 @@ public class NoteData {
 
 		mDb.open();
 		try {
-			rtn = mDb.updateNote(noteid, lat, lgt, accuracy, altitude, speed);
+			rtn = mDb.updateNote(noteId, lat, lgt, accuracy, altitude, speed);
 		}
 		finally {
 			mDb.close();
@@ -162,7 +164,7 @@ public class NoteData {
 		boolean rtn;
 		mDb.open();
 		try {
-			rtn = mDb.updateNoteStatus(noteid, noteStatus);
+			rtn = mDb.updateNoteStatus(noteId, noteStatus);
 		}
 		finally {
 			mDb.close();
@@ -170,11 +172,11 @@ public class NoteData {
 		return rtn;
 	}
 
-	public void updateNote(int notetype, String notefancystart,
-			String notedetails, String noteimgurl, byte[] noteimgdata) {
+	public void updateNote(int noteType, int noteSeverity, String noteFancyStart,
+			String noteDetails, String imageUrl, byte[] image) {
 		mDb.open();
 		try {
-			mDb.updateNote(noteid, notefancystart, notetype, notedetails, noteimgurl, noteimgdata);
+			mDb.updateNote(noteId, noteFancyStart, noteType, noteSeverity, noteDetails, imageUrl, image);
 		}
 		finally {
 			mDb.close();

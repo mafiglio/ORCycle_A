@@ -899,7 +899,7 @@ public class FragmentMainInput extends Fragment
 
 		// Setup intent to move to next activity
 		Intent intent = new Intent(getActivity(), NoteTypeActivity.class);
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_ID, note.noteid);
+		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_ID, note.noteId);
 		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_TYPE, NoteTypeActivity.EXTRA_NOTE_TYPE_UNDEFINED);
 		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_SOURCE, NoteTypeActivity.EXTRA_NOTE_SOURCE_MAIN_INPUT);
 		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_ID, tripId);
@@ -913,7 +913,7 @@ public class FragmentMainInput extends Fragment
 	private void transitionToNoteQuestionsActivity(NoteData note, long tripId) {
 
 		Intent intent = new Intent(getActivity(), NoteQuestionsActivity.class);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, note.noteid);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, note.noteId);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_TYPE, NoteTypeActivity.EXTRA_NOTE_TYPE_UNDEFINED);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, NoteTypeActivity.EXTRA_NOTE_SOURCE_MAIN_INPUT);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);

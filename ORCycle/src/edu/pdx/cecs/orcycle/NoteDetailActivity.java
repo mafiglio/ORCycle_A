@@ -33,10 +33,12 @@ public class NoteDetailActivity extends Activity {
 
 	public static final String EXTRA_NOTE_ID = "noteId";
 	public static final String EXTRA_NOTE_TYPE = "noteType";
+	public static final String EXTRA_NOTE_SEVERITY = "noteSeverity";
 	public static final String EXTRA_NOTE_SOURCE = "noteSource";
 	public static final int EXTRA_NOTE_SOURCE_UNDEFINED = -1;
 	public static final int EXTRA_NOTE_ID_UNDEFINED = -1;
 	public static final int EXTRA_NOTE_TYPE_UNDEFINED = -1;
+	public static final int EXTRA_NOTE_SEVERITY_UNDEFINED = -1;
 	public static final int EXTRA_NOTE_SOURCE_MAIN_INPUT = 0;
 	public static final int EXTRA_NOTE_SOURCE_TRIP_MAP = 1;
 
@@ -49,7 +51,8 @@ public class NoteDetailActivity extends Activity {
 	private static final int IMAGE_REQUEST = 1889;
 
 	long noteId;
-	int noteType = 0;
+	int noteType = EXTRA_NOTE_TYPE_UNDEFINED;
+	int noteSeverity = EXTRA_NOTE_SEVERITY_UNDEFINED;
 	int noteSource;
 	private long tripId;
 	private int tripSource;
@@ -81,6 +84,7 @@ public class NoteDetailActivity extends Activity {
 		}
 
 		noteType = myIntent.getIntExtra(EXTRA_NOTE_TYPE, EXTRA_NOTE_TYPE_UNDEFINED);
+		noteSeverity = myIntent.getIntExtra(EXTRA_NOTE_SEVERITY, EXTRA_NOTE_SEVERITY_UNDEFINED);
 
 		// Note: these extras are used for transitioning back to the TripMapActivity if done
 		if (EXTRA_TRIP_ID_UNDEFINED == (tripId = myIntent.getLongExtra(EXTRA_TRIP_ID, EXTRA_TRIP_ID_UNDEFINED))) {
@@ -264,17 +268,17 @@ public class NoteDetailActivity extends Activity {
 		}
 
 		// store note details in local database
-		note.updateNote(noteType, fancyStartTime, noteDetailsToUpload, imageURL, noteImage);
+		note.updateNote(noteType, noteSeverity, fancyStartTime, noteDetailsToUpload, imageURL, noteImage);
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 
 		// Now create the MainInput Activity so BACK btn works properly
 		// Should not use this.
 
 		// TODO: note uploader
-		if (note.notestatus < NoteData.STATUS_SENT) {
+		if (note.noteStatus < NoteData.STATUS_SENT) {
 			// And upload to the cloud database, too! W00t W00t!
 			NoteUploader uploader = new NoteUploader(NoteDetailActivity.this);
-			uploader.execute(note.noteid);
+			uploader.execute(note.noteId);
 		}
 
 		if (noteSource == EXTRA_NOTE_SOURCE_MAIN_INPUT) {
@@ -298,16 +302,29 @@ public class NoteDetailActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
-		case R.id.action_skip_note_detail:
-			// skip
-			submit("", null);
+
+		case R.id.action_skip_note_detail: // skip
+
+			try {
+				submit("", null);
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 			return true;
-		case R.id.action_save_note_detail:
-			// save
-			submit(noteDetails.getEditableText().toString(), noteImage);
+
+		case R.id.action_save_note_detail: // save
+
+			try {
+				submit(noteDetails.getEditableText().toString(), noteImage);
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 

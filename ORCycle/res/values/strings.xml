@@ -95,6 +95,8 @@
 					
     <string name="atq_email_hint">name@domain</string>
     <string name="atq_requiredEntries">* = Required entries</string>
+
+    <string name="snli_content_description_note_severity">Note Severity</string>
     
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
