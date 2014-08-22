@@ -83,34 +83,28 @@ public final class DbAnswers {
 		return -1;
 	}
 
-	public static int getNoteTypeImageResourceId(int noteType) {
+	public static int getNoteSeverityImageResourceId(int noteSeverity) {
 
-		switch (noteType) {
-		case 164: return R.drawable.noteissuepicker_high;
- 		case 165: return R.drawable.noteissuepicker_high;
-		case 166: return R.drawable.noteissuepicker_high;
-		case 167: return R.drawable.noteissuepicker_high;
-		case 168: return R.drawable.noteissuepicker_high;
-		case 169: return R.drawable.noteissuepicker_high;
-		case 170: return R.drawable.noteassetpicker_high;
-		case 171: return R.drawable.noteassetpicker_high;
-		case 172: return R.drawable.noteassetpicker_high;
-		case 173: return R.drawable.noteassetpicker_high;
-		case 174: return R.drawable.noteassetpicker_high;
-		case 175: return R.drawable.noteassetpicker_high;
-		default: return R.drawable.noteissuepicker_high;
+		switch (noteSeverity) {
+		case 151: return R.drawable.note_severity_list_icon_red;
+ 		case 152: return R.drawable.note_severity_list_icon_orange;
+		case 153: return R.drawable.note_severity_list_icon_orange;
+		case 154: return R.drawable.note_severity_list_icon_yellow;
+		case 155: return R.drawable.note_severity_list_icon_green;
+		default: return R.drawable.note_severity_list_icon_unknown;
 		}
 	}
 
-	public static boolean isNoteIssue(int noteType) {
-		if (noteType >= 164 && noteType <= 169)
-			return true;
-		return false;
-	}
-	public static boolean isNoteAsset(int noteType) {
-		if (noteType >= 170 && noteType <= 175)
-			return true;
-		return false;
+	public static int getNoteSeverityMapImageResourceId(int noteSeverity) {
+
+		switch (noteSeverity) {
+		case 151: return R.drawable.note_severity_map_icon_red;
+ 		case 152: return R.drawable.note_severity_map_icon_orange;
+		case 153: return R.drawable.note_severity_map_icon_orange;
+		case 154: return R.drawable.note_severity_map_icon_yellow;
+		case 155: return R.drawable.note_severity_map_icon_green;
+		default: return R.drawable.note_severity_map_icon_unknown;
+		}
 	}
 
 	/**

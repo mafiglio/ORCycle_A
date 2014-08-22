@@ -208,8 +208,8 @@ public class FragmentSavedNotesSection extends Fragment {
 			allNotes = mDb.fetchAllNotes();
 
 			String[] from = new String[] { "notetype", "noterecorded",
-					"notestatus" };
-			int[] to = new int[] { R.id.TextViewType, R.id.TextViewStart };
+					"notestatus", "noteseverity" };
+			int[] to = new int[] { R.id.tvSnliNoteType, R.id.tvSnliRecorded };
 
 			sna = new SavedNotesAdapter(getActivity(),
 					R.layout.saved_notes_list_item, allNotes, from, to,

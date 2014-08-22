@@ -34,9 +34,11 @@ public class NoteQuestionsActivity extends Activity {
 
 	public static final String EXTRA_NOTE_ID = "noteId";
 	public static final String EXTRA_NOTE_TYPE = "noteType";
+	public static final String EXTRA_NOTE_SEVERITY = "noteSeverity";
 	public static final String EXTRA_NOTE_SOURCE = "noteSource";
 	public static final int EXTRA_NOTE_ID_UNDEFINED = -1;
 	public static final int EXTRA_NOTE_TYPE_UNDEFINED = -1;
+	public static final int EXTRA_NOTE_SEVERITY_UNDEFINED = -1;
 	public static final int EXTRA_NOTE_SOURCE_UNDEFINED = -1;
 	public static final int EXTRA_NOTE_SOURCE_MAIN_INPUT = 0;
 	public static final int EXTRA_NOTE_SOURCE_TRIP_MAP = 1;
@@ -57,6 +59,7 @@ public class NoteQuestionsActivity extends Activity {
 	private SpnIssueType_OnClickListener spnIssueType_OnClick = null;
 
 	private int noteType;
+	private int noteSeverity;
 	private long noteId = -1;
 	private int noteSource = EXTRA_NOTE_SOURCE_UNDEFINED;
 	private long tripId;
@@ -88,6 +91,7 @@ public class NoteQuestionsActivity extends Activity {
 			}
 
 			noteType = myIntent.getIntExtra(EXTRA_NOTE_TYPE, EXTRA_NOTE_TYPE_UNDEFINED);
+			noteSeverity = myIntent.getIntExtra(EXTRA_NOTE_SEVERITY, EXTRA_NOTE_SEVERITY_UNDEFINED);
 
 			// Note: these extras are used for transitioning back to the TripMapActivity if done
 			if (EXTRA_TRIP_ID_UNDEFINED == (tripId = myIntent.getLongExtra(EXTRA_TRIP_ID, EXTRA_TRIP_ID_UNDEFINED))) {
@@ -488,7 +492,8 @@ public class NoteQuestionsActivity extends Activity {
 			submitSpinnerSelection(spnIssueType, dbAdapter, DbQuestions.NOTE_ISSUE,
 					DbAnswers.noteIssue, DbAnswers.noteIssueOther, issueTypeOtherText);
 
-			updateNoteType(spnIssueType, DbAnswers.noteIssue);
+			recordNoteType(spnIssueType, DbAnswers.noteIssue);
+			recordNoteSeverity(spnSeverity, DbAnswers.noteSeverity);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -546,14 +551,25 @@ public class NoteQuestionsActivity extends Activity {
 		}
 	}
 
-	private void updateNoteType(Spinner spinner, int[] answer_ids) {
+	private void recordNoteType(Spinner spinner, int[] answerIds) {
 		int answerIndex = spinner.getSelectedItemPosition() - 1;
 
 		if (answerIndex >= 0) {
-			noteType = answer_ids[answerIndex];
+			noteType = answerIds[answerIndex];
 		}
 		else {
 			noteType = -1;
+		}
+	}
+
+	private void recordNoteSeverity(Spinner spinner, int[] answerIds) {
+		int answerIndex = spinner.getSelectedItemPosition() - 1;
+
+		if (answerIndex >= 0) {
+			noteSeverity = answerIds[answerIndex];
+		}
+		else {
+			noteSeverity = -1;
 		}
 	}
 
@@ -576,6 +592,7 @@ public class NoteQuestionsActivity extends Activity {
 		// Create intent to go to the NoteDetailActivity
 		Intent intent = new Intent(this, NoteDetailActivity.class);
 		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_TYPE, noteType);
+		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_SEVERITY, noteSeverity);
 		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_ID, noteId);
 		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_SOURCE, noteSource);
 

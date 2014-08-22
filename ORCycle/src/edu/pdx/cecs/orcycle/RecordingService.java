@@ -355,7 +355,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		soundpool.play(bikebell, 1.0f, 1.0f, 1, 0, 1.0f);
 
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		int icon = R.drawable.icon48;
+		int icon = R.drawable.ic_launcher;
 		long when = System.currentTimeMillis();
 		int minutes = (int) (when - trip.getStartTime()) / 60000;
 		CharSequence tickerText = String.format("Still recording (%d min)", minutes);
@@ -381,7 +381,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 
 	private void setNotification() {
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		int icon = R.drawable.icon25;
+		int icon = R.drawable.ic_launcher;
 		CharSequence tickerText = "Recording...";
 		long when = System.currentTimeMillis();
 

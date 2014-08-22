@@ -80,6 +80,7 @@ public class TabsConfig extends FragmentActivity implements
 			// Set up the action bar.
 			final ActionBar actionBar = getActionBar();
 			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+			actionBar.setBackgroundDrawable(getResources().getDrawable(R.color.psu_brown));
 
 			// Create the adapter that will return a fragment for each of the four
 			// primary sections of the app.
@@ -106,6 +107,7 @@ public class TabsConfig extends FragmentActivity implements
 				// the adapter. Also specify this Activity object, which implements
 				// the TabListener interface, as the callback (listener) for when
 				// this tab is selected.
+
 				actionBar.addTab(actionBar.newTab()
 						.setText(mSectionsPagerAdapter.getPageTitle(i))
 						.setTabListener(this));

@@ -38,35 +38,35 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 		try {
 			Log.v(MODULE_TAG, "getView: " + position);
 
-
-			LayoutInflater inflater = (LayoutInflater) context
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			rowView = inflater.inflate(R.layout.saved_notes_list_item, parent,
-					false);
-			TextView textViewStart = (TextView) rowView.findViewById(R.id.TextViewStart);
-			TextView textViewType = (TextView) rowView.findViewById(R.id.TextViewType);
-			ImageView ivNoteIcon = (ImageView) rowView.findViewById(R.id.ImageNoteType);
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			rowView = inflater.inflate(R.layout.saved_notes_list_item, parent, false);
+			TextView tvNoteRecorded = (TextView) rowView.findViewById(R.id.tvSnliRecorded);
+			TextView tvNoteType = (TextView) rowView.findViewById(R.id.tvSnliNoteType);
+			ImageView ivNoteIcon = (ImageView) rowView.findViewById(R.id.ivNoteSeverity);
 
 			cursor.moveToPosition(position);
 
 			SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  h:mm a");
 			// sdfStart.setTimeZone(TimeZone.getTimeZone("UTC"));
-			Double startTime = cursor.getDouble(cursor
-					.getColumnIndex("noterecorded"));
+			Double startTime = cursor.getDouble(cursor.getColumnIndex("noterecorded"));
 			String start = sdfStart.format(startTime);
 
-			textViewStart.setText(start);
+			tvNoteRecorded.setText(start);
 
 			int noteType = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_NOTE_TYPE));
+			int noteSeverity = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_NOTE_SEVERITY));
 			int status = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_NOTE_STATUS));
 
-			textViewType.setText(getNoteTypeText(noteType));
+			tvNoteType.setText(getNoteTypeText(noteType));
 
 			if (status == 1) {
 				ivNoteIcon.setImageResource(R.drawable.failedupload_high);
 			}
 			else {
-				ivNoteIcon.setImageResource(DbAnswers.getNoteTypeImageResourceId(noteType));
+				int iconResourceId = DbAnswers.getNoteSeverityImageResourceId(noteSeverity);
+				if (-1 != iconResourceId) {
+					ivNoteIcon.setImageResource(iconResourceId);
+				}
 			}
 		}
 		catch(Exception ex) {

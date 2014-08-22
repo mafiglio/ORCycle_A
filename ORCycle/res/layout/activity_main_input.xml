@@ -16,7 +16,7 @@
         android:scrollbars="vertical" />
 
     <LinearLayout
-        android:id="@+id/recordStatusLayout"
+        android:id="@+id/recordStatusLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/lcdscreen"
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center"
-                android:text="00:00:00"
+                android:text="@string/ami_initial_elapsed_time"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
@@ -48,7 +48,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="2dp"
                 android:gravity="center"
-                android:text="Elapsed time"
+                android:text="@string/ami_elapsed_time"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
         </LinearLayout>
@@ -66,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center|center"
-                android:text="0.0 miles"
+                android:text="@string/ami_initial_miles"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
             
             <TextView
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:gravity="center"
-                android:text="Distance"
+                android:text="@string/ami_distance"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
         </LinearLayout>
@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center"
-                android:text="0.0 mph"
+                android:text="@string/ami_initial_mph"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:gravity="center"
-                android:text="Avg. Speed"
+                android:text="@string/ami_avg_speed"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
         </LinearLayout>
@@ -112,10 +112,12 @@
         android:id="@+id/recordStatusLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/recordStatusLayout"
+        android:layout_below="@id/recordStatusLayout1"
         android:background="@drawable/lcdscreen"
+        android:baselineAligned="false"
         android:gravity="center_horizontal"
-        android:measureWithLargestChild="true" >
+        android:measureWithLargestChild="true"
+        android:visibility="gone" >
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -130,7 +132,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center"
-                android:text="0.0 kcal"
+                android:text="@string/ami_initial_calories"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
@@ -141,7 +143,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="2dp"
                 android:gravity="center"
-                android:text="Calories"
+                android:text="@string/ami_calories"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
         </LinearLayout>
@@ -159,7 +161,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center"
-                android:text="0.0 lbs"
+                android:text="@string/ami_initial_co2"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
@@ -168,7 +170,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:gravity="center"
-                android:text="CO2 Offset"
+                android:text="@string/ami_co2"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
         </LinearLayout>
@@ -177,15 +179,17 @@
 
     <Button
         android:id="@+id/buttonNoteThis"
-        android:layout_width="140dp"
-        android:layout_height="40dp"
-        android:layout_below="@id/recordStatusLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recordStatusLayout1"
         android:layout_centerInParent="true"
         android:layout_centerVertical="false"
         android:layout_marginTop="20dp"
-        android:background="#474334"
+        android:background="@color/user_button_background"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
         android:text="@string/btn_lbl_mark_safety_problem"
-        android:textColor="#ffffff"
+        android:textColor="@color/user_button_text"
         android:textStyle="bold" />
 
         <LinearLayout
@@ -205,10 +209,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
-                android:background="#6A7F10"
+                android:background="@color/user_button_background"
                 android:onClick="OnSave"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
                 android:text="@string/btn_lbl_start"
-                android:textColor="#ffffff"
+                android:textColor="@color/user_button_text"
                 android:textStyle="bold" />
 
             <Button
@@ -218,9 +224,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
-                android:background="#6A7F10"
+                android:background="@color/user_button_background"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
                 android:text="@string/btn_lbl_pause"
-                android:textColor="#ffffff"
+                android:textColor="@color/user_button_text"
                 android:textStyle="bold" />
 
             <Button
@@ -230,9 +238,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
-                android:background="#6A7F10"
+                android:background="@color/user_button_background"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
                 android:text="@string/btn_lbl_resume"
-                android:textColor="#ffffff"
+                android:textColor="@color/user_button_text"
                 android:textStyle="bold" />
 
             <Button
@@ -242,9 +252,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
-                android:background="#6A7F10"
+                android:background="@color/user_button_background"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
                 android:text="@string/btn_lbl_finish"
-                android:textColor="#ffffff"
+                android:textColor="@color/user_button_text"
                 android:textStyle="bold" />
             
         </LinearLayout>

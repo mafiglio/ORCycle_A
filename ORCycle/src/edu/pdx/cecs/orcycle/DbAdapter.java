@@ -61,7 +61,8 @@ public class DbAdapter {
 	private static final int DATABASE_VERSION_NOTES_V3 = 25;
 	private static final int DATABASE_VERSION_ANSWERS = 26;
 	private static final int DATABASE_VERSION_NOTE_ANSWERS = 27;
-	private static final int DATABASE_VERSION = DATABASE_VERSION_NOTE_ANSWERS;
+	private static final int DATABASE_VERSION_NOTE_SEVERITY = 28;
+	private static final int DATABASE_VERSION = DATABASE_VERSION_NOTE_SEVERITY;
 
 	// Trips Table columns
 	public static final String K_TRIP_ROWID = "_id";
@@ -99,6 +100,7 @@ public class DbAdapter {
 	public static final String K_NOTE_ALT = "notealt";
 	public static final String K_NOTE_SPEED = "notespeed";
 	public static final String K_NOTE_TYPE = "notetype";
+	public static final String K_NOTE_SEVERITY = "noteseverity";
 	public static final String K_NOTE_DETAILS = "notedetails";
 	public static final String K_NOTE_IMGURL = "noteimageurl";
 	public static final String K_NOTE_IMGDATA = "noteimagedata";
@@ -148,7 +150,7 @@ public class DbAdapter {
 			+ "time double, acc float, alt double, speed float);";
 
 	private static final String TABLE_CREATE_NOTES = "create table notes "
-			+ "(_id integer primary key autoincrement, tripid int, notetype integer, noterecorded double, "
+			+ "(_id integer primary key autoincrement, tripid int, notetype integer, noteseverity integer, noterecorded double, "
 			+ "notefancystart text, notedetails text, noteimageurl text, noteimagedata blob, "
 			+ "notelat int, notelgt int, noteacc float, notealt double, notespeed float, notestatus integer);";
 
@@ -258,6 +260,15 @@ public class DbAdapter {
 			if (oldVersion < DATABASE_VERSION_NOTE_ANSWERS) {
 				try {
 					db.execSQL(TABLE_CREATE_NOTE_ANSWERS);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+			if (oldVersion < DATABASE_VERSION_NOTE_SEVERITY) {
+				try {
+					db.execSQL(TABLE_DROP_NOTES);
+					db.execSQL(TABLE_CREATE_NOTES);
 				}
 				catch(Exception ex) {
 					Log.e(MODULE_TAG, ex.getMessage());
@@ -582,17 +593,18 @@ public class DbAdapter {
 	 * indicate failure.
 	 */
 
-	public long createNote(long tripid, int noteType, double noterecorded,
-			String notefancystart, String notedetails, String noteimageurl,
-			byte[] noteimagedata) {
+	public long createNote(long tripId, int noteType, int noteSeverity, double noteRecorded,
+			String noteFancyStart, String noteDetails, String imageUrl,
+			byte[] image) {
 		ContentValues initialValues = new ContentValues();
-		initialValues.put(K_NOTE_TRIP_ID, tripid);
+		initialValues.put(K_NOTE_TRIP_ID, tripId);
 		initialValues.put(K_NOTE_TYPE, noteType);
-		initialValues.put(K_NOTE_RECORDED, noterecorded);
-		initialValues.put(K_NOTE_FANCYSTART, notefancystart);
-		initialValues.put(K_NOTE_DETAILS, notedetails);
-		initialValues.put(K_NOTE_IMGURL, noteimageurl);
-		initialValues.put(K_NOTE_IMGDATA, noteimagedata);
+		initialValues.put(K_NOTE_SEVERITY, noteSeverity);
+		initialValues.put(K_NOTE_RECORDED, noteRecorded);
+		initialValues.put(K_NOTE_FANCYSTART, noteFancyStart);
+		initialValues.put(K_NOTE_DETAILS, noteDetails);
+		initialValues.put(K_NOTE_IMGURL, imageUrl);
+		initialValues.put(K_NOTE_IMGDATA, image);
 
 		initialValues.put(K_NOTE_LAT, 0);
 		initialValues.put(K_NOTE_LGT, 0);
@@ -605,8 +617,8 @@ public class DbAdapter {
 		return mDb.insert(DATA_TABLE_NOTES, null, initialValues);
 	}
 
-	public long createNote(long tripid) {
-		return createNote(tripid, -1, System.currentTimeMillis(), "", "", "", null);
+	public long createNote(long tripId) {
+		return createNote(tripId, -1, -1, System.currentTimeMillis(), "", "", "", null);
 	}
 
 	/**
@@ -628,7 +640,7 @@ public class DbAdapter {
 	public Cursor fetchAllNotes() {
 
 		Cursor cursor = mDb.query(DATA_TABLE_NOTES,
-				new String[] { K_NOTE_ROWID, K_NOTE_TRIP_ID, K_NOTE_TYPE, K_NOTE_RECORDED,
+				new String[] { K_NOTE_ROWID, K_NOTE_TRIP_ID, K_NOTE_TYPE, K_NOTE_SEVERITY, K_NOTE_RECORDED,
 						K_NOTE_FANCYSTART, K_NOTE_DETAILS, K_NOTE_IMGURL,
 						K_NOTE_IMGDATA, K_NOTE_LAT, K_NOTE_LGT, K_NOTE_ACC,
 						K_NOTE_ALT, K_NOTE_SPEED, K_NOTE_STATUS }, null, null,
@@ -684,7 +696,7 @@ public class DbAdapter {
 	 */
 	public Cursor fetchNote(long rowId) throws SQLException {
 		Cursor mCursor = mDb.query(true, DATA_TABLE_NOTES,
-				new String[] { K_NOTE_ROWID, K_NOTE_TRIP_ID, K_NOTE_TYPE, K_NOTE_RECORDED,
+				new String[] { K_NOTE_ROWID, K_NOTE_TRIP_ID, K_NOTE_TYPE, K_NOTE_SEVERITY, K_NOTE_RECORDED,
 						K_NOTE_FANCYSTART, K_NOTE_DETAILS, K_NOTE_IMGURL,
 						K_NOTE_IMGDATA, K_NOTE_LAT, K_NOTE_LGT, K_NOTE_ACC,
 						K_NOTE_ALT, K_NOTE_SPEED, K_NOTE_STATUS },
@@ -718,23 +730,19 @@ public class DbAdapter {
 		return numRows > 0;
 	}
 
-	public boolean updateNote(long noteid, String notefancystart, int notetype,
-			 String notedetails, String noteimgurl, byte[] noteimgdata) {
+	public boolean updateNote(long noteId, String noteFancyStart, int noteType, int noteSeverity,
+			 String noteDetails, String imageUrl, byte[] imageBytes) {
 
 		ContentValues contentValues = new ContentValues();
 
-		contentValues.put(K_NOTE_FANCYSTART, notefancystart);
-		contentValues.put(K_NOTE_TYPE, notetype);
-		contentValues.put(K_NOTE_DETAILS, notedetails);
-		contentValues.put(K_NOTE_IMGURL, noteimgurl);
-		contentValues.put(K_NOTE_IMGDATA, noteimgdata);
+		contentValues.put(K_NOTE_FANCYSTART, noteFancyStart);
+		contentValues.put(K_NOTE_TYPE, noteType);
+		contentValues.put(K_NOTE_SEVERITY, noteSeverity);
+		contentValues.put(K_NOTE_DETAILS, noteDetails);
+		contentValues.put(K_NOTE_IMGURL, imageUrl);
+		contentValues.put(K_NOTE_IMGDATA, imageBytes);
 
-		int numRows = mDb.update(DATA_TABLE_NOTES, contentValues, K_NOTE_ROWID + "=" + noteid, null);
-
-		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_NOTES + "[" + String.valueOf(noteid)
-				+ "](" + K_NOTE_FANCYSTART + ", " + K_NOTE_TYPE + ", " + K_NOTE_DETAILS + ", "
-				+ K_NOTE_IMGURL + ", " + K_NOTE_IMGDATA +"): "
-				+ String.valueOf(numRows) + " rows.");
+		int numRows = mDb.update(DATA_TABLE_NOTES, contentValues, K_NOTE_ROWID + "=" + noteId, null);
 
 		return numRows > 0;
 	}
