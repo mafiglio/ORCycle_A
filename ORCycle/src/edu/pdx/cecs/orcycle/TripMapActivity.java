@@ -115,6 +115,8 @@ public class TripMapActivity extends Activity {
 	private TextView tvTmRideConflict;
 	private TextView tvTmRouteStressor;
 
+	private TextView tvAtmMoveCloser;
+
 	// *********************************************************************************
 	// *
 	// *********************************************************************************
@@ -134,8 +136,6 @@ public class TripMapActivity extends Activity {
 
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-			// Toast.makeText(this, "trip map", Toast.LENGTH_LONG).show();
-
 			// Set zoom controls
 			mapView = ((MapFragment) getFragmentManager().findFragmentById(R.id.tripMap)).getMap();
 			llTmButtons = findViewById(R.id.llTmButtons);
@@ -143,6 +143,8 @@ public class TripMapActivity extends Activity {
 
 			questionsView = findViewById(R.id.tripQuestionsRootView);
 			questionsView.setVisibility(View.INVISIBLE);
+
+			tvAtmMoveCloser = (TextView) findViewById(R.id.tvAtmMoveCloser);
 
 
 			Bundle extras = getIntent().getExtras();
@@ -247,6 +249,8 @@ public class TripMapActivity extends Activity {
 									buttonRateStart.setBackgroundColor(Color.GREEN);
 									buttonRateFinish.setTextColor(Color.BLACK);
 									buttonRateFinish.setBackgroundColor(Color.GREEN);
+									tvAtmMoveCloser.setVisibility(View.GONE);
+
 
 									if ((segmentStartIndex != -1) && (segmentEndIndex == -1)) {
 										// Remove previously drawn line
@@ -265,6 +269,7 @@ public class TripMapActivity extends Activity {
 									buttonRateStart.setBackgroundColor(Color.RED);
 									buttonRateFinish.setTextColor(Color.WHITE);
 									buttonRateFinish.setBackgroundColor(Color.RED);
+									tvAtmMoveCloser.setVisibility(View.VISIBLE);
 								}
 							}
 						}
@@ -633,7 +638,7 @@ public class TripMapActivity extends Activity {
 
 			try {
 				if (!crosshairInRangeOfTrip) {
-					Toast.makeText(TripMapActivity.this, "Target must be within 100 meters of bike path.", Toast.LENGTH_SHORT).show();
+					Toast.makeText(TripMapActivity.this, "Please move target closer to path.", Toast.LENGTH_SHORT).show();
 				}
 				else {
 					// update note entity
