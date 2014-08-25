@@ -1,84 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
 
-    <TextView
-        android:id="@+id/TextViewStart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:text="@+id/TextView03"
-        android:textColor="#ff888888"
-        android:textSize="15sp" >
-    </TextView>
+	<LinearLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginBottom="4dp"
+	    android:layout_marginLeft="4dp"
+	    android:layout_marginRight="2dp"
+	    android:layout_marginTop="4dp"
+	    android:layout_weight="6"
+	    android:orientation="vertical" >
 
-    <RelativeLayout
-        android:id="@+id/RelativeLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_below="@id/TextViewStart"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/TextViewPurpose"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:text="@+id/TextView01"
-            android:textColor="@color/psu_sienna"
-            android:textSize="20sp"
-            android:textStyle="bold" >
-        </TextView>
-
-        <TextView
-            android:id="@+id/TextViewInfo"
-            android:layout_toRightOf="@+id/TextViewPurpose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextInfo"
-            android:layout_marginLeft="20dp"
-            android:textColor="@color/text_light_gray"
-            android:textSize="18sp" >
-        </TextView>
-
-        <ImageView
-            android:id="@+id/ImageTripPurpose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="TripPurpose"
-            android:layout_alignParentRight="true"
-            android:paddingTop="4dp"
-            android:paddingRight="10dp" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/RelativeLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_below="@id/RelativeLayout1"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/TextViewCO2"
-            android:layout_width="139dp"
-            android:layout_height="wrap_content"
-            android:text="TextCO2"
-            android:textColor="#ff888888"
-            android:textSize="12sp" >
-        </TextView>
-
-        <TextView
-            android:layout_toRightOf="@+id/TextViewCO2"
-            android:id="@+id/TextViewCalory"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="TextCalory"
-            android:textColor="#ff888888"
-            android:textSize="12sp" >
-        </TextView>
-    </RelativeLayout>
-
-</RelativeLayout>
+	    <TextView
+	        android:id="@+id/TextViewStart"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="5dp"
+	        android:layout_marginTop="4dp"
+	        android:text="@string/misc_longest_date_string"
+	        android:textColor="#ff888888"
+	        android:textSize="15sp" >
+	
+	    </TextView>
+	
+	    <RelativeLayout
+	        android:id="@+id/RelativeLayout1"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/TextViewStart"
+	        android:layout_marginLeft="5dp"
+	        android:orientation="horizontal" >
+	
+	        <TextView
+	            android:id="@+id/TextViewPurpose"
+	            android:layout_width="120dp"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+	            android:layout_marginBottom="2dp"
+	            android:layout_marginTop="4dp"
+	            android:layout_toLeftOf="@+id/TextViewInfo"
+	            android:text="Access to transit or a vehicle"
+	            android:textColor="@color/psu_sienna"
+	            android:textSize="18sp"
+	            android:textStyle="bold" >
+	
+	        </TextView>
+	
+	        <TextView
+	            android:id="@+id/TextViewInfo"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentRight="true"
+	            android:layout_marginBottom="2dp"
+	            android:layout_marginLeft="8dp"
+	            android:layout_marginRight="8dp"
+	            android:layout_marginTop="4dp"
+	            android:paddingLeft="8dp"
+	            android:paddingRight="4dp"
+	            android:text="00:00:00"
+	            android:textColor="@color/text_light_gray"
+	            android:textSize="18sp" >
+	
+	        </TextView>
+	
+	    </RelativeLayout>
+	</LinearLayout>
+	
+    <ImageView
+        android:id="@+id/ImageTripPurpose"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:contentDescription="TripPurpose"
+        android:paddingLeft="4dp"
+        android:paddingRight="10dp"
+        android:paddingTop="4dp"
+        android:scaleType="center"
+        android:src="@drawable/commute_high" />
+	
+</LinearLayout>
