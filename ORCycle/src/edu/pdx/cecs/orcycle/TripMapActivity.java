@@ -601,6 +601,7 @@ public class TripMapActivity extends Activity {
 
 			questionsView.setVisibility(View.VISIBLE);
 			llTmButtons.setVisibility(View.INVISIBLE);
+			tvAtmMoveCloser.setVisibility(View.INVISIBLE);
 			if ((null != mnuInfo) && (null != mnuMap)) {
 				mnuInfo.setVisible(false);
 				mnuMap.setVisible(true);
@@ -611,6 +612,9 @@ public class TripMapActivity extends Activity {
 
 			questionsView.setVisibility(View.INVISIBLE);
 			llTmButtons.setVisibility(View.VISIBLE);
+			if (!crosshairInRangeOfTrip) {
+				tvAtmMoveCloser.setVisibility(View.VISIBLE);
+			}
 			if ((null != mnuInfo) && (null != mnuMap)) {
 				mnuInfo.setVisible(true);
 				mnuMap.setVisible(false);
