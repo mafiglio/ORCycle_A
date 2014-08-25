@@ -1,6 +1,5 @@
 package edu.pdx.cecs.orcycle;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
@@ -45,8 +44,9 @@ public class SavedTripsAdapter extends SimpleCursorAdapter {
 			TextView textViewPurpose = (TextView) rowView.findViewById(R.id.TextViewPurpose);
 			TextView textViewInfo = (TextView) rowView.findViewById(R.id.TextViewInfo);
 			ImageView imageTripPurpose = (ImageView) rowView.findViewById(R.id.ImageTripPurpose);
-			TextView textViewCO2 = (TextView) rowView.findViewById(R.id.TextViewCO2);
-			TextView textViewCalory = (TextView) rowView.findViewById(R.id.TextViewCalory);
+			//TextView textViewCO2 = (TextView) rowView.findViewById(R.id.TextViewCO2);
+			//TextView textViewCalory = (TextView) rowView.findViewById(R.id.TextViewCalory);
+			//View llCaloryCo2 = rowView.findViewById(R.id.RelativeLayout2);
 
 			cursor.moveToPosition(position);
 
@@ -66,19 +66,33 @@ public class SavedTripsAdapter extends SimpleCursorAdapter {
 
 			textViewInfo.setText(duration);
 
-			Double CO2 = cursor.getFloat(cursor.getColumnIndex("distance")) * 0.0006212 * 0.93;
-			DecimalFormat df = new DecimalFormat("0.#");
-			String CO2String = df.format(CO2);
-			textViewCO2.setText("CO2 Saved: " + CO2String + " lbs");
+			//Double CO2 = cursor.getFloat(cursor.getColumnIndex("distance")) * 0.0006212 * 0.93;
+			//DecimalFormat df = new DecimalFormat("0.#");
+			//String CO2String = df.format(CO2);
+			//textViewCO2.setText("CO2 Saved: " + CO2String + " lbs");
 
-			Double calory = cursor.getFloat(cursor.getColumnIndex("distance")) * 0.0006212 * 49 - 1.69;
-			String caloryString = df.format(calory);
-			if (calory <= 0) {
-				textViewCalory.setText("Calories Burned: " + 0 + " kcal");
-			} else {
-				textViewCalory
-						.setText("Calories Burned: " + caloryString + " kcal");
-			}
+			//Double calory = cursor.getFloat(cursor.getColumnIndex("distance")) * 0.0006212 * 49 - 1.69;
+			//String caloryString = df.format(calory);
+			//if (calory <= 0) {
+			//	textViewCalory.setText("Calories Burned: " + 0 + " kcal");
+			//} else {
+			//	textViewCalory
+			//			.setText("Calories Burned: " + caloryString + " kcal");
+			//}
+
+			// ----------------------------------------------------------
+			// For the moment, these elements will be invisible until we
+			// have a more accurate solution for calories burned
+			// ----------------------------------------------------------
+
+			//llCaloryCo2.setVisibility(View.GONE);
+
+			//textViewCO2.setVisibility(View.GONE);
+			//textViewCalory.setVisibility(View.GONE);
+
+			// -------------------------------------------------------
+			//
+			// -------------------------------------------------------
 
 			int status = cursor.getInt(cursor.getColumnIndex("status"));
 
