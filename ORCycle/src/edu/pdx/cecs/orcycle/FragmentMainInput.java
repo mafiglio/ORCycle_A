@@ -135,31 +135,26 @@ public class FragmentMainInput extends Fragment
 			// Setup the button to start recording
 			buttonStart = (Button) rootView.findViewById(R.id.buttonStart);
 			buttonStart.setVisibility(View.GONE);
-			//buttonStart.setWidth(140);
 			buttonStart.setOnClickListener(new ButtonStart_OnClickListener());
 
 			// Setup the button to pause recording
 			buttonPause = (Button) rootView.findViewById(R.id.buttonPause);
 			buttonPause.setVisibility(View.GONE);
-			//buttonPause.setWidth(140);
 			buttonPause.setOnClickListener(new ButtonPause_OnClickListener());
 
 			// Setup the button to resume recording
 			buttonResume = (Button) rootView.findViewById(R.id.buttonResume);
 			buttonResume.setVisibility(View.GONE);
-			//buttonResume.setWidth(140);
 			buttonResume.setOnClickListener(new ButtonResume_OnClickListener());
 
 			// Setup the button to finish recording
 			buttonFinish = (Button) rootView.findViewById(R.id.buttonFinish);
 			buttonFinish.setVisibility(View.GONE);
-			//buttonFinish.setWidth(140);
 			buttonFinish.setOnClickListener(new ButtonFinish_OnClickListener());
 
 			// Setup the button to add a note to the trip
 			buttonNote = (Button) rootView.findViewById(R.id.buttonNoteThis);
-			buttonNote.setVisibility(View.GONE);
-			//buttonNote.setWidth(140);
+			buttonNote.setVisibility(View.VISIBLE);
 			buttonNote.setOnClickListener(new ButtonNote_OnClickListener());
 
 			// Copy from Recording Activity
@@ -186,7 +181,7 @@ public class FragmentMainInput extends Fragment
 
 		case RecordingService.STATE_IDLE:
 
-			buttonNote.setVisibility(View.GONE);
+			buttonNote.setVisibility(View.VISIBLE);
 			buttonStart.setVisibility(View.VISIBLE);
 			buttonPause.setVisibility(View.GONE);
 			buttonResume.setVisibility(View.GONE);
@@ -598,12 +593,17 @@ public class FragmentMainInput extends Fragment
 					alertUserNoGPSData();
 				}
 				else {
-					// pause recording of trip data
-					recordingService.pauseRecording();
-
-					// update note entity
-					long tripId = recordingService.getCurrentTripID();
-
+					int state = recordingService.getState();
+					long tripId;
+					if (state > RecordingService.STATE_IDLE) {
+						// pause recording of trip data
+						recordingService.pauseRecording();
+						// update note entity
+						tripId = recordingService.getCurrentTripID();
+					}
+					else {
+						tripId = 0;
+					}
 					NoteData note = NoteData.createNote(getActivity(), tripId);
 					note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
 					note.setLocation(currentLocation);
