@@ -161,6 +161,7 @@ public class FragmentSettings extends Fragment {
 
 		// Create intent to go back to the TripMapActivity
 		Intent intent = new Intent(getActivity(), UserInfoActivity.class);
+		intent.putExtra(UserInfoActivity.EXTRA_PREVIOUS_ACTIVITY, UserInfoActivity.EXTRA_FRAGMENT_SETTINGS);
 
 		// Exit this activity
 		startActivity(intent);

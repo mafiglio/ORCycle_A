@@ -123,6 +123,9 @@ public class FragmentMainInput extends Fragment
 			// Convenient pointer to global application object
 			myApp = MyApplication.getInstance();
 
+			// Folloing line for debugging only
+			//myApp.setUserProfileUploaded(false);
+
 			// Create main user interface window
 			rootView = inflater.inflate(R.layout.activity_main_input, container, false);
 
@@ -276,6 +279,7 @@ public class FragmentMainInput extends Fragment
 			}
 			else {
 				setupButtons();
+				userProfileCheck();
 			}
 		}
 		catch(Exception ex) {
@@ -447,6 +451,10 @@ public class FragmentMainInput extends Fragment
 								//dialogTripFinish();
 							}
 						}
+						else {
+							userProfileCheck();
+						}
+
 					}
 				}
 			}
@@ -701,6 +709,39 @@ public class FragmentMainInput extends Fragment
 	}
 
 	// *********************************************************************************
+	// *                         queryUserProfile Dialog
+	// *********************************************************************************
+
+	/**
+	 * Build dialog telling user that the GPS is not available
+	 */
+	private void queryUserProfile() {
+
+		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+		builder.setMessage(getResources().getString(R.string.fmi_query_user_profile));
+		builder.setCancelable(false);
+		builder.setPositiveButton(getResources().getString(R.string.fmi_qup_dialog_ok),
+				new QueryUserProfile_OkListener());
+		builder.setNegativeButton(getResources().getString(R.string.fmi_qup_dialog_later),
+				new QueryUserProfile_CancelListener());
+		final AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	class QueryUserProfile_OkListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			transitionToUserInfoActivity();
+		}
+	}
+
+	class QueryUserProfile_CancelListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			dialog.cancel();
+		}
+	}
+
+	// *********************************************************************************
 	// *                            Trip Finished Dialogs
 	// *********************************************************************************
 
@@ -882,6 +923,18 @@ public class FragmentMainInput extends Fragment
 	// *                            Misc & Helper Functions
 	// *********************************************************************************
 
+	private void userProfileCheck() {
+
+		if (!myApp.getCheckedForUserProfile()) {
+
+			myApp.setCheckedForUserProfile(true);
+
+			if (!myApp.getUserProfileUploaded()) {
+				queryUserProfile();
+			}
+		}
+	}
+
 	private void alertUserNoGPSData() {
 		Toast.makeText(getActivity(), "No GPS data acquired; nothing to submit.", Toast.LENGTH_SHORT).show();
 	}
@@ -933,5 +986,17 @@ public class FragmentMainInput extends Fragment
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivityForResult(intent, 0);
 	}
+
+	private void transitionToUserInfoActivity() {
+
+		// Create intent to come back to this activity
+		Intent intent = new Intent(getActivity(), UserInfoActivity.class);
+		intent.putExtra(UserInfoActivity.EXTRA_PREVIOUS_ACTIVITY, UserInfoActivity.EXTRA_FRAGMENT_MAIN_INPUT);
+
+		// Exit this activity
+		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+	}
+
 
 }

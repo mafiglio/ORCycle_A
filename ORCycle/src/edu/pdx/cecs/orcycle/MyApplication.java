@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.os.IBinder;
@@ -22,8 +23,14 @@ import android.util.Log;
 public class MyApplication extends android.app.Application {
 
 	private final String MODULE_TAG = "MyApplication";
+
+	public static final String PREFS_APPLICATION = "PREFS_APPLICATION";
+
+	private static final String SETTING_USER_INFO_UPLOADED = "USER_INFO_UPLOADED";
+
 	private RecordingService recordingService = null;
 	private TripData trip;
+	private boolean checkedForUserProfile = false;
 
     /**
     * Reference to class instance
@@ -221,6 +228,29 @@ public class MyApplication extends android.app.Application {
 		}
 
 		return deviceId;
+	}
+
+	public void setCheckedForUserProfile(boolean value) {
+		checkedForUserProfile = value;
+	}
+
+	public boolean getCheckedForUserProfile() {
+		return checkedForUserProfile;
+	}
+
+	public void setUserProfileUploaded(boolean value) {
+		SharedPreferences settings;
+		settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor = settings.edit();
+		editor.putBoolean(SETTING_USER_INFO_UPLOADED, value);
+		editor.apply();
+	}
+
+	public boolean getUserProfileUploaded() {
+		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		boolean value = settings.getBoolean(SETTING_USER_INFO_UPLOADED, false);
+		return value;
 	}
 
 }
