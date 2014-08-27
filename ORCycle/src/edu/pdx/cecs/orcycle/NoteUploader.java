@@ -112,7 +112,13 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 
 					JSONObject note = new JSONObject();
 
-					note.put(NOTE_TRIP_ID, noteCursor.getInt(fieldMap.get(NOTE_TRIP_ID)));
+					// Correction for notes not associated with any trip
+					int tripId = noteCursor.getInt(fieldMap.get(NOTE_TRIP_ID));
+					if (tripId == 0) {  // then this is a note not associated with any trip, and
+						tripId = 0;	// the database is expecting a -1 for these notes
+					}
+
+					note.put(NOTE_TRIP_ID, tripId);
 					note.put(NOTE_RECORDED, df.format(noteCursor.getDouble(fieldMap.get(NOTE_RECORDED))));
 					note.put(NOTE_LAT, noteCursor.getDouble(fieldMap.get(NOTE_LAT)) / 1E6);
 					note.put(NOTE_LGT, noteCursor.getDouble(fieldMap.get(NOTE_LGT)) / 1E6);

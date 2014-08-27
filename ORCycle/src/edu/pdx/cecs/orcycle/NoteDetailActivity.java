@@ -384,10 +384,6 @@ public class NoteDetailActivity extends Activity {
 		finish();
 	}
 
-
-
-
-
 	private void transitionToNoteMapActivity() {
 		// Intent to go to Note map
 		Intent intent = new Intent(this, NoteMapActivity.class);
