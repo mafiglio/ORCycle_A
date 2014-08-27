@@ -24,6 +24,11 @@ public class UserInfoActivity extends Activity {
 	private static final String PREFS_USER_INFO = "PREFS_USER_INFO";
 	public static final String PREFS_USER_INFO_UPLOAD = "PREFS_USER_INFO_UPLOAD";
 
+	public static final String EXTRA_PREVIOUS_ACTIVITY = "previousActivity";
+	public static final int EXTRA_PREVIOUS_ACTIVITY_UNDEFINED = -1;
+	public static final int EXTRA_FRAGMENT_MAIN_INPUT = 0;
+	public static final int EXTRA_FRAGMENT_SETTINGS = 1;
+
 	public static final int PREF_EMAIL           = 0;
 	public static final int PREF_RIDER_ABILITY   = 1;
 	public static final int PREF_RIDER_TYPE      = 2;
@@ -58,6 +63,7 @@ public class UserInfoActivity extends Activity {
 	private OnItemWithOtherSelectedListener spnrGender_OnItemSelected = null;
 	private OnItemWithOtherSelectedListener spnrEthnicity_OnItemSelected = null;
 
+	private int previousActivity;
 
 	// *********************************************************************************
 	// *                              Activity Handlers
@@ -72,6 +78,14 @@ public class UserInfoActivity extends Activity {
 			// load root view
 			setContentView(R.layout.activity_user_info);
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+			// get input values for this view
+			Intent myIntent = getIntent();
+
+			previousActivity = myIntent.getIntExtra(EXTRA_PREVIOUS_ACTIVITY, EXTRA_PREVIOUS_ACTIVITY_UNDEFINED);
+			if (!((previousActivity == EXTRA_FRAGMENT_SETTINGS) ||(previousActivity == EXTRA_FRAGMENT_MAIN_INPUT))) {
+				throw new IllegalArgumentException(MODULE_TAG + ": EXTRA_NOTE_SOURCE invalid argument.");
+			}
 
 			// Create listeners for the spinner setOnItemSelectedListener
 			spnrRiderType_OnItemSelected = new OnItemWithOtherSelectedListener(this);
@@ -318,6 +332,13 @@ public class UserInfoActivity extends Activity {
 
 		// Don't forget to commit your edits!!!
 		editor.commit();
+
+		// Set the flag indicating user info has been filled out and scheduled for upload
+		if (forUpload) {
+			// Reference to Global application object
+			MyApplication myApp = MyApplication.getInstance();
+			myApp.setUserProfileUploaded(true);
+		}
 	}
 
 	/**
@@ -458,7 +479,12 @@ public class UserInfoActivity extends Activity {
 
 		Intent intent = new Intent(this, TabsConfig.class);
 
-		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_SETTINGS);
+		if (previousActivity == EXTRA_FRAGMENT_MAIN_INPUT) {
+			intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
+		}
+		else {
+			intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_SETTINGS);
+		}
 		startActivity(intent);
 		finish();
 		if (exitTransition == ExitTransition.EXIT_BACK) {
