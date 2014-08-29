@@ -193,12 +193,14 @@ public class NoteQuestionsActivity extends Activity {
 	}
 
 	private boolean MandatoryQuestionsAnswered() {
-		return spnIssueType.getSelectedItemPosition() > 0;
+
+		return ((spnIssueType.getSelectedItemPosition() > 0) &&
+				(spnSeverity.getSelectedItemPosition() > 0));
 	}
 
 	private void AlertUserMandatoryAnswers() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Please answer required questions")
+		builder.setMessage("Please answer all required questions.")
 				.setCancelable(true)
 				.setPositiveButton("OK",
 						new DialogInterface.OnClickListener() {

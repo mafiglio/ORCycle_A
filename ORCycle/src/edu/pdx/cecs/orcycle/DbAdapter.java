@@ -30,12 +30,21 @@
 
 package edu.pdx.cecs.orcycle;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.media.ExifInterface;
 import android.util.Log;
 
 /**
@@ -53,11 +62,10 @@ import android.util.Log;
  */
 public class DbAdapter {
 
+    private static final String NOTE_IMAGES_DIR_NAME = "note_images";
 	// Database versions
-	private static final int DATABASE_VERSION_NOTES = 21;
 	private static final int DATABASE_VERSION_PAUSES = 22;
 	private static final int DATABASE_VERSION_SEGMENTS = 23;
-	private static final int DATABASE_VERSION_NOTES_V2 = 24;
 	private static final int DATABASE_VERSION_NOTES_V3 = 25;
 	private static final int DATABASE_VERSION_ANSWERS = 26;
 	private static final int DATABASE_VERSION_NOTE_ANSWERS = 27;
@@ -103,7 +111,6 @@ public class DbAdapter {
 	public static final String K_NOTE_SEVERITY = "noteseverity";
 	public static final String K_NOTE_DETAILS = "notedetails";
 	public static final String K_NOTE_IMGURL = "noteimageurl";
-	public static final String K_NOTE_IMGDATA = "noteimagedata";
 	public static final String K_NOTE_STATUS = "notestatus";
 
 	// Pauses Table columns
@@ -151,7 +158,7 @@ public class DbAdapter {
 
 	private static final String TABLE_CREATE_NOTES = "create table notes "
 			+ "(_id integer primary key autoincrement, tripid int, notetype integer, noteseverity integer, noterecorded double, "
-			+ "notefancystart text, notedetails text, noteimageurl text, noteimagedata blob, "
+			+ "notefancystart text, notedetails text, noteimageurl text, "
 			+ "notelat int, notelgt int, noteacc float, notealt double, notespeed float, notestatus integer);";
 
 	private static final String TABLE_CREATE_PAUSES = "create table pauses "
@@ -190,6 +197,7 @@ public class DbAdapter {
 	private static final String DATA_TABLE_NOTE_ANSWERS = "note_answers";
 
 	private final Context mCtx;
+	private String noteImagesDirName = null;
 
 	// ************************************************************************
 	// *                         DatabaseHelper
@@ -293,7 +301,28 @@ public class DbAdapter {
 	 *            the Context within which to work
 	 */
 	public DbAdapter(Context ctx) {
-		this.mCtx = ctx;
+		mCtx = ctx;
+		try {
+			noteImagesDirName = makeNoteImageDirectory();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
+	private String makeNoteImageDirectory() throws Exception {
+        File dir;
+
+        if (null == (dir = mCtx.getFilesDir())) {
+            throw new Exception("Unable to retrieve root directory for storing note images");
+        }
+
+        String dirName = dir.getAbsolutePath() + "/"+ NOTE_IMAGES_DIR_NAME;
+        File imagesDir = new File(dirName);
+        if (!imagesDir.exists())
+            if (!imagesDir.mkdirs())
+                throw new Exception("Unable to create directory for storing note images");
+        return dirName;
 	}
 
 	/**
@@ -594,8 +623,7 @@ public class DbAdapter {
 	 */
 
 	public long createNote(long tripId, int noteType, int noteSeverity, double noteRecorded,
-			String noteFancyStart, String noteDetails, String imageUrl,
-			byte[] image) {
+			String noteFancyStart, String noteDetails, String imageUrl) {
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(K_NOTE_TRIP_ID, tripId);
 		initialValues.put(K_NOTE_TYPE, noteType);
@@ -604,7 +632,6 @@ public class DbAdapter {
 		initialValues.put(K_NOTE_FANCYSTART, noteFancyStart);
 		initialValues.put(K_NOTE_DETAILS, noteDetails);
 		initialValues.put(K_NOTE_IMGURL, imageUrl);
-		initialValues.put(K_NOTE_IMGDATA, image);
 
 		initialValues.put(K_NOTE_LAT, 0);
 		initialValues.put(K_NOTE_LGT, 0);
@@ -618,7 +645,7 @@ public class DbAdapter {
 	}
 
 	public long createNote(long tripId) {
-		return createNote(tripId, -1, -1, System.currentTimeMillis(), "", "", "", null);
+		return createNote(tripId, -1, -1, System.currentTimeMillis(), "", "", "");
 	}
 
 	/**
@@ -629,8 +656,14 @@ public class DbAdapter {
 	 * @return true if deleted, false otherwise
 	 */
 	public boolean deleteNote(long rowId) {
+
+		deleteNoteImageFile(rowId);
+
 		return mDb.delete(DATA_TABLE_NOTES, K_NOTE_ROWID + "=" + rowId, null) > 0;
 	}
+
+
+
 
 	/**
 	 * Return a Cursor over the list of all notes in the database
@@ -642,7 +675,7 @@ public class DbAdapter {
 		Cursor cursor = mDb.query(DATA_TABLE_NOTES,
 				new String[] { K_NOTE_ROWID, K_NOTE_TRIP_ID, K_NOTE_TYPE, K_NOTE_SEVERITY, K_NOTE_RECORDED,
 						K_NOTE_FANCYSTART, K_NOTE_DETAILS, K_NOTE_IMGURL,
-						K_NOTE_IMGDATA, K_NOTE_LAT, K_NOTE_LGT, K_NOTE_ACC,
+						K_NOTE_LAT, K_NOTE_LGT, K_NOTE_ACC,
 						K_NOTE_ALT, K_NOTE_SPEED, K_NOTE_STATUS }, null, null,
 				null, null, "-" + K_NOTE_RECORDED);
 
@@ -698,7 +731,7 @@ public class DbAdapter {
 		Cursor mCursor = mDb.query(true, DATA_TABLE_NOTES,
 				new String[] { K_NOTE_ROWID, K_NOTE_TRIP_ID, K_NOTE_TYPE, K_NOTE_SEVERITY, K_NOTE_RECORDED,
 						K_NOTE_FANCYSTART, K_NOTE_DETAILS, K_NOTE_IMGURL,
-						K_NOTE_IMGDATA, K_NOTE_LAT, K_NOTE_LGT, K_NOTE_ACC,
+						K_NOTE_LAT, K_NOTE_LGT, K_NOTE_ACC,
 						K_NOTE_ALT, K_NOTE_SPEED, K_NOTE_STATUS },
 
 				K_NOTE_ROWID + "=" + rowId,
@@ -739,12 +772,128 @@ public class DbAdapter {
 		contentValues.put(K_NOTE_TYPE, noteType);
 		contentValues.put(K_NOTE_SEVERITY, noteSeverity);
 		contentValues.put(K_NOTE_DETAILS, noteDetails);
-		contentValues.put(K_NOTE_IMGURL, imageUrl);
-		contentValues.put(K_NOTE_IMGDATA, imageBytes);
+		contentValues.put(K_NOTE_IMGURL, getNoteImageFileName(noteId));
+
+		if (null != imageBytes) {
+
+			float[] latLng = new float[2];
+
+			saveToFile(noteId, imageBytes);
+			if (getNoteImageLatLng(noteId, latLng)) {
+				contentValues.put(K_NOTE_LAT, (int) latLng[0]);
+				contentValues.put(K_NOTE_LGT, (int) latLng[1]);
+			}
+		}
 
 		int numRows = mDb.update(DATA_TABLE_NOTES, contentValues, K_NOTE_ROWID + "=" + noteId, null);
 
 		return numRows > 0;
+	}
+
+	public String getNoteImageFileName(long noteId) {
+		return noteImagesDirName + "/note_image_file_" + noteId + ".jpg";
+	}
+
+	private boolean getNoteImageLatLng(long noteId, float[] latLng) {
+
+		String latitude;
+		String latitudeRef;
+		String longitude;
+		String longitudeRef;
+
+		String fileName = getNoteImageFileName(noteId);
+		try {
+			ExifInterface exif = new ExifInterface(fileName);
+	    	Log.v(MODULE_TAG, "Filename: " + fileName);
+
+			if (exif.getLatLong(latLng)) {
+		    	Log.v(MODULE_TAG, "Latitude: " + latLng[0]);
+		    	Log.v(MODULE_TAG, "Longitude: " + latLng[1]);
+		    	return true;
+			}
+			if (null != (latitude = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE)))
+		    	Log.v(MODULE_TAG, "Latitude: " + latitude);
+			if (null != (latitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF)))
+		    	Log.v(MODULE_TAG, "latitudeRef: " + latitudeRef);
+			if (null != (longitude = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)))
+		    	Log.v(MODULE_TAG, "longitude: " + longitude);
+			if (null != (longitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF)))
+		    	Log.v(MODULE_TAG, "longitudeRef: " + longitudeRef);
+		}
+		catch(IOException ex) {
+	    	Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return false;
+	}
+
+	private void saveToFile(long noteId, byte[] imageBytes) {
+
+		String fileName = getNoteImageFileName(noteId);
+
+		File file = new File(fileName);
+		OutputStream out = null;
+		try {
+			out = new BufferedOutputStream(new FileOutputStream(file));
+			out.write(imageBytes);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		finally {
+			if (out != null) {
+				try {
+					out.close();
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+		}
+	}
+
+	private void deleteNoteImageFile(long noteId) {
+
+		String fileName = getNoteImageFileName(noteId);
+		File file;
+
+		try {
+			file = new File(fileName);
+			if (file.exists()) {
+				file.delete();
+			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
+	public byte[] getNoteImageData(long noteId) {
+
+		String fileName = getNoteImageFileName(noteId);
+		File file = new File(fileName);
+		InputStream in = null;
+		byte[] bytes = null;
+		try {
+			if (file.exists()) {
+				in = new FileInputStream(file);
+				bytes = new byte[(int) file.length()];
+				in.read(bytes);
+			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+			bytes = null;
+		}
+		finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+		}
+		return bytes;
 	}
 
 	public boolean updateNoteStatus(long noteid, int noteStatus) {

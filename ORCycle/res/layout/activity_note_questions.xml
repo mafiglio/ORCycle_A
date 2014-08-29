@@ -33,7 +33,7 @@
                 android:layout_below="@id/tvNoteQuestionsHeader"
                 android:layout_marginTop="15dp"
                 android:background="@drawable/lcdscreen"
-                android:text="Severity of the problem?"
+                android:text="* Severity of the problem?"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <Spinner

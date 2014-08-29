@@ -107,7 +107,10 @@ public class NoteData {
 				notedetails    = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_DETAILS    ));
 				noteStatus     = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_STATUS     ));
 				noteimageurl   = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_IMGURL     ));
-				noteimagedata  = noteDetails.getBlob  (noteDetails.getColumnIndex(DbAdapter.K_NOTE_IMGDATA    ));
+				if ((null != noteimageurl) && (!noteimageurl.equals("")))
+					noteimagedata = mDb.getNoteImageData(noteId);
+				else
+					noteimagedata = null;
 			}
 			finally {
 				noteDetails.close();
