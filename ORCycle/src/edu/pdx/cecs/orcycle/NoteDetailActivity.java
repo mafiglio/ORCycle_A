@@ -1,7 +1,9 @@
 package edu.pdx.cecs.orcycle;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 
@@ -14,6 +16,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,8 +63,6 @@ public class NoteDetailActivity extends Activity {
 	private EditText noteDetails;
 	private ImageButton imageButton;
 	private ImageView imageView;
-	private String imageURL = "";
-	private byte[] noteImage;
 	private Bitmap photo;
 	private Uri uri;
 	private Dialog attachDialog;
@@ -204,6 +205,12 @@ public class NoteDetailActivity extends Activity {
 				else if (requestCode == IMAGE_REQUEST) {
 					photo = null;
 					uri = data.getData();
+
+
+					getNoteImageLatLng(uri.toString());
+
+
+
 					imageView.setImageURI(uri);
 				}
 			}
@@ -212,6 +219,47 @@ public class NoteDetailActivity extends Activity {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
+
+	private boolean getNoteImageLatLng(String fileName) {
+
+		String latitude;
+		String latitudeRef;
+		String longitude;
+		String longitudeRef;
+
+		try {
+			File file = new File(fileName);
+			if (file.exists()) {
+				//ExifInterface exif = new ExifInterface(fileName);
+				ExifInterface exif = new ExifInterface("&^%^%$%^)_+++----");
+		    	Log.v(MODULE_TAG, "Filename: " + fileName);
+
+				//if (exif.getLatLong(latLng)) {
+			    //	Log.v(MODULE_TAG, "Latitude: " + latLng[0]);
+			    //	Log.v(MODULE_TAG, "Longitude: " + latLng[1]);
+			    //	return true;
+				//}
+				if (null != (latitude = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE)))
+			    	Log.v(MODULE_TAG, "Latitude: " + latitude);
+				if (null != (latitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF)))
+			    	Log.v(MODULE_TAG, "latitudeRef: " + latitudeRef);
+				if (null != (longitude = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)))
+			    	Log.v(MODULE_TAG, "longitude: " + longitude);
+				if (null != (longitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF)))
+			    	Log.v(MODULE_TAG, "longitudeRef: " + longitudeRef);
+			}
+		}
+		catch(IOException ex) {
+	    	Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return false;
+	}
+
+
+
+
+
+
 
 	public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
 
@@ -240,35 +288,27 @@ public class NoteDetailActivity extends Activity {
 	}
 
 	@SuppressLint("SimpleDateFormat")
-	void submit(String noteDetailsToUpload, byte[] noteImage) {
+	void submit(String noteDetailsToUpload) {
+
+		byte[] noteImage;
 
 		NoteData note = NoteData.fetchNote(NoteDetailActivity.this, noteId);
 
-		// format start time displayed in note list
+		// Start time format displayed in note list
 		String fancyStartTime = (new SimpleDateFormat("MMMM d, y  HH:mm a")).format(note.startTime);
 
-		// format date for creating image filename
-		String date = (new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")).format(note.startTime);
-
-		// Save the note details to the phone database. W00t!
-
-		String deviceId = MyApplication.getInstance().getDeviceId();
 		if (photo != null) {
 			noteImage = getBitmapAsByteArray(photo);
-			imageURL = deviceId + "-" + date + "-type-" + noteType;
 		}
 		else if (uri != null) {
 			noteImage = getBitmapAsByteArray(this, uri);
-			imageURL = uri.toString();
-			imageURL = uri.getPath();
 		}
 		else {
 			noteImage = null;
-			imageURL = "";
 		}
 
 		// store note details in local database
-		note.updateNote(noteType, noteSeverity, fancyStartTime, noteDetailsToUpload, imageURL, noteImage);
+		note.updateNote(noteType, noteSeverity, fancyStartTime, noteDetailsToUpload, noteImage);
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 
 		// Now create the MainInput Activity so BACK btn works properly
@@ -306,7 +346,7 @@ public class NoteDetailActivity extends Activity {
 		case R.id.action_skip_note_detail: // skip
 
 			try {
-				submit("", null);
+				submit("");
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -316,7 +356,7 @@ public class NoteDetailActivity extends Activity {
 		case R.id.action_save_note_detail: // save
 
 			try {
-				submit(noteDetails.getEditableText().toString(), noteImage);
+				submit(noteDetails.getEditableText().toString());
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
