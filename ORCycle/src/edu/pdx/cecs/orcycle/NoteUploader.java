@@ -55,7 +55,6 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 	private final Context mCtx;
 	private final DbAdapter mDb;
 	private byte[] imageData;
-	private Boolean imageDataNull;
 
 	private static final String MODULE_TAG = "NoteUploader";
 	private static final int kSaveNoteProtocolVersion = 4;
@@ -90,7 +89,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 	private JSONObject getNoteJSON(long noteId) throws JSONException {
 		try {
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			//df.setTimeZone(TimeZone.getTimeZone("UTC"));
+			String noteImageFileName;
 
 			mDb.openReadOnly();
 			try {
@@ -106,19 +105,12 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 					fieldMap.put(NOTE_VACC, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ACC));
 					fieldMap.put(NOTE_ALT, noteCursor.getColumnIndex(DbAdapter.K_NOTE_ALT));
 					fieldMap.put(NOTE_SPEED, noteCursor.getColumnIndex(DbAdapter.K_NOTE_SPEED));
-					//fieldMap.put(NOTE_TYPE, noteCursor.getColumnIndex(DbAdapter.K_NOTE_TYPE));
 					fieldMap.put(NOTE_DETAILS, noteCursor.getColumnIndex(DbAdapter.K_NOTE_DETAILS));
 					fieldMap.put(NOTE_IMGURL, noteCursor.getColumnIndex(DbAdapter.K_NOTE_IMGURL));
 
 					JSONObject note = new JSONObject();
 
-					// Correction for notes not associated with any trip
-					int tripId = noteCursor.getInt(fieldMap.get(NOTE_TRIP_ID));
-					if (tripId == 0) {  // then this is a note not associated with any trip, and
-						tripId = 0;	// the database is expecting a -1 for these notes
-					}
-
-					note.put(NOTE_TRIP_ID, tripId);
+					note.put(NOTE_TRIP_ID, noteCursor.getInt(fieldMap.get(NOTE_TRIP_ID)));
 					note.put(NOTE_RECORDED, df.format(noteCursor.getDouble(fieldMap.get(NOTE_RECORDED))));
 					note.put(NOTE_LAT, noteCursor.getDouble(fieldMap.get(NOTE_LAT)) / 1E6);
 					note.put(NOTE_LGT, noteCursor.getDouble(fieldMap.get(NOTE_LGT)) / 1E6);
@@ -126,17 +118,14 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 					note.put(NOTE_VACC, noteCursor.getDouble(fieldMap.get(NOTE_VACC)));
 					note.put(NOTE_ALT, noteCursor.getDouble(fieldMap.get(NOTE_ALT)));
 					note.put(NOTE_SPEED, noteCursor.getDouble(fieldMap.get(NOTE_SPEED)));
-					//note.put(NOTE_TYPE, noteCursor.getInt(fieldMap.get(NOTE_TYPE)));
 					note.put(NOTE_DETAILS, noteCursor.getString(fieldMap.get(NOTE_DETAILS)));
-					note.put(NOTE_IMGURL, noteCursor.getString(fieldMap.get(NOTE_IMGURL)));
+					note.put(NOTE_IMGURL, noteImageFileName = noteCursor.getString(fieldMap.get(NOTE_IMGURL)));
 
-					if (noteCursor.getString(fieldMap.get(NOTE_IMGURL)).equals("")) {
-						imageDataNull = true;
-					} else {
-						imageDataNull = false;
-						imageData = noteCursor.getBlob(noteCursor
-								.getColumnIndex(DbAdapter.K_NOTE_IMGDATA));
-					}
+					if ((null != noteImageFileName) && (!noteImageFileName.equals("")))
+						imageData = mDb.getNoteImageData(noteId);
+					else
+						imageData = null;
+
 					return note;
 				}
 				catch(Exception ex) {
@@ -266,7 +255,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 					dos.writeBytes(notesep + ContentField("device") + deviceId + "\r\n");
 					dos.writeBytes(notesep + ContentField("noteResponses") + jsonNoteResponses.toString() + "\r\n");
 
-					if (imageDataNull == false) {
+					if (null != imageData) {
 						dos.writeBytes(notesep
 								+ "Content-Disposition: form-data; name=\"file\"; filename=\""
 								+ deviceId + ".jpg\"\r\n"
