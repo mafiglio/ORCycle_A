@@ -879,8 +879,8 @@ public class DbAdapter {
 		float[] latLng = new float[2];
 
 		if (getNoteImageLatLng(noteId, latLng)) {
-			Log.v(MODULE_TAG, (int) latLng[0]);
-			Log.v(MODULE_TAG, , (int) latLng[1]);
+			Log.v(MODULE_TAG, String.valueOf(latLng[0]));
+			Log.v(MODULE_TAG, String.valueOf(latLng[1]));
 		}
 
 

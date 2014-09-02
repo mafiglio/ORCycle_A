@@ -80,7 +80,7 @@ public class TabsConfig extends FragmentActivity implements
 			// Set up the action bar.
 			final ActionBar actionBar = getActionBar();
 			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-			actionBar.setBackgroundDrawable(getResources().getDrawable(R.color.psu_brown));
+			actionBar.setBackgroundDrawable(getResources().getDrawable(R.color.psu_green));
 
 			// Create the adapter that will return a fragment for each of the four
 			// primary sections of the app.
