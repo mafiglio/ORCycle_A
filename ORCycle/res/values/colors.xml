@@ -16,6 +16,7 @@
     <color name="psu_purple">#650360</color>
     <color name="psu_blue">#00759A</color>
     <color name="psu_light_blue">#DFF2F5</color>
-    <color name="text_light_gray">#ff000000</color>
+    <color name="off_white">#F4F3D7</color>
+    <color name="text_light_gray">#ff888888</color>
     <color name="text_white">#FFFFFF</color>
 </resources>

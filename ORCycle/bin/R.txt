@@ -170,7 +170,7 @@ int bool abc_config_actionMenuItemAllCaps 0x7f080005
 int bool abc_config_allowActionMenuItemTextWithIcon 0x7f080004
 int bool abc_config_showMenuShortcutsWhenKeyboardPresent 0x7f080003
 int bool abc_split_action_bar_is_narrow 0x7f080002
-int color abc_search_url_text_holo 0x7f09001f
+int color abc_search_url_text_holo 0x7f090020
 int color abc_search_url_text_normal 0x7f090000
 int color abc_search_url_text_pressed 0x7f090002
 int color abc_search_url_text_selected 0x7f090001
@@ -184,9 +184,10 @@ int color common_signin_btn_light_text_default 0x7f090007
 int color common_signin_btn_light_text_disabled 0x7f090009
 int color common_signin_btn_light_text_focused 0x7f09000a
 int color common_signin_btn_light_text_pressed 0x7f090008
-int color common_signin_btn_text_dark 0x7f090020
-int color common_signin_btn_text_light 0x7f090021
+int color common_signin_btn_text_dark 0x7f090021
+int color common_signin_btn_text_light 0x7f090022
 int color default_color 0x7f09000e
+int color off_white 0x7f09001d
 int color pressed_color 0x7f09000d
 int color psu_accent_green 0x7f090012
 int color psu_blue 0x7f09001b
@@ -200,8 +201,8 @@ int color psu_red 0x7f090015
 int color psu_sienna 0x7f090014
 int color psu_tan 0x7f090018
 int color psu_yellow 0x7f090017
-int color text_light_gray 0x7f09001d
-int color text_white 0x7f09001e
+int color text_light_gray 0x7f09001e
+int color text_white 0x7f09001f
 int color user_button_background 0x7f09000f
 int color user_button_text 0x7f090010
 int dimen abc_action_bar_default_height 0x7f0a0002
