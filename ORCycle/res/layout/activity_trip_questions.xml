@@ -63,7 +63,6 @@
 		            android:layout_alignParentLeft="true"
 		            android:layout_alignParentRight="true"
 		            android:layout_below="@id/tvTripFrequency"
-		            android:layout_marginTop="20dp"
 		            android:entries="@array/qa_19_routeFrequency" />
             
         	</RelativeLayout>

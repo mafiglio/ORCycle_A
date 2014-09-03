@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">ORcycle</string>
-    <string name="title_section4">Settings</string>
+    <string name="title_section4">More</string>
     <string name="title_section3">Safety-Markers</string>
     <string name="title_section2">Trips</string>
     <string name="title_section1">Record</string>
