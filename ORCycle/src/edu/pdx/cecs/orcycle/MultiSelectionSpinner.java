@@ -22,14 +22,14 @@ public class MultiSelectionSpinner extends Spinner implements
 		OnMultiChoiceClickListener {
 
 	private static final String MODULE_TAG = "MultiSelectionSpinner";
-	private static final String DEFAULT_OTHER_TEXT = "Other...";
+	private static final String DEFAULT_OTHER_CAPTION = "Other...";
 
 	private String[] _items = null;
 	private boolean[] mSelection = null;
 	private String title = null;
 	private int indexOfOther = -1;
-	private String otherText = DEFAULT_OTHER_TEXT;
-	private EditText editText = null;
+	private String otherText = "";
+	private EditText etOther = null;
 	private AlertDialog alertDialog = null;
 
 	private final ArrayAdapter<String> simple_adapter;
@@ -55,11 +55,11 @@ public class MultiSelectionSpinner extends Spinner implements
 		if (mSelection != null && index < mSelection.length) {
 			mSelection[index] = isChecked;
 
-			if ((indexOfOther >= 0) && (indexOfOther == index)) {
-				if (isChecked) {
+			if ((indexOfOther >= 0) && (indexOfOther == index)) { // then other checkbox was clicked
+				if (isChecked) { // then show dialog to get other text value
 					performGetOtherText();
 				}
-				else {
+				else { // other was deselected so clear value
 					setOtherText(null);
 				}
 			}
@@ -76,20 +76,21 @@ public class MultiSelectionSpinner extends Spinner implements
 
 	public void setOtherText(String text) {
 
-		if (null == text)
-			otherText = DEFAULT_OTHER_TEXT;
+		// Set and trim value of other
+		if (null == text) {
+			otherText = "";
+		}
 		else {
-			text = text.trim();
-			if (text.equals("")) {
-				otherText = DEFAULT_OTHER_TEXT;
-			}
-			else {
-				otherText = "Other( \"" +  text + "\" )";
-			}
+			otherText = text.trim();
 		}
 
 		// change the text in the item array
-		_items[indexOfOther] = otherText;
+		if (otherText.equals("")) {
+			_items[indexOfOther] = DEFAULT_OTHER_CAPTION;
+		}
+		else {
+			_items[indexOfOther] = "Other( \"" +  otherText + "\" )";
+		}
 
 		//
 		simple_adapter.clear();
@@ -110,11 +111,11 @@ public class MultiSelectionSpinner extends Spinner implements
 	private void performGetOtherText() {
 
 		// Create an EditText view to get user input
-		editText = new EditText(getContext());
+		etOther = new EditText(getContext());
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		builder.setTitle("Specify other:");
-		builder.setView(editText); // Here the variable alert is the instance of
+		builder.setView(etOther); // Here the variable alert is the instance of
 		builder.setPositiveButton("OK", new OtherPositiveButton_OnClickListener());
 		builder.setNegativeButton("Cancel", new OtherNegativeButton_OnClickListener());
 		builder.show();
@@ -141,7 +142,7 @@ public class MultiSelectionSpinner extends Spinner implements
 		@Override
 		public void onClick(DialogInterface dialog, int id) {
 			try {
-				setOtherText(editText.getEditableText().toString());
+				setOtherText(etOther.getEditableText().toString());
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
