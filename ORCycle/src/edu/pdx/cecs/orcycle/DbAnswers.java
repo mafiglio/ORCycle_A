@@ -31,6 +31,8 @@ public final class DbAnswers {
 	public static final int[] rideConflict            = { 139, 140, 141, 142 };              // question_id = 26
 	public static final int[] routeStressors          = { 150, 143, 144, 145, 146, 147, 148, // question_id = 27
 	                                                      149, 150 };
+	public static final int passengersAlone = 129;
+	public static final int bikeAccessoriesNone = 135;
 
 	public static final int[] noteSeverity = { 151, 152, 153, 154, 155};                // question_id = 28
 	public static final int[] noteConflict = { 156, 157, 158, 159, 160, 161, 162, 163}; // question_id = 29

@@ -89,10 +89,12 @@ public class TripQuestionsActivity extends Activity {
 
 			passengers = (MultiSelectionSpinner) findViewById(R.id.spnrPassengers);
 			passengers.setItems(getResources().getStringArray(R.array.qa_24_ridePassengers));
+			passengers.setOverrideIndex(DbAnswers.findIndex(DbAnswers.passengers, DbAnswers.passengersAlone));
 			passengers.setOnItemSelectedListener(answer_OnClickListener);
 
 			bikeAccessories = (MultiSelectionSpinner) findViewById(R.id.spnrBikeAccessories);
 			bikeAccessories.setItems(getResources().getStringArray(R.array.qa_25_bikeAccessories));
+			bikeAccessories.setOverrideIndex(DbAnswers.findIndex(DbAnswers.bikeAccessories, DbAnswers.bikeAccessoriesNone));
 			bikeAccessories.setOnItemSelectedListener(answer_OnClickListener);
 
 			rideConflict = (Spinner) findViewById(R.id.spnrRideConflict);
