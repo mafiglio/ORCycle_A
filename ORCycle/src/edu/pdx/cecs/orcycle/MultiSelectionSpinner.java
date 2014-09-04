@@ -26,8 +26,10 @@ public class MultiSelectionSpinner extends Spinner implements
 
 	private String[] _items = null;
 	private boolean[] mSelection = null;
+	private boolean[] prevSelections = null;
 	private String title = null;
 	private int indexOfOther = -1;
+	private int indexOfOverride = -1;
 	private String otherText = "";
 	private EditText etOther = null;
 	private AlertDialog alertDialog = null;
@@ -55,6 +57,17 @@ public class MultiSelectionSpinner extends Spinner implements
 		if (mSelection != null && index < mSelection.length) {
 			mSelection[index] = isChecked;
 
+			if (indexOfOverride >= 0) { // then other checkbox was clicked
+				if (isChecked) {
+					if (index == indexOfOverride) { // then show dialog to get other text value
+						performResetAllOthers();
+					}
+					else {
+						performResetOverride();
+					}
+				}
+			}
+
 			if ((indexOfOther >= 0) && (indexOfOther == index)) { // then other checkbox was clicked
 				if (isChecked) { // then show dialog to get other text value
 					performGetOtherText();
@@ -72,6 +85,50 @@ public class MultiSelectionSpinner extends Spinner implements
 			throw new IllegalArgumentException(
 					"Argument 'index' is out of bounds.");
 		}
+	}
+
+	private void performResetAllOthers() {
+		for (int index = 0; index < mSelection.length; ++index) {
+			if (indexOfOverride != index) {
+				mSelection[index] = false;
+			}
+		}
+		simple_adapter.clear();
+		String selectedItems = buildSelectedItemString();
+		simple_adapter.add(selectedItems);
+
+		if (null != alertDialog) {
+			// get a reference to the ListView widget in the dialog
+			ListView list = alertDialog.getListView();
+
+			for (int index = 0; index < mSelection.length; ++index) {
+				list.setItemChecked(index, mSelection[index]);
+			}
+		}
+	}
+
+	private void performResetOverride() {
+
+		mSelection[indexOfOverride] = false;
+
+		simple_adapter.clear();
+		simple_adapter.add(buildSelectedItemString());
+
+		if (null != alertDialog) {
+			// get a reference to the ListView widget in the dialog
+			ListView list = alertDialog.getListView();
+
+			list.setItemChecked(indexOfOverride, false);
+		}
+	}
+
+	private void performResetChanges() {
+
+		for (int index = 0; index < mSelection.length; ++index) {
+			mSelection[index] = prevSelections[index];
+		}
+		simple_adapter.clear();
+		simple_adapter.add(buildSelectedItemString());
 	}
 
 	public void setOtherText(String text) {
@@ -133,7 +190,7 @@ public class MultiSelectionSpinner extends Spinner implements
 			DialogInterface.OnClickListener {
 		@Override
 		public void onClick(DialogInterface dialog, int id) {
-			// TODO:
+			performResetChanges();
 		}
 	}
 
@@ -161,6 +218,12 @@ public class MultiSelectionSpinner extends Spinner implements
 	@Override
 	public boolean performClick() {
 
+		prevSelections = new boolean[mSelection.length];
+
+		for (int i = 0; i < mSelection.length; ++i) {
+			prevSelections[i] = mSelection[i];
+		}
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		builder.setMultiChoiceItems(_items, mSelection, this);
 		builder.setTitle(title);
@@ -185,6 +248,12 @@ public class MultiSelectionSpinner extends Spinner implements
 		if (value < 0)
 			value = -1;
 		indexOfOther = value;
+	}
+
+	public void setOverrideIndex(int value) {
+		if (value < 0)
+			value = -1;
+		indexOfOverride = value;
 	}
 
 	@Override
