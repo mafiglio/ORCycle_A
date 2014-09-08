@@ -424,39 +424,16 @@ public class NoteDetailActivity extends Activity {
 
 	private float[] getLatLng(String fileName) {
 
-		String latitude;
-		String latitudeRef;
-		String longitude;
-		String longitudeRef;
-		String altitude;
-		String altitudeRef;
-
 		float[] latLng = new float[2];
 
 		try {
 			File file = new File(fileName);
 			if (file.exists()) {
 				ExifInterface exif = new ExifInterface(fileName);
-				//ExifInterface exif = new ExifInterface("&^%^%$%^)_+++----");
-		    	Log.v(MODULE_TAG, "Filename: " + fileName);
 
 				if (exif.getLatLong(latLng)) {
-			    	Log.v(MODULE_TAG, "Latitude: " + latLng[0]);
-			    	Log.v(MODULE_TAG, "Longitude: " + latLng[1]);
 			    	return latLng;
 				}
-				if (null != (latitude = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE)))
-			    	Log.v(MODULE_TAG, "Latitude: " + latitude);
-				if (null != (latitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF)))
-			    	Log.v(MODULE_TAG, "latitudeRef: " + latitudeRef);
-				if (null != (longitude = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)))
-			    	Log.v(MODULE_TAG, "longitude: " + longitude);
-				if (null != (longitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF)))
-			    	Log.v(MODULE_TAG, "longitudeRef: " + longitudeRef);
-				if (null != (altitude = exif.getAttribute(ExifInterface.TAG_GPS_ALTITUDE)))
-			    	Log.v(MODULE_TAG, "altitude: " + altitude);
-				if (null != (altitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF)))
-			    	Log.v(MODULE_TAG, "altitudeRef: " + altitudeRef);
 			}
 		}
 		catch(IOException ex) {

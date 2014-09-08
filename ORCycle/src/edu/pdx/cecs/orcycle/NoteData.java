@@ -179,7 +179,7 @@ public class NoteData {
 	public void updateNoteLatLng(float latitude, float longitude) {
 		mDb.open();
 		try {
-			mDb.updateNote(noteId, (int) latitude, (int) longitude, 0, 0, 0);
+			mDb.updateNote(noteId, (int) (latitude * 1E6), (int) (longitude * 1E6), 0, 0, 0);
 		}
 		finally {
 			mDb.close();
