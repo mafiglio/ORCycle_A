@@ -76,6 +76,7 @@ public class TripMapActivity extends Activity {
 	private static final int EXTRA_TRIP_SOURCE_UNDEFINED = -1;
 	public static final int EXTRA_TRIP_SOURCE_MAIN_INPUT = 0;
 	public static final int EXTRA_TRIP_SOURCE_SAVED_TRIPS = 1;
+	public static final int EXTRA_TRIP_SOURCE_TRIP_QUESTIONS = 2;
 
 	GoogleMap mapView;
 	ArrayList<CyclePoint> gpspoints;
@@ -579,7 +580,6 @@ public class TripMapActivity extends Activity {
 					polyline.remove();
 				}
 
-				//onBackPressed();
 				transitionToTabsConfigActivity();
 				return true;
 
@@ -750,10 +750,11 @@ public class TripMapActivity extends Activity {
 
 		Intent intent = new Intent(TripMapActivity.this, TabsConfig.class);
 
-		if (tripSource == EXTRA_TRIP_SOURCE_MAIN_INPUT) {
+		if ((tripSource == EXTRA_TRIP_SOURCE_MAIN_INPUT) ||
+			(tripSource == EXTRA_TRIP_SOURCE_TRIP_QUESTIONS)) {
 			intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
 		}
-		else if (tripSource == EXTRA_TRIP_SOURCE_SAVED_TRIPS){
+		else if (tripSource == EXTRA_TRIP_SOURCE_SAVED_TRIPS) {
 			intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_SAVED_TRIPS);
 		}
 		else {
@@ -762,25 +763,6 @@ public class TripMapActivity extends Activity {
 		startActivity(intent);
 		finish();
 		overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
-	}
-
-	private void transitionToNoteTypeActivity(long noteId) {
-
-		Intent intent = new Intent(this, NoteTypeActivity.class);
-
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_ID, noteId);
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_TYPE, NoteTypeActivity.EXTRA_NOTE_TYPE_UNDEFINED);
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_SOURCE, NoteTypeActivity.EXTRA_NOTE_SOURCE_TRIP_MAP);
-
-		// the NoteType activity needs these when the back button
-		// is pressed and we have to restart this activity
-		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_ID, tripId);
-		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_SOURCE, tripSource);
-
-		// Initiate transition to NoteTypeActivity
-		startActivity(intent);
-		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		finish();
 	}
 
 	private void transitionToNoteQuestionsActivity(NoteData note, long tripId) {
@@ -809,5 +791,4 @@ public class TripMapActivity extends Activity {
 		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 		finish();
 	}
-
 }
