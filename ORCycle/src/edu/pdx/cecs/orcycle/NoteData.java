@@ -175,6 +175,17 @@ public class NoteData {
 		return rtn;
 	}
 
+
+	public void updateNoteLatLng(float latitude, float longitude) {
+		mDb.open();
+		try {
+			mDb.updateNote(noteId, (int) latitude, (int) longitude, 0, 0, 0);
+		}
+		finally {
+			mDb.close();
+		}
+	}
+
 	public void updateNote(int noteType, int noteSeverity, String noteFancyStart,
 			String noteDetails, byte[] image) {
 		mDb.open();
