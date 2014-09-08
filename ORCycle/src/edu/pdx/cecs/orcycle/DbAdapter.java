@@ -44,7 +44,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.media.ExifInterface;
 import android.util.Log;
 
 /**
@@ -323,6 +322,10 @@ public class DbAdapter {
             if (!imagesDir.mkdirs())
                 throw new Exception("Unable to create directory for storing note images");
         return dirName;
+	}
+
+	public String getNoteImageDirectory() {
+		return noteImagesDirName;
 	}
 
 	/**
@@ -779,13 +782,6 @@ public class DbAdapter {
 		else {
 			contentValues.put(K_NOTE_IMGURL, getNoteImageFileName(noteId));
 			saveToFile(noteId, imageBytes);
-
-			float[] latLng = new float[2];
-
-			if (getNoteImageLatLng(noteId, latLng)) {
-				contentValues.put(K_NOTE_LAT, (int) latLng[0]);
-				contentValues.put(K_NOTE_LGT, (int) latLng[1]);
-			}
 		}
 
 		int numRows = mDb.update(DATA_TABLE_NOTES, contentValues, K_NOTE_ROWID + "=" + noteId, null);
@@ -795,42 +791,6 @@ public class DbAdapter {
 
 	public String getNoteImageFileName(long noteId) {
 		return noteImagesDirName + "/note_image_" + noteId + ".jpg";
-	}
-
-	private boolean getNoteImageLatLng(long noteId, float[] latLng) {
-
-		String latitude;
-		String latitudeRef;
-		String longitude;
-		String longitudeRef;
-
-		String fileName = getNoteImageFileName(noteId);
-		try {
-			File file = new File(fileName);
-			if (file.exists()) {
-				//ExifInterface exif = new ExifInterface(fileName);
-				ExifInterface exif = new ExifInterface("&^%^%$%^)_+++----");
-		    	Log.v(MODULE_TAG, "Filename: " + fileName);
-
-				//if (exif.getLatLong(latLng)) {
-			    //	Log.v(MODULE_TAG, "Latitude: " + latLng[0]);
-			    //	Log.v(MODULE_TAG, "Longitude: " + latLng[1]);
-			    //	return true;
-				//}
-				if (null != (latitude = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE)))
-			    	Log.v(MODULE_TAG, "Latitude: " + latitude);
-				if (null != (latitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF)))
-			    	Log.v(MODULE_TAG, "latitudeRef: " + latitudeRef);
-				if (null != (longitude = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)))
-			    	Log.v(MODULE_TAG, "longitude: " + longitude);
-				if (null != (longitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF)))
-			    	Log.v(MODULE_TAG, "longitudeRef: " + longitudeRef);
-			}
-		}
-		catch(IOException ex) {
-	    	Log.e(MODULE_TAG, ex.getMessage());
-		}
-		return false;
 	}
 
 	private void saveToFile(long noteId, byte[] imageBytes) {
@@ -875,14 +835,6 @@ public class DbAdapter {
 	}
 
 	public byte[] getNoteImageData(long noteId) {
-
-		float[] latLng = new float[2];
-
-		if (getNoteImageLatLng(noteId, latLng)) {
-			Log.v(MODULE_TAG, String.valueOf(latLng[0]));
-			Log.v(MODULE_TAG, String.valueOf(latLng[1]));
-		}
-
 
 		String fileName = getNoteImageFileName(noteId);
 		File file = new File(fileName);

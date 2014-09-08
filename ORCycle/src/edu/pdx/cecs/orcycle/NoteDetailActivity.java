@@ -3,6 +3,7 @@ package edu.pdx.cecs.orcycle;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -205,12 +206,6 @@ public class NoteDetailActivity extends Activity {
 				else if (requestCode == IMAGE_REQUEST) {
 					photo = null;
 					uri = data.getData();
-
-
-					getNoteImageLatLng(uri.toString());
-
-
-
 					imageView.setImageURI(uri);
 				}
 			}
@@ -219,47 +214,6 @@ public class NoteDetailActivity extends Activity {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
-
-	private boolean getNoteImageLatLng(String fileName) {
-
-		String latitude;
-		String latitudeRef;
-		String longitude;
-		String longitudeRef;
-
-		try {
-			File file = new File(fileName);
-			if (file.exists()) {
-				//ExifInterface exif = new ExifInterface(fileName);
-				ExifInterface exif = new ExifInterface("&^%^%$%^)_+++----");
-		    	Log.v(MODULE_TAG, "Filename: " + fileName);
-
-				//if (exif.getLatLong(latLng)) {
-			    //	Log.v(MODULE_TAG, "Latitude: " + latLng[0]);
-			    //	Log.v(MODULE_TAG, "Longitude: " + latLng[1]);
-			    //	return true;
-				//}
-				if (null != (latitude = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE)))
-			    	Log.v(MODULE_TAG, "Latitude: " + latitude);
-				if (null != (latitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF)))
-			    	Log.v(MODULE_TAG, "latitudeRef: " + latitudeRef);
-				if (null != (longitude = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)))
-			    	Log.v(MODULE_TAG, "longitude: " + longitude);
-				if (null != (longitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF)))
-			    	Log.v(MODULE_TAG, "longitudeRef: " + longitudeRef);
-			}
-		}
-		catch(IOException ex) {
-	    	Log.e(MODULE_TAG, ex.getMessage());
-		}
-		return false;
-	}
-
-
-
-
-
-
 
 	public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
 
@@ -296,11 +250,14 @@ public class NoteDetailActivity extends Activity {
 
 		// Start time format displayed in note list
 		String fancyStartTime = (new SimpleDateFormat("MMMM d, y  HH:mm a")).format(note.startTime);
+		float[] latLng = null;
 
 		if (photo != null) {
+			latLng = getLatLng(photo);
 			noteImage = getBitmapAsByteArray(photo);
 		}
 		else if (uri != null) {
+			latLng = getLatLng(this, uri);
 			noteImage = getBitmapAsByteArray(this, uri);
 		}
 		else {
@@ -308,13 +265,12 @@ public class NoteDetailActivity extends Activity {
 		}
 
 		// store note details in local database
+		if (null != latLng) {
+			note.updateNoteLatLng(latLng[0], latLng[1]);
+		}
 		note.updateNote(noteType, noteSeverity, fancyStartTime, noteDetailsToUpload, noteImage);
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 
-		// Now create the MainInput Activity so BACK btn works properly
-		// Should not use this.
-
-		// TODO: note uploader
 		if (note.noteStatus < NoteData.STATUS_SENT) {
 			// And upload to the cloud database, too! W00t W00t!
 			NoteUploader uploader = new NoteUploader(NoteDetailActivity.this);
@@ -328,7 +284,9 @@ public class NoteDetailActivity extends Activity {
 		}
 	}
 
-	/* Creates the menu items */
+	/**
+	 * Creates the menu items
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu items for use in the action bar
@@ -337,7 +295,9 @@ public class NoteDetailActivity extends Activity {
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	/* Handles item selections */
+	/**
+	 * Handles item selections
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
@@ -368,35 +328,123 @@ public class NoteDetailActivity extends Activity {
 		}
 	}
 
-	// 2.0 and above
+	/**
+	 * 2.0 and above
+	 */
 	@Override
 	public void onBackPressed() {
 		// Go back to NoteTypeActivity.
 		transitionToNoteQuestionsActivity();
 	}
 
+	// *********************************************************************************
+	// *                         Image helper functions
+	// *********************************************************************************
+
 	/**
-	 * Sets up a transition to the NoteTypeActivity.
+	 * Retrieves Exif metadata from an image file
+	 * @param uri
+	 * @return
 	 */
-	private void transitionToNoteTypeActivity() {
+	private float[] getLatLng(Context context, Uri uri) {
 
-		// Get intent for transition to NoteTypeActivity.
-		Intent intent = new Intent(this, NoteTypeActivity.class);
+		InputStream inStream = null;
+		String fileName;
 
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_ID, noteId);
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_TYPE, NoteTypeActivity.EXTRA_NOTE_TYPE_UNDEFINED);
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_SOURCE, NoteTypeActivity.EXTRA_NOTE_SOURCE_TRIP_MAP);
-
-		// the NoteType activity needs these when the back button
-		// is pressed and we have to restart this activity
-		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_ID, tripId);
-		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_SOURCE, tripSource);
-
-		// Initiate transition to NoteTypeActivity
-		startActivity(intent);
-		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-		finish();
+		try {
+	    	if (null != (inStream = context.getContentResolver().openInputStream(uri))) {
+	    		if (null != (fileName = downloadContent(context, inStream))) {
+	    			return getLatLng(fileName);
+	    		}
+	    	}
+	    }
+		catch(FileNotFoundException ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+			return null;
+		}
+		finally {
+			if (null != inStream) {
+				try {
+					inStream.close();
+			    }
+				catch(IOException ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+		}
+	    	return null;
 	}
+
+	private String downloadContent(Context context, InputStream input) {
+
+		byte[] buffer = new byte[4096];
+		int bytesRead;
+		FileOutputStream fos = null;
+
+		DbAdapter dbAdapter = new DbAdapter(this);
+		String noteImagesDirName = dbAdapter.getNoteImageDirectory();
+		String localFileName = noteImagesDirName + "/tmp.jpg";
+
+		File file = new File(localFileName);
+		if (file.exists()) {
+			file.delete();
+		}
+
+		try {
+			fos = new FileOutputStream(localFileName);
+			while ((bytesRead = input.read(buffer, 0, buffer.length)) > -1) {
+				fos.write(buffer, 0, bytesRead);
+			}
+			return localFileName;
+		}
+		catch(IOException ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+			return null;
+		}
+		finally {
+			if (null != fos) {
+				try {
+					fos.close();
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+		}
+	}
+
+	/**
+	 * Retrieves Exif metadata from a photo bitmap
+	 * @param photo
+	 * @return
+	 */
+	private float[] getLatLng(Bitmap photo) {
+		return null;
+	}
+
+	private float[] getLatLng(String fileName) {
+
+		float[] latLng = new float[2];
+
+		try {
+			File file = new File(fileName);
+			if (file.exists()) {
+				ExifInterface exif = new ExifInterface(fileName);
+
+				if (exif.getLatLong(latLng)) {
+			    	return latLng;
+				}
+			}
+		}
+		catch(IOException ex) {
+	    	Log.e(MODULE_TAG, ex.getMessage());
+		}
+		return null;
+	}
+
+	// *********************************************************************************
+	// *                    Transitioning to other activities
+	// *********************************************************************************
 
 	private void transitionToNoteQuestionsActivity() {
 
@@ -422,15 +470,6 @@ public class NoteDetailActivity extends Activity {
 		startActivity(intent);
 		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 		finish();
-	}
-
-	private void transitionToNoteMapActivity() {
-		// Intent to go to Note map
-		Intent intent = new Intent(this, NoteMapActivity.class);
-		intent.putExtra(NoteMapActivity.EXTRA_NOTE_ID, noteId);
-		this.startActivity(intent);
-		this.finish();
-		this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}
 
 	private void transitionToTabsConfigActivity() {
