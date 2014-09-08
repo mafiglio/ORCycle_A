@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 public class TripQuestionsActivity extends Activity {
@@ -33,6 +34,7 @@ public class TripQuestionsActivity extends Activity {
 	private Spinner tripComfort;
 	private Spinner routeSafety;
 	private Spinner rideConflict;
+	private EditText tripComment;
 
 	public static final String EXTRA_TRIP_ID = "TRIP_ID";
 
@@ -47,6 +49,7 @@ public class TripQuestionsActivity extends Activity {
 	private static final int PREF_BIKE_ACCESSORIES = 7;
 	private static final int PREF_RIDE_CONFLICT    = 8;
 	private static final int PREF_ROUTE_STRESSORS  = 9;
+	private static final int PREF_TRIP_COMMENT     = 10;
 
 	private final Answer_OnClickListener answer_OnClickListener = new Answer_OnClickListener();
 
@@ -103,6 +106,8 @@ public class TripQuestionsActivity extends Activity {
 			routeStressors = (MultiSelectionSpinner) findViewById(R.id.spnrRouteStressor);
 			routeStressors.setItems(getResources().getStringArray(R.array.qa_27_routeStressors));
 			routeStressors.setOnItemSelectedListener(answer_OnClickListener);
+
+			tripComment = (EditText) findViewById(R.id.editTextTripComment);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -161,7 +166,7 @@ public class TripQuestionsActivity extends Activity {
 
 				if (MandatoryQuestionsAnswered()) {
 					submitAnswers();
-					transitionToTripDetailActivity();
+					querySafetyMarker();
 				}
 				else {
 					AlertUserMandatoryAnswers();
@@ -207,7 +212,8 @@ public class TripQuestionsActivity extends Activity {
 	// *                              Button Handlers
 	// *********************************************************************************
 
-    /**
+
+	/**
      * Class: ButtonStart_OnClickListener
      *
      * Description: Callback to be invoked when startButton button is clicked
@@ -233,23 +239,6 @@ public class TripQuestionsActivity extends Activity {
 		}
 	}
 
-	private boolean questionAnswered() {
-
-		if ((tripFrequency.getSelectedItemPosition()      > 0) ||
-			(tripPurpose.getSelectedItemPosition()        > 0) ||
-			(routePrefs.getSelectedIndicies().size()      > 0) ||
-			(tripComfort.getSelectedItemPosition()        > 0) ||
-			(routeSafety.getSelectedItemPosition()        > 0) ||
-			(passengers.getSelectedIndicies().size()      > 0) ||
-			(bikeAccessories.getSelectedIndicies().size() > 0) ||
-			(rideConflict.getSelectedItemPosition()       > 0) ||
-			(routeStressors.getSelectedIndicies().size()  > 0)) {
-			return true;
-		}
-
-		return false;
-	}
-
 	// *********************************************************************************
 	// *                      Saving & Recalling UI Settings
 	// *********************************************************************************
@@ -273,6 +262,7 @@ public class TripQuestionsActivity extends Activity {
 				saveSpinnerPosition(editor, bikeAccessories, PREF_BIKE_ACCESSORIES );
 				saveSpinnerPosition(editor, rideConflict,    PREF_RIDE_CONFLICT    );
 				saveSpinnerPosition(editor, routeStressors,  PREF_ROUTE_STRESSORS  );
+				saveEditText(editor, tripComment, PREF_TRIP_COMMENT);
 				editor.commit();
 			}
 		}
@@ -284,6 +274,10 @@ public class TripQuestionsActivity extends Activity {
 
 	private void saveSpinnerPosition(SharedPreferences.Editor editor, MultiSelectionSpinner spinner, int key) {
 		editor.putString("" + key, spinner.getSelectedIndicesAsString());
+	}
+
+	private void saveEditText(SharedPreferences.Editor editor, EditText editText, int key) {
+		editor.putString("" + key, editText.getEditableText().toString());
 	}
 
 	/**
@@ -309,6 +303,7 @@ public class TripQuestionsActivity extends Activity {
 							case PREF_BIKE_ACCESSORIES: setSpinnerSetting(bikeAccessories, entry); break;
 							case PREF_RIDE_CONFLICT:    setSpinnerSetting(rideConflict,    entry); break;
 							case PREF_ROUTE_STRESSORS:  setSpinnerSetting(routeStressors,  entry); break;
+							case PREF_TRIP_COMMENT:     setEditText(tripComment,           entry); break;
 							}
 						}
 						catch(Exception ex) {
@@ -366,6 +361,10 @@ public class TripQuestionsActivity extends Activity {
 		spinner.setSelection(selections);
 	}
 
+	private void setEditText(EditText editText, Entry<String, ?> p) {
+		editText.setText((String) p.getValue());
+	}
+
 	// *********************************************************************************
 	// *                         Submitting Answers
 	// *********************************************************************************
@@ -375,14 +374,16 @@ public class TripQuestionsActivity extends Activity {
 	 */
 	private void submitAnswers() {
 
-		DbAdapter dbAdapter = new DbAdapter(this);
-		dbAdapter.open();
+		DbAdapter dbAdapter = null;
 
-		// Remove any previous answers from the local database
-		dbAdapter.deleteAnswers(tripId);
-
-		// Enter the user selections into the local database
 		try {
+			dbAdapter = new DbAdapter(this);
+			dbAdapter.open();
+
+			// Remove any previous answers from the local database
+			dbAdapter.deleteAnswers(tripId);
+
+			// Enter the user selections into the local database
 			// Update answer table
 			submitSpinnerSelection( dbAdapter, tripFrequency,    DbQuestions.TRIP_FREQUENCY,   DbAnswers.tripFreq        );
 			submitSpinnerSelection( dbAdapter, tripPurpose,      DbQuestions.TRIP_PURPOSE,     DbAnswers.tripPurpose     );
@@ -393,14 +394,47 @@ public class TripQuestionsActivity extends Activity {
 			submitSpinnerSelection( dbAdapter, bikeAccessories,  DbQuestions.BIKE_ACCESSORIES, DbAnswers.bikeAccessories );
 			submitSpinnerSelection( dbAdapter, rideConflict,     DbQuestions.RIDE_CONFLICT,    DbAnswers.rideConflict    );
 			submitSpinnerSelection( dbAdapter, routeStressors,   DbQuestions.ROUTE_STRESSORS,  DbAnswers.routeStressors  );
+
 			// Update trip table
 			updateTripPurpose(dbAdapter, tripPurpose, DbAnswers.tripPurpose);
+
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 		finally {
-			dbAdapter.close();
+			if (null != dbAdapter)
+				dbAdapter.close();
+		}
+
+		// get reference to recording service
+		IRecordService recordingService = MyApplication.getInstance().getRecordingService();
+		// finish recording process
+		recordingService.finishRecording();
+
+		// -------------------------------------
+		// gather final trip data
+		// -------------------------------------
+
+		TripData tripData = TripData.fetchTrip(this, tripId);
+
+		// Save the trip details to the phone database. W00t!
+		tripData.updateTrip(tripData.getStartTime(), tripData.getEndTime(),
+				tripData.distance, tripComment.getEditableText().toString());
+		tripData.updateTripStatus(TripData.STATUS_COMPLETE);
+
+		// ----------------
+		// Upload trip data
+		// ----------------
+
+		TripUploader uploader = new TripUploader(this);
+		uploader.execute(tripData.tripid);
+
+		try {
+			recordingService.reset();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
 
@@ -448,16 +482,63 @@ public class TripQuestionsActivity extends Activity {
 	}
 
 	// *********************************************************************************
-	// *                    Transitioning to other activities
+	// *                         querySafetyMarker Dialog
 	// *********************************************************************************
 
-	private void transitionToTripDetailActivity() {
-		Intent intent = new Intent(TripQuestionsActivity.this, TripDetailActivity.class);
-		intent.putExtra(TripDetailActivity.EXTRA_TRIP_ID, tripId);
-		startActivity(intent);
-		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		TripQuestionsActivity.this.finish();
+	/**
+	 * Build dialog telling user that they can add safety markers to the trip
+	 */
+	private void querySafetyMarker() {
+
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		builder.setMessage(getResources().getString(R.string.tqi_qsm_dialog_message));
+		builder.setCancelable(false);
+		builder.setPositiveButton(getResources().getString(R.string.tqi_qsm_dialog_ok),
+				new QuerySafetyMarker_OkListener());
+		builder.setNegativeButton(getResources().getString(R.string.tqi_qsm_dialog_later),
+				new QuerySafetyMarker_CancelListener());
+		final AlertDialog alert = builder.create();
+		alert.show();
 	}
+
+	class QuerySafetyMarker_OkListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			transitionToTripMapActivity();
+		}
+	}
+
+	class QuerySafetyMarker_CancelListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			dialog.cancel();
+			AlertUserAboutLater();
+		}
+	}
+
+	// *********************************************************************************
+	// *                       AlertUserAboutLater Dialog
+	// *********************************************************************************
+
+	private void AlertUserAboutLater() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(getResources().getString(R.string.tqa_alert_user_about_later))
+				.setCancelable(true)
+				.setPositiveButton("OK", new AlertUserAboutLater_OkListener());
+		final AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+    private final class AlertUserAboutLater_OkListener implements
+			DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			dialog.cancel();
+			transitionToTabsConfigActivity();
+		}
+	}
+
+    // *********************************************************************************
+	// *                    Transitioning to other activities
+	// *********************************************************************************
 
 	private void transitionToPreviousActivity() {
 		Intent intent = new Intent(TripQuestionsActivity.this, TabsConfig.class);
@@ -467,5 +548,25 @@ public class TripQuestionsActivity extends Activity {
 		startActivity(intent);
 		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 		TripQuestionsActivity.this.finish();
+	}
+
+	private void transitionToTripMapActivity() {
+		Intent intent = new Intent(this, TripMapActivity.class);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(TripMapActivity.EXTRA_IS_NEW_TRIP, true);
+		intent.putExtra(TripMapActivity.EXTRA_TRIP_SOURCE, TripMapActivity.EXTRA_TRIP_SOURCE_TRIP_QUESTIONS);
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		finish();
+	}
+
+	private void transitionToTabsConfigActivity() {
+
+		Intent intent = new Intent(this, TabsConfig.class);
+
+		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
+		startActivity(intent);
+		finish();
+		overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
 	}
 }

@@ -23,7 +23,7 @@
     <string name="title_activity_rate_segment">Rate Segment</string>
     <string name="title_activity_rate_segment_detail">Rating Details</string>
     <string name="title_activity_user_info">Tell us about yourself…</string>
-    <string name="post_url">http://orcycle.cecs.pdx.edu/post/</string>
+    <string name="post_url">http://orcycle2.cecs.pdx.edu/post/</string>
     <string name="btn_lbl_start">Start</string>
     <string name="btn_lbl_pause">Pause</string>
     <string name="btn_lbl_resume">Resume</string>
@@ -37,6 +37,11 @@
     <string name="fmi_qup_dialog_ok">OK</string>
     <string name="fmi_qup_dialog_later">Later</string>
 
+    <string name="tqi_qsm_dialog_message">“You can now mark locations with safety issues&#8230;</string>
+    <string name="tqi_qsm_dialog_ok">OK</string>
+    <string name="tqi_qsm_dialog_later">Later</string>
+    <string name="tqa_alert_user_about_later">You can later go to \"Trips\", select a trip and mark a safety issue</string>
+    
     <string name="ami_elapsed_time">Elapsed time</string>
     <string name="ami_initial_elapsed_time">00:00:00</string>
     <string name="ami_initial_miles">0.0 miles</string>
@@ -355,7 +360,9 @@
         <item>Other…</item>
         </string-array>
 
-	<!-- ********************************************************* -->
+    <string name="tq_comment">Additional Details:</string>
+	
+    <!-- ********************************************************* -->
     <!-- *                      Note Questions                   * -->
     <!-- ********************************************************* -->
 

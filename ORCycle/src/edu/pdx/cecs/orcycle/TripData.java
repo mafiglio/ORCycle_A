@@ -30,7 +30,9 @@
 
 package edu.pdx.cecs.orcycle;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -384,10 +386,32 @@ public class TripData {
 		mDb.updateTripPurpose(tripid, purpose);
 		mDb.close();
 	}
-	public void updateTrip(String fancyStart, String fancyInfo, String notes) {
+
+	public void updateTrip(Double startTime, Double endTime, float distance, String noteComment) {
+
+		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  h:mm a");
+		String fancyStartTime = sdfStart.format(startTime);
+		Log.v(MODULE_TAG, "Start: " + fancyStartTime);
+
+		SimpleDateFormat sdfDuration = new SimpleDateFormat("HH:mm:ss");
+		sdfDuration.setTimeZone(TimeZone.getTimeZone("UTC"));
+		String duration = sdfDuration.format(endTime - startTime);
+
+		String fancyEndInfo = String.format("%1.1f miles, %s", (0.0006212f * distance), duration);
+		if ((null != noteComment) && (!noteComment.equals(""))) {
+			fancyEndInfo += String.format(",  %s", noteComment);
+		}
+
 		// Save the trip details to the phone database. W00t!
 		mDb.open();
-		mDb.updateTrip(tripid, fancyStart, fancyInfo, notes);
+		mDb.updateTrip(tripid, fancyStartTime, fancyEndInfo, noteComment);
+		mDb.close();
+	}
+
+	public void updateTrip(String fancyStartTime, String fancyEndInfo, String noteComment) {
+		// Save the trip details to the phone database. W00t!
+		mDb.open();
+		mDb.updateTrip(tripid, fancyStartTime, fancyEndInfo, noteComment);
 		mDb.close();
 	}
 }
