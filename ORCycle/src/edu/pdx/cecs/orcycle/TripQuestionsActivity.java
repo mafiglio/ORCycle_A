@@ -26,8 +26,8 @@ public class TripQuestionsActivity extends Activity {
 	private static final String MODULE_TAG = "TripQuestionsActivity";
 
 	private MultiSelectionSpinner routePrefs;
-	private MultiSelectionSpinner passengers;
-	private MultiSelectionSpinner bikeAccessories;
+	//private MultiSelectionSpinner passengers;
+	//private MultiSelectionSpinner bikeAccessories;
 	private MultiSelectionSpinner routeStressors;
 	private Spinner tripFrequency;
 	private Spinner tripPurpose;
@@ -81,30 +81,33 @@ public class TripQuestionsActivity extends Activity {
 			tripPurpose.setOnItemSelectedListener(answer_OnClickListener);
 
 			routePrefs = (MultiSelectionSpinner) findViewById(R.id.spnrRouteChoice);
+			routePrefs.setTitle(getResources().getString(R.string.q21_routePreferences));
 			routePrefs.setItems(getResources().getStringArray(R.array.qa_21_routePreferences));
 			routePrefs.setOnItemSelectedListener(answer_OnClickListener);
 
 			tripComfort = (Spinner) findViewById(R.id.spnrTripComfort);
 			tripComfort.setOnItemSelectedListener(answer_OnClickListener);
 
-			routeSafety = (Spinner) findViewById(R.id.spnrRouteSafety);
-			routeSafety.setOnItemSelectedListener(answer_OnClickListener);
+			//routeSafety = (Spinner) findViewById(R.id.spnrRouteSafety);
+			//routeSafety.setOnItemSelectedListener(answer_OnClickListener);
 
-			passengers = (MultiSelectionSpinner) findViewById(R.id.spnrPassengers);
-			passengers.setItems(getResources().getStringArray(R.array.qa_24_ridePassengers));
-			passengers.setOverrideIndex(DbAnswers.findIndex(DbAnswers.passengers, DbAnswers.passengersAlone));
-			passengers.setOnItemSelectedListener(answer_OnClickListener);
+			//passengers = (MultiSelectionSpinner) findViewById(R.id.spnrPassengers);
+			//passengers.setItems(getResources().getStringArray(R.array.qa_24_ridePassengers));
+			//passengers.setOverrideIndex(DbAnswers.findIndex(DbAnswers.passengers, DbAnswers.passengersAlone));
+			//passengers.setOnItemSelectedListener(answer_OnClickListener);
 
-			bikeAccessories = (MultiSelectionSpinner) findViewById(R.id.spnrBikeAccessories);
-			bikeAccessories.setItems(getResources().getStringArray(R.array.qa_25_bikeAccessories));
-			bikeAccessories.setOverrideIndex(DbAnswers.findIndex(DbAnswers.bikeAccessories, DbAnswers.bikeAccessoriesNone));
-			bikeAccessories.setOnItemSelectedListener(answer_OnClickListener);
+			//bikeAccessories = (MultiSelectionSpinner) findViewById(R.id.spnrBikeAccessories);
+			//bikeAccessories.setItems(getResources().getStringArray(R.array.qa_25_bikeAccessories));
+			//bikeAccessories.setOverrideIndex(DbAnswers.findIndex(DbAnswers.bikeAccessories, DbAnswers.bikeAccessoriesNone));
+			//bikeAccessories.setOnItemSelectedListener(answer_OnClickListener);
 
-			rideConflict = (Spinner) findViewById(R.id.spnrRideConflict);
-			rideConflict.setOnItemSelectedListener(answer_OnClickListener);
+			//rideConflict = (Spinner) findViewById(R.id.spnrRideConflict);
+			//rideConflict.setOnItemSelectedListener(answer_OnClickListener);
 
 			routeStressors = (MultiSelectionSpinner) findViewById(R.id.spnrRouteStressor);
 			routeStressors.setItems(getResources().getStringArray(R.array.qa_27_routeStressors));
+			routeStressors.setTitle(getResources().getString(R.string.q27_routeStressors));
+			routeStressors.setOverrideIndex(DbAnswers.findIndex(DbAnswers.routeStressors, DbAnswers.routeStressorsNotConcerned));
 			routeStressors.setOnItemSelectedListener(answer_OnClickListener);
 
 			tripComment = (EditText) findViewById(R.id.editTextTripComment);
@@ -257,10 +260,10 @@ public class TripQuestionsActivity extends Activity {
 				saveSpinnerPosition(editor, tripPurpose,     PREF_TRIP_PURPOSE     );
 				saveSpinnerPosition(editor, routePrefs,      PREF_ROUTE_PREFS      );
 				saveSpinnerPosition(editor, tripComfort,     PREF_TRIP_COMFORT     );
-				saveSpinnerPosition(editor, routeSafety,     PREF_ROUTE_SAFETY     );
-				saveSpinnerPosition(editor, passengers,      PREF_PASSENGERS       );
-				saveSpinnerPosition(editor, bikeAccessories, PREF_BIKE_ACCESSORIES );
-				saveSpinnerPosition(editor, rideConflict,    PREF_RIDE_CONFLICT    );
+				//saveSpinnerPosition(editor, routeSafety,     PREF_ROUTE_SAFETY     );
+				//saveSpinnerPosition(editor, passengers,      PREF_PASSENGERS       );
+				//saveSpinnerPosition(editor, bikeAccessories, PREF_BIKE_ACCESSORIES );
+				//saveSpinnerPosition(editor, rideConflict,    PREF_RIDE_CONFLICT    );
 				saveSpinnerPosition(editor, routeStressors,  PREF_ROUTE_STRESSORS  );
 				saveEditText(editor, tripComment, PREF_TRIP_COMMENT);
 				editor.commit();
@@ -298,10 +301,10 @@ public class TripQuestionsActivity extends Activity {
 							case PREF_TRIP_PURPOSE:     setSpinnerSetting(tripPurpose,     entry); break;
 							case PREF_ROUTE_PREFS:      setSpinnerSetting(routePrefs,      entry); break;
 							case PREF_TRIP_COMFORT:     setSpinnerSetting(tripComfort,     entry); break;
-							case PREF_ROUTE_SAFETY:     setSpinnerSetting(routeSafety,     entry); break;
-							case PREF_PASSENGERS:       setSpinnerSetting(passengers,      entry); break;
-							case PREF_BIKE_ACCESSORIES: setSpinnerSetting(bikeAccessories, entry); break;
-							case PREF_RIDE_CONFLICT:    setSpinnerSetting(rideConflict,    entry); break;
+							//case PREF_ROUTE_SAFETY:     setSpinnerSetting(routeSafety,     entry); break;
+							//case PREF_PASSENGERS:       setSpinnerSetting(passengers,      entry); break;
+							//case PREF_BIKE_ACCESSORIES: setSpinnerSetting(bikeAccessories, entry); break;
+							//case PREF_RIDE_CONFLICT:    setSpinnerSetting(rideConflict,    entry); break;
 							case PREF_ROUTE_STRESSORS:  setSpinnerSetting(routeStressors,  entry); break;
 							case PREF_TRIP_COMMENT:     setEditText(tripComment,           entry); break;
 							}
@@ -389,10 +392,10 @@ public class TripQuestionsActivity extends Activity {
 			submitSpinnerSelection( dbAdapter, tripPurpose,      DbQuestions.TRIP_PURPOSE,     DbAnswers.tripPurpose     );
 			submitSpinnerSelection( dbAdapter, routePrefs,       DbQuestions.ROUTE_PREFS,      DbAnswers.routePrefs      );
 			submitSpinnerSelection( dbAdapter, tripComfort,      DbQuestions.TRIP_COMFORT,     DbAnswers.tripComfort     );
-			submitSpinnerSelection( dbAdapter, routeSafety,      DbQuestions.ROUTE_SAFETY,     DbAnswers.routeSafety     );
-			submitSpinnerSelection( dbAdapter, passengers,       DbQuestions.PASSENGERS,       DbAnswers.passengers      );
-			submitSpinnerSelection( dbAdapter, bikeAccessories,  DbQuestions.BIKE_ACCESSORIES, DbAnswers.bikeAccessories );
-			submitSpinnerSelection( dbAdapter, rideConflict,     DbQuestions.RIDE_CONFLICT,    DbAnswers.rideConflict    );
+			//submitSpinnerSelection( dbAdapter, routeSafety,      DbQuestions.ROUTE_SAFETY,     DbAnswers.routeSafety     );
+			//submitSpinnerSelection( dbAdapter, passengers,       DbQuestions.PASSENGERS,       DbAnswers.passengers      );
+			//submitSpinnerSelection( dbAdapter, bikeAccessories,  DbQuestions.BIKE_ACCESSORIES, DbAnswers.bikeAccessories );
+			//submitSpinnerSelection( dbAdapter, rideConflict,     DbQuestions.RIDE_CONFLICT,    DbAnswers.rideConflict    );
 			submitSpinnerSelection( dbAdapter, routeStressors,   DbQuestions.ROUTE_STRESSORS,  DbAnswers.routeStressors  );
 
 			// Update trip table

@@ -27,10 +27,10 @@ public final class DbQuestions {
 	public static final int TRIP_PURPOSE     = 20; // purpose
 	public static final int ROUTE_PREFS      = 21; // routePrefs
 	public static final int TRIP_COMFORT     = 22; // routeComfort
-	public static final int ROUTE_SAFETY     = 23; // routeSafety
-	public static final int PASSENGERS       = 24; // ridePassengers
-	public static final int BIKE_ACCESSORIES = 25; // rideSpecial
-	public static final int RIDE_CONFLICT    = 26; // rideConflict
+	//public static final int ROUTE_SAFETY     = 23; // routeSafety
+	//public static final int PASSENGERS       = 24; // ridePassengers
+	//public static final int BIKE_ACCESSORIES = 25; // rideSpecial
+	//public static final int RIDE_CONFLICT    = 26; // rideConflict
 	public static final int ROUTE_STRESSORS  = 27; // routeStressors
 
 	// Note related questions

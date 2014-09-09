@@ -110,10 +110,10 @@ public class TripMapActivity extends Activity {
 	private TextView tvTmTripPurpose;
 	private TextView tvTmRouteChoice;
 	private TextView tvTmTripComfort;
-	private TextView tvTmRouteSafety;
-	private TextView tvTmPassengers;
-	private TextView tvTmBikeAccessories;
-	private TextView tvTmRideConflict;
+	//private TextView tvTmRouteSafety;
+	//private TextView tvTmPassengers;
+	//private TextView tvTmBikeAccessories;
+	//private TextView tvTmRideConflict;
 	private TextView tvTmRouteStressor;
 
 	private TextView tvAtmMoveCloser;
@@ -174,10 +174,10 @@ public class TripMapActivity extends Activity {
 			tvTmTripPurpose     = (TextView) findViewById(R.id.tvTmTripPurpose);
 			tvTmRouteChoice     = (TextView) findViewById(R.id.tvTmRouteChoice);
 			tvTmTripComfort     = (TextView) findViewById(R.id.tvTmTripComfort);
-			tvTmRouteSafety     = (TextView) findViewById(R.id.tvTmRouteSafety);
-			tvTmPassengers      = (TextView) findViewById(R.id.tvTmPassengers);
-			tvTmBikeAccessories = (TextView) findViewById(R.id.tvTmBikeAccessories);
-			tvTmRideConflict    = (TextView) findViewById(R.id.tvTmRideConflict);
+			//tvTmRouteSafety     = (TextView) findViewById(R.id.tvTmRouteSafety);
+			//tvTmPassengers      = (TextView) findViewById(R.id.tvTmPassengers);
+			//tvTmBikeAccessories = (TextView) findViewById(R.id.tvTmBikeAccessories);
+			//tvTmRideConflict    = (TextView) findViewById(R.id.tvTmRideConflict);
 			tvTmRouteStressor   = (TextView) findViewById(R.id.tvTmRouteStressor);
 
 			getTripResponses(tripId);
@@ -308,10 +308,10 @@ public class TripMapActivity extends Activity {
 			StringBuilder sbTripPurpose = new StringBuilder();
 			StringBuilder sbRoutePrefs = new StringBuilder();
 			StringBuilder sbTripComfort = new StringBuilder();
-			StringBuilder sbRouteSafety = new StringBuilder();
-			StringBuilder sbPassengers = new StringBuilder();
-			StringBuilder sbBikeAccessories = new StringBuilder();
-			StringBuilder sbRideConflict = new StringBuilder();
+			//StringBuilder sbRouteSafety = new StringBuilder();
+			//StringBuilder sbPassengers = new StringBuilder();
+			//StringBuilder sbBikeAccessories = new StringBuilder();
+			//StringBuilder sbRideConflict = new StringBuilder();
 			StringBuilder sbRouteStressor = new StringBuilder();
 
 			int questionId;
@@ -352,21 +352,21 @@ public class TripMapActivity extends Activity {
 						append(sbTripComfort, R.array.qa_22_routeComfort, DbAnswers.tripComfort, answerId);
 						break;
 
-					case DbQuestions.ROUTE_SAFETY:
-						append(sbRouteSafety, R.array.qa_23_RouteSafety, DbAnswers.routeSafety, answerId);
-						break;
+					//case DbQuestions.ROUTE_SAFETY:
+					//	append(sbRouteSafety, R.array.qa_23_RouteSafety, DbAnswers.routeSafety, answerId);
+					//	break;
 
-					case DbQuestions.PASSENGERS:
-						append(sbPassengers, R.array.qa_24_ridePassengers, DbAnswers.passengers, answerId);
-						break;
+					//case DbQuestions.PASSENGERS:
+					//	append(sbPassengers, R.array.qa_24_ridePassengers, DbAnswers.passengers, answerId);
+					//	break;
 
-					case DbQuestions.BIKE_ACCESSORIES:
-						append(sbBikeAccessories, R.array.qa_25_bikeAccessories, DbAnswers.bikeAccessories, answerId, otherText);
-						break;
+					//case DbQuestions.BIKE_ACCESSORIES:
+					//	append(sbBikeAccessories, R.array.qa_25_bikeAccessories, DbAnswers.bikeAccessories, answerId, otherText);
+					//	break;
 
-					case DbQuestions.RIDE_CONFLICT:
-						append(sbRideConflict, R.array.qa_26_rideConflict, DbAnswers.rideConflict, answerId);
-						break;
+					//case DbQuestions.RIDE_CONFLICT:
+					//	append(sbRideConflict, R.array.qa_26_rideConflict, DbAnswers.rideConflict, answerId);
+					//	break;
 
 					case DbQuestions.ROUTE_STRESSORS:
 						append(sbRouteStressor, R.array.qa_27_routeStressors, DbAnswers.routeStressors, answerId, otherText);
@@ -386,10 +386,10 @@ public class TripMapActivity extends Activity {
 			tvTmTripPurpose.setText(sbTripPurpose.toString());
 			tvTmRouteChoice.setText(sbRoutePrefs.toString());
 			tvTmTripComfort.setText(sbTripComfort.toString());
-			tvTmRouteSafety.setText(sbRouteSafety.toString());
-			tvTmPassengers.setText(sbPassengers.toString());
-			tvTmBikeAccessories.setText(sbBikeAccessories.toString());
-			tvTmRideConflict.setText(sbRideConflict.toString());
+			//tvTmRouteSafety.setText(sbRouteSafety.toString());
+			//tvTmPassengers.setText(sbPassengers.toString());
+			//tvTmBikeAccessories.setText(sbBikeAccessories.toString());
+			//tvTmRideConflict.setText(sbRideConflict.toString());
 			tvTmRouteStressor.setText(sbRouteStressor.toString());
 		}
 		catch(Exception ex) {

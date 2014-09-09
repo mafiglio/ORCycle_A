@@ -21,7 +21,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="10dp"
-            android:text="Specific Safety Related Questions"
+            android:text="@string/nqaHeaderTitle"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/text_white" />
 
@@ -51,7 +51,7 @@
 	                android:layout_alignParentLeft="true"
 	                android:layout_alignParentRight="true"
 	                android:layout_alignParentTop="true"
-	                android:text="* Severity of the problem?"
+	                android:text="@string/nqaSeverityOfProblemTitle"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#A33F1F" />
 
@@ -86,7 +86,7 @@
 	                android:layout_alignParentLeft="true"
 	                android:layout_alignParentRight="true"
 	                android:layout_alignParentTop="true"
-	                android:text="Type of conflict/accident, with ?"
+	                android:text="@string/nqaConflictTypeTitle"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#A33F1F" />
 	
@@ -120,21 +120,20 @@
 	                android:layout_alignParentLeft="true"
 	                android:layout_alignParentRight="true"
 	                android:layout_alignParentTop="true"
-	                android:text=" * Safety issues?"
+	                android:text="@string/nqaIssueTypeTitle"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#A33F1F" />
 	
-	            <Spinner
+	            <edu.pdx.cecs.orcycle.MultiSelectionSpinner
 	                android:id="@+id/spnIssueType"
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_alignLeft="@id/tvIssueType"
 	                android:layout_below="@id/tvIssueType"
 	                android:layout_marginBottom="6dp"
-	                android:entries="@array/nqaIssueType"
 	                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        	</RelativeLayout>
+            
+	            	</RelativeLayout>
 	            
 	        <RelativeLayout
 	            android:layout_width="fill_parent"
@@ -154,7 +153,7 @@
 	                android:layout_alignParentRight="true"
 	                android:layout_alignParentTop="true"
 	                android:layout_marginTop="0dp"
-	                android:text="* = Required entry"
+	                android:text="@string/anq_requiredEntries"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#A33F1F" />
         	</RelativeLayout>
