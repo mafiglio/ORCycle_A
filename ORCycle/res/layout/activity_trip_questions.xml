@@ -90,9 +90,6 @@
 		            android:text="@string/q20_TripPurpose"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#A33F1F" >
-	                			
-			        <requestFocus />
-	                
 	                </TextView>
 		
 		        <Spinner

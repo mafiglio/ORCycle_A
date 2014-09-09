@@ -22,7 +22,7 @@
     <string name="title_activity_saved_notes">Saved Notes</string>
     <string name="title_activity_rate_segment">Rate Segment</string>
     <string name="title_activity_rate_segment_detail">Rating Details</string>
-    <string name="title_activity_user_info">Tell us about yourself…</string>
+    <string name="title_activity_user_info">Tell us about yourself&#8230;</string>
     <string name="post_url">http://orcycle2.cecs.pdx.edu/post/</string>
     <string name="btn_lbl_start">Start</string>
     <string name="btn_lbl_pause">Pause</string>
@@ -108,6 +108,8 @@
     <string name="atq_specific_questions">Specific Trip Related Questions</string>
     
     <string name="snli_content_description_note_severity">Note Severity</string>
+
+    <string name="anq_requiredEntries">* = Required entries</string>
     
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
@@ -284,7 +286,7 @@
         <item>Other (custom entry)</item>
         </string-array>
 			
-    <string name="q21_routePreferences">I chose this route because…</string>
+    <string name="q21_routePreferences">I chose this route because&#8230;</string>
 	<string-array name="qa_21_routePreferences">
         <item>It is direct/fast</item>
         <item>It has good bike facilities</item>
@@ -300,7 +302,7 @@
         <item>Other&#8230;</item>
         </string-array>
 			
-    <string name="q22_routeComfort">In terms of comfort, this route is…</string>
+    <string name="q22_routeComfort">In terms of comfort, this route is&#8230;</string>
 	<string-array name="qa_22_routeComfort">
         <item></item>
         <item>Very good (even for families/children)</item>
@@ -357,7 +359,7 @@
         <item>Parked vehicles (being doored)</item>
         <item>Other cyclist</item>
         <item>Pedestrians</item>
-        <item>Other…</item>
+        <item>Other&#8230;</item>
         </string-array>
 
     <string name="tq_comment">Additional Details:</string>
@@ -366,6 +368,9 @@
     <!-- *                      Note Questions                   * -->
     <!-- ********************************************************* -->
 
+	<string name="nqaHeaderTitle">Specific Safety Related Questions</string>
+
+	<string name="nqaSeverityOfProblemTitle">* Severity of the problem?</string>
 	<string-array name="nqaSeverityOfProblem">
         <item></item>
         <item>I have had a major crash/accident</item>
@@ -384,11 +389,11 @@
         <item>Other cyclists</item>
         <item>Pedestrians</item>
         <item>Pole/barrier/infrastructure</item>
-        <item>Other…</item>
+        <item>Other&#8230;</item>
         </string-array>
     			
+	<string name="nqaIssueTypeTitle"> * Safety issues?</string>
     <string-array name="nqaIssueType">
-        <item></item>
         <item>Narrow Bike Lane</item>
         <item>No bike lane or separation</item>
         <item>High vehicles Speed</item>
@@ -400,7 +405,7 @@
         <item>Bus traffic/stop</item>
         <item>Parked vehicles</item>
         <item>Pavement condition</item>
-        <item>Other…</item>
+        <item>Other&#8230;</item>
         </string-array>
 			
 </resources>

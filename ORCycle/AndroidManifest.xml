@@ -53,7 +53,8 @@
         </activity>
         <activity
             android:name="edu.pdx.cecs.orcycle.TripQuestionsActivity"
-            android:label="@string/title_activity_trip_questions" >
+            android:label="@string/title_activity_trip_questions" 
+            android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name="edu.pdx.cecs.orcycle.NoteQuestionsActivity"
