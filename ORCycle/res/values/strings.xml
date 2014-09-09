@@ -105,7 +105,8 @@
 					
     <string name="atq_email_hint">name@domain</string>
     <string name="atq_requiredEntries">* = Required entries</string>
-
+    <string name="atq_specific_questions">Specific Trip Related Questions</string>
+    
     <string name="snli_content_description_note_severity">Note Severity</string>
     
     <!-- ********************************************************* -->
@@ -287,31 +288,30 @@
 	<string-array name="qa_21_routePreferences">
         <item>It is direct/fast</item>
         <item>It has good bike facilities</item>
-        <item>It is enjoyable</item>
+        <item>It is enjoyable/has nice scenery</item>
         <item>It is good for a workout</item>
         <item>It has low traffic/low speeds</item>
         <item>It has few intersections</item>
         <item>It has few/easy hills</item>
-        <item>It has other riders/people (I’m not alone)</item>
-        <item>It has beautiful scenery/green</item>
-        <item>I have no other reasonable alternative</item>
-        <item>I do not know another route</item>
-        <item>I found it online or using my phone</item>
+        <item>It has other riders/people</item>
+        <item>It is good for families/kids</item>
+        <item>I do not know/have other route</item>
+        <item>I found it on my phone/online</item>
         <item>Other&#8230;</item>
         </string-array>
 			
     <string name="q22_routeComfort">In terms of comfort, this route is…</string>
 	<string-array name="qa_22_routeComfort">
         <item></item>
-        <item>Very good</item>
-        <item>Good</item>
+        <item>Very good (even for families/children)</item>
+        <item>Good (for most riders)</item>
         <item>Average</item>
-        <item>Bad</item>
-        <item>Very bad</item>
+        <item>Bad (only for confident riders)</item>
+        <item>Very bad (unacceptable for most riders)</item>
         </string-array>
 			
-    <string name="q23_RouteSafety">How safe/comfortable was this ride?</string>
-	<string-array name="qa_23_RouteSafety">
+    <string name="xx_q23_RouteSafety">How safe/comfortable was this ride?</string>
+	<string-array name="xx_qa_23_RouteSafety">
         <item></item>
         <item>Safe/comfortable for families, children or new riders</item>
         <item>Safe/comfortable for most riders</item>
@@ -320,8 +320,8 @@
         <item>Unacceptable</item>
         </string-array>
 			
-    <string name="q24_ridePassengers">Who accompanied you on this ride?</string>
-	<string-array name="qa_24_ridePassengers">
+    <string name="xx_q24_ridePassengers">Who accompanied you on this ride?</string>
+	<string-array name="xx_qa_24_ridePassengers">
         <item>Alone</item>
         <item>With a child under 2</item>
         <item>With a child between 2&#8211;10</item>
@@ -330,8 +330,8 @@
         <item>With 2+ adults</item>
         </string-array>
 			
-    <string name="q25_bikeAccessories">What bike accessories did you use?</string>
-	<string-array name="qa_25_bikeAccessories">
+    <string name="xx_q25_bikeAccessories">What bike accessories did you use?</string>
+	<string-array name="xx_qa_25_bikeAccessories">
         <item>None</item>
         <item>Child seat(s)</item>
         <item>Electric-assist</item>
@@ -339,8 +339,8 @@
         <item>Other&#8230;</item>
         </string-array>
 
-    <string name="q26_rideConflict">On this route indicate what best fits your experience:</string>
-	<string-array name="qa_26_rideConflict">
+    <string name="xx_q26_rideConflict">On this route indicate what best fits your experience:</string>
+	<string-array name="xx_qa_26_rideConflict">
         <item></item>
         <item>I have had a crash/accident</item>
         <item>I have had a near-crash/accident</item>
@@ -348,12 +348,12 @@
         <item>I did feel safe</item>
         </string-array>
 
-    <string name="q27_routeStressors">Along this route, you are mostly concerned about conflicts/crashes with:</string>
+    <string name="q27_routeStressors">Along this route, you are concerned about conflicts/crashes with:</string>
 	<string-array name="qa_27_routeStressors">
-        <item>Not concerned about conflicts/crashes along this route</item>
+        <item>NOT concerned</item>
         <item>Auto traffic</item>
         <item>Large commercial vehicles (trucks)</item>
-        <item>Public transport (buses, light rail, streetcar)</item>
+        <item>Public transport (e.g. buses, light rail)</item>
         <item>Parked vehicles (being doored)</item>
         <item>Other cyclist</item>
         <item>Pedestrians</item>

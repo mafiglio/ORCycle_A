@@ -23,16 +23,17 @@ public final class DbAnswers {
 	public static final int[] tripFreq                = { 88, 89, 90, 91, 92};               // question_id = 19
 	public static final int[] tripPurpose             = { 94, 95, 96, 97, 98, 99, 100, 101}; // question_id = 20
 	public static final int[] routePrefs              = { 103, 104, 105, 106, 107, 108, 109, // question_id = 21
-			                                              110, 111, 112, 113, 114, 115};
+			                                              110, 111, 112, 113, 114};
 	public static final int[] tripComfort             = { 121, 120, 119, 118, 117};          // question_id = 22
 	public static final int[] routeSafety             = { 123, 124, 125, 126, 127};          // question_id = 23
 	public static final int[] passengers              = { 129, 130, 131, 132, 133, 134};     // question_id = 24
 	public static final int[] bikeAccessories         = { 135, 136, 137, 138, 176};          // question_id = 25
 	public static final int[] rideConflict            = { 139, 140, 141, 142 };              // question_id = 26
-	public static final int[] routeStressors          = { 150, 143, 144, 145, 146, 147, 148, // question_id = 27
+	public static final int[] routeStressors          = { 143, 144, 145, 146, 147, 148, // question_id = 27
 	                                                      149, 150 };
 	public static final int passengersAlone = 129;
 	public static final int bikeAccessoriesNone = 135;
+	public static final int routeStressorsNotConcerned = 143;
 
 	public static final int[] noteSeverity = { 151, 152, 153, 154, 155};                // question_id = 28
 	public static final int[] noteConflict = { 156, 157, 158, 159, 160, 161, 162, 163}; // question_id = 29
@@ -40,7 +41,7 @@ public final class DbAnswers {
 		                                    170, 171, 172, 173, 174, 175};
 
 	public static final int[] userDetailedAnswers = { 12, 58, 81}; // These are answers specified as other
-	public static final int[] tripDetailedAnswers = { 101, 115};   // These are answers specified as other
+	public static final int[] tripDetailedAnswers = { 101, 114};   // These are answers specified as other
 	public static final int[] noteDetailedAnswers = { 163, 175};   // These are answers specified as other
 
 	public static final int userInfoGenderOther = 12;

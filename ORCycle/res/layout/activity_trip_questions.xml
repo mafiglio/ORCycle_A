@@ -21,7 +21,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="10dp"
-            android:text="Specific Trip Related Questions"
+            android:text="@string/atq_specific_questions"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/text_white" />
         
@@ -188,144 +188,6 @@
 	            tools:context=".UserInfo$DummySectionFragment" >
 	            
 		        <TextView
-		            android:id="@+id/tvRouteSafety"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_alignParentLeft="true"
-	                android:layout_alignParentRight="true"
-	                android:layout_alignParentTop="true"
-		            android:text="@string/q23_RouteSafety"
-	                android:textAppearance="?android:attr/textAppearanceMedium"
-	                android:textColor="#A33F1F" />
-		
-		        <Spinner
-		            android:id="@+id/spnrRouteSafety"
-		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content"
-	                android:layout_alignLeft="@id/tvRouteSafety"
-	                android:layout_below="@id/tvRouteSafety"
-	                android:layout_marginBottom="6dp"
-		            android:entries="@array/qa_23_RouteSafety"
-	                android:textAppearance="?android:attr/textAppearanceMedium" />
-        	
-        	</RelativeLayout>
-	            
-	        <RelativeLayout
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginTop="1dp"
-	            android:background="#fcfcfc"
-	            android:orientation="vertical"
-	            android:paddingBottom="4dp"
-	            android:paddingLeft="@dimen/activity_horizontal_margin"
-	            android:paddingRight="@dimen/activity_horizontal_margin"
-	            android:paddingTop="12dp"
-	            tools:context=".UserInfo$DummySectionFragment" >
-	            
-		        <TextView
-		            android:id="@+id/tvRidePassengers"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_alignParentLeft="true"
-	                android:layout_alignParentRight="true"
-	                android:layout_alignParentTop="true"
-		            android:text="@string/q24_ridePassengers"
-	                android:textAppearance="?android:attr/textAppearanceMedium"
-	                android:textColor="#A33F1F" />
-		
-		        <edu.pdx.cecs.orcycle.MultiSelectionSpinner
-		            android:id="@+id/spnrPassengers"
-		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content"
-	                android:layout_alignLeft="@id/tvRidePassengers"
-	                android:layout_below="@id/tvRidePassengers"
-	                android:layout_marginBottom="6dp"
-	                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        	</RelativeLayout>
-		        
-	        <RelativeLayout
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginTop="1dp"
-	            android:background="#fcfcfc"
-	            android:orientation="vertical"
-	            android:paddingBottom="4dp"
-	            android:paddingLeft="@dimen/activity_horizontal_margin"
-	            android:paddingRight="@dimen/activity_horizontal_margin"
-	            android:paddingTop="12dp"
-	            tools:context=".UserInfo$DummySectionFragment" >
-	            
-	            <TextView
-		            android:id="@+id/tvBikeAccessories"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_alignParentLeft="true"
-	                android:layout_alignParentRight="true"
-	                android:layout_alignParentTop="true"
-		            android:text="@string/q25_bikeAccessories"
-	                android:textAppearance="?android:attr/textAppearanceMedium"
-	                android:textColor="#A33F1F" />
-		
-		        <edu.pdx.cecs.orcycle.MultiSelectionSpinner
-		            android:id="@+id/spnrBikeAccessories"
-	                android:layout_width="match_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_alignLeft="@id/tvBikeAccessories"
-	                android:layout_below="@id/tvBikeAccessories"
-	                android:layout_marginBottom="6dp"
-	                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        	</RelativeLayout>
-		        
-	        <RelativeLayout
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginTop="1dp"
-	            android:background="#fcfcfc"
-	            android:orientation="vertical"
-	            android:paddingBottom="4dp"
-	            android:paddingLeft="@dimen/activity_horizontal_margin"
-	            android:paddingRight="@dimen/activity_horizontal_margin"
-	            android:paddingTop="12dp"
-	            tools:context=".UserInfo$DummySectionFragment" >
-
-		    	<TextView
-		            android:id="@+id/tvRideConflict"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_alignParentLeft="true"
-	                android:layout_alignParentRight="true"
-	                android:layout_alignParentTop="true"
-		            android:text="@string/q26_rideConflict"
-	                android:textAppearance="?android:attr/textAppearanceMedium"
-	                android:textColor="#A33F1F" />
-		
-		        <Spinner
-		            android:id="@+id/spnrRideConflict"
-		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content"
-	                android:layout_alignLeft="@id/tvRideConflict"
-	                android:layout_below="@id/tvRideConflict"
-	                android:layout_marginBottom="6dp"
-		            android:entries="@array/qa_26_rideConflict"
-	                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        	</RelativeLayout>
-            
-	        <RelativeLayout
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginTop="1dp"
-	            android:background="#fcfcfc"
-	            android:orientation="vertical"
-	            android:paddingBottom="4dp"
-	            android:paddingLeft="@dimen/activity_horizontal_margin"
-	            android:paddingRight="@dimen/activity_horizontal_margin"
-	            android:paddingTop="12dp"
-	            tools:context=".UserInfo$DummySectionFragment" >
-	            
-		        <TextView
 		            android:id="@+id/tvRouteStressor"
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
@@ -402,7 +264,7 @@
 	                android:layout_alignParentRight="true"
 	                android:layout_alignParentTop="true"
 	                android:layout_marginTop="0dp"
-	                android:text="* = Required entry"
+	                android:text="@string/atq_requiredEntries"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#A33F1F" />
         	</RelativeLayout>
