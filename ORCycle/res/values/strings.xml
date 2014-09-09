@@ -2,8 +2,8 @@
 <resources>
 
     <string name="app_name">ORcycle</string>
-    <string name="title_section4">More</string>
-    <string name="title_section3">Safety-Markers</string>
+    <string name="title_section4">User</string>
+    <string name="title_section3">Safety</string>
     <string name="title_section2">Trips</string>
     <string name="title_section1">Record</string>
     <string name="action_settings">Settings</string>
@@ -24,7 +24,7 @@
     <string name="title_activity_rate_segment_detail">Rating Details</string>
     <string name="title_activity_user_info">Tell us about yourself&#8230;</string>
     <string name="post_url">http://orcycle2.cecs.pdx.edu/post/</string>
-    <string name="btn_lbl_start">Start</string>
+    <string name="btn_lbl_start">Start Trip</string>
     <string name="btn_lbl_pause">Pause</string>
     <string name="btn_lbl_resume">Resume</string>
     <string name="btn_lbl_finish">Finish</string>
