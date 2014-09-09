@@ -1,0 +1,5 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/action_send_user_feedback"
+        android:showAsAction="always"
+          android:title="send"/>
+</menu>

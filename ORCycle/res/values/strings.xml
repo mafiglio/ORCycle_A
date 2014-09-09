@@ -15,7 +15,7 @@
     <string name="title_activity_note_questions">Note Description</string>
     <string name="title_activity_trip_map">Trip Map</string>
     <string name="title_activity_saved_trips">Saved Trips</string>
-    <string name="title_activity_trip_detail">Trip Details</string>
+    <string name="title_activity_user_feedback">User Feedback</string>
     <string name="title_activity_note_type">Note Type</string>
     <string name="title_activity_note_detail">Note Details</string>
     <string name="title_activity_note_map">Note Map</string>
@@ -110,6 +110,13 @@
     <string name="snli_content_description_note_severity">Note Severity</string>
 
     <string name="anq_requiredEntries">* = Required entries</string>
+    
+    <string name="ats_tell_us_about_yourself">Tell us about yourself&#8230;</string>
+    <string name="ats_getting_started">Get started with ORCycle&#8230;</string>
+    <string name="ats_provide_feedback">Provide feedback about the app...&#8230;</string>
+    
+    <string name="auf_user_feedback">Comment here if you would like to provide feedback
+        about ORcycle or desirable features:</string>
     
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->

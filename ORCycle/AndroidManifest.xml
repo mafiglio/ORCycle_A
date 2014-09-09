@@ -48,10 +48,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="edu.pdx.cecs.orcycle.TripPurposeActivity"
-            android:label="@string/title_activity_trip_purpose" >
-        </activity>
-        <activity
             android:name="edu.pdx.cecs.orcycle.TripQuestionsActivity"
             android:label="@string/title_activity_trip_questions" 
             android:windowSoftInputMode="stateHidden" >
@@ -65,12 +61,8 @@
             android:label="@string/title_activity_trip_map" >
         </activity>
         <activity
-            android:name="edu.pdx.cecs.orcycle.TripDetailActivity"
-            android:label="@string/title_activity_trip_detail" >
-        </activity>
-        <activity
-            android:name="edu.pdx.cecs.orcycle.NoteTypeActivity"
-            android:label="@string/title_activity_note_type" >
+            android:name="edu.pdx.cecs.orcycle.UserFeedbackActivity"
+            android:label="@string/title_activity_user_feedback" >
         </activity>
         <activity
             android:name="edu.pdx.cecs.orcycle.NoteDetailActivity"

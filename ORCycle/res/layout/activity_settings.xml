@@ -29,7 +29,7 @@
                 android:layout_alignParentLeft="true"
             	android:background="#fcfcfc"
         		android:textColor="@color/psu_sienna"
-                android:text="Tell us about yourself..." />
+                android:text="@string/ats_tell_us_about_yourself" />
 
        	</RelativeLayout>
             
@@ -52,7 +52,7 @@
 	            android:layout_alignParentLeft="true"
             	android:background="#fcfcfc"
         		android:textColor="@color/psu_sienna"
-	            android:text="Get started with ORCycle..." />
+	            android:text="@string/ats_getting_started" />
 
        	</RelativeLayout>
             
@@ -69,13 +69,13 @@
             tools:context=".UserInfo$DummySectionFragment" >
 		    		    
 	        <Button
-	            android:id="@+id/buttonAbout"
+	            android:id="@+id/buttonFeedback"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_alignParentLeft="true"
             	android:background="#fcfcfc"
         		android:textColor="@color/psu_sienna"
-	            android:text="About ORCycle..." />
+	            android:text="@string/ats_provide_feedback" />
 
         </RelativeLayout>
 
