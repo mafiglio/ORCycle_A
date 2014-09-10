@@ -244,12 +244,12 @@ public class TripMapActivity extends Activity {
 							if (null != buttonNote) {
 								if (crosshairInRangeOfTrip) {
 									//buttonNote.setText("  --> Note this... <--  ");
-									buttonNote.setTextColor(Color.BLACK);
-									buttonNote.setBackgroundColor(Color.GREEN);
-									buttonRateStart.setTextColor(Color.BLACK);
-									buttonRateStart.setBackgroundColor(Color.GREEN);
-									buttonRateFinish.setTextColor(Color.BLACK);
-									buttonRateFinish.setBackgroundColor(Color.GREEN);
+									buttonNote.setTextColor(getResources().getColor(R.color.user_button_text));
+									buttonNote.setBackgroundColor(getResources().getColor(R.color.user_button_background));
+									buttonRateStart.setTextColor(getResources().getColor(R.color.user_button_text));
+									buttonRateStart.setBackgroundColor(getResources().getColor(R.color.user_button_background));
+									buttonRateFinish.setTextColor(getResources().getColor(R.color.user_button_text));
+									buttonRateFinish.setBackgroundColor(getResources().getColor(R.color.user_button_background));
 									tvAtmMoveCloser.setVisibility(View.GONE);
 
 
