@@ -401,6 +401,7 @@
     			
 	<string name="nqaIssueTypeTitle"> * Safety issues?</string>
     <string-array name="nqaIssueType">
+        <item></item>
         <item>Narrow Bike Lane</item>
         <item>No bike lane or separation</item>
         <item>High vehicles Speed</item>
