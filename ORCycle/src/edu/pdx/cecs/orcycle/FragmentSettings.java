@@ -14,11 +14,13 @@ public class FragmentSettings extends Fragment {
 
 	private static final String MODULE_TAG = "FragmentSettings";
 	private static final String ORCYCLE_URI = "http://www.pdx.edu/transportation-lab/android-instructions";
+	private static final String PRIVACY_POLICY_URI = "http://www.pdx.edu/transportation-lab/privacy-policy";
 
 	// UI Elements
-	private Button buttonUserInfo = null;
-	private Button buttonGetStarted = null;
-	private Button buttonFeedback = null;
+	private Button btnUserInfo = null;
+	private Button btnGetStarted = null;
+	private Button btnFeedback = null;
+	private Button btnPrivacyPolicy = null;
 
 	// *********************************************************************************
 	// *                              Fragment Handlers
@@ -41,14 +43,17 @@ public class FragmentSettings extends Fragment {
 			rootView = inflater.inflate(R.layout.activity_settings, container, false);
 
 			// get references to view widgets
-			buttonUserInfo = (Button) rootView.findViewById(R.id.buttonUserInfo);
-			buttonUserInfo.setOnClickListener(new ButtonUserInfo_OnClickListener());
+			btnUserInfo = (Button) rootView.findViewById(R.id.btnUserInfo);
+			btnUserInfo.setOnClickListener(new UserInfo_OnClickListener());
 
-			buttonGetStarted = (Button) rootView.findViewById(R.id.buttonGetStarted);
-			buttonGetStarted.setOnClickListener(new ButtonGetStarted_OnClickListener());
+			btnGetStarted = (Button) rootView.findViewById(R.id.btnGetStarted);
+			btnGetStarted.setOnClickListener(new GetStarted_OnClickListener());
 
-			buttonFeedback = (Button) rootView.findViewById(R.id.buttonFeedback);
-			buttonFeedback.setOnClickListener(new ButtonFeedback_OnClickListener());
+			btnFeedback = (Button) rootView.findViewById(R.id.btnFeedback);
+			btnFeedback.setOnClickListener(new Feedback_OnClickListener());
+
+			btnPrivacyPolicy = (Button) rootView.findViewById(R.id.btnPrivacyPolicy);
+			btnPrivacyPolicy.setOnClickListener(new PrivacyPolicy_OnClickListener());
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -92,7 +97,7 @@ public class FragmentSettings extends Fragment {
      *
      * Description: Callback to be invoked when startButton button is clicked
      */
-	private final class ButtonUserInfo_OnClickListener implements View.OnClickListener {
+	private final class UserInfo_OnClickListener implements View.OnClickListener {
 
 		/**
 		 * Description: Handles onClick for view
@@ -114,7 +119,7 @@ public class FragmentSettings extends Fragment {
      *
      * Description: Callback to be invoked when startButton button is clicked
      */
-	private final class ButtonGetStarted_OnClickListener implements View.OnClickListener {
+	private final class GetStarted_OnClickListener implements View.OnClickListener {
 
 		/**
 		 * Description: Handles onClick for view
@@ -136,7 +141,7 @@ public class FragmentSettings extends Fragment {
      *
      * Description: Callback to be invoked when startButton button is clicked
      */
-	private final class ButtonFeedback_OnClickListener implements View.OnClickListener {
+	private final class Feedback_OnClickListener implements View.OnClickListener {
 
 		/**
 		 * Description: Handles onClick for view
@@ -153,9 +158,36 @@ public class FragmentSettings extends Fragment {
 		}
 	}
 
+	/**
+     * Class: ButtonAbout_OnClickListener
+     *
+     * Description: Callback to be invoked when startButton button is clicked
+     */
+	private final class PrivacyPolicy_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+			try {
+				transitionToPrivacyPolicy();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			finally {
+			}
+		}
+	}
+
 	private void transitionToORcycle() {
-		Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(ORCYCLE_URI));
-		startActivity(browserIntent);
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(ORCYCLE_URI));
+		startActivity(intent);
+	}
+
+	private void transitionToPrivacyPolicy() {
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URI));
+		startActivity(intent);
 	}
 
 	private void transitionToUserFeedbackActivity() {

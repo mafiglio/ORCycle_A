@@ -23,7 +23,7 @@
             tools:context=".UserInfo$DummySectionFragment" >
 		    		    
             <Button
-                android:id="@+id/buttonUserInfo"
+                android:id="@+id/btnUserInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -46,7 +46,7 @@
             tools:context=".UserInfo$DummySectionFragment" >
 		    		    
 	        <Button
-	            android:id="@+id/buttonGetStarted"
+	            android:id="@+id/btnGetStarted"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_alignParentLeft="true"
@@ -69,7 +69,7 @@
             tools:context=".UserInfo$DummySectionFragment" >
 		    		    
 	        <Button
-	            android:id="@+id/buttonFeedback"
+	            android:id="@+id/btnFeedback"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_alignParentLeft="true"
@@ -79,6 +79,28 @@
 
         </RelativeLayout>
 
+		<RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="#fcfcfc"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="8dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+		    		    
+	        <Button
+	            android:id="@+id/btnPrivacyPolicy"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+            	android:background="#fcfcfc"
+        		android:textColor="@color/psu_sienna"
+	            android:text="@string/ats_privacy_policy" />
+
+        </RelativeLayout>
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
