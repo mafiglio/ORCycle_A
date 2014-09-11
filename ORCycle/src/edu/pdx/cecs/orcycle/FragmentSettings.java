@@ -13,12 +13,12 @@ import android.widget.Button;
 public class FragmentSettings extends Fragment {
 
 	private static final String MODULE_TAG = "FragmentSettings";
-	private static final String ORCYCLE_URI = "http://orcycle.cecs.pdx.edu/Web/";
+	private static final String ORCYCLE_URI = "http://www.pdx.edu/transportation-lab/android-instructions";
 
 	// UI Elements
 	private Button buttonUserInfo = null;
 	private Button buttonGetStarted = null;
-	private Button buttonAbout = null;
+	private Button buttonFeedback = null;
 
 	// *********************************************************************************
 	// *                              Fragment Handlers
@@ -47,8 +47,8 @@ public class FragmentSettings extends Fragment {
 			buttonGetStarted = (Button) rootView.findViewById(R.id.buttonGetStarted);
 			buttonGetStarted.setOnClickListener(new ButtonGetStarted_OnClickListener());
 
-			buttonAbout = (Button) rootView.findViewById(R.id.buttonAbout);
-			buttonAbout.setOnClickListener(new ButtonAbout_OnClickListener());
+			buttonFeedback = (Button) rootView.findViewById(R.id.buttonFeedback);
+			buttonFeedback.setOnClickListener(new ButtonFeedback_OnClickListener());
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -136,13 +136,14 @@ public class FragmentSettings extends Fragment {
      *
      * Description: Callback to be invoked when startButton button is clicked
      */
-	private final class ButtonAbout_OnClickListener implements View.OnClickListener {
+	private final class ButtonFeedback_OnClickListener implements View.OnClickListener {
 
 		/**
 		 * Description: Handles onClick for view
 		 */
 		public void onClick(View v) {
 			try {
+				transitionToUserFeedbackActivity();
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -157,6 +158,11 @@ public class FragmentSettings extends Fragment {
 		startActivity(browserIntent);
 	}
 
+	private void transitionToUserFeedbackActivity() {
+		Intent intent = new Intent(getActivity(), UserFeedbackActivity.class);
+		startActivity(intent);
+	}
+
 	private void transitionToUserInfoActivity() {
 
 		// Create intent to go back to the TripMapActivity
@@ -167,5 +173,4 @@ public class FragmentSettings extends Fragment {
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}
-
 }
