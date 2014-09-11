@@ -68,13 +68,13 @@ public class NoteMapActivity extends Activity {
 			NoteData note = NoteData.fetchNote(this, noteid);
 
 			// Show note details
-			TextView t1 = (TextView) findViewById(R.id.TextViewMapNoteType);
-			TextView t2 = (TextView) findViewById(R.id.TextViewMapNoteDetails);
-			TextView t3 = (TextView) findViewById(R.id.TextViewMapNoteFancyStart);
+			TextView tvHeaderIssueType = (TextView) findViewById(R.id.tvHeaderIssueType);
+			TextView tvHeaderFancyStart = (TextView) findViewById(R.id.tvHeaderFancyStart);
+			TextView tvNmComment = (TextView) findViewById(R.id.tvNmComment);
 
-			t1.setText(DbAnswers.getAnswerText(this, R.array.nqaIssueType, DbAnswers.noteIssue, note.noteType));
-			t2.setText(note.notedetails);
-			t3.setText(note.notefancystart);
+			tvHeaderIssueType.setText(DbAnswers.getAnswerText(this, R.array.nqaIssueType, DbAnswers.noteIssue, note.noteType));
+			tvHeaderFancyStart.setText(note.notefancystart);
+			tvNmComment.setText(note.notedetails);
 
 			// Center & zoom the map
 			LatLng center = new LatLng(note.latitude * 1E-6, note.longitude * 1E-6);
@@ -344,6 +344,10 @@ public class NoteMapActivity extends Activity {
 		finally {
 			mDb.close();
 		}
+	}
+
+	private void getNoteComment() {
+
 	}
 
 	private void append(StringBuilder sb, int textArrayId, int[] answers, int answerId) {

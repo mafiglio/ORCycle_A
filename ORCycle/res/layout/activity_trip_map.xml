@@ -9,7 +9,7 @@
         android:id="@+id/rlTripMapHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#6A7F10"
+        android:background="@drawable/lcdscreen"
         android:baselineAligned="false"
         android:gravity="center_horizontal"
         android:measureWithLargestChild="true" >
@@ -22,7 +22,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="4dp"
             android:text="@string/misc_longest_date_string"
-            android:textColor="#E6DC8F"
+            android:textColor="@color/text_black"
             android:textSize="15sp" >
         </TextView>
         
@@ -31,25 +31,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_below="@id/TextViewMapFancyStart"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="4dp"
-            android:layout_below="@id/TextViewMapFancyStart"
             android:text="@string/atm_trip_purpose"
-            android:textColor="#ffffff"
+            android:textColor="@color/text_black"
             android:textSize="18sp"
             android:textStyle="bold" >
+
         </TextView>
 
 	    <TextView
 	        android:id="@+id/TextViewMapInfo"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:layout_below="@id/TextViewMapPurpose"
 	        android:layout_marginLeft="4dp"
 	        android:layout_marginTop="4dp"
-	        android:layout_below="@id/TextViewMapPurpose"
 	        android:paddingBottom="8dp"
 	        android:text="@string/atm_trip_info_long_string"
-	        android:textColor="#E6DC8F" >
+	        android:textColor="@color/text_black" >
 
 	    </TextView>
     
@@ -101,6 +102,43 @@
 		            android:paddingTop="12dp"
 		            tools:context=".UserInfo$DummySectionFragment" >
 			
+			        <TextView
+			            android:id="@+id/tvTmqTripPurpose"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_alignParentLeft="true"
+		                android:layout_alignParentRight="true"
+		                android:layout_alignParentTop="true"
+		                android:layout_marginTop="0dp"
+			            android:text="@string/tmaTripPurpose"
+			            android:textAppearance="?android:attr/textAppearanceMedium" 
+			            android:textColor="#A33F1F" />
+			
+			        <TextView
+			            android:id="@+id/tvTmTripPurpose"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_below="@id/tvTmqTripPurpose"
+			            android:layout_marginTop="12dp"
+			            android:text="@string/misc_generally_long_text_string"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+		
+				</RelativeLayout>
+
+			    <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
 				    <TextView
 			            android:id="@+id/tvTmqTripFrequency"
 		                android:layout_width="fill_parent"
@@ -124,43 +162,6 @@
 			            android:textAppearance="?android:attr/textAppearanceMedium"
 			            android:textColor="#474334" />
 	
-				</RelativeLayout>
-		
-		        <RelativeLayout
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content"
-		            android:layout_marginTop="1dp"
-		            android:background="#fcfcfc"
-		            android:orientation="vertical"
-		            android:paddingBottom="4dp"
-		            android:paddingLeft="@dimen/activity_horizontal_margin"
-		            android:paddingRight="@dimen/activity_horizontal_margin"
-		            android:paddingTop="12dp"
-		            tools:context=".UserInfo$DummySectionFragment" >
-			
-			        <TextView
-			            android:id="@+id/tvTmqTripPurpose"
-		                android:layout_width="fill_parent"
-		                android:layout_height="wrap_content"
-		                android:layout_alignParentLeft="true"
-		                android:layout_alignParentRight="true"
-		                android:layout_alignParentTop="true"
-		                android:layout_marginTop="0dp"
-			            android:text="@string/q20_TripPurpose"
-			            android:textAppearance="?android:attr/textAppearanceMedium" 
-			            android:textColor="#A33F1F" />
-			
-			        <TextView
-			            android:id="@+id/tvTmTripPurpose"
-			            android:layout_width="match_parent"
-			            android:layout_height="wrap_content"
-			            android:layout_alignParentLeft="true"
-			            android:layout_below="@id/tvTmqTripPurpose"
-			            android:layout_marginTop="12dp"
-			            android:text="@string/misc_generally_long_text_string"
-			            android:textAppearance="?android:attr/textAppearanceMedium"
-			            android:textColor="#474334" />
-		
 				</RelativeLayout>
 		
 		        <RelativeLayout
@@ -274,7 +275,56 @@
 			    		
 		        </RelativeLayout>
 		        
-			</LinearLayout>
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+	   	            <TextView
+	   	                android:id="@+id/tvTmqComment"
+	   	                android:layout_width="match_parent"
+	   	                android:layout_height="wrap_content"
+	   	                android:layout_alignParentLeft="true"
+	   	                android:layout_alignParentRight="true"
+	   	                android:layout_alignParentTop="true"
+	   	                android:layout_marginTop="0dp"
+	   	                android:text="@string/atmComment"
+	   	                android:textAppearance="?android:attr/textAppearanceMedium"
+	   	                android:textColor="#A33F1F" />
+		
+		            <TextView
+		                android:id="@+id/tvTmComment"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_below="@id/tvTmqComment"
+		                android:layout_marginTop="16dp"
+		                android:textColor="#474334"
+		                android:text="@string/misc_generally_long_text_string"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+				</RelativeLayout>
+
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+				</RelativeLayout>
+		            			
+   			</LinearLayout>
 			
 		</ScrollView>
 		    		

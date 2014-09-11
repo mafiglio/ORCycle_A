@@ -115,6 +115,7 @@ public class TripMapActivity extends Activity {
 	//private TextView tvTmBikeAccessories;
 	//private TextView tvTmRideConflict;
 	private TextView tvTmRouteStressor;
+	private TextView tvTmComment;
 
 	private TextView tvAtmMoveCloser;
 
@@ -179,6 +180,8 @@ public class TripMapActivity extends Activity {
 			//tvTmBikeAccessories = (TextView) findViewById(R.id.tvTmBikeAccessories);
 			//tvTmRideConflict    = (TextView) findViewById(R.id.tvTmRideConflict);
 			tvTmRouteStressor   = (TextView) findViewById(R.id.tvTmRouteStressor);
+			tvTmComment         = (TextView) findViewById(R.id.tvTmComment);
+			tvTmComment.setText(trip.getNoteComment());
 
 			getTripResponses(tripId);
 
