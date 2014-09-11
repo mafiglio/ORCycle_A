@@ -80,6 +80,41 @@
 	            tools:context=".UserInfo$DummySectionFragment" >
 	            
 		        <TextView
+	                android:id="@+id/tvIssueType"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentRight="true"
+	                android:layout_alignParentTop="true"
+	                android:text="@string/nqaIssueTypeTitle"
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="#A33F1F" />
+	
+	            <Spinner
+	                android:id="@+id/spnIssueType"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignLeft="@id/tvIssueType"
+	                android:layout_below="@id/tvIssueType"
+	                android:layout_marginBottom="6dp"
+	                android:entries="@array/nqaIssueType"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+           	</RelativeLayout>
+           	
+   	        <RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+	            
+		        <TextView
 	                android:id="@+id/tvConflictType"
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
@@ -101,40 +136,6 @@
             
         	</RelativeLayout>
 	            
-	        <RelativeLayout
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginTop="1dp"
-	            android:background="#fcfcfc"
-	            android:orientation="vertical"
-	            android:paddingBottom="4dp"
-	            android:paddingLeft="@dimen/activity_horizontal_margin"
-	            android:paddingRight="@dimen/activity_horizontal_margin"
-	            android:paddingTop="12dp"
-	            tools:context=".UserInfo$DummySectionFragment" >
-	            
-		        <TextView
-	                android:id="@+id/tvIssueType"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_alignParentLeft="true"
-	                android:layout_alignParentRight="true"
-	                android:layout_alignParentTop="true"
-	                android:text="@string/nqaIssueTypeTitle"
-	                android:textAppearance="?android:attr/textAppearanceMedium"
-	                android:textColor="#A33F1F" />
-	
-	            <Spinner
-	                android:id="@+id/spnIssueType"
-	                android:layout_width="match_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_alignLeft="@id/tvIssueType"
-	                android:layout_below="@id/tvIssueType"
-	                android:layout_marginBottom="6dp"
-	                android:entries="@array/nqaIssueType"
-	                android:textAppearance="?android:attr/textAppearanceMedium" />
-            
-	            	            	</RelativeLayout>
 	            
 	        <RelativeLayout
 	            android:layout_width="fill_parent"

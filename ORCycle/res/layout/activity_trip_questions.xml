@@ -43,41 +43,6 @@
 	            android:paddingRight="@dimen/activity_horizontal_margin"
 	            android:paddingTop="12dp"
 	            tools:context=".UserInfo$DummySectionFragment" >
-		    		    
-			    <TextView
-		            android:id="@+id/tvTripFrequency"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_alignParentLeft="true"
-	                android:layout_alignParentRight="true"
-	                android:layout_alignParentTop="true"
-	                android:layout_marginTop="0dp"
-		            android:text="@string/q19_TripFrequency"
-	                android:textAppearance="?android:attr/textAppearanceMedium"
-	                android:textColor="#A33F1F" />
-	
-		        <Spinner
-		            android:id="@+id/spnrTripFrequency"
-		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content"
-		            android:layout_alignParentLeft="true"
-		            android:layout_alignParentRight="true"
-		            android:layout_below="@id/tvTripFrequency"
-		            android:entries="@array/qa_19_routeFrequency" />
-            
-        	</RelativeLayout>
-            
-	        <RelativeLayout
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginTop="1dp"
-	            android:background="#fcfcfc"
-	            android:orientation="vertical"
-	            android:paddingBottom="4dp"
-	            android:paddingLeft="@dimen/activity_horizontal_margin"
-	            android:paddingRight="@dimen/activity_horizontal_margin"
-	            android:paddingTop="12dp"
-	            tools:context=".UserInfo$DummySectionFragment" >
 	            
 		        <TextView
 		            android:id="@+id/tvTripPurpose"
@@ -101,6 +66,41 @@
 	                android:layout_marginBottom="6dp"
 		            android:entries="@array/qa_20_tripPurpose" />
 
+        	</RelativeLayout>
+            
+		    <RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+		    		    
+			    <TextView
+		            android:id="@+id/tvTripFrequency"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentRight="true"
+	                android:layout_alignParentTop="true"
+	                android:layout_marginTop="0dp"
+		            android:text="@string/q19_TripFrequency"
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="#A33F1F" />
+	
+		        <Spinner
+		            android:id="@+id/spnrTripFrequency"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_alignParentLeft="true"
+		            android:layout_alignParentRight="true"
+		            android:layout_below="@id/tvTripFrequency"
+		            android:entries="@array/qa_19_routeFrequency" />
+            
         	</RelativeLayout>
             
 	        <RelativeLayout

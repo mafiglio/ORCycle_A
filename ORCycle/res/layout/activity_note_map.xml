@@ -9,7 +9,7 @@
         android:id="@+id/rlNoteMapHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/psu_green"
+        android:background="@drawable/lcdscreen"
         android:paddingLeft="4sp"
         android:paddingRight="6sp"
         android:paddingTop="4sp" >
@@ -22,7 +22,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="4dp"
             android:text="September 27, 2014 11:02 PM"
-            android:textColor="@color/psu_yellow"
+            android:textColor="@color/text_black"
             android:textSize="15sp" >
         </TextView>
         
@@ -31,25 +31,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_below="@id/TextViewMapNoteFancyStart"
             android:layout_marginLeft="2dp"
             android:layout_marginTop="4dp"
-            android:layout_below="@id/TextViewMapNoteFancyStart"
             android:text="Water fountains"
-            android:textColor="@color/text_white"
+            android:textColor="@color/text_black"
             android:textSize="18sp"
             android:textStyle="bold" >
+
         </TextView>
 
 	    <TextView
 	        android:id="@+id/TextViewMapNoteDetails"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:layout_below="@id/TextViewMapNoteType"
 	        android:layout_marginLeft="4dp"
 	        android:layout_marginRight="8dp"
-	        android:layout_below="@id/TextViewMapNoteType"
 	        android:paddingBottom="8dp"
 	        android:text="Note info: The quick brown fox jumps over the lazy dog"
-	        android:textColor="@color/psu_yellow" >
+	        android:textColor="@color/text_black" >
 
 	    </TextView>
 
@@ -107,7 +108,7 @@
 	                android:layout_alignParentRight="true"
 	                android:layout_alignParentTop="true"
 	                android:layout_marginTop="0dp"
-	                android:text="Severity of the problem?"
+	                android:text="Severity of the problem:"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#A33F1F" />
 	
@@ -137,42 +138,6 @@
 	            tools:context=".UserInfo$DummySectionFragment" >
 		
 	        	            <TextView
-	        	                android:id="@+id/tvNmqConflictType"
-	        	                android:layout_width="match_parent"
-	        	                android:layout_height="wrap_content"
-	        	                android:layout_alignParentLeft="true"
-	        	                android:layout_alignParentRight="true"
-	        	                android:layout_alignParentTop="true"
-	        	                android:layout_marginTop="0dp"
-	        	                android:text="Type of conflict/accident, with ?"
-	        	                android:textAppearance="?android:attr/textAppearanceMedium"
-	        	                android:textColor="#A33F1F" />
-	
-	            <TextView
-	                android:id="@+id/tvNmConflictType"
-	                android:layout_width="match_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_below="@id/tvNmqConflictType"
-	                android:layout_marginTop="16dp"
-	                android:textColor="#474334"
-	                android:text="The quick brown fox jumps over the lazy dog"
-	                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-	</RelativeLayout>
-
-	        <RelativeLayout
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginTop="1dp"
-	            android:background="#fcfcfc"
-	            android:orientation="vertical"
-	            android:paddingBottom="4dp"
-	            android:paddingLeft="@dimen/activity_horizontal_margin"
-	            android:paddingRight="@dimen/activity_horizontal_margin"
-	            android:paddingTop="12dp"
-	            tools:context=".UserInfo$DummySectionFragment" >
-		
-	        	            <TextView
 	        	                android:id="@+id/tvNmqIssueType"
 	        	                android:layout_width="match_parent"
 	        	                android:layout_height="wrap_content"
@@ -180,7 +145,7 @@
 	        	                android:layout_alignParentRight="true"
 	        	                android:layout_alignParentTop="true"
 	        	                android:layout_marginTop="0dp"
-	        	                android:text=" * Safety issues?"
+	        	                android:text="Safety issues:"
 	        	                android:textAppearance="?android:attr/textAppearanceMedium"
 	        	                android:textColor="#A33F1F" />
 	
@@ -195,7 +160,43 @@
 	                android:textAppearance="?android:attr/textAppearanceMedium" />
 
 			</RelativeLayout>
-	            
+
+	        <RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+		
+	        	            <TextView
+	        	                android:id="@+id/tvNmqConflictType"
+	        	                android:layout_width="match_parent"
+	        	                android:layout_height="wrap_content"
+	        	                android:layout_alignParentLeft="true"
+	        	                android:layout_alignParentRight="true"
+	        	                android:layout_alignParentTop="true"
+	        	                android:layout_marginTop="0dp"
+	        	                android:text="Type of conflict/accident, with:"
+	        	                android:textAppearance="?android:attr/textAppearanceMedium"
+	        	                android:textColor="#A33F1F" />
+	
+	            <TextView
+	                android:id="@+id/tvNmConflictType"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_below="@id/tvNmqConflictType"
+	                android:layout_marginTop="16dp"
+	                android:textColor="#474334"
+	                android:text="The quick brown fox jumps over the lazy dog"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+			</RelativeLayout>
+
            	</LinearLayout>
 		</ScrollView>
 	</RelativeLayout>
