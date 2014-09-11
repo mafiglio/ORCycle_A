@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.TimeZone;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.location.Location;
@@ -63,6 +64,7 @@ public class TripData {
 	int status;
 	float distance;
 	String purp, fancystart, info;
+	private String noteComment;
 
 	private ArrayList<CyclePoint> gpspoints = new ArrayList<CyclePoint>();
 	CyclePoint startpoint, endpoint;
@@ -144,7 +146,7 @@ public class TripData {
 		latlow = (int) (100 * 1E6);
 		lgtlow = (int) (180 * 1E6);
 		lgthigh = (int) (-180 * 1E6);
-		purp = fancystart = info = "";
+		noteComment = purp = fancystart = info = "";
 
 		// So that there are not nulls in the database for purpose,
 		// fancyStart, fancyInfo, and notes fields, we set them to blank
@@ -155,7 +157,7 @@ public class TripData {
 	// Get lat/long extremes, etc, from trip record
 	void populateDetails() {
 
-		pauseStartedTime = RESET_START_TIME; // TODO: maybe put into database.
+		pauseStartedTime = RESET_START_TIME;
 		isPaused = false;
 
 		mDb.openReadOnly();
@@ -176,6 +178,7 @@ public class TripData {
 					purp = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_PURP));
 					fancystart = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_FANCYSTART));
 					info = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_FANCYINFO));
+					noteComment = tripdetails.getString(tripdetails.getColumnIndex(DbAdapter.K_TRIP_NOTE));
 				}
 				finally {
 					tripdetails.close();
@@ -279,8 +282,6 @@ public class TripData {
 
 		double currentTime = System.currentTimeMillis();
 
-		// TODO: Assert(pauseStartedTime > RESET_START_TIME);
-
 		// Insert pause data into database
 		try {
 			mDb.open();
@@ -298,7 +299,6 @@ public class TripData {
 		isPaused = false;
 	}
 
-	// TODO: Verify this calculation.  Should be tied to whether trip is done or in progress
 	public double getDuration () {
 
 		if (isPaused) {
@@ -387,6 +387,7 @@ public class TripData {
 		mDb.close();
 	}
 
+	@SuppressLint("SimpleDateFormat")
 	public void updateTrip(Double startTime, Double endTime, float distance, String noteComment) {
 
 		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  h:mm a");
@@ -398,9 +399,6 @@ public class TripData {
 		String duration = sdfDuration.format(endTime - startTime);
 
 		String fancyEndInfo = String.format("%1.1f miles, %s", (0.0006212f * distance), duration);
-		if ((null != noteComment) && (!noteComment.equals(""))) {
-			fancyEndInfo += String.format(",  %s", noteComment);
-		}
 
 		// Save the trip details to the phone database. W00t!
 		mDb.open();
@@ -413,5 +411,9 @@ public class TripData {
 		mDb.open();
 		mDb.updateTrip(tripid, fancyStartTime, fancyEndInfo, noteComment);
 		mDb.close();
+	}
+
+	public String getNoteComment() {
+		return noteComment;
 	}
 }

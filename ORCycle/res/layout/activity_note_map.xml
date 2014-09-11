@@ -221,7 +221,20 @@
 	
 				</RelativeLayout>
 
-	        </LinearLayout>
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment">
+				</RelativeLayout>
+		        		        
+		    </LinearLayout>
 		</ScrollView>
 	</RelativeLayout>
 </LinearLayout>

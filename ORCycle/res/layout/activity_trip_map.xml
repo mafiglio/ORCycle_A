@@ -110,7 +110,7 @@
 		                android:layout_alignParentRight="true"
 		                android:layout_alignParentTop="true"
 		                android:layout_marginTop="0dp"
-			            android:text="@string/q20_TripPurpose"
+			            android:text="@string/tmaTripPurpose"
 			            android:textAppearance="?android:attr/textAppearanceMedium" 
 			            android:textColor="#A33F1F" />
 			
@@ -275,7 +275,56 @@
 			    		
 		        </RelativeLayout>
 		        
-			</LinearLayout>
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+	   	            <TextView
+	   	                android:id="@+id/tvTmqComment"
+	   	                android:layout_width="match_parent"
+	   	                android:layout_height="wrap_content"
+	   	                android:layout_alignParentLeft="true"
+	   	                android:layout_alignParentRight="true"
+	   	                android:layout_alignParentTop="true"
+	   	                android:layout_marginTop="0dp"
+	   	                android:text="@string/atmComment"
+	   	                android:textAppearance="?android:attr/textAppearanceMedium"
+	   	                android:textColor="#A33F1F" />
+		
+		            <TextView
+		                android:id="@+id/tvTmComment"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_below="@id/tvTmqComment"
+		                android:layout_marginTop="16dp"
+		                android:textColor="#474334"
+		                android:text="@string/misc_generally_long_text_string"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+				</RelativeLayout>
+
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+				</RelativeLayout>
+		            			
+   			</LinearLayout>
 			
 		</ScrollView>
 		    		

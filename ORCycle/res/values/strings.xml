@@ -124,7 +124,10 @@
 	<string name="anmSeverityOfProblem">Severity of the problem:</string>
 	<string name="anmSafetyIssue">Safety issues:</string>
 	
-    <!-- ********************************************************* -->
+    <string name="atmComment">Additional Details:</string>
+    <string name="tmaTripPurpose">What is the main trip purpose?</string>
+    	
+	<!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
     <!-- ********************************************************* -->
 
