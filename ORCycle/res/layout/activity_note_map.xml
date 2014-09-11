@@ -15,44 +15,32 @@
         android:paddingTop="4sp" >
 
         <TextView
-            android:id="@+id/TextViewMapNoteFancyStart"
+            android:id="@+id/tvHeaderFancyStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="4dp"
-            android:text="September 27, 2014 11:02 PM"
+            android:text="@string/misc_longest_date_string"
             android:textColor="@color/text_black"
             android:textSize="15sp" >
         </TextView>
         
         <TextView
-            android:id="@+id/TextViewMapNoteType"
+            android:id="@+id/tvHeaderIssueType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/TextViewMapNoteFancyStart"
+            android:layout_below="@id/tvHeaderFancyStart"
+            android:layout_marginBottom="6dp"
             android:layout_marginLeft="2dp"
             android:layout_marginTop="4dp"
-            android:text="Water fountains"
+            android:text="@string/anmWaterFalls"
             android:textColor="@color/text_black"
             android:textSize="18sp"
             android:textStyle="bold" >
 
         </TextView>
-
-	    <TextView
-	        android:id="@+id/TextViewMapNoteDetails"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/TextViewMapNoteType"
-	        android:layout_marginLeft="4dp"
-	        android:layout_marginRight="8dp"
-	        android:paddingBottom="8dp"
-	        android:text="Note info: The quick brown fox jumps over the lazy dog"
-	        android:textColor="@color/text_black" >
-
-	    </TextView>
 
     </RelativeLayout>
 
@@ -72,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
-            android:contentDescription="noteImage"
+            android:contentDescription="@string/anmNoteImageContentDescription"
             android:scaleType="centerCrop" />
         
 		<ScrollView
@@ -84,7 +72,7 @@
 
 		<LinearLayout
 		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
+		    android:layout_height="wrap_content"
 		    android:background="#474334"
 		    android:orientation="vertical" >
 		    		
@@ -108,7 +96,7 @@
 	                android:layout_alignParentRight="true"
 	                android:layout_alignParentTop="true"
 	                android:layout_marginTop="0dp"
-	                android:text="Severity of the problem:"
+	                android:text="@string/anmSeverityOfProblem"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#A33F1F" />
 	
@@ -119,85 +107,121 @@
 	                android:layout_alignLeft="@id/tvNmSeverityOfProblem"
 	                android:layout_below="@id/tvNmqSeverityOfProblem"
 	                android:layout_marginTop="16dp"
-	                android:text="The quick brown fox jumps over the lazy dog"
+	                android:text="@string/misc_generally_long_text_string"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#474334" />
 	            
 	           	</RelativeLayout>
 	            
-	        <RelativeLayout
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginTop="1dp"
-	            android:background="#fcfcfc"
-	            android:orientation="vertical"
-	            android:paddingBottom="4dp"
-	            android:paddingLeft="@dimen/activity_horizontal_margin"
-	            android:paddingRight="@dimen/activity_horizontal_margin"
-	            android:paddingTop="12dp"
-	            tools:context=".UserInfo$DummySectionFragment" >
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+		        	            <TextView
+		        	                android:id="@+id/tvNmqIssueType"
+		        	                android:layout_width="match_parent"
+		        	                android:layout_height="wrap_content"
+		        	                android:layout_alignParentLeft="true"
+		        	                android:layout_alignParentRight="true"
+		        	                android:layout_alignParentTop="true"
+		        	                android:layout_marginTop="0dp"
+		        	                android:text="@string/anmSafetyIssue"
+		        	                android:textAppearance="?android:attr/textAppearanceMedium"
+		        	                android:textColor="#A33F1F" />
 		
-	        	            <TextView
-	        	                android:id="@+id/tvNmqIssueType"
-	        	                android:layout_width="match_parent"
-	        	                android:layout_height="wrap_content"
-	        	                android:layout_alignParentLeft="true"
-	        	                android:layout_alignParentRight="true"
-	        	                android:layout_alignParentTop="true"
-	        	                android:layout_marginTop="0dp"
-	        	                android:text="Safety issues:"
-	        	                android:textAppearance="?android:attr/textAppearanceMedium"
-	        	                android:textColor="#A33F1F" />
+		            <TextView
+		                android:id="@+id/tvNmIssueType"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_below="@id/tvNmqIssueType"
+		                android:layout_marginTop="16dp"
+		                android:textColor="#474334"
+		                android:text="@string/misc_generally_long_text_string"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
 	
-	            <TextView
-	                android:id="@+id/tvNmIssueType"
-	                android:layout_width="match_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_below="@id/tvNmqIssueType"
-	                android:layout_marginTop="16dp"
-	                android:textColor="#474334"
-	                android:text="The quick brown fox jumps over the lazy dog"
-	                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-			</RelativeLayout>
-
-	        <RelativeLayout
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginTop="1dp"
-	            android:background="#fcfcfc"
-	            android:orientation="vertical"
-	            android:paddingBottom="4dp"
-	            android:paddingLeft="@dimen/activity_horizontal_margin"
-	            android:paddingRight="@dimen/activity_horizontal_margin"
-	            android:paddingTop="12dp"
-	            tools:context=".UserInfo$DummySectionFragment" >
+				</RelativeLayout>
+	
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+	   	            <TextView
+	   	                android:id="@+id/tvNmqConflictType"
+	   	                android:layout_width="match_parent"
+	   	                android:layout_height="wrap_content"
+	   	                android:layout_alignParentLeft="true"
+	   	                android:layout_alignParentRight="true"
+	   	                android:layout_alignParentTop="true"
+	   	                android:layout_marginTop="0dp"
+	   	                android:text="Type of conflict/accident, with:"
+	   	                android:textAppearance="?android:attr/textAppearanceMedium"
+	   	                android:textColor="#A33F1F" />
 		
-	        	            <TextView
-	        	                android:id="@+id/tvNmqConflictType"
-	        	                android:layout_width="match_parent"
-	        	                android:layout_height="wrap_content"
-	        	                android:layout_alignParentLeft="true"
-	        	                android:layout_alignParentRight="true"
-	        	                android:layout_alignParentTop="true"
-	        	                android:layout_marginTop="0dp"
-	        	                android:text="Type of conflict/accident, with:"
-	        	                android:textAppearance="?android:attr/textAppearanceMedium"
-	        	                android:textColor="#A33F1F" />
+		            <TextView
+		                android:id="@+id/tvNmConflictType"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_below="@id/tvNmqConflictType"
+		                android:layout_marginTop="16dp"
+		                android:textColor="#474334"
+		                android:text="@string/misc_generally_long_text_string"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
 	
-	            <TextView
-	                android:id="@+id/tvNmConflictType"
-	                android:layout_width="match_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_below="@id/tvNmqConflictType"
-	                android:layout_marginTop="16dp"
-	                android:textColor="#474334"
-	                android:text="The quick brown fox jumps over the lazy dog"
-	                android:textAppearance="?android:attr/textAppearanceMedium" />
+				</RelativeLayout>
+	
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+	   	            <TextView
+	   	                android:id="@+id/tvNmqComment"
+	   	                android:layout_width="match_parent"
+	   	                android:layout_height="wrap_content"
+	   	                android:layout_alignParentLeft="true"
+	   	                android:layout_alignParentRight="true"
+	   	                android:layout_alignParentTop="true"
+	   	                android:layout_marginTop="0dp"
+	   	                android:text="@string/anmComment"
+	   	                android:textAppearance="?android:attr/textAppearanceMedium"
+	   	                android:textColor="#A33F1F" />
+		
+		            <TextView
+		                android:id="@+id/tvNmComment"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_below="@id/tvNmqComment"
+		                android:layout_marginTop="16dp"
+		                android:textColor="#474334"
+		                android:text="@string/misc_generally_long_text_string"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+				</RelativeLayout>
 
-			</RelativeLayout>
-
-           	</LinearLayout>
+	        </LinearLayout>
 		</ScrollView>
 	</RelativeLayout>
 </LinearLayout>

@@ -113,11 +113,17 @@
     
     <string name="ats_tell_us_about_yourself">Tell us about yourself&#8230;</string>
     <string name="ats_getting_started">Get started with ORCycle&#8230;</string>
-    <string name="ats_provide_feedback">Provide feedback about the app...&#8230;</string>
+    <string name="ats_provide_feedback">Provide feedback about the app&#8230;</string>
     
     <string name="auf_user_feedback">Comment here if you would like to provide feedback
         about ORcycle or desirable features:</string>
-    
+        
+    <string name="anmWaterFalls">Waterfalls</string>
+    <string name="anmComment">Additional Details:</string>
+    <string name="anmNoteImageContentDescription">Note Image</string>
+	<string name="anmSeverityOfProblem">Severity of the problem:</string>
+	<string name="anmSafetyIssue">Safety issues:</string>
+	
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
     <!-- ********************************************************* -->
