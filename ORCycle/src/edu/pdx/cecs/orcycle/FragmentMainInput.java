@@ -948,29 +948,14 @@ public class FragmentMainInput extends Fragment
 		getActivity().finish();
 	}
 
-	private void transitionToNoteTypeActivity(NoteData note, long tripId) {
-
-		// Setup intent to move to next activity
-		Intent intent = new Intent(getActivity(), NoteTypeActivity.class);
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_ID, note.noteId);
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_TYPE, NoteTypeActivity.EXTRA_NOTE_TYPE_UNDEFINED);
-		intent.putExtra(NoteTypeActivity.EXTRA_NOTE_SOURCE, NoteTypeActivity.EXTRA_NOTE_SOURCE_MAIN_INPUT);
-		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_ID, tripId);
-		intent.putExtra(NoteTypeActivity.EXTRA_TRIP_SOURCE, NoteTypeActivity.EXTRA_TRIP_SOURCE_MAIN_INPUT);
-
-		startActivity(intent);
-		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		// getActivity().finish();
-	}
-
 	private void transitionToNoteQuestionsActivity(NoteData note, long tripId) {
 
 		Intent intent = new Intent(getActivity(), NoteQuestionsActivity.class);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, note.noteId);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_TYPE, NoteTypeActivity.EXTRA_NOTE_TYPE_UNDEFINED);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, NoteTypeActivity.EXTRA_NOTE_SOURCE_MAIN_INPUT);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_TYPE, NoteQuestionsActivity.EXTRA_NOTE_TYPE_UNDEFINED);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, NoteQuestionsActivity.EXTRA_NOTE_SOURCE_MAIN_INPUT);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, NoteTypeActivity.EXTRA_TRIP_SOURCE_MAIN_INPUT);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, NoteQuestionsActivity.EXTRA_TRIP_SOURCE_MAIN_INPUT);
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 		getActivity().finish();

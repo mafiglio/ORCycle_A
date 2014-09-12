@@ -15,11 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.Spinner;
 
 public class NoteQuestionsActivity extends Activity {
@@ -27,10 +22,8 @@ public class NoteQuestionsActivity extends Activity {
 	private static final String MODULE_TAG = "NoteQuestionsActivity";
 
 	private Spinner spnSeverity;
-	private Spinner spnIssueType;
+	private MultiSelectionSpinner spnIssueType;
 	private MultiSelectionSpinner spnConflict;
-
-	private String issueTypeOtherText = null;
 
 	public static final String EXTRA_NOTE_ID = "noteId";
 	public static final String EXTRA_NOTE_TYPE = "noteType";
@@ -56,9 +49,6 @@ public class NoteQuestionsActivity extends Activity {
 	private static final int PREF_CONFLICT = 2;
 	private static final int PREF_ISSUE    = 3;
 
-	private SpnIssueType_OnClickListener spnIssueType_OnClick = null;
-
-	private int noteType;
 	private int noteSeverity;
 	private long noteId = -1;
 	private int noteSource = EXTRA_NOTE_SOURCE_UNDEFINED;
@@ -90,7 +80,6 @@ public class NoteQuestionsActivity extends Activity {
 				throw new IllegalArgumentException(MODULE_TAG + ": EXTRA_NOTE_SOURCE invalid argument.");
 			}
 
-			noteType = myIntent.getIntExtra(EXTRA_NOTE_TYPE, EXTRA_NOTE_TYPE_UNDEFINED);
 			noteSeverity = myIntent.getIntExtra(EXTRA_NOTE_SEVERITY, EXTRA_NOTE_SEVERITY_UNDEFINED);
 
 			// Note: these extras are used for transitioning back to the TripMapActivity if done
@@ -107,9 +96,6 @@ public class NoteQuestionsActivity extends Activity {
 			setContentView(R.layout.activity_note_questions);
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-			spnIssueType_OnClick = new SpnIssueType_OnClickListener();
-
-
 			spnSeverity = (Spinner) findViewById(R.id.spnSeverityOfProblem);
 
 			spnConflict = (MultiSelectionSpinner) findViewById(R.id.spnConflictType);
@@ -117,10 +103,13 @@ public class NoteQuestionsActivity extends Activity {
 			spnConflict.setTitle(getResources().getString(R.string.nqaConflictTypeTitle));
 			spnConflict.setOtherIndex(DbAnswers.findIndex(DbAnswers.noteConflict, DbAnswers.noteConflictOther));
 
-			spnIssueType = (Spinner) findViewById(R.id.spnIssueType);
-			spnIssueType_OnClick.setOtherIndex(DbAnswers.findIndex(DbAnswers.noteIssue, DbAnswers.noteIssueOther));
-			spnIssueType_OnClick.setItems(getResources().getStringArray(R.array.nqaIssueType));
-			spnIssueType.setOnItemSelectedListener(spnIssueType_OnClick);
+			spnIssueType = (MultiSelectionSpinner) findViewById(R.id.spnIssueType);
+			spnIssueType.setItems(getResources().getStringArray(R.array.nqaIssueType));
+			spnIssueType.setTitle(getResources().getString(R.string.nqaIssueTypeTitle));
+			spnIssueType.setOtherIndex(DbAnswers.findIndex(DbAnswers.noteIssue, DbAnswers.noteIssueOther));
+			//spnIssueType_OnClick.setOtherIndex(DbAnswers.findIndex(DbAnswers.noteIssue, DbAnswers.noteIssueOther));
+			//spnIssueType_OnClick.setItems(getResources().getStringArray(R.array.nqaIssueType));
+			//spnIssueType.setOnItemSelectedListener(spnIssueType_OnClick);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -194,7 +183,7 @@ public class NoteQuestionsActivity extends Activity {
 
 	private boolean MandatoryQuestionsAnswered() {
 
-		return ((spnIssueType.getSelectedItemPosition() > 0) &&
+		return ((spnIssueType.getSelectedIndicies().size() > 0) &&
 				(spnSeverity.getSelectedItemPosition() > 0));
 	}
 
@@ -226,144 +215,6 @@ public class NoteQuestionsActivity extends Activity {
 	// *                              Button Handlers
 	// *********************************************************************************
 
-    /**
-     * Class: ButtonStart_OnClickListener
-     *
-     * Description: Callback to be invoked when startButton button is clicked
-     */
-	private final class SpnIssueType_OnClickListener implements OnItemSelectedListener {
-
-		private int otherIndex = -1;
-		private final AlertDialog.Builder inputDialog;
-		private final EditText editText;
-		private ArrayAdapter<String> myArrayAdapter = null;
-		private String[] items;
-		private final String DEFAULT_OTHER_TEXT = "Other...";
-		private AdapterView<ArrayAdapter<String>> myAdapterView;
-
-		public SpnIssueType_OnClickListener() {
-
-			inputDialog = new AlertDialog.Builder(NoteQuestionsActivity.this);
-			editText = new EditText(NoteQuestionsActivity.this);
-			inputDialog.setView(editText);
-			inputDialog.setTitle("Specify other...");
-			inputDialog.setPositiveButton("OK", new OtherPositiveButton_OnClickListener());
-			inputDialog.setNegativeButton("Cancel", new OtherNegativeButton_OnClickListener());
-			inputDialog.setCancelable(true);
-		}
-
-		@Override
-		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			try {
-				Log.v(MODULE_TAG, "Item selected(" + position + ") = " + id);
-
-				if (otherIndex == position - 1) {
-					myArrayAdapter = null;
-					try {
-						myAdapterView = (AdapterView<ArrayAdapter<String>>) parent;
-						myArrayAdapter = myAdapterView.getAdapter();
-						String item = myArrayAdapter.getItem(position);
-						Log.v(MODULE_TAG, "Item(" + position + ") = <" + item + ">");
-						inputDialog.show();
-					}
-					catch(ClassCastException ex) {
-						Log.e(MODULE_TAG, ex.getMessage());
-					}
-				}
-			}
-			catch(Exception ex) {
-				Log.e(MODULE_TAG, ex.getMessage());
-			}
-		}
-
-		@Override
-		public void onNothingSelected(AdapterView<?> parent) {
-			try {
-			}
-			catch(Exception ex) {
-				Log.e(MODULE_TAG, ex.getMessage());
-			}
-		}
-
-		private final class OtherPositiveButton_OnClickListener implements
-				DialogInterface.OnClickListener {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-				try {
-					setOtherText(editText.getText().toString());
-				}
-				catch (Exception ex) {
-					Log.e(MODULE_TAG, ex.getMessage());
-				}
-				finally {
-					dialog.dismiss();
-				}
-			}
-		}
-
-		private final class OtherNegativeButton_OnClickListener implements
-				DialogInterface.OnClickListener {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-				try {
-					dialog.dismiss();
-				}
-				catch (Exception ex) {
-					Log.e(MODULE_TAG, ex.getMessage());
-				}
-			}
-		}
-
-		public void setOtherIndex(int index) {
-			this.otherIndex = index;
-		}
-
-		private void setOtherText(String text) {
-
-			if (null == text) {
-				issueTypeOtherText="";
-			}
-			else {
-				issueTypeOtherText = text.trim();
-			}
-
-			// Pick something sane to show the user
-			if (issueTypeOtherText == "") {
-				this.items[otherIndex + 1] = DEFAULT_OTHER_TEXT;
-			}
-			else {
-				this.items[otherIndex + 1] = "Other( \"" +  text + "\" )";
-			}
-
-			// First try
-			//myArrayAdapter.clear();
-			//myArrayAdapter.addAll(this.items);
-			//myArrayAdapter.notifyDataSetChanged();
-
-			// Second try
-			//ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(NoteQuestionsActivity.this, otherIndex);
-			//myAdapterView.setAdapter(arrayAdapter);
-		}
-
-		private void setItems(String[] items) {
-			this.items = new String[items.length];
-			for (int i = 0; i < items.length; ++i) {
-				this.items[i] = new String(items[i]);
-			}
-		}
-	}
-
-	private boolean questionAnswered() {
-
-		if ((spnSeverity.getSelectedItemPosition()    > 0) ||
-			(spnConflict.getSelectedIndicies().size() > 0) ||
-			(spnIssueType.getSelectedItemPosition()   > 0)) {
-			return true;
-		}
-
-		return false;
-	}
-
 	// *********************************************************************************
 	// *                      Saving & Recalling UI Settings
 	// *********************************************************************************
@@ -378,19 +229,31 @@ public class NoteQuestionsActivity extends Activity {
 
 		if (null != (settings = getSharedPreferences(PREFS_NOTE_QUESTIONS, MODE_PRIVATE))) {
 			if (null != (editor = settings.edit())) {
-				saveSpinnerPosition(editor, spnSeverity,  PREF_SEVERITY);
-				saveSpinnerPosition(editor, spnConflict,  PREF_CONFLICT);
-				saveSpinnerPosition(editor, spnIssueType, PREF_ISSUE   );
+				saveSpinnerSelection(editor, spnSeverity,  PREF_SEVERITY);
+				saveSpinnerSelections(editor, spnConflict,  PREF_CONFLICT);
+				saveSpinnerSelections(editor, spnIssueType, PREF_ISSUE   );
 				editor.commit();
 			}
 		}
 	}
 
-	private void saveSpinnerPosition(SharedPreferences.Editor editor, Spinner spinner, int key) {
+	/**
+	 * Saves spinner selection to preferences editor
+	 * @param editor
+	 * @param spinner
+	 * @param key
+	 */
+	private void saveSpinnerSelection(SharedPreferences.Editor editor, Spinner spinner, int key) {
 		editor.putInt("" + key, spinner.getSelectedItemPosition());
 	}
 
-	private void saveSpinnerPosition(SharedPreferences.Editor editor, MultiSelectionSpinner spinner, int key) {
+	/**
+	 * Saves MultiSelectionSpinner selections to preferences editor
+	 * @param editor
+	 * @param spinner
+	 * @param key
+	 */
+	private void saveSpinnerSelections(SharedPreferences.Editor editor, MultiSelectionSpinner spinner, int key) {
 		editor.putString("" + key, spinner.getSelectedIndicesAsString());
 	}
 
@@ -408,9 +271,9 @@ public class NoteQuestionsActivity extends Activity {
 					for (Entry<String, ?> entry : prefs.entrySet()) {
 						try {
 							switch (Integer.parseInt(entry.getKey())) {
-							case PREF_SEVERITY: setSpinnerSetting(spnSeverity,  entry); break;
-							case PREF_CONFLICT: setSpinnerSetting(spnConflict,  entry); break;
-							case PREF_ISSUE:    setSpinnerSetting(spnIssueType, entry); break;
+							case PREF_SEVERITY: setSpinnerSelection(spnSeverity,  entry); break;
+							case PREF_CONFLICT: setSpinnerSelections(spnConflict,  entry); break;
+							case PREF_ISSUE:    setSpinnerSelections(spnIssueType, entry); break;
 							}
 						}
 						catch(Exception ex) {
@@ -430,7 +293,7 @@ public class NoteQuestionsActivity extends Activity {
 	 * @param spinner
 	 * @param p
 	 */
-	private void setSpinnerSetting(Spinner spinner, Entry<String, ?> p) {
+	private void setSpinnerSelection(Spinner spinner, Entry<String, ?> p) {
 		spinner.setSelection(((Integer) p.getValue()).intValue());
 	}
 
@@ -439,7 +302,7 @@ public class NoteQuestionsActivity extends Activity {
 	 * @param spinner
 	 * @param p
 	 */
-	private void setSpinnerSetting(MultiSelectionSpinner spinner, Entry<String, ?> p) {
+	private void setSpinnerSelections(MultiSelectionSpinner spinner, Entry<String, ?> p) {
 
 		// Retireve entry value
 		String entry = (String) p.getValue();
@@ -489,13 +352,12 @@ public class NoteQuestionsActivity extends Activity {
 					DbAnswers.noteSeverity);
 
 			submitSpinnerSelection(spnConflict,  dbAdapter, DbQuestions.NOTE_CONFLICT,
-					DbAnswers.noteConflict, DbAnswers.noteConflictOther );
+					DbAnswers.noteConflict, DbAnswers.noteConflictOther);
 
 			submitSpinnerSelection(spnIssueType, dbAdapter, DbQuestions.NOTE_ISSUE,
-					DbAnswers.noteIssue, DbAnswers.noteIssueOther, issueTypeOtherText);
+					DbAnswers.noteIssue, DbAnswers.noteIssueOther);
 
-			recordNoteType(spnIssueType, DbAnswers.noteIssue);
-			recordNoteSeverity(spnSeverity, DbAnswers.noteSeverity);
+			setSeverity(spnSeverity, DbAnswers.noteSeverity);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -553,18 +415,7 @@ public class NoteQuestionsActivity extends Activity {
 		}
 	}
 
-	private void recordNoteType(Spinner spinner, int[] answerIds) {
-		int answerIndex = spinner.getSelectedItemPosition() - 1;
-
-		if (answerIndex >= 0) {
-			noteType = answerIds[answerIndex];
-		}
-		else {
-			noteType = -1;
-		}
-	}
-
-	private void recordNoteSeverity(Spinner spinner, int[] answerIds) {
+	private void setSeverity(Spinner spinner, int[] answerIds) {
 		int answerIndex = spinner.getSelectedItemPosition() - 1;
 
 		if (answerIndex >= 0) {
@@ -593,7 +444,6 @@ public class NoteQuestionsActivity extends Activity {
 
 		// Create intent to go to the NoteDetailActivity
 		Intent intent = new Intent(this, NoteDetailActivity.class);
-		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_TYPE, noteType);
 		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_SEVERITY, noteSeverity);
 		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_ID, noteId);
 		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_SOURCE, noteSource);

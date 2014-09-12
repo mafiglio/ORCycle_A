@@ -28,12 +28,12 @@
         </TextView>
 
         <TextView
-            android:id="@+id/tvSnliNoteType"
+            android:id="@+id/tvSnliNoteSeverity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="2dp"
-            android:text="@string/note_traffic_signal"
+            android:text="@string/snliNoteSeverityExample"
             android:textColor="@color/psu_sienna"
             android:textSize="18sp"
             android:textStyle="normal" >

@@ -36,7 +36,6 @@ public class NoteDetailActivity extends Activity {
 	public static final String MODULE_TAG = "NoteDetailActivity";
 
 	public static final String EXTRA_NOTE_ID = "noteId";
-	public static final String EXTRA_NOTE_TYPE = "noteType";
 	public static final String EXTRA_NOTE_SEVERITY = "noteSeverity";
 	public static final String EXTRA_NOTE_SOURCE = "noteSource";
 	public static final int EXTRA_NOTE_SOURCE_UNDEFINED = -1;
@@ -55,7 +54,6 @@ public class NoteDetailActivity extends Activity {
 	private static final int IMAGE_REQUEST = 1889;
 
 	long noteId;
-	int noteType = EXTRA_NOTE_TYPE_UNDEFINED;
 	int noteSeverity = EXTRA_NOTE_SEVERITY_UNDEFINED;
 	int noteSource;
 	private long tripId;
@@ -85,7 +83,6 @@ public class NoteDetailActivity extends Activity {
 			throw new IllegalArgumentException(MODULE_TAG + ": EXTRA_NOTE_SOURCE invalid argument.");
 		}
 
-		noteType = myIntent.getIntExtra(EXTRA_NOTE_TYPE, EXTRA_NOTE_TYPE_UNDEFINED);
 		noteSeverity = myIntent.getIntExtra(EXTRA_NOTE_SEVERITY, EXTRA_NOTE_SEVERITY_UNDEFINED);
 
 		// Note: these extras are used for transitioning back to the TripMapActivity if done
@@ -268,7 +265,7 @@ public class NoteDetailActivity extends Activity {
 		if (null != latLng) {
 			note.updateNoteLatLng(latLng[0], latLng[1]);
 		}
-		note.updateNote(noteType, noteSeverity, fancyStartTime, noteDetailsToUpload, noteImage);
+		note.updateNote(noteSeverity, fancyStartTime, noteDetailsToUpload, noteImage);
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 
 		if (note.noteStatus < NoteData.STATUS_SENT) {
@@ -450,7 +447,6 @@ public class NoteDetailActivity extends Activity {
 
 		Intent intent = new Intent(this, NoteQuestionsActivity.class);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, noteId);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_TYPE, noteType);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, noteSource);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, tripSource);

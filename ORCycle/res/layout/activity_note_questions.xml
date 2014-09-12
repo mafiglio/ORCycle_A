@@ -90,17 +90,16 @@
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#A33F1F" />
 	
-	            <Spinner
+	            <edu.pdx.cecs.orcycle.MultiSelectionSpinner
 	                android:id="@+id/spnIssueType"
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_alignLeft="@id/tvIssueType"
 	                android:layout_below="@id/tvIssueType"
 	                android:layout_marginBottom="6dp"
-	                android:entries="@array/nqaIssueType"
 	                android:textAppearance="?android:attr/textAppearanceMedium" />
-            
-           	</RelativeLayout>
+	            
+	       	</RelativeLayout>
            	
    	        <RelativeLayout
 	            android:layout_width="fill_parent"

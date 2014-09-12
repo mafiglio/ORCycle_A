@@ -127,6 +127,7 @@
 	
     <string name="atmComment">Additional Details:</string>
     <string name="tmaTripPurpose">What is the main trip purpose?</string>
+    <string name="snliNoteSeverityExample">Major crash/accident</string>
     	
 	<!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
@@ -397,6 +398,14 @@
         <item>I feel uncomfortable</item>
         </string-array>
 
+	<string-array name="nmaSeverityOfProblem">
+        <item>Major crash/accident</item>
+        <item>Minor crash/accident</item>
+        <item>Near-crash/accident</item>
+        <item>I do not feel safe</item>
+        <item>I feel uncomfortable</item>
+        </string-array>
+
 	<string name="nqaConflictTypeTitle">Type of conflict/Accident With</string>
     <string-array name="nqaConflictType">
         <item>Auto traffic</item>
@@ -411,7 +420,6 @@
     			
 	<string name="nqaIssueTypeTitle"> * Safety issues?</string>
     <string-array name="nqaIssueType">
-        <item></item>
         <item>Narrow Bike Lane</item>
         <item>No bike lane or separation</item>
         <item>High vehicles Speed</item>

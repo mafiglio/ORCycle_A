@@ -20,7 +20,7 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 	private final String[] from;
 	private final int[] to;
 	Cursor cursor;
-	private final String[] textNoteTypes;
+	private final String[] textNoteSeverities;
 
 	public SavedNotesAdapter(Context context, int layout, Cursor c,
 			String[] from, int[] to, int flags) {
@@ -29,7 +29,7 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 		this.from = from;
 		this.to = to;
 		this.cursor = c;
-		this.textNoteTypes = context.getResources().getStringArray(R.array.nqaIssueType);
+		this.textNoteSeverities = context.getResources().getStringArray(R.array.nmaSeverityOfProblem);
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			rowView = inflater.inflate(R.layout.saved_notes_list_item, parent, false);
 			TextView tvNoteRecorded = (TextView) rowView.findViewById(R.id.tvSnliRecorded);
-			TextView tvNoteType = (TextView) rowView.findViewById(R.id.tvSnliNoteType);
+			TextView tvNoteSeverity = (TextView) rowView.findViewById(R.id.tvSnliNoteSeverity);
 			ImageView ivNoteIcon = (ImageView) rowView.findViewById(R.id.ivNoteSeverity);
 
 			cursor.moveToPosition(position);
@@ -53,11 +53,10 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 
 			tvNoteRecorded.setText(start);
 
-			int noteType = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_NOTE_TYPE));
 			int noteSeverity = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_NOTE_SEVERITY));
 			int status = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_NOTE_STATUS));
 
-			tvNoteType.setText(getNoteTypeText(noteType));
+			tvNoteSeverity.setText(getNoteSeverityText(noteSeverity));
 
 			if (status == 1) {
 				ivNoteIcon.setImageResource(R.drawable.failedupload_high);
@@ -75,12 +74,12 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 		return rowView;
 	}
 
-	private String getNoteTypeText(int noteType) {
+	private String getNoteSeverityText(int noteSeverity) {
 
-		int noteTypeIndex = DbAnswers.findIndex(DbAnswers.noteIssue, noteType);
+		int noteSeverityIndex = DbAnswers.findIndex(DbAnswers.noteSeverity, noteSeverity);
 
-		if (-1 != noteTypeIndex) {
-			return textNoteTypes[noteTypeIndex + 1];
+		if (-1 != noteSeverityIndex) {
+			return textNoteSeverities[noteSeverityIndex];
 		}
 		return "Unknown";
 	}
