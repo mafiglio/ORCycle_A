@@ -83,7 +83,7 @@ public class TripQuestionsActivity extends Activity {
 			routePrefs = (MultiSelectionSpinner) findViewById(R.id.spnrRouteChoice);
 			routePrefs.setTitle(getResources().getString(R.string.q21_routePreferences));
 			routePrefs.setItems(getResources().getStringArray(R.array.qa_21_routePreferences));
-			routePrefs.setOnItemSelectedListener(answer_OnClickListener);
+			routePrefs.setOtherIndex(DbAnswers.findIndex(DbAnswers.routePrefs, DbAnswers.tripRoutePrefsOther));
 
 			tripComfort = (Spinner) findViewById(R.id.spnrTripComfort);
 			tripComfort.setOnItemSelectedListener(answer_OnClickListener);
@@ -108,7 +108,7 @@ public class TripQuestionsActivity extends Activity {
 			routeStressors.setItems(getResources().getStringArray(R.array.qa_27_routeStressors));
 			routeStressors.setTitle(getResources().getString(R.string.q27_routeStressors));
 			routeStressors.setOverrideIndex(DbAnswers.findIndex(DbAnswers.routeStressors, DbAnswers.routeStressorsNotConcerned));
-			routeStressors.setOnItemSelectedListener(answer_OnClickListener);
+			routeStressors.setOtherIndex(DbAnswers.findIndex(DbAnswers.routeStressors, DbAnswers.tripRouteStressorsOther));
 
 			tripComment = (EditText) findViewById(R.id.editTextTripComment);
 		}
@@ -256,26 +256,26 @@ public class TripQuestionsActivity extends Activity {
 
 		if (null != (settings = getSharedPreferences(PREFS_TRIP_QUESTIONS, MODE_PRIVATE))) {
 			if (null != (editor = settings.edit())) {
-				saveSpinnerPosition(editor, tripFrequency,   PREF_TRIP_FREQUENCY   );
-				saveSpinnerPosition(editor, tripPurpose,     PREF_TRIP_PURPOSE     );
-				saveSpinnerPosition(editor, routePrefs,      PREF_ROUTE_PREFS      );
-				saveSpinnerPosition(editor, tripComfort,     PREF_TRIP_COMFORT     );
+				saveSpinnerSelection(editor, tripFrequency,   PREF_TRIP_FREQUENCY   );
+				saveSpinnerSelection(editor, tripPurpose,     PREF_TRIP_PURPOSE     );
+				saveSpinnerSelections(editor, routePrefs,      PREF_ROUTE_PREFS      );
+				saveSpinnerSelection(editor, tripComfort,     PREF_TRIP_COMFORT     );
 				//saveSpinnerPosition(editor, routeSafety,     PREF_ROUTE_SAFETY     );
 				//saveSpinnerPosition(editor, passengers,      PREF_PASSENGERS       );
 				//saveSpinnerPosition(editor, bikeAccessories, PREF_BIKE_ACCESSORIES );
 				//saveSpinnerPosition(editor, rideConflict,    PREF_RIDE_CONFLICT    );
-				saveSpinnerPosition(editor, routeStressors,  PREF_ROUTE_STRESSORS  );
+				saveSpinnerSelections(editor, routeStressors,  PREF_ROUTE_STRESSORS  );
 				saveEditText(editor, tripComment, PREF_TRIP_COMMENT);
 				editor.commit();
 			}
 		}
 	}
 
-	private void saveSpinnerPosition(SharedPreferences.Editor editor, Spinner spinner, int key) {
+	private void saveSpinnerSelection(SharedPreferences.Editor editor, Spinner spinner, int key) {
 		editor.putInt("" + key, spinner.getSelectedItemPosition());
 	}
 
-	private void saveSpinnerPosition(SharedPreferences.Editor editor, MultiSelectionSpinner spinner, int key) {
+	private void saveSpinnerSelections(SharedPreferences.Editor editor, MultiSelectionSpinner spinner, int key) {
 		editor.putString("" + key, spinner.getSelectedIndicesAsString());
 	}
 
@@ -297,15 +297,15 @@ public class TripQuestionsActivity extends Activity {
 					for (Entry<String, ?> entry : prefs.entrySet()) {
 						try {
 							switch (Integer.parseInt(entry.getKey())) {
-							case PREF_TRIP_FREQUENCY:   setSpinnerSetting(tripFrequency,   entry); break;
-							case PREF_TRIP_PURPOSE:     setSpinnerSetting(tripPurpose,     entry); break;
-							case PREF_ROUTE_PREFS:      setSpinnerSetting(routePrefs,      entry); break;
-							case PREF_TRIP_COMFORT:     setSpinnerSetting(tripComfort,     entry); break;
+							case PREF_TRIP_FREQUENCY:   setSpinnerSelection(tripFrequency,   entry); break;
+							case PREF_TRIP_PURPOSE:     setSpinnerSelection(tripPurpose,     entry); break;
+							case PREF_ROUTE_PREFS:      setSpinnerSelections(routePrefs,      entry); break;
+							case PREF_TRIP_COMFORT:     setSpinnerSelection(tripComfort,     entry); break;
 							//case PREF_ROUTE_SAFETY:     setSpinnerSetting(routeSafety,     entry); break;
 							//case PREF_PASSENGERS:       setSpinnerSetting(passengers,      entry); break;
 							//case PREF_BIKE_ACCESSORIES: setSpinnerSetting(bikeAccessories, entry); break;
 							//case PREF_RIDE_CONFLICT:    setSpinnerSetting(rideConflict,    entry); break;
-							case PREF_ROUTE_STRESSORS:  setSpinnerSetting(routeStressors,  entry); break;
+							case PREF_ROUTE_STRESSORS:  setSpinnerSelections(routeStressors,  entry); break;
 							case PREF_TRIP_COMMENT:     setEditText(tripComment,           entry); break;
 							}
 						}
@@ -326,7 +326,7 @@ public class TripQuestionsActivity extends Activity {
 	 * @param spinner
 	 * @param p
 	 */
-	private void setSpinnerSetting(Spinner spinner, Entry<String, ?> p) {
+	private void setSpinnerSelection(Spinner spinner, Entry<String, ?> p) {
 		spinner.setSelection(((Integer) p.getValue()).intValue());
 	}
 
@@ -335,7 +335,7 @@ public class TripQuestionsActivity extends Activity {
 	 * @param spinner
 	 * @param p
 	 */
-	private void setSpinnerSetting(MultiSelectionSpinner spinner, Entry<String, ?> p) {
+	private void setSpinnerSelections(MultiSelectionSpinner spinner, Entry<String, ?> p) {
 
 		// Retireve entry value
 		String entry = (String) p.getValue();
@@ -390,13 +390,13 @@ public class TripQuestionsActivity extends Activity {
 			// Update answer table
 			submitSpinnerSelection( dbAdapter, tripFrequency,    DbQuestions.TRIP_FREQUENCY,   DbAnswers.tripFreq        );
 			submitSpinnerSelection( dbAdapter, tripPurpose,      DbQuestions.TRIP_PURPOSE,     DbAnswers.tripPurpose     );
-			submitSpinnerSelection( dbAdapter, routePrefs,       DbQuestions.ROUTE_PREFS,      DbAnswers.routePrefs      );
+			submitSpinnerSelection( routePrefs, dbAdapter,      DbQuestions.ROUTE_PREFS,      DbAnswers.routePrefs,  DbAnswers.tripRoutePrefsOther);
 			submitSpinnerSelection( dbAdapter, tripComfort,      DbQuestions.TRIP_COMFORT,     DbAnswers.tripComfort     );
 			//submitSpinnerSelection( dbAdapter, routeSafety,      DbQuestions.ROUTE_SAFETY,     DbAnswers.routeSafety     );
 			//submitSpinnerSelection( dbAdapter, passengers,       DbQuestions.PASSENGERS,       DbAnswers.passengers      );
 			//submitSpinnerSelection( dbAdapter, bikeAccessories,  DbQuestions.BIKE_ACCESSORIES, DbAnswers.bikeAccessories );
 			//submitSpinnerSelection( dbAdapter, rideConflict,     DbQuestions.RIDE_CONFLICT,    DbAnswers.rideConflict    );
-			submitSpinnerSelection( dbAdapter, routeStressors,   DbQuestions.ROUTE_STRESSORS,  DbAnswers.routeStressors  );
+			submitSpinnerSelection( routeStressors, dbAdapter,   DbQuestions.ROUTE_STRESSORS,  DbAnswers.routeStressors, DbAnswers.tripRouteStressorsOther );
 
 			// Update trip table
 			updateTripPurpose(dbAdapter, tripPurpose, DbAnswers.tripPurpose);
@@ -468,6 +468,26 @@ public class TripQuestionsActivity extends Activity {
 		List<Integer> selectedIndicies = spinner.getSelectedIndicies();
 		for (int index : selectedIndicies) {
 			dbAdapter.addAnswerToTrip(tripId, question_id, answers[index]);
+		}
+	}
+
+	/**
+	 * Enters the MultiSelectionSpinner selections into the database
+	 * @param spinner
+	 * @param dbAdapter
+	 * @param question_id
+	 * @param answers
+	 */
+	private void submitSpinnerSelection(MultiSelectionSpinner spinner, DbAdapter dbAdapter,
+			int question_id, int[] answers, int answerOther) {
+		List<Integer> selectedIndicies = spinner.getSelectedIndicies();
+		for (int index : selectedIndicies) {
+			if ((answerOther >= 0) && (answers[index] == answerOther)) {
+				dbAdapter.addAnswerToTrip(tripId, question_id, answers[index], spinner.getOtherText());
+			}
+			else {
+				dbAdapter.addAnswerToTrip(tripId, question_id, answers[index]);
+			}
 		}
 	}
 

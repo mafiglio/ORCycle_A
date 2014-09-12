@@ -170,11 +170,11 @@ public class DbAdapter {
 			+ "FOREIGN KEY(tripid) REFERENCES TRIPS(_id));";
 
 	private static final String TABLE_CREATE_ANSWERS = "create table answers "
-			+ "(trip_id integer, question_id integer, answer_id integer, "
+			+ "(trip_id integer, question_id integer, answer_id integer, other_text text, "
 			+ "FOREIGN KEY(trip_id) REFERENCES TRIPS(_id));";
 
 	private static final String TABLE_CREATE_NOTE_ANSWERS = "create table note_answers "
-			+ "(note_id integer, question_id integer, answer_id integer, other_text text,"
+			+ "(note_id integer, question_id integer, answer_id integer, other_text text, "
 			+ "FOREIGN KEY(note_id) REFERENCES NOTES(_id));";
 
 	private static final String TABLE_DROP_NOTES = "drop table notes;";
@@ -922,19 +922,32 @@ public class DbAdapter {
 	// ************************************************************************
 
 	/**
-	 * Insert a row into the 'answers' table
+	 * Insert a row into the 'answers' table, other is set to blank
 	 * @param trip_id Trip ID of associated trip
 	 * @param question_id ID of question being answered
 	 * @param answer_id ID of answer
 	 * @throws SQLException
 	 */
 	public void addAnswerToTrip(long trip_id, int question_id, int answer_id) throws SQLException{
+		addAnswerToTrip(trip_id, question_id, answer_id, "");
+	}
+
+	/**
+	 * Insert a row into the 'answers' table
+	 * @param trip_id Trip ID of associated trip
+	 * @param question_id ID of question being answered
+	 * @param answer_id ID of answer
+	 * @param other_text value of other
+	 * @throws SQLException
+	 */
+	public void addAnswerToTrip(long trip_id, int question_id, int answer_id, String other_text) throws SQLException{
 
 		// Assemble row data
 		ContentValues rowValues = new ContentValues();
 		rowValues.put(K_ANSWER_TRIP_ID, trip_id);
 		rowValues.put(K_ANSWER_QUESTION_ID, question_id);
 		rowValues.put(K_ANSWER_ANSWER_ID, answer_id);
+		rowValues.put(K_ANSWER_OTHER_TEXT, other_text);
 
 		// Insert row in table
 		mDb.insertOrThrow(DATA_TABLE_ANSWERS, null, rowValues);
@@ -955,11 +968,11 @@ public class DbAdapter {
 	 * @return Cursor positioned to matching trip, if found
 	 * @throws SQLException if trip could not be found/retrieved
 	 */
-	public Cursor fetchAnswers(long trip_id) throws SQLException {
+	public Cursor fetchTripAnswers(long trip_id) throws SQLException {
 
 		Cursor cursor;
 
-		String[] columns = new String[] { K_ANSWER_QUESTION_ID, K_ANSWER_ANSWER_ID };
+		String[] columns = new String[] { K_ANSWER_QUESTION_ID, K_ANSWER_ANSWER_ID, K_ANSWER_OTHER_TEXT };
 		String whereClause = K_ANSWER_TRIP_ID + "=" + trip_id;
 
 		if (null != (cursor = mDb.query(true, DATA_TABLE_ANSWERS, columns,
@@ -982,16 +995,7 @@ public class DbAdapter {
 	 * @throws SQLException
 	 */
 	public void addAnswerToNote(long note_id, int question_id, int answer_id) throws SQLException{
-
-		// Assemble row data
-		ContentValues rowValues = new ContentValues();
-		rowValues.put(K_NOTE_ANSWER_NOTE_ID, note_id);
-		rowValues.put(K_NOTE_ANSWER_QUESTION_ID, question_id);
-		rowValues.put(K_NOTE_ANSWER_ANSWER_ID, answer_id);
-		rowValues.put(K_NOTE_ANSWER_OTHER_TEXT, "");
-
-		// Insert row in table
-		mDb.insertOrThrow(DATA_TABLE_NOTE_ANSWERS, null, rowValues);
+		addAnswerToNote(note_id, question_id, answer_id, "");
 	}
 
 	/**
@@ -999,6 +1003,7 @@ public class DbAdapter {
 	 * @param note_id Note ID of associated trip
 	 * @param question_id ID of question being answered
 	 * @param answer_id ID of answer
+	 * @param other_text value of other
 	 * @throws SQLException
 	 */
 	public void addAnswerToNote(long note_id, int question_id, int answer_id, String other_text) throws SQLException{
