@@ -38,7 +38,6 @@ public class NoteData {
 	long noteId;
 	double startTime = 0;
 	Location noteLocation = new Location("");
-	int noteType;
 	int noteSeverity;
 	String notefancystart, notedetails, noteimageurl;
 	byte[] noteimagedata;
@@ -76,7 +75,6 @@ public class NoteData {
 
 	void initializeData() {
 		startTime = System.currentTimeMillis();
-		noteType = -1;
 		noteSeverity = -1;
 		notefancystart = notedetails = "";
 		latitude = 0;
@@ -102,7 +100,6 @@ public class NoteData {
 				accuracy       = noteDetails.getFloat (noteDetails.getColumnIndex(DbAdapter.K_NOTE_ACC        ));
 				altitude       = noteDetails.getDouble(noteDetails.getColumnIndex(DbAdapter.K_NOTE_ALT        ));
 				speed          = noteDetails.getFloat (noteDetails.getColumnIndex(DbAdapter.K_NOTE_SPEED      ));
-				noteType       = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_TYPE       ));
 				noteSeverity   = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_SEVERITY   ));
 				notedetails    = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_DETAILS    ));
 				noteStatus     = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_STATUS     ));
@@ -186,11 +183,11 @@ public class NoteData {
 		}
 	}
 
-	public void updateNote(int noteType, int noteSeverity, String noteFancyStart,
+	public void updateNote(int noteSeverity, String noteFancyStart,
 			String noteDetails, byte[] image) {
 		mDb.open();
 		try {
-			mDb.updateNote(noteId, noteFancyStart, noteType, noteSeverity, noteDetails, image);
+			mDb.updateNote(noteId, noteFancyStart, noteSeverity, noteDetails, image);
 		}
 		finally {
 			mDb.close();

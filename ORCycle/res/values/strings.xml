@@ -406,7 +406,7 @@
         <item>I feel uncomfortable</item>
         </string-array>
 
-		<string name="nqaConflictTypeTitle">Type of conflict/Accident With</string>
+	<string name="nqaConflictTypeTitle">Type of conflict/Accident With</string>
     <string-array name="nqaConflictType">
         <item>Auto traffic</item>
         <item>Large commercial vehicles (trucks)</item>
@@ -420,7 +420,6 @@
     			
 	<string name="nqaIssueTypeTitle"> * Safety issues?</string>
     <string-array name="nqaIssueType">
-        <item></item>
         <item>Narrow Bike Lane</item>
         <item>No bike lane or separation</item>
         <item>High vehicles Speed</item>

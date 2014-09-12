@@ -68,11 +68,11 @@ public class NoteMapActivity extends Activity {
 			NoteData note = NoteData.fetchNote(this, noteid);
 
 			// Show note details
-			TextView tvHeaderIssueType = (TextView) findViewById(R.id.tvHeaderIssueType);
+			TextView tvHeaderSeverity = (TextView) findViewById(R.id.tvHeaderSeverity);
 			TextView tvHeaderFancyStart = (TextView) findViewById(R.id.tvHeaderFancyStart);
 			TextView tvNmComment = (TextView) findViewById(R.id.tvNmComment);
 
-			tvHeaderIssueType.setText(DbAnswers.getAnswerText(this, R.array.nqaIssueType, DbAnswers.noteIssue, note.noteType));
+			tvHeaderSeverity.setText(DbAnswers.getAnswerText(this, R.array.nmaSeverityOfProblem, DbAnswers.noteSeverity, note.noteSeverity));
 			tvHeaderFancyStart.setText(note.notefancystart);
 			tvNmComment.setText(note.notedetails);
 
@@ -94,7 +94,7 @@ public class NoteMapActivity extends Activity {
 					.anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
 					.position(notePosition));
 
-				noteHasImage = !note.noteimageurl.equals("");
+				noteHasImage = !note.noteimageurl.equals("") && (note.noteimagedata != null);
 			}
 
 			// If image exist, add it to the imageView widget
@@ -344,10 +344,6 @@ public class NoteMapActivity extends Activity {
 		finally {
 			mDb.close();
 		}
-	}
-
-	private void getNoteComment() {
-
 	}
 
 	private void append(StringBuilder sb, int textArrayId, int[] answers, int answerId) {

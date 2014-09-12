@@ -588,7 +588,7 @@ int id tvEmail 0x7f0700b9
 int id tvEthnicity 0x7f0700b5
 int id tvGender 0x7f0700af
 int id tvHeaderFancyStart 0x7f070058
-int id tvHeaderIssueType 0x7f070059
+int id tvHeaderSeverity 0x7f070059
 int id tvIncome 0x7f0700b7
 int id tvIssueType 0x7f070068
 int id tvNmComment 0x7f070063
