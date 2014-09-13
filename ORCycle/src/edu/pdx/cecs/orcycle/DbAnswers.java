@@ -49,6 +49,9 @@ public final class DbAnswers {
 	public static final int userInfoOccupationOther = 25;
 	public static final int userInfoBikeTypeOther = 58;
 	public static final int userInfoRiderTypeOther = 81;
+	public static final int tripPurposeOther = 101;
+	public static final int tripRoutePrefsOther = 114;
+	public static final int tripRouteStressorsOther = 150;
 	public static final int noteConflictOther = 163;
 	public static final int noteIssueOther = 175;
 	public static final int noteBikeAccessoriesOther = 176;

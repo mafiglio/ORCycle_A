@@ -109,6 +109,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 
 	private static final String FID_QUESTION_ID = "question_id";
 	private static final String FID_ANSWER_ID = "answer_id";
+	private static final String FID_ANSWER_OTHER_TEXT = "other_text";
 
 	public TripUploader(Context ctx) {
 		super();
@@ -211,10 +212,12 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 
 		mDb.openReadOnly();
 		try {
-			Cursor answers = mDb.fetchAnswers(tripId);
+			Cursor answers = mDb.fetchTripAnswers(tripId);
 
 			int questionColumn = answers.getColumnIndex(DbAdapter.K_ANSWER_QUESTION_ID);
 			int answerColumn = answers.getColumnIndex(DbAdapter.K_ANSWER_ANSWER_ID);
+			int otherText = answers.getColumnIndex(DbAdapter.K_ANSWER_OTHER_TEXT);
+			String text;
 
 			// Cycle thru the database entries
 			while (!answers.isAfterLast()) {
@@ -227,6 +230,12 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 					json.put(FID_QUESTION_ID, answers.getInt(questionColumn));
 					json.put(FID_ANSWER_ID, answers.getInt(answerColumn));
 
+					if (null != (text = answers.getString(otherText))) {
+						text = text.trim();
+						if (!text.equals("")) {
+							json.put(FID_ANSWER_OTHER_TEXT, text);
+						}
+					}
 					// Place JSON objects into the JSON array
 					jsonAnswers.put(json);
 				}

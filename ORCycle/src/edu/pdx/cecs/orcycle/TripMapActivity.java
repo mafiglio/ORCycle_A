@@ -300,7 +300,7 @@ public class TripMapActivity extends Activity {
 
 		mDb.openReadOnly();
 		try {
-			Cursor answers = mDb.fetchAnswers(tripId);
+			Cursor answers = mDb.fetchTripAnswers(tripId);
 
 			int questionCol = answers.getColumnIndex(DbAdapter.K_ANSWER_QUESTION_ID);
 			int answerCol = answers.getColumnIndex(DbAdapter.K_ANSWER_ANSWER_ID);
