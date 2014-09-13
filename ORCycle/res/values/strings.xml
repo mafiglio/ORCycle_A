@@ -301,7 +301,7 @@
         <item>Social/entertainment</item>
         <item>Shopping/errands</item>
         <item>Access to transit or a vehicle</item>
-        <item>Other (custom entry)</item>
+        <item>Other&#8230;</item>
         </string-array>
 			
     <string name="q21_routePreferences">I chose this route because&#8230;</string>

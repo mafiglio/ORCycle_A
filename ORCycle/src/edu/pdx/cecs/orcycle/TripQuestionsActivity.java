@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -26,15 +27,15 @@ public class TripQuestionsActivity extends Activity {
 	private static final String MODULE_TAG = "TripQuestionsActivity";
 
 	private MultiSelectionSpinner routePrefs;
-	//private MultiSelectionSpinner passengers;
-	//private MultiSelectionSpinner bikeAccessories;
 	private MultiSelectionSpinner routeStressors;
 	private Spinner tripFrequency;
 	private Spinner tripPurpose;
 	private Spinner tripComfort;
-	private Spinner routeSafety;
-	private Spinner rideConflict;
 	private EditText tripComment;
+	//private MultiSelectionSpinner passengers;
+	//private MultiSelectionSpinner bikeAccessories;
+	//private Spinner routeSafety;
+	//private Spinner rideConflict;
 
 	public static final String EXTRA_TRIP_ID = "TRIP_ID";
 
@@ -51,7 +52,9 @@ public class TripQuestionsActivity extends Activity {
 	private static final int PREF_ROUTE_STRESSORS  = 9;
 	private static final int PREF_TRIP_COMMENT     = 10;
 
-	private final Answer_OnClickListener answer_OnClickListener = new Answer_OnClickListener();
+	private TripPurpose_OnClickListener tripPurpose_OnClick = null;
+
+
 
 	private long tripId = -1;
 
@@ -74,11 +77,14 @@ public class TripQuestionsActivity extends Activity {
 			setContentView(R.layout.activity_trip_questions);
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+
 			tripFrequency = (Spinner) findViewById(R.id.spnrTripFrequency);
-			tripFrequency.setOnItemSelectedListener(answer_OnClickListener);
 
 			tripPurpose = (Spinner) findViewById(R.id.spnrTripPurpose);
-			tripPurpose.setOnItemSelectedListener(answer_OnClickListener);
+			tripPurpose_OnClick = new TripPurpose_OnClickListener();
+			tripPurpose_OnClick.setOtherIndex(DbAnswers.findIndex(DbAnswers.tripPurpose, DbAnswers.tripPurposeOther));
+			tripPurpose_OnClick.setItems(getResources().getStringArray(R.array.qa_20_tripPurpose));
+			tripPurpose.setOnItemSelectedListener(tripPurpose_OnClick);
 
 			routePrefs = (MultiSelectionSpinner) findViewById(R.id.spnrRouteChoice);
 			routePrefs.setTitle(getResources().getString(R.string.q21_routePreferences));
@@ -86,7 +92,6 @@ public class TripQuestionsActivity extends Activity {
 			routePrefs.setOtherIndex(DbAnswers.findIndex(DbAnswers.routePrefs, DbAnswers.tripRoutePrefsOther));
 
 			tripComfort = (Spinner) findViewById(R.id.spnrTripComfort);
-			tripComfort.setOnItemSelectedListener(answer_OnClickListener);
 
 			//routeSafety = (Spinner) findViewById(R.id.spnrRouteSafety);
 			//routeSafety.setOnItemSelectedListener(answer_OnClickListener);
@@ -111,6 +116,7 @@ public class TripQuestionsActivity extends Activity {
 			routeStressors.setOtherIndex(DbAnswers.findIndex(DbAnswers.routeStressors, DbAnswers.tripRouteStressorsOther));
 
 			tripComment = (EditText) findViewById(R.id.editTextTripComment);
+
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -215,17 +221,57 @@ public class TripQuestionsActivity extends Activity {
 	// *                              Button Handlers
 	// *********************************************************************************
 
-
-	/**
+    /**
      * Class: ButtonStart_OnClickListener
      *
      * Description: Callback to be invoked when startButton button is clicked
      */
-	private final class Answer_OnClickListener implements OnItemSelectedListener {
+	private final class TripPurpose_OnClickListener implements OnItemSelectedListener {
+
+		private int otherIndex = -1;
+		private String otherText = null;
+		private AlertDialog.Builder inputDialog;
+		private EditText editText;
+		private ArrayAdapter<String> myArrayAdapter = null;
+		private String[] items;
+		private final String DEFAULT_OTHER_TEXT = "Other...";
+		private AdapterView<ArrayAdapter<String>> myAdapterView;
+
+		public TripPurpose_OnClickListener() {
+		}
+
+		private void initDialog() {
+			inputDialog = new AlertDialog.Builder(TripQuestionsActivity.this);
+			editText = new EditText(TripQuestionsActivity.this);
+			inputDialog.setView(editText);
+			inputDialog.setTitle("Please specify other:");
+			inputDialog.setPositiveButton("OK", new OtherPositiveButton_OnClickListener());
+			inputDialog.setNegativeButton("Cancel", new OtherNegativeButton_OnClickListener());
+			inputDialog.setCancelable(true);
+		}
 
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 			try {
+				Log.v(MODULE_TAG, "Item selected(" + position + ") = " + id);
+
+				if (otherIndex == position - 1) {
+					myArrayAdapter = null;
+					try {
+						myAdapterView = (AdapterView<ArrayAdapter<String>>) parent;
+						myArrayAdapter = myAdapterView.getAdapter();
+						String item = myArrayAdapter.getItem(position);
+						Log.v(MODULE_TAG, "Item(" + position + ") = <" + item + ">");
+						initDialog();
+						inputDialog.show();
+					}
+					catch(ClassCastException ex) {
+						Log.e(MODULE_TAG, ex.getMessage());
+					}
+				}
+				else {
+					otherText = "";
+				}
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -238,6 +284,77 @@ public class TripQuestionsActivity extends Activity {
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+
+		private final class OtherPositiveButton_OnClickListener implements
+				DialogInterface.OnClickListener {
+			@Override
+			public void onClick(DialogInterface dialog, int id) {
+				try {
+					setOtherText(editText.getText().toString());
+				}
+				catch (Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+				finally {
+					dialog.dismiss();
+				}
+			}
+		}
+
+		private final class OtherNegativeButton_OnClickListener implements
+				DialogInterface.OnClickListener {
+			@Override
+			public void onClick(DialogInterface dialog, int id) {
+				try {
+					dialog.dismiss();
+				}
+				catch (Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+		}
+
+		public void setOtherIndex(int index) {
+			this.otherIndex = index;
+		}
+
+		private void setOtherText(String text) {
+
+			if (null == text) {
+				otherText="";
+			}
+			else {
+				otherText = text.trim();
+			}
+
+			// Pick something sane to show the user
+			if (otherText == "") {
+				this.items[otherIndex + 1] = DEFAULT_OTHER_TEXT;
+			}
+			else {
+				this.items[otherIndex + 1] = "Other( \"" +  text + "\" )";
+			}
+
+			// First try
+			//myArrayAdapter.clear();
+			//myArrayAdapter.addAll(this.items);
+			//myArrayAdapter.notifyDataSetChanged();
+
+			// Second try
+			//ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(NoteQuestionsActivity.this, otherIndex);
+			//myAdapterView.setAdapter(arrayAdapter);
+		}
+
+		public String getOtherText() {
+			return otherText;
+		}
+
+		private void setItems(String[] items) {
+			this.items = new String[items.length];
+			for (int i = 0; i < items.length; ++i) {
+				this.items[i] = new String(items[i]);
 			}
 		}
 	}
@@ -388,15 +505,27 @@ public class TripQuestionsActivity extends Activity {
 
 			// Enter the user selections into the local database
 			// Update answer table
-			submitSpinnerSelection( dbAdapter, tripFrequency,    DbQuestions.TRIP_FREQUENCY,   DbAnswers.tripFreq        );
-			submitSpinnerSelection( dbAdapter, tripPurpose,      DbQuestions.TRIP_PURPOSE,     DbAnswers.tripPurpose     );
-			submitSpinnerSelection( routePrefs, dbAdapter,      DbQuestions.ROUTE_PREFS,      DbAnswers.routePrefs,  DbAnswers.tripRoutePrefsOther);
-			submitSpinnerSelection( dbAdapter, tripComfort,      DbQuestions.TRIP_COMFORT,     DbAnswers.tripComfort     );
-			//submitSpinnerSelection( dbAdapter, routeSafety,      DbQuestions.ROUTE_SAFETY,     DbAnswers.routeSafety     );
-			//submitSpinnerSelection( dbAdapter, passengers,       DbQuestions.PASSENGERS,       DbAnswers.passengers      );
-			//submitSpinnerSelection( dbAdapter, bikeAccessories,  DbQuestions.BIKE_ACCESSORIES, DbAnswers.bikeAccessories );
-			//submitSpinnerSelection( dbAdapter, rideConflict,     DbQuestions.RIDE_CONFLICT,    DbAnswers.rideConflict    );
-			submitSpinnerSelection( routeStressors, dbAdapter,   DbQuestions.ROUTE_STRESSORS,  DbAnswers.routeStressors, DbAnswers.tripRouteStressorsOther );
+			submitSpinnerSelection(dbAdapter, tripFrequency,
+					DbQuestions.TRIP_FREQUENCY, DbAnswers.tripFreq);
+			submitSpinnerSelection(dbAdapter, tripPurpose,
+					DbQuestions.TRIP_PURPOSE, DbAnswers.tripPurpose,
+					DbAnswers.tripPurposeOther, tripPurpose_OnClick.getOtherText());
+			submitSpinnerSelection(routePrefs, dbAdapter,
+					DbQuestions.ROUTE_PREFS, DbAnswers.routePrefs,
+					DbAnswers.tripRoutePrefsOther);
+			submitSpinnerSelection(dbAdapter, tripComfort,
+					DbQuestions.TRIP_COMFORT, DbAnswers.tripComfort);
+			// submitSpinnerSelection( dbAdapter, routeSafety,
+			// DbQuestions.ROUTE_SAFETY, DbAnswers.routeSafety );
+			// submitSpinnerSelection( dbAdapter, passengers,
+			// DbQuestions.PASSENGERS, DbAnswers.passengers );
+			// submitSpinnerSelection( dbAdapter, bikeAccessories,
+			// DbQuestions.BIKE_ACCESSORIES, DbAnswers.bikeAccessories );
+			// submitSpinnerSelection( dbAdapter, rideConflict,
+			// DbQuestions.RIDE_CONFLICT, DbAnswers.rideConflict );
+			submitSpinnerSelection(routeStressors, dbAdapter,
+					DbQuestions.ROUTE_STRESSORS, DbAnswers.routeStressors,
+					DbAnswers.tripRouteStressorsOther);
 
 			// Update trip table
 			updateTripPurpose(dbAdapter, tripPurpose, DbAnswers.tripPurpose);
@@ -448,7 +577,7 @@ public class TripQuestionsActivity extends Activity {
 	 * @param question_id
 	 * @param answers
 	 */
-	private void submitSpinnerSelection(DbAdapter dbAdapter, Spinner spinner, int question_id, int[] answer_ids) {
+	private void submitSpinnerSelection(Spinner spinner, DbAdapter dbAdapter, int question_id, int[] answer_ids) {
 		// Note: The first entry is always blank, the array of answers displayed
 		// by the UI is one greater than the number of answers in the database.
 		int answerIndex = spinner.getSelectedItemPosition() - 1;
@@ -456,6 +585,45 @@ public class TripQuestionsActivity extends Activity {
 			dbAdapter.addAnswerToTrip(tripId, question_id, answer_ids[answerIndex]);
 		}
 	}
+
+	/**
+	 * Enters the spinner selection into the database
+	 * @param dbAdapter
+	 * @param spinner
+	 * @param question_id
+	 * @param answers
+	 */
+	private void submitSpinnerSelection(DbAdapter dbAdapter, Spinner spinner,
+			int question_id, int[] answer_ids) {
+		submitSpinnerSelection(dbAdapter, spinner, question_id, answer_ids, -1, null);
+	}
+	/**
+	 * Enters the spinner selection into the database
+	 * @param spinner
+	 * @param dbAdapter
+	 * @param question_id
+	 * @param answers
+	 */
+	private void submitSpinnerSelection(DbAdapter dbAdapter, Spinner spinner,
+			int question_id, int[] answer_ids, int other_id, String other_text) {
+
+		// Note: The first entry is always blank, the array of answers displayed
+		// by the UI is one greater than the number of answers in the database.
+		int answerIndex = spinner.getSelectedItemPosition() - 1;
+
+		if (answerIndex >= 0) {
+			if (answer_ids[answerIndex] == other_id) {
+				dbAdapter.addAnswerToTrip(tripId, question_id, other_id, other_text);
+			}
+			else {
+				dbAdapter.addAnswerToTrip(tripId, question_id, answer_ids[answerIndex]);
+			}
+		}
+	}
+
+
+
+
 
 	/**
 	 * Enters the MultiSelectionSpinner selections into the database
