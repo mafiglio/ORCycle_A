@@ -87,7 +87,7 @@ public class NoteMapActivity extends Activity {
 
 				LatLng notePosition = new LatLng(note.latitude * 1E-6, note.longitude * 1E-6);
 
-				int noteDrawable = DbAnswers.getNoteSeverityImageResourceId(note.noteSeverity);
+				int noteDrawable = DbAnswers.getNoteSeverityMapImageResourceId(note.noteSeverity);
 
 				map.addMarker(new MarkerOptions()
 					.icon(BitmapDescriptorFactory.fromResource(noteDrawable))
