@@ -224,7 +224,7 @@ public class NoteDetailActivity extends Activity {
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 16;
+		options.inSampleSize = 8;
 
 	    try {
 	    	InputStream inStream = context.getContentResolver().openInputStream(uri);
