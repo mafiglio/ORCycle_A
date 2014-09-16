@@ -210,11 +210,11 @@ public class TripMapActivity extends Activity {
 			}
 
 			if (trip.startpoint != null) {
-				addMarker(trip.startpoint, R.drawable.pingreen);
+				addMarker(trip.startpoint, R.drawable.trip_start);
 			}
 
 			if (trip.endpoint != null) {
-				addMarker(trip.endpoint, R.drawable.pinpurple);
+				addMarker(trip.endpoint, R.drawable.trip_end);
 			}
 
 			polyline = drawMap(0, mapPoints.size() - 1, Color.BLUE);
@@ -688,7 +688,7 @@ public class TripMapActivity extends Activity {
 				else {
 					setSelectingSegment(true);
 					segmentStartIndex = indexOfClosestPoint;
-					segmentStartMarker = addMarker(gpspoints.get(segmentStartIndex), R.drawable.pingreen);
+					segmentStartMarker = addMarker(gpspoints.get(segmentStartIndex), R.drawable.trip_start);
 				}
 			}
 			catch(Exception ex) {
@@ -722,7 +722,7 @@ public class TripMapActivity extends Activity {
 				}
 				else {
 					segmentEndIndex = indexOfClosestPoint;
-					addMarker(gpspoints.get(segmentEndIndex), R.drawable.pinpurple);
+					addMarker(gpspoints.get(segmentEndIndex), R.drawable.trip_end);
 
 					// The user may have selected the start and beginning indexes
 					// in reverse order, so check and swap if necessary
