@@ -398,9 +398,11 @@ int drawable shopping 0x7f0200a4
 int drawable shopping_high 0x7f0200a5
 int drawable social 0x7f0200a6
 int drawable social_high 0x7f0200a7
-int drawable whitebutton 0x7f0200a8
-int drawable workrel 0x7f0200a9
-int drawable workrel_high 0x7f0200aa
+int drawable trip_end 0x7f0200a8
+int drawable trip_start 0x7f0200a9
+int drawable whitebutton 0x7f0200aa
+int drawable workrel 0x7f0200ab
+int drawable workrel_high 0x7f0200ac
 int id ImageTripPurpose 0x7f0700ca
 int id ImageViewNoteType 0x7f0700bf
 int id ImageViewTripPurpose 0x7f0700cc
