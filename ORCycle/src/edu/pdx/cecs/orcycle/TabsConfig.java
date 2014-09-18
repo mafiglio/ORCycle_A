@@ -31,6 +31,7 @@ public class TabsConfig extends FragmentActivity implements
 	public static final int FRAG_INDEX_SETTINGS = 3;
 
 	private int fragmentToShow = FRAG_INDEX_MAIN_INPUT;
+	private MyApplication myApp;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -63,6 +64,8 @@ public class TabsConfig extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
+			myApp = MyApplication.getInstance();
+
 			setContentView(R.layout.tabs_config);
 
 			Log.v(MODULE_TAG, "Cycle: TabsConfig onCreate");
@@ -137,6 +140,7 @@ public class TabsConfig extends FragmentActivity implements
 		try {
 			final ActionBar actionBar = getActionBar();
 			actionBar.selectTab(actionBar.getTabAt(fragmentToShow));
+			myApp.ResumeNotification();
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -153,6 +157,12 @@ public class TabsConfig extends FragmentActivity implements
 	public void onDestroy() {
 		super.onDestroy();
 		Log.v(MODULE_TAG, "Cycle: TabsConfig onDestroy");
+		try {
+			myApp.clearNotifications();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	// 2.0 and above

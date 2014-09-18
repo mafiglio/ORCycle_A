@@ -229,12 +229,8 @@ public class FragmentSavedNotesSection extends Fragment {
 					allNotes.moveToPosition(pos);
 					if (mActionModeNote == null) {
 						if (allNotes.getInt(allNotes.getColumnIndex("notestatus")) == 2) {
-							Intent i = new Intent(getActivity(),
-									NoteMapActivity.class);
-							i.putExtra("shownote", id);
-							startActivity(i);
-						} else if (allNotes.getInt(allNotes
-								.getColumnIndex("notestatus")) == 1) {
+							transitionToNoteMapActivity(id);
+						} else if (allNotes.getInt(allNotes.getColumnIndex("notestatus")) == 1) {
 							// Toast.makeText(getActivity(), "Unsent",
 							// Toast.LENGTH_SHORT).show();
 							buildAlertMessageUnuploadedNoteClicked(id);
@@ -410,5 +406,13 @@ public class FragmentSavedNotesSection extends Fragment {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 		return false;
+	}
+
+	private void transitionToNoteMapActivity(long noteId) {
+		Intent intent = new Intent(getActivity(), NoteMapActivity.class);
+		intent.putExtra(NoteMapActivity.EXTRA_NOTE_ID, noteId);
+		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		getActivity().finish();
 	}
 }

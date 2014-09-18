@@ -68,7 +68,6 @@ public class FragmentMainInput extends Fragment
 	private TextView txtCO2 = null;
 	private TextView txtCalories = null;
 
-	boolean isRecording = false;
 	boolean isPaused = false;
 	Timer timer;
 	Timer timerWaitForServiceConnection;
@@ -653,8 +652,6 @@ public class FragmentMainInput extends Fragment
 		try {
 			myApp.cancelRecording();
 
-			isRecording = false;
-
 			txtDuration = (TextView) getActivity().findViewById(R.id.textViewElapsedTime);
 			txtDuration.setText("00:00:00");
 
@@ -981,6 +978,7 @@ public class FragmentMainInput extends Fragment
 		// Exit this activity
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		getActivity().finish();
 	}
 
 
