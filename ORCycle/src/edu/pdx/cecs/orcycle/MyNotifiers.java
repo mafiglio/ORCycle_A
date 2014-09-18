@@ -15,7 +15,7 @@ public class MyNotifiers {
 	public static void setNotification(Context context) {
 
 		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		int icon = R.drawable.icon25;
+		int icon = R.drawable.ic_launcher;
 		CharSequence tickerText = "Recording...";
 		long when = System.currentTimeMillis();
 
@@ -49,7 +49,7 @@ public class MyNotifiers {
 	public static void setNotification(Context context, double startTime) {
 
 		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		int icon = R.drawable.icon48;
+		int icon = R.drawable.ic_launcher;
 		long when = System.currentTimeMillis();
 		int minutes = (int) (when - startTime) / 60000;
 		CharSequence tickerText = String.format(Locale.US, "Still recording (%d min)", minutes);
