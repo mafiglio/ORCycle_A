@@ -27,10 +27,14 @@ public class MyApplication extends android.app.Application {
 	public static final String PREFS_APPLICATION = "PREFS_APPLICATION";
 
 	private static final String SETTING_USER_INFO_UPLOADED = "USER_INFO_UPLOADED";
+	private static final double RESET_START_TIME = 0.0;
 
 	private RecordingService recordingService = null;
 	private TripData trip;
 	private boolean checkedForUserProfile = false;
+	private final BellTimer bellTimer = new BellTimer();
+	private double lastTripStartTime = RESET_START_TIME;
+
 
     /**
     * Reference to class instance
@@ -61,6 +65,8 @@ public class MyApplication extends android.app.Application {
         myApp = this;
 
         ConnectRecordingService();
+
+		bellTimer.init(this.getBaseContext());
     }
 
     /**
@@ -190,6 +196,8 @@ public class MyApplication extends android.app.Application {
 			trip = TripData.fetchTrip(activity, id);
 			break;
 		}
+
+		startNotification(lastTripStartTime = trip.getStartTime());
     }
 
     /**
@@ -197,6 +205,8 @@ public class MyApplication extends android.app.Application {
      */
     public void finishRecording() {
     	recordingService.finishRecording();
+		clearNotifications();
+		lastTripStartTime = RESET_START_TIME;
    }
 
     /**
@@ -204,6 +214,18 @@ public class MyApplication extends android.app.Application {
      */
     public void cancelRecording() {
     	recordingService.cancelRecording();
+		clearNotifications();
+		lastTripStartTime = RESET_START_TIME;
+    }
+
+    public boolean isRecording() {
+    	if (recordingService == null) {
+    		return false;
+    	}
+    	else {
+    		return ((RecordingService.STATE_RECORDING == recordingService.getState()) ||
+					(RecordingService.STATE_PAUSED == recordingService.getState()));
+    	}
     }
 
 	public String getDeviceId() {
@@ -251,6 +273,28 @@ public class MyApplication extends android.app.Application {
 		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
 		boolean value = settings.getBoolean(SETTING_USER_INFO_UPLOADED, false);
 		return value;
+	}
+
+	public void ResumeNotification() {
+		if (isRecording()) {
+			startNotification(lastTripStartTime);
+		}
+	}
+
+	public void startNotification(double startTime) {
+
+		if (startTime != RESET_START_TIME) {
+			bellTimer.cancel();
+			// Set up timer for bike bell
+			bellTimer.start(startTime);
+		}
+		// Add the notify bar and blinking light
+		MyNotifiers.setNotification(this);
+	}
+
+	public void clearNotifications() {
+		MyNotifiers.cancelAll(this.getBaseContext());
+		bellTimer.cancel();
 	}
 
 }

@@ -39,6 +39,8 @@ public class NoteMapActivity extends Activity {
 	private View questionsView;
 	private boolean noteHasImage;
 	private NoteMapView currentView = NoteMapView.map;
+	// Views
+
 
 	// *********************************************************************************
 	// *                              Fragment Handlers
@@ -76,10 +78,22 @@ public class NoteMapActivity extends Activity {
 			tvHeaderFancyStart.setText(note.notefancystart);
 			tvNmComment.setText(note.notedetails);
 
+			TextView tvNmSeverityOfProblem = (TextView) findViewById(R.id.tvNmSeverityOfProblem);
+			TextView tvNmConflictType = (TextView) findViewById(R.id.tvNmConflictType);
+			TextView tvNmIssueType = (TextView) findViewById(R.id.tvNmIssueType);
+
+			tvNmSeverityOfProblem.setText("");
+			tvNmConflictType.setText("");
+			tvNmIssueType.setText("");
 			// Center & zoom the map
 			LatLng center = new LatLng(note.latitude * 1E-6, note.longitude * 1E-6);
 
-			map.animateCamera(CameraUpdateFactory.newLatLngZoom(center, 16));
+			try {
+				map.animateCamera(CameraUpdateFactory.newLatLngZoom(center, 16));
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 
 			// Add note marker to map
 			noteHasImage = false;

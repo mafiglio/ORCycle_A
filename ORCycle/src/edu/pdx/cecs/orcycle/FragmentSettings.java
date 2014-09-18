@@ -183,16 +183,20 @@ public class FragmentSettings extends Fragment {
 	private void transitionToORcycle() {
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(ORCYCLE_URI));
 		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}
 
 	private void transitionToPrivacyPolicy() {
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URI));
 		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}
 
 	private void transitionToUserFeedbackActivity() {
 		Intent intent = new Intent(getActivity(), UserFeedbackActivity.class);
 		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		getActivity().finish();
 	}
 
 	private void transitionToUserInfoActivity() {
@@ -204,5 +208,6 @@ public class FragmentSettings extends Fragment {
 		// Exit this activity
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		getActivity().finish();
 	}
 }

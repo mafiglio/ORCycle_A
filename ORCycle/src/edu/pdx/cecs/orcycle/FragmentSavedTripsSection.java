@@ -430,5 +430,7 @@ public class FragmentSavedTripsSection extends Fragment {
 		intent.putExtra(TripMapActivity.EXTRA_IS_NEW_TRIP, false);
 		intent.putExtra(TripMapActivity.EXTRA_TRIP_SOURCE, TripMapActivity.EXTRA_TRIP_SOURCE_SAVED_TRIPS);
 		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		getActivity().finish();
 	}
 }

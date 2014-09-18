@@ -540,9 +540,7 @@ public class TripQuestionsActivity extends Activity {
 		}
 
 		// get reference to recording service
-		IRecordService recordingService = MyApplication.getInstance().getRecordingService();
-		// finish recording process
-		recordingService.finishRecording();
+		MyApplication.getInstance().finishRecording();
 
 		// -------------------------------------
 		// gather final trip data
@@ -563,7 +561,7 @@ public class TripQuestionsActivity extends Activity {
 		uploader.execute(tripData.tripid);
 
 		try {
-			recordingService.reset();
+			MyApplication.getInstance().getRecordingService().reset();
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());

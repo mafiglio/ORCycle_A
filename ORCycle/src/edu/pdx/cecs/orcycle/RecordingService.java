@@ -30,23 +30,14 @@
 
 package edu.pdx.cecs.orcycle;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.os.Binder;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -56,19 +47,6 @@ public class RecordingService extends Service implements IRecordService, Locatio
 
 	IRecordServiceListener recordServiceListener;
 	LocationManager lm = null;
-
-	// Bike bell variables
-	static int BELL_FIRST_INTERVAL = 20;
-	static int BELL_NEXT_INTERVAL = 5;
-	Timer timer;
-	SoundPool soundpool;
-	int bikebell;
-	final Handler mHandler = new Handler();
-	final Runnable mRemindUser = new Runnable() {
-		public void run() {
-			remindUser();
-		}
-	};
 
 	// Aspects of the currently recording trip
 	Location lastLocation;
@@ -102,17 +80,11 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		soundpool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION, 0);
-		bikebell = soundpool.load(this.getBaseContext(), R.raw.bikebell, 1);
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if (timer != null) {
-			timer.cancel();
-			timer.purge();
-		}
 	}
 
 	public class MyServiceBinder extends Binder {
@@ -204,27 +176,12 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		distanceMeters = 0.0f;
 		lastLocation = null;
 
-		// Add the notify bar and blinking light
-		setNotification();
-
 		// Start listening for GPS updates!
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 				MIN_TIME_BETWEEN_READINGS_MILLISECONDS,
 				MIN_DISTANCE_BETWEEN_READINGS_METERS, this);
 
-		// Set up timer for bike bell
-		if (timer != null) {
-			timer.cancel();
-			timer.purge();
-		}
-		timer = new Timer();
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				mHandler.post(mRemindUser);
-			}
-		}, BELL_FIRST_INTERVAL * 60000, BELL_NEXT_INTERVAL * 60000);
 	}
 
 	/**
@@ -261,9 +218,6 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		lm.removeUpdates(this);
 
-		// Clear notifications
-		clearNotifications();
-
 		//
 		if (trip.numpoints > 0) {
 			trip.finish(); // makes some final calculations and pushed trip to the database
@@ -283,7 +237,6 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		lm.removeUpdates(this);
 
-		clearNotifications();
 		this.state = STATE_IDLE;
 	}
 
@@ -327,94 +280,5 @@ public class RecordingService extends Service implements IRecordService, Locatio
 
 	@Override
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-	}
-
-	private void updateTripStats(Location newLocation) {
-
-	}
-
-	void notifyListeners() {
-		if (null != recordServiceListener) {
-			if (null == trip) {
-				recordServiceListener.updateStatus(0.0f, 0.0f);
-			}
-			else {
-				double duration = trip.getDuration() / 1000.0f;
-				float avgSpeedMps = (float) ((duration > 1.0f) ? (distanceMeters / duration): 0);
-
-				recordServiceListener.updateStatus(distanceMeters, avgSpeedMps);
-			}
-		}
-	}
-
-	// *********************************************************************************
-	// *                     Notification Implementation
-	// *********************************************************************************
-
-	public void remindUser() {
-		soundpool.play(bikebell, 1.0f, 1.0f, 1, 0, 1.0f);
-
-		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		int icon = R.drawable.icon48;
-		long when = System.currentTimeMillis();
-		int minutes = (int) (when - trip.getStartTime()) / 60000;
-		CharSequence tickerText = String.format("Still recording (%d min)", minutes);
-
-		Notification notification = new Notification(icon, tickerText, when);
-		notification.flags |= Notification.FLAG_ONGOING_EVENT
-				| Notification.FLAG_SHOW_LIGHTS;
-		notification.ledARGB = 0xffff00ff;
-		notification.ledOnMS = 300;
-		notification.ledOffMS = 3000;
-
-		Context context = this;
-		CharSequence contentTitle = "ORcycle recording";
-		CharSequence contentText = "Tap to see your ongoing trip";
-		Intent notificationIntent = new Intent(context, FragmentMainInput.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-				notificationIntent, 0);
-		notification.setLatestEventInfo(context, contentTitle, contentText,
-				contentIntent);
-		final int RECORDING_ID = 1;
-		mNotificationManager.notify(RECORDING_ID, notification);
-	}
-
-	private void setNotification() {
-		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		int icon = R.drawable.icon25;
-		CharSequence tickerText = "Recording...";
-		long when = System.currentTimeMillis();
-
-		Notification notification = new Notification(icon, tickerText, when);
-
-		notification.ledARGB = 0xffff00ff;
-		notification.ledOnMS = 300;
-		notification.ledOffMS = 3000;
-		notification.flags = notification.flags
-				| Notification.FLAG_ONGOING_EVENT
-				| Notification.FLAG_SHOW_LIGHTS | Notification.FLAG_INSISTENT
-				| Notification.FLAG_NO_CLEAR;
-
-		Context context = this;
-		CharSequence contentTitle = "ORcycle recording";
-		CharSequence contentText = "Tap to see your ongoing trip";
-		Intent notificationIntent = new Intent(context, FragmentMainInput.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-				notificationIntent, 0);
-		notification.setLatestEventInfo(context, contentTitle, contentText,
-				contentIntent);
-
-		final int RECORDING_ID = 1;
-		mNotificationManager.notify(RECORDING_ID, notification);
-	}
-
-	private void clearNotifications() {
-		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotificationManager.cancelAll();
-
-		if (timer != null) {
-			timer.cancel();
-			timer.purge();
-		}
 	}
 }
