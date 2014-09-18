@@ -32,7 +32,8 @@ public class MyNotifiers {
 		CharSequence contentTitle = "ORcycle recording";
 		CharSequence contentText = "Tap to see your ongoing trip";
 
-		Intent intent = new Intent(context, FragmentMainInput.class);
+		Intent intent = new Intent(context, TabsConfig.class);
+		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 		notification.setLatestEventInfo(context, contentTitle, contentText, pendingIntent);
 
@@ -63,9 +64,10 @@ public class MyNotifiers {
 		CharSequence contentTitle = "ORcycle recording";
 		CharSequence contentText = "Tap to see your ongoing trip";
 
-		Intent notificationIntent = new Intent(context, FragmentMainInput.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+		Intent intent = new Intent(context, FragmentMainInput.class);
+		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
+		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+		notification.setLatestEventInfo(context, contentTitle, contentText, pendingIntent);
 
 		mNotificationManager.notify(RECORDING_ID, notification);
 	}
