@@ -469,25 +469,24 @@
 	            
 		        <TextView
 		            android:id="@+id/tvEmail"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_alignParentLeft="true"
-		            android:layout_alignParentTop="true"
-		            android:layout_marginBottom="12dp"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentRight="true"
+	                android:layout_alignParentTop="true"
 		            android:text="@string/q02_email"
-		            android:textAppearance="?android:attr/textAppearanceMedium"
-		            android:textColor="#A33F1F" />
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="#A33F1F" />
 		
 		        <EditText
 		            android:id="@+id/editEmail"
-		            android:layout_width="wrap_content"
+		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
-		            android:layout_alignBaseline="@id/tvEmail"
-		            android:layout_alignBottom="@id/tvEmail"
+		            android:layout_alignParentLeft="true"
 		            android:layout_alignParentRight="true"
-		            android:layout_marginLeft="10dp"
+		            android:layout_below="@id/tvEmail"
 		            android:layout_marginTop="10dp"
-		            android:layout_toRightOf="@id/tvEmail"
+		            android:layout_marginBottom="15dp"
 		            android:ems="20"
 		            android:hint="@string/atq_email_hint"
 		            android:inputType="textEmailAddress" />
