@@ -67,7 +67,7 @@ public class TripMapActivity extends Activity {
 
 	private static final String MODULE_TAG = "TripMapActivity";
 
-	private static final double NOTE_MIN_DISTANCE_FROM_TRIP = 100.0;
+	private static final double NOTE_MIN_DISTANCE_FROM_TRIP = 45.7247; // meters is approximate 150 feet;
 
 	public static final String EXTRA_TRIP_ID = "tripId";
 	private static final int EXTRA_TRIP_ID_UNDEFINED = -1;
