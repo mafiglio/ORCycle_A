@@ -735,6 +735,20 @@ public class DbAdapter {
 		return mCursor;
 	}
 
+	public int getNoteStatus(long noteId) {
+
+		Cursor cursor = mDb.query(true, DATA_TABLE_NOTES,
+				new String[] { K_NOTE_STATUS }, K_NOTE_ROWID + "=" + noteId,
+				null, null, null, null, null);
+
+		if ((cursor != null) && (cursor.getCount() > 0)) {
+			cursor.moveToFirst();
+			int noteStatus = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_NOTE_STATUS));
+			return noteStatus;
+		}
+		return -1;
+	}
+
 	public boolean updateNote(long noteid, int latitude, int longitude,
 			float accuracy, double altitude, float speed) {
 
@@ -857,8 +871,8 @@ public class DbAdapter {
 
 		int numRows = mDb.update(DATA_TABLE_NOTES, initialValues, K_NOTE_ROWID + "=" + noteid, null);
 
-		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_NOTES + "[" + String.valueOf(noteid)
-				+ "](" + K_NOTE_STATUS +"): " + String.valueOf(numRows) + " rows.");
+		Log.v(MODULE_TAG, "updateNoteStatus[" + String.valueOf(noteid)
+				+ "](" + String.valueOf(noteStatus) +"): " + String.valueOf(numRows) + " rows.");
 
 		return numRows > 0;
 	}

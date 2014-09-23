@@ -271,6 +271,7 @@ public class NoteDetailActivity extends Activity {
 		if (note.noteStatus < NoteData.STATUS_SENT) {
 			// And upload to the cloud database, too! W00t W00t!
 			NoteUploader uploader = new NoteUploader(NoteDetailActivity.this);
+			NoteUploader.setPending(note.noteId, true);
 			uploader.execute(note.noteId);
 		}
 
