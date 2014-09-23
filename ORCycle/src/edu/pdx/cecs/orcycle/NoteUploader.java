@@ -80,10 +80,33 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 	private static final String lineEnd = "\r\n";
 	private static final String notesep = "--cycle*******notedata*******atlanta\r\n";
 
+	private static final Map<Long, Boolean> pendingUploads = new HashMap<Long, Boolean>();
+
 	public NoteUploader(Context ctx) {
 		super();
 		this.mCtx = ctx;
 		this.mDb = new DbAdapter(this.mCtx);
+	}
+
+	public static void setPending(long noteId, boolean value) {
+		Log.v(MODULE_TAG, "setPending: [" + String.valueOf(noteId) + "] = " + String.valueOf(value));
+		if (value == false) {
+			if (pendingUploads.containsKey(noteId)) {
+				pendingUploads.remove(noteId);
+			}
+		}
+		else {
+			pendingUploads.put(noteId, true);
+		}
+	}
+
+	public static boolean isPending(long noteId) {
+
+		boolean value = false;
+		if (pendingUploads.containsKey(noteId)) {
+			value = pendingUploads.get(noteId);
+		}
+		return value;
 	}
 
 	private JSONObject getNoteJSON(long noteId) throws JSONException {
@@ -225,12 +248,12 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 		return deviceId;
 	}
 
-	boolean uploadOneNote(long currentNoteId) {
+	boolean uploadOneNote(long noteId) {
 		boolean result = false;
 		final String postUrl = mCtx.getResources().getString(R.string.post_url);
 
 		try {
-			JSONArray jsonNoteResponses = getNoteResponsesJSON(currentNoteId);
+			JSONArray jsonNoteResponses = getNoteResponsesJSON(noteId);
 
 			URL url = new URL(postUrl);
 
@@ -246,7 +269,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 
 			DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
 			JSONObject jsonNote;
-			if (null != (jsonNote = getNoteJSON(currentNoteId))) {
+			if (null != (jsonNote = getNoteJSON(noteId))) {
 				try {
 					String deviceId = getDeviceId();
 
@@ -281,7 +304,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 						+ serverResponseCode);
 				if (serverResponseCode == 201 || serverResponseCode == 202) {
 					mDb.open();
-					mDb.updateNoteStatus(currentNoteId, NoteData.STATUS_SENT);
+					mDb.updateNoteStatus(noteId, NoteData.STATUS_SENT);
 					mDb.close();
 					result = true;
 				}
@@ -289,15 +312,18 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 			else {
 				result = false;
 			}
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
+		} catch (IllegalStateException ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 			return false;
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 			return false;
-		} catch (JSONException e) {
-			e.printStackTrace();
+		} catch (JSONException ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 			return false;
+		}
+		finally {
+			NoteUploader.setPending(noteId, false);
 		}
 		return result;
 	}
@@ -307,11 +333,11 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 	}
 
 	@Override
-	protected Boolean doInBackground(Long... noteid) {
+	protected Boolean doInBackground(Long... noteIds) {
 		// First, send the note user asked for:
 		Boolean result = true;
-		if (noteid.length != 0) {
-			result = uploadOneNote(noteid[0]);
+		if (noteIds.length != 0) {
+			result = uploadOneNote(noteIds[0]);
 		}
 
 		// Then, automatically try and send previously-completed notes

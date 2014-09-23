@@ -206,6 +206,7 @@ public class FragmentSavedNotesSection extends Fragment {
 		mDb.openReadOnly();
 		try {
 			allNotes = mDb.fetchAllNotes();
+			Log.e(MODULE_TAG, "------------------> populateNoteList()");
 
 			String[] from = new String[] { "noteseverity", "noterecorded" };
 			int[] to = new int[] { R.id.tvSnliNoteSeverity, R.id.tvSnliRecorded };
@@ -224,28 +225,42 @@ public class FragmentSavedNotesSection extends Fragment {
 		mDb.close();
 
 		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
+			public void onItemClick(AdapterView<?> parent, View v, int pos, long noteId) {
+				Log.v(MODULE_TAG, "onItemClick (id = " + String.valueOf(noteId) + ", pos = " + String.valueOf(pos) + ")");
 				try {
-					allNotes.moveToPosition(pos);
 					if (mActionModeNote == null) {
-						if (allNotes.getInt(allNotes.getColumnIndex("notestatus")) == 2) {
-							transitionToNoteMapActivity(id);
-						} else if (allNotes.getInt(allNotes.getColumnIndex("notestatus")) == 1) {
-							// Toast.makeText(getActivity(), "Unsent",
-							// Toast.LENGTH_SHORT).show();
-							buildAlertMessageUnuploadedNoteClicked(id);
 
-							// Log.v("Jason",
-							// ""+allNotes.getLong(allNotes.getColumnIndex("_id")));
+						// If the note has just been recently scheduled, we won't ask the user
+						// if they want to upload it.  This fixes a bug whereby the note is
+						// in the process of uploading, but the user wants to see it now.
+						if (NoteUploader.isPending(noteId)) {
+							transitionToNoteMapActivity(noteId);
 						}
-
+						else {
+							final DbAdapter mDb = new DbAdapter(getActivity());
+							mDb.openReadOnly();
+							try {
+								int noteStatus = mDb.getNoteStatus(noteId);
+								if (noteStatus == 2) {
+									transitionToNoteMapActivity(noteId);
+								} else if (noteStatus == 1) {
+									buildAlertMessageUnuploadedNoteClicked(noteId);
+								}
+							}
+							catch(Exception ex) {
+								Log.e(MODULE_TAG, ex.getMessage());
+							}
+							finally {
+								mDb.close();
+							}
+						}
 					} else {
 						// highlight
-						if (noteIdArray.indexOf(id) > -1) {
-							noteIdArray.remove(id);
+						if (noteIdArray.indexOf(noteId) > -1) {
+							noteIdArray.remove(noteId);
 							v.setBackgroundColor(Color.parseColor("#80ffffff"));
 						} else {
-							noteIdArray.add(id);
+							noteIdArray.add(noteId);
 							v.setBackgroundColor(Color.parseColor("#ff33b5e5"));
 						}
 						// Toast.makeText(getActivity(), "Selected: " + noteIdArray,
@@ -338,6 +353,7 @@ public class FragmentSavedNotesSection extends Fragment {
 		super.onResume();
 		try {
 			Log.v(MODULE_TAG, "Cycle: SavedNotes onResume");
+			listSavedNotes.invalidate();
 			populateNoteList(listSavedNotes);
 		}
 		catch(Exception ex) {
