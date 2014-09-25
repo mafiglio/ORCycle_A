@@ -554,10 +554,10 @@ public class FragmentMainInput extends Fragment
 				setupButtons();
 
 				TripData tripData = myApp.getStatus().getTripData();
-				boolean allowSave = (tripData.numpoints > 0);
+				boolean allowSave = (tripData.getNumPoints() > 0);
 				dialogTripFinish(allowSave);
 
-				if (tripData.numpoints > 0) {
+				if (tripData.getNumPoints() > 0) {
 				}
 				else {
 					// Otherwise, cancel and go back to main screen
@@ -772,7 +772,7 @@ public class FragmentMainInput extends Fragment
 
 				TripData tripData = myApp.getStatus().getTripData();
 
-				if (tripData.numpoints > 0) {
+				if (tripData.getNumPoints() > 0) {
 					transitionToTripQuestionsActivity(tripData.tripid);
 				}
 				// Otherwise, cancel and go back to main screen

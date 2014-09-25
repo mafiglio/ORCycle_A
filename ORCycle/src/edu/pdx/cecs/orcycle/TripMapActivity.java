@@ -281,7 +281,7 @@ public class TripMapActivity extends Activity {
 				}
 			});
 
-			if ((trip.status < TripData.STATUS_SENT) && (extras != null)
+			if ((trip.getStatus() < TripData.STATUS_SENT) && (extras != null)
 					&& isNewTrip) {
 				// And upload to the cloud database, too! W00t W00t!
 				TripUploader uploader = new TripUploader(TripMapActivity.this);
