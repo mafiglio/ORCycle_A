@@ -1,6 +1,7 @@
 package edu.pdx.cecs.orcycle;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -68,23 +69,18 @@ public class FragmentMainInput extends Fragment
 	private TextView txtCO2 = null;
 	private TextView txtCalories = null;
 
-	boolean isPaused = false;
-	Timer timer;
-	Timer timerWaitForServiceConnection;
-	float curDistance;
-	boolean cameraPositionInitialized = false;
-
-	Location currentLocation = new Location("");
+	private Timer timer;
+	private Timer timerWaitForServiceConnection;
+	private Location currentLocation = new Location("");
 
 	// Format used to show elapsed time to user when recording trips
-	private final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+	private final SimpleDateFormat tripDurationFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
 
 	// *********************************************************************************
 	// *
 	// *********************************************************************************
 
 	private GoogleMap map;
-	private UiSettings mUiSettings;
 	private LocationClient mLocationClient;
 
 	private static final LocationRequest REQUEST = LocationRequest.create()
@@ -98,7 +94,7 @@ public class FragmentMainInput extends Fragment
 
 	public FragmentMainInput() {
 
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+		tripDurationFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 	}
 
@@ -114,7 +110,7 @@ public class FragmentMainInput extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.v(MODULE_TAG, "onCreateView");
+		Log.v(MODULE_TAG, "Cycle: onCreateView()");
 
 		View rootView = null;
 
@@ -229,7 +225,7 @@ public class FragmentMainInput extends Fragment
 
 		try {
 
-			Log.v(MODULE_TAG, "onResume()");
+			Log.v(MODULE_TAG, "Cycle: onResume()");
 
 			// Use a timer to update the trip duration.
 			timer = new Timer();
@@ -247,6 +243,7 @@ public class FragmentMainInput extends Fragment
 
 			setUpMapIfNeeded();
 			if (map != null) {
+				UiSettings mUiSettings = map.getUiSettings();
 				// Keep the UI Settings state in sync with the checkboxes.
 				mUiSettings.setZoomControlsEnabled(true);
 				mUiSettings.setCompassEnabled(true);
@@ -257,8 +254,7 @@ public class FragmentMainInput extends Fragment
 				mUiSettings.setTiltGesturesEnabled(true);
 				mUiSettings.setRotateGesturesEnabled(true);
 			}
-			setUpLocationClientIfNeeded();
-			mLocationClient.connect();
+			enableLocationClient();
 
 			// Setup wait for service connection timer
 
@@ -289,7 +285,7 @@ public class FragmentMainInput extends Fragment
 		super.onPause();
 
 		try {
-			Log.v(MODULE_TAG, "Cycle: MainInput onPause");
+			Log.v(MODULE_TAG, "Cycle: onPause()");
 
 			// Background GPS.
 			if (timer != null)
@@ -320,7 +316,7 @@ public class FragmentMainInput extends Fragment
 		super.onDestroyView();
 
 		try {
-			Log.v(MODULE_TAG, "Cycle: MainInput onDestroyView");
+			Log.v(MODULE_TAG, "Cycle: onDestroyView()");
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -344,7 +340,7 @@ public class FragmentMainInput extends Fragment
 			if (map != null) {
 				map.setMyLocationEnabled(true);
 				map.setOnMyLocationButtonClickListener(this);
-				mUiSettings = map.getUiSettings();
+				moveCameraToOregon();
 			}
 		}
 	}
@@ -385,7 +381,7 @@ public class FragmentMainInput extends Fragment
 					TripData tripData = appStatus.getTripData();
 
 					if (null != tripData) {
-						txtDuration.setText(sdf.format(tripData.getDuration()));
+						txtDuration.setText(tripDurationFormat.format(tripData.getDuration()));
 						double duration = tripData.getDuration() / 1000.0f;
 						float distance = tripData.getDistance();
 						float avgSpeedMps = (float) ((duration > 1.0f) ? (distance / duration): 0);
@@ -416,7 +412,7 @@ public class FragmentMainInput extends Fragment
 		public void run() {
 
 			try {
-				Log.v(MODULE_TAG, "doServiceConnection");
+				Log.v(MODULE_TAG, "doServiceConnection()");
 
 				if (null == recordingService) {
 
@@ -439,10 +435,7 @@ public class FragmentMainInput extends Fragment
 						int state = recordingService.getState();
 						if (state > RecordingService.STATE_IDLE) {
 							if (state == RecordingService.STATE_FULL) {
-								//TripData tripData = myApp.getStatus().getTripData();
-								//boolean allowSave = (tripData.numpoints > 0);
 								dialogTripFinish(true);
-								//dialogTripFinish();
 							}
 						}
 						else {
@@ -459,8 +452,11 @@ public class FragmentMainInput extends Fragment
 	};
 
 	// *********************************************************************************
+
+	// *********************************************************************************
 	// *                              Button Handlers
 	// *********************************************************************************
+
 
 	/**
      * Class: ButtonStart_OnClickListener
@@ -477,7 +473,7 @@ public class FragmentMainInput extends Fragment
 				// Before we go to record, check GPS status
 				if (!myApp.getStatus().isProviderEnabled()) {
 					// Alert user GPS not available
-					showDialogNoGps();
+					dialogNoGps();
 				}
 				else {
 					myApp.startRecording(getActivity());
@@ -556,15 +552,6 @@ public class FragmentMainInput extends Fragment
 				TripData tripData = myApp.getStatus().getTripData();
 				boolean allowSave = (tripData.getNumPoints() > 0);
 				dialogTripFinish(allowSave);
-
-				if (tripData.getNumPoints() > 0) {
-				}
-				else {
-					// Otherwise, cancel and go back to main screen
-					//alertUserNoGPSData();
-					//cancelRecording();
-					//setupButtons();
-				}
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -586,7 +573,7 @@ public class FragmentMainInput extends Fragment
 
 			try {
 				if (!myApp.getStatus().isProviderEnabled()) {
-					showDialogNoGps();
+					dialogNoGps();
 				}
 				else if (currentLocation == null) {
 					alertUserNoGPSData();
@@ -625,8 +612,6 @@ public class FragmentMainInput extends Fragment
 	 * @param avgSpeedMps Average speed in meters per second
 	 */
 	public void updateStatus(float distanceMeters, float avgSpeedMps) {
-
-		this.curDistance = distanceMeters;
 
 		float distanceMiles = distanceMeters * CF_METERS_TO_MILES;
 		txtDistance.setText(String.format("%1.1f miles", distanceMiles));
@@ -681,28 +666,28 @@ public class FragmentMainInput extends Fragment
 	/**
 	 * Build dialog telling user that the GPS is not available
 	 */
-	private void showDialogNoGps() {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(
-				getActivity());
-		builder.setMessage(
-				"Your phone's GPS is disabled. ORCycle needs GPS to determine your location.\n\nGo to System Settings now to enable GPS?")
-				.setCancelable(false)
-				.setPositiveButton("GPS Settings...",
-						new DialogInterface.OnClickListener() {
-							public void onClick(final DialogInterface dialog,
-									final int id) {
-								transitionToLocationServices();
-							}
-						})
-				.setNegativeButton("Cancel",
-						new DialogInterface.OnClickListener() {
-							public void onClick(final DialogInterface dialog,
-									final int id) {
-								dialog.cancel();
-							}
-						});
+	private void dialogNoGps() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setMessage(getResources().getString(R.string.fmi_no_gps));
+		builder.setCancelable(false);
+		builder.setPositiveButton(getResources().getString(R.string.fmi_no_gps_dialog_ok),
+				new DialogNoGps_OkListener());
+		builder.setNegativeButton(getResources().getString(R.string.fmi_no_gps_dialog_cancel),
+				new DialogNoGps_CancelListener());
 		final AlertDialog alert = builder.create();
 		alert.show();
+	}
+
+	private final class DialogNoGps_OkListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			transitionToLocationServices();
+		}
+	}
+
+	private final class DialogNoGps_CancelListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			dialog.cancel();
+		}
 	}
 
 	// *********************************************************************************
@@ -822,12 +807,13 @@ public class FragmentMainInput extends Fragment
 	// *********************************************************************************
 
 	/**
-	 * Creates a new location client and ???
+	 * Creates a new location client and connects to it
 	 */
-	private void setUpLocationClientIfNeeded() {
+	private void enableLocationClient() {
 		if (mLocationClient == null) {
 			mLocationClient = new LocationClient(getActivity(), this, this); // OnConnectionFailedListener // ConnectionCallbacks
 		}
+		mLocationClient.connect();
 	}
 
 	/**
@@ -836,14 +822,7 @@ public class FragmentMainInput extends Fragment
 	@Override
 	public void onLocationChanged(Location location) {
 		try {
-			currentLocation = location;
-			if (!cameraPositionInitialized) {
-				if (location != null) {
-					//moveCameraToMyLocation(location);
-					moveCameraToOregon();
-					cameraPositionInitialized = true;
-				}
-			}
+			currentLocation = new Location(location);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
