@@ -185,17 +185,17 @@ public class TripMapActivity extends Activity {
 
 			getTripResponses(tripId);
 
-			buttonNote = (Button) findViewById(R.id.buttonNoteThis);
+			buttonNote = (Button) findViewById(R.id.btn_atm_note_this);
 			buttonNote.setOnClickListener(new ButtonNote_OnClickListener());
 
-			buttonRateStart = (Button) findViewById(R.id.buttonRateStart);
+			buttonRateStart = (Button) findViewById(R.id.btn_atm_rate_start);
 			buttonRateStart.setOnClickListener(new ButtonRateStart_OnClickListener());
 
 			// the next two lines will temporarily disable the RateSegment functionality
 			//buttonRateStart.setOnClickListener(new ButtonRateStart_OnClickListener());
 			buttonRateStart.setVisibility(View.GONE);
 
-			buttonRateFinish = (Button) findViewById(R.id.buttonRateFinish);
+			buttonRateFinish = (Button) findViewById(R.id.btn_atm_rate_finish);
 			buttonRateFinish.setOnClickListener(new ButtonRateFinish_OnClickListener());
 			buttonRateFinish.setVisibility(View.GONE);
 
