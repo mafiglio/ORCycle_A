@@ -898,7 +898,7 @@ public class FragmentMainInput extends Fragment
 
 			myApp.setCheckedForUserProfile(true);
 
-			if (!myApp.getUserProfileUploaded()) {
+			if (!myApp.getUserProfileUploaded() && (myApp.getFirstTripCompleted())) {
 				queryUserProfile();
 			}
 		}
