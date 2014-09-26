@@ -150,7 +150,7 @@ public class FragmentMainInput extends Fragment
 			buttonFinish.setOnClickListener(new ButtonFinish_OnClickListener());
 
 			// Setup the button to add a note to the trip
-			buttonNote = (Button) rootView.findViewById(R.id.buttonNoteThis);
+			buttonNote = (Button) rootView.findViewById(R.id.btn_ami_note_this);
 			buttonNote.setVisibility(View.VISIBLE);
 			buttonNote.setOnClickListener(new ButtonNote_OnClickListener());
 

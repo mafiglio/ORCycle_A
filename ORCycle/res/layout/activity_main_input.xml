@@ -177,7 +177,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/buttonNoteThis"
+        android:id="@+id/btn_ami_note_this"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/recordStatusLayout1"
