@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class FragmentSettings extends Fragment {
 
@@ -21,6 +22,7 @@ public class FragmentSettings extends Fragment {
 	private Button btnGetStarted = null;
 	private Button btnFeedback = null;
 	private Button btnPrivacyPolicy = null;
+	private TextView tvVersionCode = null;
 
 	// *********************************************************************************
 	// *                              Fragment Handlers
@@ -54,6 +56,10 @@ public class FragmentSettings extends Fragment {
 
 			btnPrivacyPolicy = (Button) rootView.findViewById(R.id.btnPrivacyPolicy);
 			btnPrivacyPolicy.setOnClickListener(new PrivacyPolicy_OnClickListener());
+
+			tvVersionCode = (TextView) rootView.findViewById(R.id.as_version_code);
+			tvVersionCode.setText(getResources().getString(R.string.about_version_code) +
+					String.valueOf(MyApplication.getInstance().getAppVersion()));
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());

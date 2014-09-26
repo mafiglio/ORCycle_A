@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationManager;
@@ -319,5 +321,18 @@ public class MyApplication extends android.app.Application {
 		gps[1] = l.getLongitude();
 		}
 		return gps;
+	}
+
+	public int getAppVersion() {
+		try {
+			PackageInfo pInfo;
+			if (null != (pInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0))) {
+				return pInfo.versionCode;
+			}
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		return -1;
 	}
 }
