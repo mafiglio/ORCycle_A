@@ -175,6 +175,7 @@ public class TripQuestionsActivity extends Activity {
 
 				if (MandatoryQuestionsAnswered()) {
 					submitAnswers();
+					MyApplication.getInstance().setFirstTripCompleted(true);
 					querySafetyMarker();
 				}
 				else {

@@ -32,6 +32,7 @@ public class MyApplication extends android.app.Application {
 	public static final String PREFS_APPLICATION = "PREFS_APPLICATION";
 
 	private static final String SETTING_USER_INFO_UPLOADED = "USER_INFO_UPLOADED";
+	private static final String SETTING_FIRST_TRIP_COMPLETED = "SETTING_FIRST_TRIP_COMPLETED";
 	private static final double RESET_START_TIME = 0.0;
 
 	private RecordingService recordingService = null;
@@ -278,6 +279,21 @@ public class MyApplication extends android.app.Application {
 		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
 		boolean value = settings.getBoolean(SETTING_USER_INFO_UPLOADED, false);
 		return value;
+	}
+
+	public boolean getFirstTripCompleted() {
+		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		boolean value = settings.getBoolean(SETTING_FIRST_TRIP_COMPLETED, false);
+		return value;
+	}
+
+	public void setFirstTripCompleted(boolean value) {
+		SharedPreferences settings;
+		settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor = settings.edit();
+		editor.putBoolean(SETTING_FIRST_TRIP_COMPLETED, value);
+		editor.apply();
 	}
 
 	public void ResumeNotification() {
