@@ -113,8 +113,67 @@
             android:paddingTop="8dp"
             tools:context=".UserInfo$DummySectionFragment" >
 		    		    
+        <TextView
+            android:id="@+id/as_orcycle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="#fcfcfc"
+            android:gravity="center_vertical|center_horizontal"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/about_version"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/psu_sienna" />
+        
+        <TextView
+            android:id="@+id/as_copyright"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/as_orcycle"
+            android:background="#fcfcfc"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/about_copyright"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/psu_sienna" />
+        
+        <TextView
+            android:id="@+id/as_version_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@id/as_orcycle"
+            android:layout_toRightOf="@id/as_copyright"
+            android:background="#fcfcfc"
+            android:gravity="end"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/about_version_code"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/psu_sienna" />
+        
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="#fcfcfc"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="8dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+		    		    
+        </RelativeLayout>
+
+        
         </LinearLayout>
 
 </ScrollView>

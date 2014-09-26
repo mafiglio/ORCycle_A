@@ -144,7 +144,11 @@
     <string name="tmaTripPurpose">What is the main trip purpose?</string>
     <string name="snliNoteSeverityExample">Major crash/accident</string>
     	
-	<!-- ********************************************************* -->
+    <string name="about_version">Version 1.00</string>
+    <string name="about_version_code">vc:&#160;</string>
+    <string name="about_copyright">&#169; 2014 ORcycle</string>
+    
+    <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
     <!-- ********************************************************* -->
 
