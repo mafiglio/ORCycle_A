@@ -50,6 +50,8 @@ public class FragmentMainInput extends Fragment
 	private static final float CF1_MILES_TO_KCALORIES = 49.0f;  	// Conversion factor part 1 miles to Kcalories burned
 	private static final float CF2_MILES_TO_KCALORIES = -1.69f;  	// Conversion factor part 2 miles to Kcalories burned
 	private static final float METERS_PER_SECOND_TO_MILES_PER_HOUR = 2.2369f;
+	private static final String COM_ANDROID_SETTINGS = "com.android.settings";
+	private static final String COM_ANDROID_SETTINGS_SECURITY_SETTINGS = "com.android.settings.SecuritySettings";
 
 	// Reference to Global application object
 	private MyApplication myApp = null;
@@ -69,9 +71,9 @@ public class FragmentMainInput extends Fragment
 	private TextView txtCO2 = null;
 	private TextView txtCalories = null;
 
-	private Timer timer;
-	private Timer timerWaitForServiceConnection;
-	private Location currentLocation = new Location("");
+	private Timer tripStatusTimer;
+	private Timer serviceConnectionTimer;
+	private Location currentLocation = null;
 
 	// Format used to show elapsed time to user when recording trips
 	private final SimpleDateFormat tripDurationFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
@@ -228,12 +230,12 @@ public class FragmentMainInput extends Fragment
 			Log.v(MODULE_TAG, "Cycle: onResume()");
 
 			// Use a timer to update the trip duration.
-			timer = new Timer();
-			timer.scheduleAtFixedRate(new TimerTask() {
+			tripStatusTimer = new Timer();
+			tripStatusTimer.scheduleAtFixedRate(new TimerTask() {
 				@Override
 				public void run() {
 					try {
-						mHandler.post(mUpdateTimer);
+						tripStatusHandler.post(tripStatusUpdateTask);
 					}
 					catch(Exception ex) {
 						Log.e(MODULE_TAG, ex.getMessage());
@@ -259,11 +261,11 @@ public class FragmentMainInput extends Fragment
 			// Setup wait for service connection timer
 
 			if (null == recordingService) {
-				timerWaitForServiceConnection = new Timer();
-				timerWaitForServiceConnection.scheduleAtFixedRate(new TimerTask() {
+				serviceConnectionTimer = new Timer();
+				serviceConnectionTimer.scheduleAtFixedRate(new TimerTask() {
 					@Override
 					public void run() {
-						handlerWaitForServiceConnection.post(doServiceConnection);
+						serviceConnectionHandler.post(doServiceConnection);
 					}
 				}, 0, 1000); // every second
 			}
@@ -288,12 +290,12 @@ public class FragmentMainInput extends Fragment
 			Log.v(MODULE_TAG, "Cycle: onPause()");
 
 			// Background GPS.
-			if (timer != null)
-				timer.cancel();
+			if (tripStatusTimer != null)
+				tripStatusTimer.cancel();
 
 			// Background GPS.
-			if (timerWaitForServiceConnection != null)
-				timerWaitForServiceConnection.cancel();
+			if (serviceConnectionTimer != null)
+				serviceConnectionTimer.cancel();
 
 			if (mLocationClient != null) {
 				mLocationClient.disconnect();
@@ -346,15 +348,15 @@ public class FragmentMainInput extends Fragment
 	}
 
 	// *********************************************************************************
-	// *                                Timers
+	// *                   Trip Status Update Timers and Runnables
 	// *********************************************************************************
 
 	// Need handler for callbacks to the UI thread
-	final Handler mHandler = new Handler();
-	final Runnable mUpdateTimer = new Runnable() {
+	final Handler tripStatusHandler = new Handler();
+	final Runnable tripStatusUpdateTask = new Runnable() {
 		public void run() {
 			try {
-				updateTimer();
+				updateTripStatus();
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -365,7 +367,7 @@ public class FragmentMainInput extends Fragment
 	/**
 	 * Update the duration label
 	 */
-	private void updateTimer() {
+	private void updateTripStatus() {
 
 		try {
 			if (null != recordingService) {
@@ -400,7 +402,7 @@ public class FragmentMainInput extends Fragment
 	// *********************************************************************************
 
 	// Need handler for callbacks to the UI thread
-	final Handler handlerWaitForServiceConnection = new Handler();
+	final Handler serviceConnectionHandler = new Handler();
 
 	/**
 	 * Class: doServiceConnection
@@ -420,10 +422,11 @@ public class FragmentMainInput extends Fragment
 					if (null != (recordingService = myApp.getRecordingService())) {
 
 						// We now have connection to the service so cancel the timer
-						timerWaitForServiceConnection.cancel();
+						serviceConnectionTimer.cancel();
 
-						Toast.makeText(getActivity(), "Recording service connected...",
-								Toast.LENGTH_SHORT).show();
+						Toast.makeText(getActivity(),
+							getResources().getString(R.string.fmi_service_connected),
+							Toast.LENGTH_SHORT).show();
 
 						recordingService.setListener(FragmentMainInput.this);
 
@@ -638,19 +641,19 @@ public class FragmentMainInput extends Fragment
 			myApp.cancelRecording();
 
 			txtDuration = (TextView) getActivity().findViewById(R.id.textViewElapsedTime);
-			txtDuration.setText("00:00:00");
+			txtDuration.setText(getResources().getString(R.string.fmi_reset_duration));
 
 			txtDistance = (TextView) getActivity().findViewById(R.id.textViewDistance);
-			txtDistance.setText("0.0 miles");
+			txtDistance.setText(getResources().getString(R.string.fmi_reset_distance));
 
 			txtAvgSpeed = (TextView) getActivity().findViewById(R.id.textViewAvgSpeed);
-			txtAvgSpeed.setText("0.0 mph");
+			txtAvgSpeed.setText(getResources().getString(R.string.fmi_reset_avg_speed));
 
 			txtCalories = (TextView) getActivity().findViewById(R.id.textViewCalories);
-			txtCalories.setText("0.0 kcal");
+			txtCalories.setText(getResources().getString(R.string.fmi_reset_calories));
 
 			txtCO2 = (TextView) getActivity().findViewById(R.id.textViewCO2);
-			txtCO2.setText("0.0 lbs");
+			txtCO2.setText(getResources().getString(R.string.fmi_reset_co2));
 
 			setupButtons();
 		}
@@ -732,16 +735,16 @@ public class FragmentMainInput extends Fragment
 	 */
 	private void dialogTripFinish(boolean allowSave) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle("Save Trip");
+		builder.setTitle(getResources().getString(R.string.fmi_dtf_save_trip));
 		if (allowSave) {
-			builder.setMessage("Do you want to save this trip?");
-			builder.setNegativeButton("Save", new DialogTripFinish_OnSaveTripClicked());
+			builder.setMessage(getResources().getString(R.string.fmi_dtf_query_save));
+			builder.setNegativeButton(getResources().getString(R.string.fmi_dtf_save), new DialogTripFinish_OnSaveTripClicked());
 		}
 		else {
-			builder.setMessage("No GPS data acquired; nothing to save.");
+			builder.setMessage(getResources().getString(R.string.fmi_no_gps_data));
 		}
-		builder.setNeutralButton("Discard", new DialogTripFinish_OnDiscardTripClicked());
-		builder.setPositiveButton("Resume", new DialogTripFinish_OnContinueTripClicked());
+		builder.setNeutralButton(getResources().getString(R.string.fmi_dtf_discard), new DialogTripFinish_OnDiscardTripClicked());
+		builder.setPositiveButton(getResources().getString(R.string.fmi_dtf_resume), new DialogTripFinish_OnContinueTripClicked());
 		final AlertDialog alert = builder.create();
 		alert.show();
 	}
@@ -882,16 +885,6 @@ public class FragmentMainInput extends Fragment
 
 	@Override
 	public boolean onMyLocationButtonClick() {
-		try {
-		// Toast.makeText(getActivity(), "MyLocation button clicked",
-		// Toast.LENGTH_SHORT).show();
-		// Return false so that we don't consume the event and the default
-		// behavior still occurs
-		// (the camera animates to the user's current position).
-		}
-		catch(Exception ex) {
-			Log.e(MODULE_TAG, ex.getMessage());
-		}
 		return false;
 	}
 
@@ -912,7 +905,9 @@ public class FragmentMainInput extends Fragment
 	}
 
 	private void alertUserNoGPSData() {
-		Toast.makeText(getActivity(), "No GPS data acquired; nothing to submit.", Toast.LENGTH_SHORT).show();
+		Toast.makeText(getActivity(),
+			getResources().getString(R.string.fmi_no_gps_data),
+			Toast.LENGTH_SHORT).show();
 	}
 
 	private void transitionToTripQuestionsActivity(long tripId) {
@@ -939,8 +934,8 @@ public class FragmentMainInput extends Fragment
 
 	private void transitionToLocationServices() {
 		final ComponentName toLaunch = new ComponentName(
-				"com.android.settings",
-				"com.android.settings.SecuritySettings");
+				COM_ANDROID_SETTINGS,
+				COM_ANDROID_SETTINGS_SECURITY_SETTINGS);
 		final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 		intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		intent.setComponent(toLaunch);
