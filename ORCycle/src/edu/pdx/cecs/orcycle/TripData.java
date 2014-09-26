@@ -59,10 +59,10 @@ public class TripData {
 	private boolean isFinished = false;
 
 
-	int numpoints = 0;
-	int lathigh, lgthigh, latlow, lgtlow, latestlat, latestlgt;
-	int status;
-	float distance;
+	private int numpoints = 0;
+	private int lathigh, lgthigh, latlow, lgtlow, latestlat, latestlgt;
+	private int status;
+	private float distance;
 	String purp, fancystart, info;
 	private String noteComment;
 
@@ -415,5 +415,13 @@ public class TripData {
 
 	public String getNoteComment() {
 		return noteComment;
+	}
+
+	public int getNumPoints() {
+		return numpoints;
+	}
+
+	public int getStatus() {
+		return status;
 	}
 }

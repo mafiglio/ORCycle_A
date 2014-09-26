@@ -36,7 +36,22 @@
     <string name="fmi_query_user_profile">If you are new to ORcycle, tell us about yourself&#8230;</string>
     <string name="fmi_qup_dialog_ok">OK</string>
     <string name="fmi_qup_dialog_later">Later</string>
-
+    <string name="fmi_no_gps">Your phone\'s GPS is disabled. ORCycle needs GPS to determine your location.\n\nGo to System Settings now to enable GPS?</string>
+    <string name="fmi_no_gps_dialog_ok">GPS Settings&#8230;</string>
+    <string name="fmi_no_gps_dialog_cancel">Cancel</string>
+    <string name="fmi_no_gps_data">No GPS data acquired; nothing to submit.</string>
+	<string name="fmi_dtf_save_trip">Save Trip</string>
+	<string name="fmi_dtf_query_save">Do you want to save this trip?</string>
+	<string name="fmi_dtf_discard">Discard</string>
+	<string name="fmi_dtf_resume">Resume</string>
+	<string name="fmi_dtf_save">Save</string>
+	<string name="fmi_reset_duration">00:00:00</string>
+	<string name="fmi_reset_distance">0.0 miles</string>
+	<string name="fmi_reset_avg_speed">0.0 mph</string>
+	<string name="fmi_reset_calories">0.0 kcal</string>
+	<string name="fmi_reset_co2">0.0 lbs</string>
+	<string name="fmi_service_connected">Recording service connected&#8230;</string>
+									    
     <string name="tqi_qsm_dialog_message">“You can now mark locations with safety issues&#8230;</string>
     <string name="tqi_qsm_dialog_ok">OK</string>
     <string name="tqi_qsm_dialog_later">Later</string>

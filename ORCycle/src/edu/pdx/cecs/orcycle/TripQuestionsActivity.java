@@ -550,7 +550,7 @@ public class TripQuestionsActivity extends Activity {
 
 		// Save the trip details to the phone database. W00t!
 		tripData.updateTrip(tripData.getStartTime(), tripData.getEndTime(),
-				tripData.distance, tripComment.getEditableText().toString());
+				tripData.getDistance(), tripComment.getEditableText().toString());
 		tripData.updateTripStatus(TripData.STATUS_COMPLETE);
 
 		// ----------------

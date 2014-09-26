@@ -219,7 +219,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		lm.removeUpdates(this);
 
 		//
-		if (trip.numpoints > 0) {
+		if (trip.getNumPoints() > 0) {
 			trip.finish(); // makes some final calculations and pushed trip to the database
 		}
 		else {
@@ -250,8 +250,15 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		try {
 			if (location != null) {
 
-				// Stats should only be updated if accuracy is decent
-				if (location.getAccuracy() <= MIN_DESIRED_ACCURACY) {
+				double timeSinceStart = System.currentTimeMillis() - trip.getStartTime();
+				float accuracy = location.getAccuracy();
+
+				// The first 2 points are recorded regardless of accuracy, and
+				// we ignore accuracy for the first minute. After those 2
+				// conditions, we only add points if the accuracy is decent
+				if ((accuracy <= MIN_DESIRED_ACCURACY)
+					|| (trip.getNumPoints() < 2)
+					|| (timeSinceStart < 60000 /* milliseconds*/ )) {
 
 					if (lastLocation != null) {
 						distanceMeters += lastLocation.distanceTo(location);
