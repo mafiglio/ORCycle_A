@@ -369,10 +369,10 @@ public class DbAdapter {
 			Log.e(MODULE_TAG, "Insert " + DATA_TABLE_COORDS + ": failed");
 		}
 		else {
-			Log.i(MODULE_TAG, "Insert " + DATA_TABLE_COORDS + "[" + String.valueOf(rowId) + "]("
+			/* Log.i(MODULE_TAG, "Insert " + DATA_TABLE_COORDS + "[" + String.valueOf(rowId) + "]("
 					+ K_POINT_TRIP + ", " + K_POINT_LAT + ", " + K_POINT_LGT + ", "
 					+ K_POINT_TIME + ", " + K_POINT_ACC + ", " + K_POINT_ALT + ", "
-					+ K_POINT_SPEED +")");
+					+ K_POINT_SPEED +")"); */
 		}
 
 		// And update the trip stats
@@ -380,9 +380,6 @@ public class DbAdapter {
 		tripValues.put(K_TRIP_END, pt.time);
 
 		int numRows = mDb.update(DATA_TABLE_TRIPS, tripValues, K_TRIP_ROWID + "=" + tripid, null);
-
-		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid) +"]("
-				+ K_TRIP_END +"): " + String.valueOf(numRows) + " rows.");
 
 		boolean success = ((rowId != -1) && (numRows > 0));
 
@@ -550,9 +547,9 @@ public class DbAdapter {
 
 		numRows = mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null);
 
-		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
+		/* Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
 				+ "](" + K_TRIP_FANCYSTART + ", " + K_TRIP_FANCYINFO + ", " + K_TRIP_NOTE +"): "
-				+ String.valueOf(numRows) + " rows.");
+				+ String.valueOf(numRows) + " rows.");		*/
 
 		return numRows > 0;
 	}
@@ -567,8 +564,8 @@ public class DbAdapter {
 
 		numRows = mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null);
 
-		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
-				+ "](" + K_TRIP_PURP + "): " + String.valueOf(numRows) + " rows.");
+		/* Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
+				+ "](" + K_TRIP_PURP + "): " + String.valueOf(numRows) + " rows."); */
 
 		return;
 	}
@@ -587,8 +584,9 @@ public class DbAdapter {
 
 		numRows = mDb.update(DATA_TABLE_TRIPS, contentValues, K_TRIP_ROWID + "=" + tripid, null);
 
-		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
-				+ "](" + K_TRIP_LATHI + ", " + K_TRIP_LATLO + ", " + K_TRIP_LGTHI + ", " + K_TRIP_LGTLO + ", " + K_TRIP_DISTANCE +"): " + String.valueOf(numRows) + " rows.");
+		/* Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
+				+ "](" + K_TRIP_LATHI + ", " + K_TRIP_LATLO + ", " + K_TRIP_LGTHI + ", " +
+				K_TRIP_LGTLO + ", " + K_TRIP_DISTANCE +"): " + String.valueOf(numRows) + " rows."); */
 
 		return numRows > 0;
 	}
@@ -602,8 +600,8 @@ public class DbAdapter {
 
 		numRows = mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "=" + tripid, null);
 
-		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
-				+ "](" + K_TRIP_STATUS +"): " + String.valueOf(numRows) + " rows.");
+		/* Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
+				+ "](" + K_TRIP_STATUS +"): " + String.valueOf(numRows) + " rows."); */
 
 		return numRows > 0;
 	}
@@ -762,9 +760,9 @@ public class DbAdapter {
 
 		int numRows = mDb.update(DATA_TABLE_NOTES, contentValues, K_NOTE_ROWID + "=" + noteid, null);
 
-		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_NOTES + "[" + String.valueOf(noteid) + "]("
+		/* Log.i(MODULE_TAG, "Updated " + DATA_TABLE_NOTES + "[" + String.valueOf(noteid) + "]("
 				+ K_NOTE_LAT + ", " + K_NOTE_LGT + ", " + K_NOTE_ACC + ", " + K_NOTE_ALT + ", "
-				+ K_NOTE_SPEED +"): " + String.valueOf(numRows) + " rows.");
+				+ K_NOTE_SPEED +"): " + String.valueOf(numRows) + " rows."); */
 
 		return numRows > 0;
 	}

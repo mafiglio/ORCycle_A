@@ -65,6 +65,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 
 	int state = STATE_IDLE;
 
+	private SpeedMonitor speedMonitor;
 
 	private final MyServiceBinder myServiceBinder = new MyServiceBinder();
 
@@ -182,6 +183,10 @@ public class RecordingService extends Service implements IRecordService, Locatio
 				MIN_TIME_BETWEEN_READINGS_MILLISECONDS,
 				MIN_DISTANCE_BETWEEN_READINGS_METERS, this);
 
+		if (null == speedMonitor) {
+			speedMonitor = new SpeedMonitor(this);
+		}
+		speedMonitor.start();
 	}
 
 	/**
@@ -192,6 +197,8 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	public void pauseRecording() {
 		this.state = STATE_PAUSED;
 		trip.startPause();
+		if (null != speedMonitor)
+			speedMonitor.cancel();
 	}
 
 	/**
@@ -202,6 +209,8 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	public void resumeRecording() {
 		this.state = STATE_RECORDING;
 		trip.finishPause();
+		if (null != speedMonitor)
+			speedMonitor.start();
 	}
 
 	/**
@@ -213,6 +222,9 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	 */
 	public long finishRecording() {
 		this.state = STATE_FULL;
+
+		if (null != speedMonitor)
+			speedMonitor.cancel();
 
 		// Disable location manager updates
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -230,6 +242,10 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	}
 
 	public void cancelRecording() {
+
+		if (null != speedMonitor)
+			speedMonitor.cancel();
+
 		if (trip != null) {
 			trip.dropTrip();
 		}
@@ -252,6 +268,9 @@ public class RecordingService extends Service implements IRecordService, Locatio
 
 				double timeSinceStart = System.currentTimeMillis() - trip.getStartTime();
 				float accuracy = location.getAccuracy();
+
+				if ((null != speedMonitor) && (location.hasSpeed()))
+					speedMonitor.recordSpeed(System.currentTimeMillis(), location.getSpeed());
 
 				// The first 2 points are recorded regardless of accuracy, and
 				// we ignore accuracy for the first minute. After those 2
