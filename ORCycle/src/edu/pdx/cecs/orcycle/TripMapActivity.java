@@ -683,7 +683,9 @@ public class TripMapActivity extends Activity {
 		public void onClick(View v) {
 			try {
 				if (!crosshairInRangeOfTrip) {
-					Toast.makeText(TripMapActivity.this, "Target must be within 100 meters of bike path.", Toast.LENGTH_SHORT).show();
+					Toast.makeText(TripMapActivity.this,
+							getResources().getString((R.string.atm_crosshair_distance_message)),
+							Toast.LENGTH_SHORT).show();
 				}
 				else {
 					setSelectingSegment(true);
@@ -712,7 +714,7 @@ public class TripMapActivity extends Activity {
 			try {
 				if (!crosshairInRangeOfTrip) {
 					Toast.makeText(TripMapActivity.this,
-							"Target must be within 100 meters of bike path.",
+							getResources().getString((R.string.atm_crosshair_distance_message)),
 							Toast.LENGTH_SHORT).show();
 				}
 				else if (indexOfClosestPoint == segmentStartIndex) {

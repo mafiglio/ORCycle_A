@@ -74,7 +74,7 @@
     <string name="atm_trip_purpose">Trip Purpose:</string>
     <string name="atm_trip_info_long_string">Trip info: The quick brown fox jumps over the lazy dog</string>
     <string name="atm_crosshair_image_description">Map Crosshairs</string>
-    <string name="atm_crosshair_distance_message">Cannot mark location! Target must be within 100 meters of bike path.</string>
+    <string name="atm_crosshair_distance_message">Cannot mark location! Target must be within 150 feet of bike path.</string>
     
     <string name="note_note_asset">Note this asset</string>
 	<string name="note_water_fountain">Water fountain</string>
