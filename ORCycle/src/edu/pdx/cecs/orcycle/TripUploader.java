@@ -56,17 +56,13 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.provider.Settings.System;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
-	Context mCtx;
-	DbAdapter mDb;
 
 	private static final String MODULE_TAG = "TripUploader";
-
 	public static final int kSaveProtocolVersion = 3;
 
 	// Saving protocol version 2
@@ -111,9 +107,14 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 	private static final String FID_ANSWER_ID = "answer_id";
 	private static final String FID_ANSWER_OTHER_TEXT = "other_text";
 
-	public TripUploader(Context ctx) {
+	private final Context mCtx;
+	private final String userId;
+	private final DbAdapter mDb;
+
+	public TripUploader(Context ctx, String userId) {
 		super();
 		this.mCtx = ctx;
+		this.userId = userId;
 		this.mDb = new DbAdapter(this.mCtx);
 	}
 
@@ -277,30 +278,6 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		return tripData;
 	}
 
-	public String getDeviceId() {
-		String androidId = System.getString(this.mCtx.getContentResolver(),
-				System.ANDROID_ID);
-		String androidBase = "androidDeviceId-";
-
-		if (androidId == null) { // This happens when running in the Emulator
-			final String emulatorId = "android-RunningAsTestingDeleteMe";
-			return emulatorId;
-		}
-		String deviceId = androidBase.concat(androidId);
-
-		// Fix String Length
-		int a = deviceId.length();
-		if (a < 32) {
-			for (int i = 0; i < 32 - a; i++) {
-				deviceId = deviceId.concat("0");
-			}
-		} else {
-			deviceId = deviceId.substring(0, 32);
-		}
-
-		return deviceId;
-	}
-
 	public String getAppVersion() {
 		String versionName = "";
 		int versionCode = 0;
@@ -345,7 +322,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		JSONArray pauses = getPausesJSON(tripId);
 		//JSONObject user = getUserJSON();
 		JSONArray tripResponses = getTripResponsesJSON(tripId);
-		String deviceId = getDeviceId();
+		String deviceId = userId;
 		Vector<String> tripData = getTripData(tripId);
 		String notes = tripData.get(0);
 		String purpose = tripData.get(1);

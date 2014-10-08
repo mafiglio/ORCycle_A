@@ -558,7 +558,7 @@ public class TripQuestionsActivity extends Activity {
 		// Upload trip data
 		// ----------------
 
-		TripUploader uploader = new TripUploader(this);
+		TripUploader uploader = new TripUploader(this, MyApplication.getInstance().getUserId());
 		uploader.execute(tripData.tripid);
 
 		try {

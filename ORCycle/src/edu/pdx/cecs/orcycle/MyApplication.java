@@ -1,6 +1,7 @@
 package edu.pdx.cecs.orcycle;
 
 import java.util.List;
+import java.util.UUID;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,7 +14,6 @@ import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.IBinder;
-import android.provider.Settings.System;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
@@ -33,8 +33,11 @@ public class MyApplication extends android.app.Application {
 
 	private static final String SETTING_USER_INFO_UPLOADED = "USER_INFO_UPLOADED";
 	private static final String SETTING_FIRST_TRIP_COMPLETED = "SETTING_FIRST_TRIP_COMPLETED";
+	private static final String SETTING_USER_ID = "SETTING_USER_ID";
 	private static final double RESET_START_TIME = 0.0;
+	private static final String ANDROID_USER = "android-";
 
+	private String userId = null;
 	private RecordingService recordingService = null;
 	private TripData trip;
 	private boolean checkedForUserProfile = false;
@@ -73,6 +76,8 @@ public class MyApplication extends android.app.Application {
         ConnectRecordingService();
 
 		bellTimer.init(this.getBaseContext());
+
+		initUserId();
     }
 
     /**
@@ -234,30 +239,6 @@ public class MyApplication extends android.app.Application {
     	}
     }
 
-	public String getDeviceId() {
-		String androidId = System.getString(this.getContentResolver(),
-				System.ANDROID_ID);
-		String androidBase = "androidDeviceId-";
-
-		if (androidId == null) { // This happens when running in the Emulator
-			final String emulatorId = "android-RunningAsTestingDeleteMe";
-			return emulatorId;
-		}
-		String deviceId = androidBase.concat(androidId);
-
-		// Fix String Length
-		int a = deviceId.length();
-		if (a < 32) {
-			for (int i = 0; i < 32 - a; i++) {
-				deviceId = deviceId.concat("0");
-			}
-		} else {
-			deviceId = deviceId.substring(0, 32);
-		}
-
-		return deviceId;
-	}
-
 	public void setCheckedForUserProfile(boolean value) {
 		checkedForUserProfile = value;
 	}
@@ -288,11 +269,32 @@ public class MyApplication extends android.app.Application {
 	}
 
 	public void setFirstTripCompleted(boolean value) {
-		SharedPreferences settings;
-		settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor = settings.edit();
 		editor.putBoolean(SETTING_FIRST_TRIP_COMPLETED, value);
+		editor.apply();
+	}
+
+	private void initUserId() {
+		// generateNewUserId();  // For resetting while debugging
+		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		userId = settings.getString(SETTING_USER_ID, null);
+		if ((null == userId) || (userId.equals(""))) {
+			generateNewUserId();
+		}
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void generateNewUserId() {
+		userId = ANDROID_USER + UUID.randomUUID().toString();
+		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor = settings.edit();
+		editor.putString(SETTING_USER_ID, userId);
 		editor.apply();
 	}
 
