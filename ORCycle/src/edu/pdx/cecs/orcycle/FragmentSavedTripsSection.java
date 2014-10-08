@@ -325,7 +325,7 @@ public class FragmentSavedTripsSection extends Fragment {
 	}
 
 	private void retryTripUpload(long tripId) {
-		TripUploader uploader = new TripUploader(getActivity());
+		TripUploader uploader = new TripUploader(getActivity(), MyApplication.getInstance().getUserId());
 		FragmentSavedTripsSection f2 = (FragmentSavedTripsSection) getActivity()
 				.getSupportFragmentManager().findFragmentByTag(
 						"android:switcher:" + R.id.pager + ":1");

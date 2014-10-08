@@ -76,7 +76,7 @@ public class RateSegmentDetailActivity extends Activity {
 				segment.updateSegment(tripId, rating, details, segmentStartIndex, segmentEndIndex);
 
 				// Upload segment entity
-				Uploader uploader = new Uploader(RateSegmentDetailActivity.this);
+				Uploader uploader = new Uploader(RateSegmentDetailActivity.this, MyApplication.getInstance().getUserId());
 				uploader.execute(segment.getSegmentId());
 			}
 		}

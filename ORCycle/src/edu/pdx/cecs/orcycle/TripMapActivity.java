@@ -284,7 +284,7 @@ public class TripMapActivity extends Activity {
 			if ((trip.getStatus() < TripData.STATUS_SENT) && (extras != null)
 					&& isNewTrip) {
 				// And upload to the cloud database, too! W00t W00t!
-				TripUploader uploader = new TripUploader(TripMapActivity.this);
+				TripUploader uploader = new TripUploader(TripMapActivity.this, MyApplication.getInstance().getUserId());
 				uploader.execute(trip.tripid);
 			}
 

@@ -324,7 +324,7 @@ public class FragmentSavedNotesSection extends Fragment {
 	}
 
 	private void retryNoteUpload(long noteId) {
-		NoteUploader uploader = new NoteUploader(getActivity());
+		NoteUploader uploader = new NoteUploader(getActivity(), MyApplication.getInstance().getUserId());
 		FragmentSavedNotesSection f3 = (FragmentSavedNotesSection) getActivity()
 				.getSupportFragmentManager().findFragmentByTag(
 						"android:switcher:" + R.id.pager + ":2");

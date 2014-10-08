@@ -12,49 +12,24 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.provider.Settings.System;
 import android.util.Log;
 import android.widget.Toast;
 
 public class Uploader extends AsyncTask<Long, Integer, Boolean> {
 
-	public static final String MODULE_TAG = "Uploader";
-	public static final int kSaveNoteProtocolVersion = 4;
+	private static final String MODULE_TAG = "Uploader";
+	private static final int kSaveNoteProtocolVersion = 4;
+	private static final String boundary = "cycle*******notedata*******atlanta";
 
 	private final Context mCtx;
-	DbAdapter mDb;
+	private final String userId;
+	private final DbAdapter mDb;
 
-	String twoHyphens = "--";
-	String boundary = "cycle*******notedata*******atlanta";
-	String lineEnd = "\r\n";
-
-	public Uploader(Context ctx) {
+	public Uploader(Context ctx, String userId) {
 		super();
 		this.mCtx = ctx;
+		this.userId = userId;
 		this.mDb = new DbAdapter(this.mCtx);
-	}
-
-	public String getDeviceId() {
-		String androidId = System.getString(this.mCtx.getContentResolver(), System.ANDROID_ID);
-		String androidBase = "androidDeviceId-";
-
-		if (androidId == null) { // This happens when running in the Emulator
-			final String emulatorId = "android-RunningAsTestingDeleteMe";
-			return emulatorId;
-		}
-		String deviceId = androidBase.concat(androidId);
-
-		// Fix String Length
-		int a = deviceId.length();
-		if (a < 32) {
-			for (int i = 0; i < 32 - a; i++) {
-				deviceId = deviceId.concat("0");
-			}
-		} else {
-			deviceId = deviceId.substring(0, 32);
-		}
-
-		return deviceId;
 	}
 
 	private static final String contentFieldPrefix = "--cycle*******notedata*******atlanta\r\n";
@@ -83,7 +58,7 @@ public class Uploader extends AsyncTask<Long, Integer, Boolean> {
 
 			SegmentData segmentData = SegmentData.fetchSegment(mCtx, currentNoteId);
 			JSONObject json = segmentData.getJSON();
-			String deviceId = getDeviceId();
+			String deviceId = userId;
 
 			DataOutputStream stream = new DataOutputStream(conn.getOutputStream());
 			stream.writeBytes(makeContentField("ratesegment", json.toString()));
@@ -158,7 +133,6 @@ public class Uploader extends AsyncTask<Long, Integer, Boolean> {
 		return result;
 
 	}
-
 
 	@Override
 	protected void onPreExecute() {

@@ -46,14 +46,12 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.provider.Settings.System;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
-	private final Context mCtx;
-	private final DbAdapter mDb;
+
 	private byte[] imageData;
 
 	private static final String MODULE_TAG = "NoteUploader";
@@ -82,9 +80,14 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 
 	private static final Map<Long, Boolean> pendingUploads = new HashMap<Long, Boolean>();
 
-	public NoteUploader(Context ctx) {
+	private final Context mCtx;
+	private final String userId;
+	private final DbAdapter mDb;
+
+	public NoteUploader(Context ctx, String userId) {
 		super();
 		this.mCtx = ctx;
+		this.userId = userId;
 		this.mDb = new DbAdapter(this.mCtx);
 	}
 
@@ -224,30 +227,6 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 		return jsonAnswers;
 	}
 
-	public String getDeviceId() {
-		String androidId = System.getString(this.mCtx.getContentResolver(),
-				System.ANDROID_ID);
-		String androidBase = "androidDeviceId-";
-
-		if (androidId == null) { // This happens when running in the Emulator
-			final String emulatorId = "android-RunningAsTestingDeleteMe";
-			return emulatorId;
-		}
-		String deviceId = androidBase.concat(androidId);
-
-		// Fix String Length
-		int a = deviceId.length();
-		if (a < 32) {
-			for (int i = 0; i < 32 - a; i++) {
-				deviceId = deviceId.concat("0");
-			}
-		} else {
-			deviceId = deviceId.substring(0, 32);
-		}
-
-		return deviceId;
-	}
-
 	boolean uploadOneNote(long noteId) {
 		boolean result = false;
 		final String postUrl = mCtx.getResources().getString(R.string.post_url);
@@ -271,7 +250,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 			JSONObject jsonNote;
 			if (null != (jsonNote = getNoteJSON(noteId))) {
 				try {
-					String deviceId = getDeviceId();
+					String deviceId = userId;
 
 					dos.writeBytes(notesep + ContentField("note") + jsonNote.toString() + "\r\n");
 					dos.writeBytes(notesep + ContentField("version") + String.valueOf(kSaveNoteProtocolVersion) + "\r\n");
