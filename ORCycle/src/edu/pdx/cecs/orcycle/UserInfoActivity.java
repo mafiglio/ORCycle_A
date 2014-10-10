@@ -43,6 +43,7 @@ public class UserInfoActivity extends Activity {
 	public static final int PREF_WORKERS         = 11;
 	public static final int PREF_ETHNICITY       = 12;
 	public static final int PREF_INCOME          = 13;
+	public static final int PREF_INSTALLED       = 14;
 	public static final int PREF_RIDER_TYPE_OTHER = 1002;
 	public static final int PREF_BIKE_TYPE_OTHER  = 1006;
 	public static final int PREF_OCCUPATION_OTHER = 1007;
@@ -193,7 +194,7 @@ public class UserInfoActivity extends Activity {
 				// this extra call to savePreferences is absolutely necessary.  It
 				// allows changes to be stored for later return to this activity.
 				savePreferences(false);
-				UserInfoUploader uploader = new UserInfoUploader(this);
+				UserInfoUploader uploader = new UserInfoUploader(this, MyApplication.getInstance().getUserId());
 				uploader.execute();
 			}
 			catch(Exception ex) {
@@ -329,6 +330,7 @@ public class UserInfoActivity extends Activity {
 				PREF_ETHNICITY_OTHER, forUpload);
 
 		savePref( editor, PREF_INCOME,          (Spinner)  findViewById(R.id.spnrIncome         ), forUpload);
+		savePref(editor, PREF_INSTALLED, MyApplication.getInstance().getFirstUseString());
 
 		// Don't forget to commit your edits!!!
 		editor.commit();
@@ -378,6 +380,15 @@ public class UserInfoActivity extends Activity {
 		}
 	}
 
+	/**
+	 * Insert the long value into the preference in the editor
+	 * @param editor Preference editor
+	 * @param prefIndex Named index where preference is stored
+	 * @param spinner Instance of a Spinner widget
+	 */
+	private static final void savePref(SharedPreferences.Editor editor, int prefIndex, String value) {
+		editor.putString("" + prefIndex, value);
+	}
 
 	/**
 	 * Insert the position of the spinner into an int preference in the editor

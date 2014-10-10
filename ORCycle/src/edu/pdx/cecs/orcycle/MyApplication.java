@@ -1,5 +1,6 @@
 package edu.pdx.cecs.orcycle;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -34,10 +36,14 @@ public class MyApplication extends android.app.Application {
 	private static final String SETTING_USER_INFO_UPLOADED = "USER_INFO_UPLOADED";
 	private static final String SETTING_FIRST_TRIP_COMPLETED = "SETTING_FIRST_TRIP_COMPLETED";
 	private static final String SETTING_USER_ID = "SETTING_USER_ID";
+	private static final String SETTING_FIRST_USE = "SETTING_FIRST_USE";
+	private static final String SETTING_VERSION_CODE = "SETTING_CODE_VERSION";
 	private static final double RESET_START_TIME = 0.0;
-	private static final String ANDROID_USER = "android-";
+	private static final String ANDROID_USER = "android";
 
 	private String userId = null;
+	private int versionCode = -1;
+	private long firstUse = -1;
 	private RecordingService recordingService = null;
 	private TripData trip;
 	private boolean checkedForUserProfile = false;
@@ -77,7 +83,7 @@ public class MyApplication extends android.app.Application {
 
 		bellTimer.init(this.getBaseContext());
 
-		initUserId();
+		initSettings();
     }
 
     /**
@@ -276,26 +282,57 @@ public class MyApplication extends android.app.Application {
 		editor.apply();
 	}
 
-	private void initUserId() {
-		// generateNewUserId();  // For resetting while debugging
+	private void initSettings() {
+
+		//generateUserId();  // For resetting while debugging
 		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
 		userId = settings.getString(SETTING_USER_ID, null);
 		if ((null == userId) || (userId.equals(""))) {
-			generateNewUserId();
+			userId = generateUserId();
 		}
+
+		int savedVersionCode = settings.getInt(SETTING_VERSION_CODE, -1);
+		firstUse = settings.getLong(SETTING_FIRST_USE, -1);
+		if ((-1 == firstUse) || (savedVersionCode != getVersionCode())) {
+			firstUse = generateFirstUse();
+		}
+	}
+
+	/**
+	 * Sets SETTING_FIRST_USE, and SETTING_VERSION_CODE settings
+	 * @return new value of SETTING_FIRST_USE
+	 */
+	private long generateFirstUse() {
+		long value = System.currentTimeMillis();
+		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor = settings.edit();
+		editor.putInt(SETTING_VERSION_CODE, getVersionCode());
+		editor.putLong(SETTING_FIRST_USE, value);
+		editor.apply();
+		return value;
+	}
+
+	public long getFirstUse() {
+		return firstUse;
+	}
+
+	public String getFirstUseString() {
+		return (new SimpleDateFormat("MMMM d, y  h:mm a")).format(firstUse);
 	}
 
 	public String getUserId() {
 		return userId;
 	}
 
-	public void generateNewUserId() {
-		userId = ANDROID_USER + UUID.randomUUID().toString();
+	private String generateUserId() {
+		String value = ANDROID_USER + UUID.randomUUID().toString();
 		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor = settings.edit();
 		editor.putString(SETTING_USER_ID, userId);
 		editor.apply();
+		return value;
 	}
 
 	public void ResumeNotification() {
@@ -341,16 +378,57 @@ public class MyApplication extends android.app.Application {
 		return gps;
 	}
 
-	public int getAppVersion() {
+	public int getVersionCode() {
 		try {
-			PackageInfo pInfo;
-			if (null != (pInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0))) {
-				return pInfo.versionCode;
+			if (versionCode == -1) {
+				PackageInfo pInfo;
+				if (null != (pInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0))) {
+					versionCode = pInfo.versionCode;
+				}
 			}
+			return versionCode;
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public String getAppVersion(Context context) {
+		String versionName = "";
+		int versionCode = 0;
+
+		try {
+			PackageInfo pInfo = context.getPackageManager().getPackageInfo(
+					context.getPackageName(), 0);
+			versionName = pInfo.versionName;
+			versionCode = pInfo.versionCode;
 		} catch (PackageManager.NameNotFoundException e) {
 			e.printStackTrace();
 		}
 
-		return -1;
+		String systemVersion = Build.VERSION.RELEASE;
+
+		String manufacturer = Build.MANUFACTURER;
+		String model = Build.MODEL;
+		if (model.startsWith(manufacturer)) {
+			return versionName + " (" + versionCode + ") on Android "
+					+ systemVersion + " " + capitalize(model);
+		} else {
+			return versionName + " (" + versionCode + ") on Android "
+					+ systemVersion + " " + capitalize(manufacturer) + " "
+					+ model;
+		}
+	}
+
+	private String capitalize(String s) {
+		if (s == null || s.length() == 0) {
+			return "";
+		}
+		char first = s.charAt(0);
+		if (Character.isUpperCase(first)) {
+			return s;
+		} else {
+			return Character.toUpperCase(first) + s.substring(1);
+		}
 	}
 }

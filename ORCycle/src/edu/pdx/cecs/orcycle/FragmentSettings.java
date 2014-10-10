@@ -59,7 +59,7 @@ public class FragmentSettings extends Fragment {
 
 			tvVersionCode = (TextView) rootView.findViewById(R.id.as_version_code);
 			tvVersionCode.setText(getResources().getString(R.string.about_version_code) +
-					String.valueOf(MyApplication.getInstance().getAppVersion()));
+					String.valueOf(MyApplication.getInstance().getVersionCode()));
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());

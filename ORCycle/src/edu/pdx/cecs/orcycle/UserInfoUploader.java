@@ -23,11 +23,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.provider.Settings.System;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -45,14 +41,18 @@ public class UserInfoUploader extends AsyncTask<Long, Integer, Boolean> {
 	private static final String FID_ANSWER_OTHER_TEXT = "other_text";
 
 	public static final String USER_EMAIL = "email";
+	public static final String USER_INSTALLED = "installed";
 
 	private String email;
+	private String installed; // DateTime
 
 	private Context mCtx = null;
+	private String userId = null;
 
-	public UserInfoUploader(Context ctx) {
+	public UserInfoUploader(Context ctx, String userId) {
 		super();
 		this.mCtx = ctx;
+		this.userId = userId;
 	}
 
 
@@ -66,6 +66,7 @@ public class UserInfoUploader extends AsyncTask<Long, Integer, Boolean> {
 		JSONObject userJson = new JSONObject();
 
 		userJson.put(USER_EMAIL, email);
+		userJson.put(USER_INSTALLED, installed);
 
 		return userJson;
 	}
@@ -181,8 +182,15 @@ public class UserInfoUploader extends AsyncTask<Long, Integer, Boolean> {
 				putInt(jsonAnswers, DbQuestions.USER_INFO_INCOME,
 						DbAnswers.userInfoIncome, -1, null, p);
 				break;
+
+			case UserInfoActivity.PREF_INSTALLED:
+				installed = (String) p.getValue();
+				break;
+
 			}
 		}
+
+
 
 		return jsonAnswers;
 	}
@@ -298,74 +306,12 @@ public class UserInfoUploader extends AsyncTask<Long, Integer, Boolean> {
 		}
 	}
 
-	public String getDeviceId() {
-		String androidId = System.getString(this.mCtx.getContentResolver(),
-				System.ANDROID_ID);
-		String androidBase = "androidDeviceId-";
-
-		if (androidId == null) { // This happens when running in the Emulator
-			final String emulatorId = "android-RunningAsTestingDeleteMe";
-			return emulatorId;
-		}
-		String deviceId = androidBase.concat(androidId);
-
-		// Fix String Length
-		int a = deviceId.length();
-		if (a < 32) {
-			for (int i = 0; i < 32 - a; i++) {
-				deviceId = deviceId.concat("0");
-			}
-		} else {
-			deviceId = deviceId.substring(0, 32);
-		}
-
-		return deviceId;
-	}
-
-	public String getAppVersion() {
-		String versionName = "";
-		int versionCode = 0;
-
-		try {
-			PackageInfo pInfo = mCtx.getPackageManager().getPackageInfo(
-					mCtx.getPackageName(), 0);
-			versionName = pInfo.versionName;
-			versionCode = pInfo.versionCode;
-		} catch (PackageManager.NameNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		String systemVersion = Build.VERSION.RELEASE;
-
-		String manufacturer = Build.MANUFACTURER;
-		String model = Build.MODEL;
-		if (model.startsWith(manufacturer)) {
-			return versionName + " (" + versionCode + ") on Android "
-					+ systemVersion + " " + capitalize(model);
-		} else {
-			return versionName + " (" + versionCode + ") on Android "
-					+ systemVersion + " " + capitalize(manufacturer) + " "
-					+ model;
-		}
-	}
-
-	private String capitalize(String s) {
-		if (s == null || s.length() == 0) {
-			return "";
-		}
-		char first = s.charAt(0);
-		if (Character.isUpperCase(first)) {
-			return s;
-		} else {
-			return Character.toUpperCase(first) + s.substring(1);
-		}
-	}
 
 	private String getPostDataV3() throws JSONException {
 
 		JSONArray userResponses = getUserResponsesJSON();
 		JSONObject user = getUserJSON();
-		String deviceId = getDeviceId();
+		String deviceId = userId;
 
 		String codedPostData =
 				"&user=" + user.toString() +
@@ -496,7 +442,7 @@ public class UserInfoUploader extends AsyncTask<Long, Integer, Boolean> {
 			JSONObject jsonUser;
 			if (null != (jsonUser = getUserJSON())) {
 				try {
-					String deviceId = getDeviceId();
+					String deviceId = userId;
 
 					dos.writeBytes(fieldSep + ContentField("user") + jsonUser.toString() + "\r\n");
 					dos.writeBytes(fieldSep + ContentField("version") + String.valueOf(kSaveProtocolVersion4) + "\r\n");
@@ -583,3 +529,4 @@ public class UserInfoUploader extends AsyncTask<Long, Integer, Boolean> {
 		}
 	}
 }
+
