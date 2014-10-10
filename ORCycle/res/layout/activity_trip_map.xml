@@ -14,47 +14,19 @@
         android:gravity="center_horizontal"
         android:measureWithLargestChild="true" >
 
-        <TextView
-            android:id="@+id/TextViewMapFancyStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="4dp"
-            android:text="@string/misc_longest_date_string"
-            android:textColor="@color/text_black"
-            android:textSize="15sp" >
-        </TextView>
-        
-        <TextView
-            android:id="@+id/TextViewMapPurpose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/TextViewMapFancyStart"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/atm_trip_purpose"
-            android:textColor="@color/text_black"
-            android:textSize="18sp"
-            android:textStyle="bold" >
-
-        </TextView>
-
 	    <TextView
-	        android:id="@+id/TextViewMapInfo"
-	        android:layout_width="fill_parent"
+	        android:id="@+id/tvAtmMapPurpose"
+	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@id/TextViewMapPurpose"
-	        android:layout_marginLeft="4dp"
-	        android:layout_marginTop="4dp"
-	        android:paddingBottom="8dp"
-	        android:text="@string/atm_trip_info_long_string"
-	        android:textColor="@color/text_black" >
+	        android:layout_centerInParent="true"
+	        android:layout_marginBottom="12dp"
+	        android:layout_marginTop="12dp"
+	        android:text="@string/atm_trip_purpose"
+	        android:textColor="@color/text_black"
+	        android:textSize="18sp"
+	        android:textStyle="bold" />
 
-	    </TextView>
-    
-	    </RelativeLayout>
+	</RelativeLayout>
 
     <RelativeLayout
         
@@ -91,6 +63,66 @@
 			    android:orientation="vertical" >
 	
 		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+   			        <TextView
+			            android:id="@+id/tvAtmStartTime"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_alignParentLeft="true"
+		                android:layout_alignParentRight="true"
+		                android:layout_alignParentTop="true"
+		                android:layout_marginTop="0dp"
+			            android:text="Start Time: Sept. 27, 2014 11:02 PM"
+			            android:textAppearance="?android:attr/textAppearanceMedium" 
+			            android:textColor="#474334" />
+			
+			        <TextView
+			            android:id="@+id/tvAtmElapsedTime"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_below="@id/tvAtmStartTime"
+			            android:layout_marginTop="0dp"
+			            android:text="Time Elapsed:"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+		
+			        <TextView
+			            android:id="@+id/tvAtmDistance"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_below="@id/tvAtmElapsedTime"
+			            android:layout_marginTop="0dp"
+			            android:text="Distance:"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+		
+			        <TextView
+			            android:id="@+id/tvAtmAvgSpeed"
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_below="@id/tvAtmDistance"
+			            android:layout_marginBottom="12dp"
+			            android:layout_marginTop="0dp"
+			            android:text="Average Speed:"
+			            android:textAppearance="?android:attr/textAppearanceMedium"
+			            android:textColor="#474334" />
+		
+   				</RelativeLayout>
+
+			    <RelativeLayout
 		            android:layout_width="fill_parent"
 		            android:layout_height="wrap_content"
 		            android:layout_marginTop="1dp"
