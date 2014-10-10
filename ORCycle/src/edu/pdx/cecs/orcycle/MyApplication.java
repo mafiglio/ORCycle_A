@@ -96,14 +96,13 @@ public class MyApplication extends android.app.Application {
     }
 
     /**
-     * TODO: onTrimMemory() requires minimum API of 14
      * Called when the operating system has determined that it is a good
      * time for a process to trim unneeded memory from its process.
+     */
     @Override
     public final void onTrimMemory(int level) {
         super.onTrimMemory(level);
     }
-     */
 
     /**
      * Called by the system when the device configuration changes while
