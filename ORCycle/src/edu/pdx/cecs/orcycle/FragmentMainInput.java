@@ -383,11 +383,8 @@ public class FragmentMainInput extends Fragment
 					TripData tripData = appStatus.getTripData();
 
 					if (null != tripData) {
-						txtDuration.setText(tripDurationFormat.format(tripData.getDuration()));
-						double duration = tripData.getDuration() / 1000.0f;
-						float distance = tripData.getDistance();
-						float avgSpeedMps = (float) ((duration > 1.0f) ? (distance / duration): 0);
-						this.updateStatus(distance, avgSpeedMps);
+						txtDuration.setText(tripDurationFormat.format(tripData.getDuration(true)));
+						this.updateStatus(tripData.getDistance(), tripData.getAvgSpeedMps(true));
 					}
 				}
 			}

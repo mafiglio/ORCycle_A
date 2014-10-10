@@ -63,7 +63,9 @@ public class TripData {
 	private int lathigh, lgthigh, latlow, lgtlow, latestlat, latestlgt;
 	private int status;
 	private float distance;
-	String purp, fancystart, info;
+	String info;
+	private String fancystart;
+	private String purp;
 	private String noteComment;
 
 	private ArrayList<CyclePoint> gpspoints = new ArrayList<CyclePoint>();
@@ -266,6 +268,23 @@ public class TripData {
 		return endTime;
 	}
 
+	public String getPurpose() {
+		return purp;
+	}
+
+	public String getFormattedStartTime() {
+		return fancystart;
+	}
+
+	/**
+	 * Returns average speed in meters per second
+	 * @return
+	 */
+	public float getAvgSpeedMps(boolean isRecording) {
+		double durationSeconds = getDuration(isRecording) / 1000.0f;
+		return (float) ((durationSeconds > 1.0f) ? (distance / durationSeconds): 0);
+	}
+
 	public void startPause() {
 
 		if (!isPaused) {
@@ -299,13 +318,23 @@ public class TripData {
 		isPaused = false;
 	}
 
-	public double getDuration () {
+	/**
+	 * Returns trip duration in milliseconds
+	 * @param isRecording
+	 * @return trip duration in milliseconds
+	 */
+	public double getDuration (boolean isRecording) {
 
-		if (isPaused) {
-			return totalTravelTime;
+		if (isRecording) {
+			if (isPaused) {
+				return totalTravelTime;
+			}
+			else {
+				return  totalTravelTime + (System.currentTimeMillis() - segmentStartTime);
+			}
 		}
 		else {
-			return  totalTravelTime + (System.currentTimeMillis() - segmentStartTime);
+			return endTime - startTime;
 		}
 	}
 
@@ -388,7 +417,7 @@ public class TripData {
 	}
 
 	@SuppressLint("SimpleDateFormat")
-	public void updateTrip(Double startTime, Double endTime, float distance, String noteComment) {
+	public void updateTrip(Double start, Double end, float distance, String noteComment) {
 
 		SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  h:mm a");
 		String fancyStartTime = sdfStart.format(startTime);
@@ -396,7 +425,7 @@ public class TripData {
 
 		SimpleDateFormat sdfDuration = new SimpleDateFormat("HH:mm:ss");
 		sdfDuration.setTimeZone(TimeZone.getTimeZone("UTC"));
-		String duration = sdfDuration.format(endTime - startTime);
+		String duration = sdfDuration.format(end - start);
 
 		String fancyEndInfo = String.format("%1.1f miles, %s", (0.0006212f * distance), duration);
 

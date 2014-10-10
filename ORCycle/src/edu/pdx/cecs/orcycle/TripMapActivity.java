@@ -30,8 +30,12 @@
 //
 package edu.pdx.cecs.orcycle;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.TimeZone;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -68,6 +72,7 @@ public class TripMapActivity extends Activity {
 	private static final String MODULE_TAG = "TripMapActivity";
 
 	private static final double NOTE_MIN_DISTANCE_FROM_TRIP = 45.7247; // meters is approximate 150 feet;
+	private static final float METERS_PER_SECOND_TO_MILES_PER_HOUR = 2.2369f;
 
 	public static final String EXTRA_TRIP_ID = "tripId";
 	private static final int EXTRA_TRIP_ID_UNDEFINED = -1;
@@ -163,12 +168,17 @@ public class TripMapActivity extends Activity {
 			TripData trip = TripData.fetchTrip(this, tripId);
 
 			// Show trip details
-			TextView t1 = (TextView) findViewById(R.id.TextViewMapPurpose);
-			TextView t2 = (TextView) findViewById(R.id.TextViewMapInfo);
-			TextView t3 = (TextView) findViewById(R.id.TextViewMapFancyStart);
-			t1.setText(trip.purp);
-			t2.setText(trip.info);
-			t3.setText(trip.fancystart);
+			TextView tvAtmMapPurpose  = (TextView) findViewById(R.id.tvAtmMapPurpose);
+			TextView tvAtmStartTime   = (TextView) findViewById(R.id.tvAtmStartTime);
+			TextView tvAtmElapsedTime = (TextView) findViewById(R.id.tvAtmElapsedTime);
+			TextView tvAtmDistance    = (TextView) findViewById(R.id.tvAtmDistance);
+			TextView tvAtmAvgSpeed    = (TextView) findViewById(R.id.tvAtmAvgSpeed);
+
+			tvAtmMapPurpose.setText(trip.getPurpose());
+			tvAtmStartTime.setText("Start Time: " + getFormattedStartTime(trip.getStartTime()));
+			tvAtmElapsedTime.setText("Elapsed Time: " + getFormattedDuration(trip.getStartTime(), trip.getEndTime()));
+			tvAtmDistance.setText("Distance: " + getFormattedDistance(trip.getDistance()));
+			tvAtmAvgSpeed.setText("Avg. Speed: " + getFormattedSpeed(trip.getAvgSpeedMps(false)));
 
 			// Trip questions
 			tvTmTripFrequency   = (TextView) findViewById(R.id.tvTmTripFrequency);
@@ -292,6 +302,40 @@ public class TripMapActivity extends Activity {
 			Log.e(MODULE_TAG, e.toString());
 		}
 		currentView = TripMapView.map;
+	}
+
+	@SuppressLint("SimpleDateFormat")
+	private String getFormattedDuration(Double startTime, Double endTime) {
+
+		SimpleDateFormat sdfDuration = new SimpleDateFormat("HH:mm:ss");
+		sdfDuration.setTimeZone(TimeZone.getTimeZone("UTC"));
+		return sdfDuration.format(endTime - startTime);
+	}
+
+	@SuppressLint("SimpleDateFormat")
+	private String getFormattedStartTime(Double startTime) {
+		SimpleDateFormat sdfStart = new SimpleDateFormat("MMM d, y  h:mm a", Locale.US);
+		return sdfStart.format(startTime);
+	}
+
+	/**
+	 * Returns distance formatted in miles
+	 * @param distance in meters
+	 * @return distance formatted in miles
+	 */
+	private String getFormattedDistance(float distanceMeters) {
+		float miles = (0.0006212f * distanceMeters);
+		return String.format(Locale.US, "%1.1f miles", miles);
+	}
+
+	/**
+	 * Returns speed formatted in miles per hour
+	 * @param speedMPS in meterrs per second
+	 * @return speed formatted in miles per hour
+	 */
+	private String getFormattedSpeed(float speedMPS) {
+		float speedMPH = speedMPS * METERS_PER_SECOND_TO_MILES_PER_HOUR;
+		return String.format(Locale.US, "%1.1f mph", speedMPH);
 	}
 
 	private void getTripResponses(long tripId) {
