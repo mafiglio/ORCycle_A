@@ -232,7 +232,7 @@
         <item>3 or more Vehicles</item>
     </string-array>
     
-    <string name="q09_numBikes">How many bicycles do you own/ride?</string>
+    <string name="q09_numBikes">How many bikes do you own?</string>
     <string-array name="qa_09_numBikes">
         <item></item>
         <item>None</item>
