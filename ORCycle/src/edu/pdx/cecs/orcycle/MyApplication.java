@@ -37,7 +37,6 @@ public class MyApplication extends android.app.Application {
 	private static final String SETTING_FIRST_TRIP_COMPLETED = "SETTING_FIRST_TRIP_COMPLETED";
 	private static final String SETTING_USER_ID = "SETTING_USER_ID";
 	private static final String SETTING_FIRST_USE = "SETTING_FIRST_USE";
-	private static final String SETTING_VERSION_CODE = "SETTING_CODE_VERSION";
 	private static final double RESET_START_TIME = 0.0;
 	private static final String ANDROID_USER = "android";
 
@@ -290,9 +289,9 @@ public class MyApplication extends android.app.Application {
 			userId = generateUserId();
 		}
 
-		int savedVersionCode = settings.getInt(SETTING_VERSION_CODE, -1);
 		firstUse = settings.getLong(SETTING_FIRST_USE, -1);
-		if ((-1 == firstUse) || (savedVersionCode != getVersionCode())) {
+		firstUse = -1;
+		if (-1 == firstUse) {
 			firstUse = generateFirstUse();
 		}
 	}
@@ -306,7 +305,6 @@ public class MyApplication extends android.app.Application {
 		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor = settings.edit();
-		editor.putInt(SETTING_VERSION_CODE, getVersionCode());
 		editor.putLong(SETTING_FIRST_USE, value);
 		editor.apply();
 		return value;
