@@ -336,12 +336,27 @@ public class UserInfoActivity extends Activity {
 		editor.commit();
 
 		// Set the flag indicating user info has been filled out and scheduled for upload
-		if (forUpload) {
-			// Reference to Global application object
-			MyApplication myApp = MyApplication.getInstance();
-			myApp.setUserProfileUploaded(true);
+		if (forUpload && desiredQuestionsAnswered()) {
+			MyApplication.getInstance().setUserProfileUploaded(true);
 		}
 	}
+
+	/**
+	 * Returns true if desired user questions have been answered, false otherwise
+	 * @return true if desired user questions have been answered, false otherwise
+	 */
+	private boolean desiredQuestionsAnswered() {
+		if ((((Spinner) findViewById(R.id.spnrRiderAbility  )).getSelectedItemPosition() > 0) &&
+			(((Spinner) findViewById(R.id.spnrRiderType     )).getSelectedItemPosition() > 0) &&
+			(((Spinner) findViewById(R.id.spnrCycleFrequency)).getSelectedItemPosition() > 0) &&
+			(((Spinner) findViewById(R.id.spnrCycleWeather  )).getSelectedItemPosition() > 0) &&
+			(((Spinner) findViewById(R.id.spnrNumBikes      )).getSelectedItemPosition() > 0) &&
+			(((MultiSelectionSpinner) findViewById(R.id.spnrBikeTypes)).getSelectedIndicies().size() > 0)) {
+			return true;
+		}
+		return false;
+	}
+
 
 	/**
 	 * Insert the position of the spinner into an int preference in the editor
