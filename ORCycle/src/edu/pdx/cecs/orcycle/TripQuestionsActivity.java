@@ -173,7 +173,7 @@ public class TripQuestionsActivity extends Activity {
 
 			case R.id.action_save_trip_questions:
 
-				if (MandatoryQuestionsAnswered()) {
+				if (mandatoryQuestionsAnswered()) {
 					submitAnswers();
 					MyApplication.getInstance().setFirstTripCompleted(true);
 					querySafetyMarker();
@@ -190,15 +190,16 @@ public class TripQuestionsActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	private boolean MandatoryQuestionsAnswered() {
-		return tripPurpose.getSelectedItemPosition() > 0;
+	private boolean mandatoryQuestionsAnswered() {
+		return (tripPurpose.getSelectedItemPosition() > 0) &&
+			(tripFrequency.getSelectedItemPosition() > 0);
 	}
 
 	private void AlertUserMandatoryAnswers() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Please answer required questions")
+		builder.setMessage(getResources().getString(R.string.tqa_alert_answer_required_questions))
 				.setCancelable(true)
-				.setPositiveButton("OK",
+				.setPositiveButton(getResources().getString(R.string.tqa_alert_OK),
 						new DialogInterface.OnClickListener() {
 							public void onClick(final DialogInterface dialog, final int id) {
 								dialog.cancel();

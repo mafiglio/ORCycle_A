@@ -57,6 +57,8 @@
     <string name="tqi_qsm_dialog_ok">OK</string>
     <string name="tqi_qsm_dialog_later">Later</string>
     <string name="tqa_alert_user_about_later">You can later go to \"Trips\", select a trip and mark a safety issue</string>
+    <string name="tqa_alert_answer_required_questions">Please answer required questions</string>
+    <string name="tqa_alert_OK">OK</string>
     
     <string name="ami_elapsed_time">Elapsed time</string>
     <string name="ami_initial_elapsed_time">00:00:00</string>
@@ -301,7 +303,7 @@
     <!-- *                     Trip Questions                    * -->
     <!-- ********************************************************* -->
 
-    <string name="q19_TripFrequency">How often do you ride this route?</string>
+    <string name="q19_TripFrequency">*How often do you ride this route?</string>
     <string-array name="qa_19_routeFrequency">
         <item></item>
         <item>Several times a week</item>
