@@ -33,7 +33,8 @@
     <string name="btn_lbl_rate_segment_finish">Enter end of segment</string>
     <string name="chooser_image">Select Image</string>
 
-    <string name="fmi_query_user_profile">If you are new to ORcycle, tell us about yourself&#8230;</string>
+    <string name="fmi_query_user_profile">If you are new to ORcycle, tell us about yourself.&#160;&#160;Please 
+        answer at least the first 6 questions about your biking habits.</string>
     <string name="fmi_qup_dialog_ok">OK</string>
     <string name="fmi_qup_dialog_later">Later</string>
     <string name="fmi_no_gps">Your phone\'s GPS is disabled. ORCycle needs GPS to determine your location.\n\nGo to System Settings now to enable GPS?</string>

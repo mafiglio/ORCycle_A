@@ -36,7 +36,7 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View rowView = null;
 		try {
-			Log.v(MODULE_TAG, "getView: " + position);
+			//Log.v(MODULE_TAG, "getView: " + position);
 
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			rowView = inflater.inflate(R.layout.saved_notes_list_item, parent, false);

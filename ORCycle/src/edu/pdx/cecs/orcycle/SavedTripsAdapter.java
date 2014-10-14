@@ -35,7 +35,7 @@ public class SavedTripsAdapter extends SimpleCursorAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View rowView = null;
 		try {
-			Log.v(MODULE_TAG, "getView(Position): " + position);
+			//Log.v(MODULE_TAG, "getView(Position): " + position);
 
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -62,7 +62,7 @@ public class SavedTripsAdapter extends SimpleCursorAdapter {
 			Double endTime = cursor.getDouble(cursor.getColumnIndex("endtime"));
 			String duration = sdfDuration.format(endTime - startTime);
 
-			Log.v(MODULE_TAG, "Duration: " + duration);
+			//Log.v(MODULE_TAG, "Duration: " + duration);
 
 			textViewInfo.setText(duration);
 
@@ -96,7 +96,7 @@ public class SavedTripsAdapter extends SimpleCursorAdapter {
 
 			int status = cursor.getInt(cursor.getColumnIndex("status"));
 
-			Log.v(MODULE_TAG, "Status: " + status);
+			//Log.v(MODULE_TAG, "Status: " + status);
 
 			if (status == 0){
 				//textViewPurpose.setText("In Progress");
