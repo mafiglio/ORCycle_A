@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,8 +20,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class TripQuestionsActivity extends Activity {
 
@@ -168,6 +172,8 @@ public class TripQuestionsActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
+		MyApplication myApp = MyApplication.getInstance();
+
 		try {
 			switch (item.getItemId()) {
 
@@ -175,8 +181,11 @@ public class TripQuestionsActivity extends Activity {
 
 				if (mandatoryQuestionsAnswered()) {
 					String tripPurposeText = submitAnswers();
-					MyApplication.getInstance().setFirstTripCompleted(true);
-					AlertUserRepeatTrips(tripPurposeText);
+					myApp.setFirstTripCompleted(true);
+					if (myApp.getWarnRepeatTrips())
+						AlertUserRepeatTrips(tripPurposeText);
+					else
+						querySafetyMarker();
 				}
 				else {
 					AlertUserMandatoryAnswers();
@@ -742,10 +751,22 @@ public class TripQuestionsActivity extends Activity {
 	// *********************************************************************************
 
 	private void AlertUserRepeatTrips(String purpose) {
+
+		// Load custom layout for alert dialog
+		LayoutInflater inflater = getLayoutInflater();
+		View rootView = inflater.inflate(R.layout.dialog_text_checkbox, null);
+
+		// Reference custom layout's textbox and set text value
+		TextView textbox = (TextView) rootView.findViewById(R.id.tv_dtc_text);
+		textbox.setText(getResources().getString(R.string.tqa_alert_repeated_trips, purpose));
+
+		CheckBox cbDontShowAgain = (CheckBox) rootView.findViewById(R.id.cb_dtc_checkbox);
+		cbDontShowAgain.setOnCheckedChangeListener(new AlertUserRepeatTrips_CheckedChangeListener());
+
+		// Create alert dialog
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(getResources().getString(R.string.tqa_alert_repeated_trips, purpose))
-				.setCancelable(true)
-				.setPositiveButton(getResources().getString(R.string.tqa_alert_OK),
+		builder.setView(rootView);
+		builder.setPositiveButton(getResources().getString(R.string.tqa_alert_OK),
 						new AlertUserRepeatTrips_OkListener());
 		final AlertDialog alert = builder.create();
 		alert.show();
@@ -756,6 +777,13 @@ public class TripQuestionsActivity extends Activity {
 		public void onClick(final DialogInterface dialog, final int id) {
 			dialog.cancel();
 			querySafetyMarker();
+		}
+	}
+
+    private final class AlertUserRepeatTrips_CheckedChangeListener implements
+    CompoundButton.OnCheckedChangeListener {
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			MyApplication.getInstance().setWarnRepeatTrips(!isChecked);
 		}
 	}
 

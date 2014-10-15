@@ -60,9 +60,9 @@ public final class DbAnswers {
 	public static final String PURPOSE_SCHOOL = "School";
 	public static final String PURPOSE_WORK_RELATED = "Work-Related";
 	public static final String PURPOSE_EXERCISE = "Exercise";
-	public static final String PURPOSE_SOCIAL = "Social";
-	public static final String PURPOSE_SHOPPING = "Shopping";
-	public static final String PURPOSE_ERRAND = "Errand";
+	public static final String PURPOSE_SOCIAL = "Social/entertainment";
+	public static final String PURPOSE_SHOPPING = "Shopping/errands";
+	public static final String PURPOSE_TRANSIT_OR_VEHICLE = "Access to transit or a vehicle";
 	public static final String PURPOSE_OTHER = "Other";
 
 	public static final String getTextTripPurpose(int value)
@@ -74,7 +74,7 @@ public final class DbAnswers {
 		case 97: return PURPOSE_EXERCISE;
 		case 98: return PURPOSE_SOCIAL;
 		case 99: return PURPOSE_SHOPPING;
-		case 100: return PURPOSE_ERRAND;
+		case 100: return PURPOSE_TRANSIT_OR_VEHICLE;
 		case 101: return PURPOSE_OTHER;
 		default: throw new IllegalArgumentException();
 		}

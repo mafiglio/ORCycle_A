@@ -131,7 +131,7 @@ public class SavedTripsAdapter extends SimpleCursorAdapter {
 						else if (value.equals(DbAnswers.PURPOSE_SHOPPING)) {
 							imageTripPurpose.setImageResource(R.drawable.shopping_high);
 						}
-						else if (value.equals(DbAnswers.PURPOSE_ERRAND)) {
+						else if (value.equals(DbAnswers.PURPOSE_TRANSIT_OR_VEHICLE)) {
 							imageTripPurpose.setImageResource(R.drawable.errands_high);
 						}
 						else if (value.equals(DbAnswers.PURPOSE_OTHER)) {
