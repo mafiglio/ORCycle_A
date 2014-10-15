@@ -35,6 +35,7 @@ public class MyApplication extends android.app.Application {
 
 	private static final String SETTING_USER_INFO_UPLOADED = "USER_INFO_UPLOADED";
 	private static final String SETTING_FIRST_TRIP_COMPLETED = "SETTING_FIRST_TRIP_COMPLETED";
+	private static final String SETTING_WARN_REPEAT_TRIPS = "SETTING_WARN_REPEAT_TRIPS";
 	private static final String SETTING_USER_ID = "SETTING_USER_ID";
 	private static final String SETTING_FIRST_USE = "SETTING_FIRST_USE";
 	private static final double RESET_START_TIME = 0.0;
@@ -43,6 +44,7 @@ public class MyApplication extends android.app.Application {
 	private String userId = null;
 	private int versionCode = -1;
 	private long firstUse = -1;
+	private boolean warnRepeatTrips;
 	private RecordingService recordingService = null;
 	private TripData trip;
 	private boolean checkedForUserProfile = false;
@@ -280,6 +282,19 @@ public class MyApplication extends android.app.Application {
 		editor.apply();
 	}
 
+	public void setWarnRepeatTrips(boolean value) {
+		warnRepeatTrips = value;
+		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor = settings.edit();
+		editor.putBoolean(SETTING_WARN_REPEAT_TRIPS, warnRepeatTrips);
+		editor.apply();
+	}
+
+	public boolean getWarnRepeatTrips() {
+		return warnRepeatTrips;
+	}
+
 	private void initSettings() {
 
 		//generateUserId();  // For resetting while debugging
@@ -290,10 +305,12 @@ public class MyApplication extends android.app.Application {
 		}
 
 		firstUse = settings.getLong(SETTING_FIRST_USE, -1);
-		firstUse = -1;
 		if (-1 == firstUse) {
 			firstUse = generateFirstUse();
 		}
+
+		// setWarnRepeatTrips(true);
+		warnRepeatTrips = settings.getBoolean(SETTING_WARN_REPEAT_TRIPS, true);
 	}
 
 	/**

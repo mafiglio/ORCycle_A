@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,8 +20,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class TripQuestionsActivity extends Activity {
 
@@ -168,15 +172,20 @@ public class TripQuestionsActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
+		MyApplication myApp = MyApplication.getInstance();
+
 		try {
 			switch (item.getItemId()) {
 
 			case R.id.action_save_trip_questions:
 
-				if (MandatoryQuestionsAnswered()) {
-					submitAnswers();
-					MyApplication.getInstance().setFirstTripCompleted(true);
-					querySafetyMarker();
+				if (mandatoryQuestionsAnswered()) {
+					String tripPurposeText = submitAnswers();
+					myApp.setFirstTripCompleted(true);
+					if (myApp.getWarnRepeatTrips())
+						AlertUserRepeatTrips(tripPurposeText);
+					else
+						querySafetyMarker();
 				}
 				else {
 					AlertUserMandatoryAnswers();
@@ -190,15 +199,16 @@ public class TripQuestionsActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	private boolean MandatoryQuestionsAnswered() {
-		return tripPurpose.getSelectedItemPosition() > 0;
+	private boolean mandatoryQuestionsAnswered() {
+		return (tripPurpose.getSelectedItemPosition() > 0) &&
+			(tripFrequency.getSelectedItemPosition() > 0);
 	}
 
 	private void AlertUserMandatoryAnswers() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Please answer required questions")
+		builder.setMessage(getResources().getString(R.string.tqa_alert_answer_required_questions))
 				.setCancelable(true)
-				.setPositiveButton("OK",
+				.setPositiveButton(getResources().getString(R.string.tqa_alert_OK),
 						new DialogInterface.OnClickListener() {
 							public void onClick(final DialogInterface dialog, final int id) {
 								dialog.cancel();
@@ -222,7 +232,8 @@ public class TripQuestionsActivity extends Activity {
 	// *                              Button Handlers
 	// *********************************************************************************
 
-    /**
+
+	/**
      * Class: ButtonStart_OnClickListener
      *
      * Description: Callback to be invoked when startButton button is clicked
@@ -493,9 +504,10 @@ public class TripQuestionsActivity extends Activity {
 	/**
 	 * Saves UI settings to database
 	 */
-	private void submitAnswers() {
+	private String submitAnswers() {
 
 		DbAdapter dbAdapter = null;
+		String tripPurposeText = "";
 
 		try {
 			dbAdapter = new DbAdapter(this);
@@ -529,8 +541,8 @@ public class TripQuestionsActivity extends Activity {
 					DbAnswers.tripRouteStressorsOther);
 
 			// Update trip table
-			updateTripPurpose(dbAdapter, tripPurpose, DbAnswers.tripPurpose);
-
+			tripPurposeText = updateTripPurpose(dbAdapter, tripPurpose, DbAnswers.tripPurpose,
+					DbAnswers.tripPurposeOther, tripPurpose_OnClick.getOtherText());
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -567,6 +579,7 @@ public class TripQuestionsActivity extends Activity {
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
+		return tripPurposeText;
 	}
 
 	/**
@@ -620,10 +633,6 @@ public class TripQuestionsActivity extends Activity {
 		}
 	}
 
-
-
-
-
 	/**
 	 * Enters the MultiSelectionSpinner selections into the database
 	 * @param spinner
@@ -665,10 +674,21 @@ public class TripQuestionsActivity extends Activity {
 	 * @param dbAdapter The adapter connected to the local database
 	 * @param answer_ids The TripPurpose values corresponding to the spinner selections
 	 */
-	private void updateTripPurpose(DbAdapter dbAdapter, Spinner spinner, int[] answer_ids) {
-		int tripPurposeId = DbAnswers.tripPurpose[spinner.getSelectedItemPosition() - 1];
+	private String updateTripPurpose(DbAdapter dbAdapter, Spinner spinner, int[] answer_ids, int other_id, String other_text) {
+
+		// Note: The first entry is always blank, the array of answers displayed
+		// by the UI is one greater than the number of answers in the database.
+		int answerIndex = spinner.getSelectedItemPosition() - 1;
+
+		int tripPurposeId = DbAnswers.tripPurpose[answerIndex];
+
 		String tripPurposeText = DbAnswers.getTextTripPurpose(tripPurposeId);
 		dbAdapter.updateTripPurpose(tripId, tripPurposeText);
+
+		if (answer_ids[answerIndex] == other_id)
+			return other_text;
+		else
+			return tripPurposeText;
 	}
 
 	// *********************************************************************************
@@ -723,6 +743,47 @@ public class TripQuestionsActivity extends Activity {
 		public void onClick(final DialogInterface dialog, final int id) {
 			dialog.cancel();
 			transitionToTabsConfigActivity();
+		}
+	}
+
+	// *********************************************************************************
+	// *                       AlertUserRepeatTrips Dialog
+	// *********************************************************************************
+
+	private void AlertUserRepeatTrips(String purpose) {
+
+		// Load custom layout for alert dialog
+		LayoutInflater inflater = getLayoutInflater();
+		View rootView = inflater.inflate(R.layout.dialog_text_checkbox, null);
+
+		// Reference custom layout's textbox and set text value
+		TextView textbox = (TextView) rootView.findViewById(R.id.tv_dtc_text);
+		textbox.setText(getResources().getString(R.string.tqa_alert_repeated_trips, purpose));
+
+		CheckBox cbDontShowAgain = (CheckBox) rootView.findViewById(R.id.cb_dtc_checkbox);
+		cbDontShowAgain.setOnCheckedChangeListener(new AlertUserRepeatTrips_CheckedChangeListener());
+
+		// Create alert dialog
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(rootView);
+		builder.setPositiveButton(getResources().getString(R.string.tqa_alert_OK),
+						new AlertUserRepeatTrips_OkListener());
+		final AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+    private final class AlertUserRepeatTrips_OkListener implements
+			DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			dialog.cancel();
+			querySafetyMarker();
+		}
+	}
+
+    private final class AlertUserRepeatTrips_CheckedChangeListener implements
+    CompoundButton.OnCheckedChangeListener {
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			MyApplication.getInstance().setWarnRepeatTrips(!isChecked);
 		}
 	}
 
