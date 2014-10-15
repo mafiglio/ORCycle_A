@@ -174,9 +174,9 @@ public class TripQuestionsActivity extends Activity {
 			case R.id.action_save_trip_questions:
 
 				if (mandatoryQuestionsAnswered()) {
-					submitAnswers();
+					String tripPurposeText = submitAnswers();
 					MyApplication.getInstance().setFirstTripCompleted(true);
-					querySafetyMarker();
+					AlertUserRepeatTrips(tripPurposeText);
 				}
 				else {
 					AlertUserMandatoryAnswers();
@@ -223,7 +223,8 @@ public class TripQuestionsActivity extends Activity {
 	// *                              Button Handlers
 	// *********************************************************************************
 
-    /**
+
+	/**
      * Class: ButtonStart_OnClickListener
      *
      * Description: Callback to be invoked when startButton button is clicked
@@ -494,9 +495,10 @@ public class TripQuestionsActivity extends Activity {
 	/**
 	 * Saves UI settings to database
 	 */
-	private void submitAnswers() {
+	private String submitAnswers() {
 
 		DbAdapter dbAdapter = null;
+		String tripPurposeText = "";
 
 		try {
 			dbAdapter = new DbAdapter(this);
@@ -530,8 +532,8 @@ public class TripQuestionsActivity extends Activity {
 					DbAnswers.tripRouteStressorsOther);
 
 			// Update trip table
-			updateTripPurpose(dbAdapter, tripPurpose, DbAnswers.tripPurpose);
-
+			tripPurposeText = updateTripPurpose(dbAdapter, tripPurpose, DbAnswers.tripPurpose,
+					DbAnswers.tripPurposeOther, tripPurpose_OnClick.getOtherText());
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -568,6 +570,7 @@ public class TripQuestionsActivity extends Activity {
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
+		return tripPurposeText;
 	}
 
 	/**
@@ -621,10 +624,6 @@ public class TripQuestionsActivity extends Activity {
 		}
 	}
 
-
-
-
-
 	/**
 	 * Enters the MultiSelectionSpinner selections into the database
 	 * @param spinner
@@ -666,10 +665,21 @@ public class TripQuestionsActivity extends Activity {
 	 * @param dbAdapter The adapter connected to the local database
 	 * @param answer_ids The TripPurpose values corresponding to the spinner selections
 	 */
-	private void updateTripPurpose(DbAdapter dbAdapter, Spinner spinner, int[] answer_ids) {
-		int tripPurposeId = DbAnswers.tripPurpose[spinner.getSelectedItemPosition() - 1];
+	private String updateTripPurpose(DbAdapter dbAdapter, Spinner spinner, int[] answer_ids, int other_id, String other_text) {
+
+		// Note: The first entry is always blank, the array of answers displayed
+		// by the UI is one greater than the number of answers in the database.
+		int answerIndex = spinner.getSelectedItemPosition() - 1;
+
+		int tripPurposeId = DbAnswers.tripPurpose[answerIndex];
+
 		String tripPurposeText = DbAnswers.getTextTripPurpose(tripPurposeId);
 		dbAdapter.updateTripPurpose(tripId, tripPurposeText);
+
+		if (answer_ids[answerIndex] == other_id)
+			return other_text;
+		else
+			return tripPurposeText;
 	}
 
 	// *********************************************************************************
@@ -724,6 +734,28 @@ public class TripQuestionsActivity extends Activity {
 		public void onClick(final DialogInterface dialog, final int id) {
 			dialog.cancel();
 			transitionToTabsConfigActivity();
+		}
+	}
+
+	// *********************************************************************************
+	// *                       AlertUserRepeatTrips Dialog
+	// *********************************************************************************
+
+	private void AlertUserRepeatTrips(String purpose) {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(getResources().getString(R.string.tqa_alert_repeated_trips, purpose))
+				.setCancelable(true)
+				.setPositiveButton(getResources().getString(R.string.tqa_alert_OK),
+						new AlertUserRepeatTrips_OkListener());
+		final AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+    private final class AlertUserRepeatTrips_OkListener implements
+			DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			dialog.cancel();
+			querySafetyMarker();
 		}
 	}
 
