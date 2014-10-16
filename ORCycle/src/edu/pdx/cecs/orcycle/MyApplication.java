@@ -309,7 +309,7 @@ public class MyApplication extends android.app.Application {
 			firstUse = generateFirstUse();
 		}
 
-		// setWarnRepeatTrips(true);
+		// setWarnRepeatTrips(true); // use this line during debugging to reset value
 		warnRepeatTrips = settings.getBoolean(SETTING_WARN_REPEAT_TRIPS, true);
 	}
 
