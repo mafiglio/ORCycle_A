@@ -751,6 +751,7 @@ public class TripQuestionsActivity extends Activity {
 	private void AlertUserRepeatTrips(String purpose) {
 
 		DsaDialog dsaDialog = new DsaDialog(this,
+			null,
 			getResources().getString(R.string.tqa_alert_repeated_trips, purpose),
 			new AlertUserRepeatTrips_CheckedChangeListener(),
 			getResources().getString(R.string.tqa_alert_OK), new AlertUserRepeatTrips_OkListener(),

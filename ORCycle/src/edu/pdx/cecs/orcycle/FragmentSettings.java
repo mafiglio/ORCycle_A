@@ -14,8 +14,6 @@ import android.widget.TextView;
 public class FragmentSettings extends Fragment {
 
 	private static final String MODULE_TAG = "FragmentSettings";
-	private static final String ORCYCLE_URI = "http://www.pdx.edu/transportation-lab/android-instructions";
-	private static final String PRIVACY_POLICY_URI = "http://www.pdx.edu/transportation-lab/privacy-policy";
 
 	// UI Elements
 	private Button btnUserInfo = null;
@@ -187,13 +185,13 @@ public class FragmentSettings extends Fragment {
 	}
 
 	private void transitionToORcycle() {
-		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(ORCYCLE_URI));
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MyApplication.ORCYCLE_URI));
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}
 
 	private void transitionToPrivacyPolicy() {
-		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URI));
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MyApplication.PRIVACY_POLICY_URI));
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}

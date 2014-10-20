@@ -226,7 +226,7 @@ public class UserFeedbackActivity extends Activity {
 	// *********************************************************************************
 
 	/**
-	 * Build dialog telling user that the GPS is not available
+	 * Build dialog telling user enter feedback text
 	 */
 	private void showNoBlankInputDialog() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);

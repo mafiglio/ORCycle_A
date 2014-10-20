@@ -11,6 +11,7 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -271,6 +273,7 @@ public class FragmentMainInput extends Fragment
 			}
 			else {
 				setupButtons();
+				userWelcomeCheck();
 				userProfileCheck();
 			}
 		}
@@ -439,9 +442,9 @@ public class FragmentMainInput extends Fragment
 							}
 						}
 						else {
+							userWelcomeCheck();
 							userProfileCheck();
 						}
-
 					}
 				}
 			}
@@ -456,7 +459,6 @@ public class FragmentMainInput extends Fragment
 	// *********************************************************************************
 	// *                              Button Handlers
 	// *********************************************************************************
-
 
 	/**
      * Class: ButtonStart_OnClickListener
@@ -724,6 +726,43 @@ public class FragmentMainInput extends Fragment
 	}
 
 	// *********************************************************************************
+	// *                       Welcome Dialog
+	// *********************************************************************************
+
+	private void welcomeUser() {
+
+		DsaDialog dsaDialog = new DsaDialog(getActivity(),
+			R.string.fmi_welcome_title,
+			R.string.fmi_welcome_message, new WelcomeUser_CheckedChangeListener(),
+			R.string.fmi_welcome_continue, new WelcomeContinue_Listener(),
+			R.string.fmi_welcome_instructions, new WelcomeInstructions_Listener(), -1, null);
+
+		dsaDialog.show();
+	}
+
+    private final class WelcomeContinue_Listener implements
+			DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			dialog.cancel();
+		}
+	}
+
+    private final class WelcomeInstructions_Listener implements
+			DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			dialog.cancel();
+			transitionToORcycle();
+		}
+	}
+
+    private final class WelcomeUser_CheckedChangeListener implements
+    CompoundButton.OnCheckedChangeListener {
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			MyApplication.getInstance().setUserWelcomeEnabled(!isChecked);
+		}
+	}
+
+	// *********************************************************************************
 	// *                            Trip Finished Dialogs
 	// *********************************************************************************
 
@@ -901,11 +940,27 @@ public class FragmentMainInput extends Fragment
 		}
 	}
 
+	private void userWelcomeCheck() {
+
+		if (!myApp.getCheckedForUserWelcome()) {
+
+			myApp.setCheckedForUserWelcome(true);
+
+			if (myApp.getUserWelcomeEnabled()) {
+				welcomeUser();
+			}
+		}
+	}
+
 	private void alertUserNoGPSData() {
 		Toast.makeText(getActivity(),
 			getResources().getString(R.string.fmi_no_gps_data),
 			Toast.LENGTH_SHORT).show();
 	}
+
+	// *********************************************************************************
+	// *                            Transitions
+	// *********************************************************************************
 
 	private void transitionToTripQuestionsActivity(long tripId) {
 
@@ -950,6 +1005,12 @@ public class FragmentMainInput extends Fragment
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 		getActivity().finish();
+	}
+
+	private void transitionToORcycle() {
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MyApplication.ORCYCLE_URI));
+		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}
 
 

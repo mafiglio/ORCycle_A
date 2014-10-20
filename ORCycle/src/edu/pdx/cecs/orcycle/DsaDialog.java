@@ -13,51 +13,108 @@ public class DsaDialog {
 
 	private final AlertDialog alertDialog;
 
-	public DsaDialog(Activity activity, int text,
+	public DsaDialog(Activity activity, int titleId, int textId,
 			CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
-			int positiveText, DialogInterface.OnClickListener positiveListener,
-			int neutralText, DialogInterface.OnClickListener neutralListener,
-			int negativeText, DialogInterface.OnClickListener negativeListener
+			int positiveTextId, DialogInterface.OnClickListener positiveListener,
+			int neutralTextId, DialogInterface.OnClickListener neutralListener,
+			int negativeTextId, DialogInterface.OnClickListener negativeListener
 			) {
 
-		alertDialog = createDialog(activity,
-				activity.getResources().getString(text),
-				onCheckedChangeListener,
-				activity.getResources().getString(positiveText), positiveListener,
-				activity.getResources().getString(neutralText), neutralListener,
-				activity.getResources().getString(negativeText), negativeListener);
+		String title;
+		String text;
+		String positiveText = null;
+		String neutralText = null;
+		String negativeText = null;
+
+		if (-1 == titleId) {
+			title = "";
+		}
+		else {
+			title = activity.getResources().getString(titleId);
+		}
+
+		if (-1 == textId) {
+			text = "";
+		}
+		else {
+			text = activity.getResources().getString(textId);
+		}
+
+		if (null != positiveListener) {
+			positiveText = activity.getResources().getString(positiveTextId);
+		}
+		if (null != neutralListener) {
+			neutralText = activity.getResources().getString(neutralTextId);
+		}
+		if (null != negativeListener) {
+			negativeText = activity.getResources().getString(negativeTextId);
+		}
+
+		alertDialog = createDialog(activity, title, text, onCheckedChangeListener,
+									positiveText, positiveListener,
+									neutralText, neutralListener,
+									negativeText, negativeListener);
 	}
 
-	public DsaDialog(Activity activity, int text, String parameter,
-			CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
-			int positiveText, DialogInterface.OnClickListener positiveListener,
-			int neutralText, DialogInterface.OnClickListener neutralListener,
-			int negativeText, DialogInterface.OnClickListener negativeListener
-			) {
+	public DsaDialog(Activity activity, int titleId, int textId, String parameter,
+		CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
+		int positiveTextId, DialogInterface.OnClickListener positiveListener,
+		int neutralTextId, DialogInterface.OnClickListener neutralListener,
+		int negativeTextId, DialogInterface.OnClickListener negativeListener
+		) {
 
-		alertDialog = createDialog(activity,
-				activity.getResources().getString(text, parameter),
-				onCheckedChangeListener,
-				activity.getResources().getString(positiveText), positiveListener,
-				activity.getResources().getString(neutralText), neutralListener,
-				activity.getResources().getString(negativeText), negativeListener);
+		String title;
+		String text;
+		String positiveText = null;
+		String neutralText = null;
+		String negativeText = null;
+
+		if (-1 == titleId) {
+			title = "";
+		}
+		else {
+			title = activity.getResources().getString(titleId, parameter);
+		}
+
+		if (-1 == textId) {
+			text = "";
+		}
+		else {
+			text = activity.getResources().getString(textId, parameter);
+		}
+
+		if (null != positiveListener) {
+			positiveText = activity.getResources().getString(positiveTextId);
+		}
+
+		if (null != neutralListener) {
+			neutralText = activity.getResources().getString(neutralTextId);
+		}
+
+		if (null != negativeListener) {
+			negativeText = activity.getResources().getString(negativeTextId);
+		}
+
+		alertDialog = createDialog(activity, title, text, onCheckedChangeListener,
+									positiveText, positiveListener,
+									neutralText, neutralListener,
+									negativeText, negativeListener);
 	}
 
-	public DsaDialog(Activity activity, String text,
-			CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
-			String positiveText, DialogInterface.OnClickListener positiveListener,
-			String neutralText, DialogInterface.OnClickListener neutralListener,
-			String negativeText, DialogInterface.OnClickListener negativeListener
-			) {
+	public DsaDialog(Activity activity, String title, String text,
+		CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
+		String positiveText, DialogInterface.OnClickListener positiveListener,
+		String neutralText, DialogInterface.OnClickListener neutralListener,
+		String negativeText, DialogInterface.OnClickListener negativeListener
+		) {
 
-		alertDialog = createDialog(activity, text,
-				onCheckedChangeListener,
-				positiveText, positiveListener,
-				neutralText, neutralListener,
-				negativeText, negativeListener);
+		alertDialog = createDialog(activity, title, text, onCheckedChangeListener,
+									positiveText, positiveListener,
+									neutralText, neutralListener,
+									negativeText, negativeListener);
 	}
 
-	private static final AlertDialog createDialog(Activity activity, String text,
+	private static final AlertDialog createDialog(Activity activity, String title, String text,
 			CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
 			String positiveText, DialogInterface.OnClickListener positiveListener,
 			String neutralText, DialogInterface.OnClickListener neutralListener,
@@ -79,6 +136,9 @@ public class DsaDialog {
 		// Create alert dialog
 		final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 		builder.setView(rootView);
+
+		if (null != title)
+			builder.setTitle(title);
 
 		if (null != positiveListener)
 			builder.setPositiveButton(positiveText, positiveListener);
