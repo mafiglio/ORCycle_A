@@ -25,6 +25,12 @@ public class TabsConfig extends FragmentActivity implements
 
 	public static final String EXTRA_KEEP_ME = "EXTRA_KEEP_ME";
 	public static final String EXTRA_SHOW_FRAGMENT = "EXTRA_SHOW_FRAGMENT";
+	public static final String EXTRA_SOURCE_ACTIVITY = "EXTRA_SOURCE_ACTIVITY";
+	public static final String EXTRA_DSA_ACTIVITY = "EXTRA_DSA_ACTIVITY";
+	public static final String EXTRA_DSA_BUTTON_PRESSED = "dsa_button_pressed";
+	public static final String EXTRA_DSA_DIALOG_ID = "dsa_dialog_id";
+
+
 	public static final int FRAG_INDEX_MAIN_INPUT = 0;
 	public static final int FRAG_INDEX_SAVED_TRIPS = 1;
 	public static final int FRAG_INDEX_SAVED_NOTES = 2;

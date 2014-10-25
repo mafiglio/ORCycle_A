@@ -110,7 +110,7 @@ public class MyApplication extends android.app.Application {
 
 		setDefaultApplicationSettings();
 
-		firstTripCompleted = settings.getBoolean(SETTING_FIRST_TRIP_COMPLETED, false);
+		firstTripCompleted = settings.getBoolean(SETTING_FIRST_TRIP_COMPLETED, true);
 
 		userProfileUploaded = settings.getBoolean(SETTING_USER_INFO_UPLOADED, false);
 
