@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 public class DsaDialogActivity extends Activity {
@@ -21,6 +23,7 @@ public class DsaDialogActivity extends Activity {
 	public static final String EXTRA_NEUTRAL_ID = "neutral_id";
 	public static final String EXTRA_NEGATIVE_TEXT = "negative_text";
 	public static final String EXTRA_NEGATIVE_ID = "negative_id";
+	public static final String EXTRA_IS_CHECKED = "is_checked";
 	public static final int EXTRA_UNSET_ID = -1;
 
 	private int dialogId;
@@ -30,6 +33,16 @@ public class DsaDialogActivity extends Activity {
 	private Button btnPositive;
 	private Button btnNeutral;
 	private Button btnNegative;
+	private CheckBox cbDontShowAgain;
+
+	private final CheckboxChangeListener onCheckboxChangeListener = new CheckboxChangeListener();
+	private final class CheckboxChangeListener implements CompoundButton.OnCheckedChangeListener {
+
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		}
+	}
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -98,10 +111,16 @@ public class DsaDialogActivity extends Activity {
 			else {
 				btnNegative.setVisibility(View.GONE);
 			}
+
+			cbDontShowAgain = (CheckBox) findViewById(R.id.chkDsaCheckbox);
+			cbDontShowAgain.setOnCheckedChangeListener(onCheckboxChangeListener);
+
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
+
+
 
 	}
 	// *********************************************************************************
@@ -142,6 +161,7 @@ public class DsaDialogActivity extends Activity {
 		intent.putExtra(TabsConfig.EXTRA_DSA_ACTIVITY, TabsConfig.EXTRA_DSA_ACTIVITY);
 		intent.putExtra(TabsConfig.EXTRA_DSA_DIALOG_ID, dialogId);
 		intent.putExtra(TabsConfig.EXTRA_DSA_BUTTON_PRESSED, buttonPressed);
+		intent.putExtra(EXTRA_IS_CHECKED, cbDontShowAgain.isChecked());
 		startActivity(intent);
 		finish();
 	}

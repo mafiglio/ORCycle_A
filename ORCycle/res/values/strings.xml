@@ -24,7 +24,7 @@
     <string name="title_activity_rate_segment_detail">Rating Details</string>
     <string name="title_activity_user_info">Tell us about yourself&#8230;</string>
     <string name="title_activity_dsa_dialog">DsaDialogActivity</string>
-
+    <string name="title_orcycle_instructions">Instructions</string>
     <string name="post_url">http://orcycle2.cecs.pdx.edu/post/</string>
     <string name="btn_lbl_start">Start Trip</string>
     <string name="btn_lbl_pause">Pause</string>
@@ -462,5 +462,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Pavement condition</item>
         <item>Other&#8230;</item>
     </string-array>
+
+    <string name="title_activity_web_view">WebViewActivity</string>
 
 </resources>

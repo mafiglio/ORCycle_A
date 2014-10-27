@@ -11,7 +11,6 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -56,7 +55,8 @@ public class FragmentMainInput extends Fragment
 
 	private static final int DSA_ID_WELCOME_DIALOG_ID = 1000;
 	private static final int DSA_ID_WELCOME_DIALOG_CONTINUE = 1001;
-	private static final int DSA_ID_WELCOME_DIALOG_OK = 1002;
+	private static final int DSA_ID_WELCOME_DIALOG_INSTRUCTIONS = 1002;
+	private static final int DSA_ID_WELCOME_BACK_FROM_INSTRUCTIONS = 1003;
 
 	private static final int DSA_ID_USER_PROFILE_DIALOG_ID = 2000;
 	private static final int DSA_ID_USER_PROFILE_DIALOG_OK = 2001;
@@ -85,6 +85,8 @@ public class FragmentMainInput extends Fragment
 	private Timer serviceConnectionTimer;
 	final Handler taskHandler = new Handler();
 	private Location currentLocation = null;
+
+	private boolean backFromInstructions;
 
 	// Format used to show elapsed time to user when recording trips
 	private final SimpleDateFormat tripDurationFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
@@ -254,20 +256,35 @@ public class FragmentMainInput extends Fragment
 
 			Intent intent;
 			Bundle bundle;
-			if (null != (intent = getActivity().getIntent())) {
+			if (backFromInstructions) {
+				backFromInstructions = false;
+				if (myApp.getUserWelcomeEnabled()) {
+					transitionToDialogWelcome();
+					return;
+				}
+			}
+			else if (null != (intent = getActivity().getIntent())) {
 				if (null != (bundle = intent.getExtras())) {
 					String src = bundle.getString(TabsConfig.EXTRA_DSA_ACTIVITY);
 					if (null != src) {
 						int dialogId = bundle.getInt(TabsConfig.EXTRA_DSA_DIALOG_ID, -1);
 						int buttonPressed = bundle.getInt(TabsConfig.EXTRA_DSA_BUTTON_PRESSED, -1);
+						boolean ischecked = bundle.getBoolean(DsaDialogActivity.EXTRA_IS_CHECKED, false);
 						if (DSA_ID_WELCOME_DIALOG_ID == dialogId) {
-							if (DSA_ID_WELCOME_DIALOG_OK == buttonPressed) {
+							if (ischecked) {
+								myApp.setUserWelcomeEnabled(false);
+							}
+							if (DSA_ID_WELCOME_DIALOG_INSTRUCTIONS == buttonPressed) {
 								transitionToORcycle();
-								getActivity().finish();
+								backFromInstructions = false;
+								//getActivity().finish();
 								return;
 							}
 						}
 						else if (DSA_ID_USER_PROFILE_DIALOG_ID == dialogId) {
+							if (ischecked) {
+								myApp.setUserProfileUploaded(true);
+							}
 							if (DSA_ID_USER_PROFILE_DIALOG_OK == buttonPressed) {
 								transitionToUserInfoActivity();
 								getActivity().finish();
@@ -970,9 +987,28 @@ public class FragmentMainInput extends Fragment
 	}
 
 	private void transitionToORcycle() {
-		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MyApplication.ORCYCLE_URI));
-		startActivity(intent);
+		//Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MyApplication.ORCYCLE_URI));
+		//startActivityForResult(intent, DSA_ID_WELCOME_DIALOG_ID);
+		String title = getResources().getString(R.string.title_orcycle_instructions);
+		Intent intent = new Intent(getActivity(), WebViewActivity.class);
+		intent.putExtra(WebViewActivity.EXTRA_URL, MyApplication.ORCYCLE_URI);
+		intent.putExtra(WebViewActivity.EXTRA_TITLE, title);
+		startActivityForResult(intent, DSA_ID_WELCOME_DIALOG_ID);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		switch(requestCode) {
+		case DSA_ID_WELCOME_DIALOG_ID:
+			backFromInstructions = true;
+			Log.e(MODULE_TAG, "back from ORcycle");
+			break;
+		case DSA_ID_USER_PROFILE_DIALOG_ID:
+			break;
+		}
+
 	}
 
 	private void transitionToDialogWelcome() {
@@ -990,7 +1026,7 @@ public class FragmentMainInput extends Fragment
 		intent.putExtra(DsaDialogActivity.EXTRA_POSITIVE_TEXT, positiveText);
 		intent.putExtra(DsaDialogActivity.EXTRA_POSITIVE_ID, DSA_ID_WELCOME_DIALOG_CONTINUE);
 		intent.putExtra(DsaDialogActivity.EXTRA_NEGATIVE_TEXT, negativeText);
-		intent.putExtra(DsaDialogActivity.EXTRA_NEGATIVE_ID, DSA_ID_WELCOME_DIALOG_OK);
+		intent.putExtra(DsaDialogActivity.EXTRA_NEGATIVE_ID, DSA_ID_WELCOME_DIALOG_INSTRUCTIONS);
 		startActivity(intent);
 	}
 

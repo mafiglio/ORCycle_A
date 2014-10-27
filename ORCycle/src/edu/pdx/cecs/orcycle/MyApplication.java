@@ -108,7 +108,7 @@ public class MyApplication extends android.app.Application {
 			firstUse = generateFirstUse();
 		}
 
-		setDefaultApplicationSettings();
+		// setDefaultApplicationSettings();
 
 		firstTripCompleted = settings.getBoolean(SETTING_FIRST_TRIP_COMPLETED, true);
 

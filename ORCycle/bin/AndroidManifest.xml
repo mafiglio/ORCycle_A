@@ -83,12 +83,12 @@
             android:name="edu.pdx.cecs.orcycle.UserInfoActivity"
             android:label="@string/title_activity_user_info" >
         </activity>
-
         <activity
             android:name="edu.pdx.cecs.orcycle.DsaDialogActivity"
-            android:theme="@android:style/Theme.Dialog"
-            android:label="@string/title_activity_dsa_dialog">
+            android:label="@string/title_activity_dsa_dialog"
+            android:theme="@android:style/Theme.Dialog" >
         </activity>
+
         <service
             android:name="edu.pdx.cecs.orcycle.RecordingService"
             android:enabled="true" >
@@ -98,7 +98,10 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDxFJg7uGiIW1kN4OKAOfS3isB9_2FhP94" />
 
-        
+        <activity
+            android:name="edu.pdx.cecs.orcycle.WebViewActivity"
+            android:label="@string/title_activity_web_view" >
+        </activity>
     </application>
 
 </manifest>

@@ -112,6 +112,16 @@ public class UserFeedbackActivity extends Activity {
 		if (text.equals("")) {
 			showNoBlankInputDialog();
 		}
+		else if (text.equals("orcycle:reset-all-dialogs")) {
+			try {
+				MyApplication.getInstance().setDefaultApplicationSettings();
+				savePreferences(false);
+				transitionToTabsConfigActivity(ExitTransition.EXIT_SEND);
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
 		else {
 			try {
 				savePreferences(true);
