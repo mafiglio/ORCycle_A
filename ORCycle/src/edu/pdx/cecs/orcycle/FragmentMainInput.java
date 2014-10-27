@@ -53,11 +53,20 @@ public class FragmentMainInput extends Fragment
 	private static final String COM_ANDROID_SETTINGS = "com.android.settings";
 	private static final String COM_ANDROID_SETTINGS_SECURITY_SETTINGS = "com.android.settings.SecuritySettings";
 
+	private static final int DSA_ID_WELCOME_DIALOG_ID = 1000;
+	private static final int DSA_ID_WELCOME_DIALOG_CONTINUE = 1001;
+	private static final int DSA_ID_WELCOME_DIALOG_INSTRUCTIONS = 1002;
+	private static final int DSA_ID_WELCOME_BACK_FROM_INSTRUCTIONS = 1003;
+
+	private static final int DSA_ID_USER_PROFILE_DIALOG_ID = 2000;
+	private static final int DSA_ID_USER_PROFILE_DIALOG_OK = 2001;
+	private static final int DSA_ID_USER_PROFILE_DIALOG_LATER = 2002;
+
 	// Reference to Global application object
 	private MyApplication myApp = null;
 
 	// Reference to recording service;
-	private IRecordService recordingService = null;
+	private IRecordService recordingService;
 
 	// UI Elements
 	private Button buttonStart = null;
@@ -71,9 +80,13 @@ public class FragmentMainInput extends Fragment
 	private TextView txtCO2 = null;
 	private TextView txtCalories = null;
 
-	private Timer tripStatusTimer;
+	private Timer statusUpdateTimer;
+	final Handler serviceConnectionHandler = new Handler();
 	private Timer serviceConnectionTimer;
+	final Handler taskHandler = new Handler();
 	private Location currentLocation = null;
+
+	private boolean backFromInstructions;
 
 	// Format used to show elapsed time to user when recording trips
 	private final SimpleDateFormat tripDurationFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
@@ -95,9 +108,7 @@ public class FragmentMainInput extends Fragment
 	// *********************************************************************************
 
 	public FragmentMainInput() {
-
 		tripDurationFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
 	}
 
 	// *********************************************************************************
@@ -226,22 +237,7 @@ public class FragmentMainInput extends Fragment
 		super.onResume();
 
 		try {
-
 			Log.v(MODULE_TAG, "Cycle: onResume()");
-
-			// Use a timer to update the trip duration.
-			tripStatusTimer = new Timer();
-			tripStatusTimer.scheduleAtFixedRate(new TimerTask() {
-				@Override
-				public void run() {
-					try {
-						tripStatusHandler.post(tripStatusUpdateTask);
-					}
-					catch(Exception ex) {
-						Log.e(MODULE_TAG, ex.getMessage());
-					}
-				}
-			}, 0, 1000); // every second
 
 			setUpMapIfNeeded();
 			if (map != null) {
@@ -258,26 +254,122 @@ public class FragmentMainInput extends Fragment
 			}
 			enableLocationClient();
 
-			// Setup wait for service connection timer
-
-			if (null == recordingService) {
-				serviceConnectionTimer = new Timer();
-				serviceConnectionTimer.scheduleAtFixedRate(new TimerTask() {
-					@Override
-					public void run() {
-						serviceConnectionHandler.post(doServiceConnection);
+			Intent intent;
+			Bundle bundle;
+			if (backFromInstructions) {
+				backFromInstructions = false;
+				if (myApp.getUserWelcomeEnabled()) {
+					transitionToDialogWelcome();
+					return;
+				}
+			}
+			else if (null != (intent = getActivity().getIntent())) {
+				if (null != (bundle = intent.getExtras())) {
+					String src = bundle.getString(TabsConfig.EXTRA_DSA_ACTIVITY);
+					if (null != src) {
+						int dialogId = bundle.getInt(TabsConfig.EXTRA_DSA_DIALOG_ID, -1);
+						int buttonPressed = bundle.getInt(TabsConfig.EXTRA_DSA_BUTTON_PRESSED, -1);
+						boolean ischecked = bundle.getBoolean(DsaDialogActivity.EXTRA_IS_CHECKED, false);
+						if (DSA_ID_WELCOME_DIALOG_ID == dialogId) {
+							if (ischecked) {
+								myApp.setUserWelcomeEnabled(false);
+							}
+							if (DSA_ID_WELCOME_DIALOG_INSTRUCTIONS == buttonPressed) {
+								transitionToORcycle();
+								backFromInstructions = false;
+								//getActivity().finish();
+								return;
+							}
+						}
+						else if (DSA_ID_USER_PROFILE_DIALOG_ID == dialogId) {
+							if (ischecked) {
+								myApp.setUserProfileUploaded(true);
+							}
+							if (DSA_ID_USER_PROFILE_DIALOG_OK == buttonPressed) {
+								transitionToUserInfoActivity();
+								getActivity().finish();
+								return;
+							}
+						}
+						else {
+							// got a bundle, from unknown dialog?
+						}
 					}
-				}, 0, 1000); // every second
+				}
+			}
+
+			if (!myApp.getCheckedForUserWelcome() && myApp.getUserWelcomeEnabled()) {
+				myApp.setCheckedForUserWelcome(true);
+				transitionToDialogWelcome();
+			}
+			else if (!myApp.getCheckedForUserProfile()
+					&& !myApp.getUserProfileUploaded()
+					&& (myApp.getFirstTripCompleted())) {
+				myApp.setCheckedForUserProfile(true);
+				transitionToDialogUserInfo();
+			}
+			else if (null == recordingService) {
+				scheduleServiceConnect();
 			}
 			else {
-				setupButtons();
-				userProfileCheck();
+				syncDisplayToRecordingState();
 			}
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
+
+	/**
+	 * Set up buttons, and enable status updates
+	 */
+	private void syncDisplayToRecordingState() {
+		// Setup the UI buttons according to current state
+		setupButtons();
+
+		// If the recorder is has completed a recording, switch
+		// to activity for uploading the trip data
+		int state = recordingService.getState();
+		if (state > RecordingService.STATE_IDLE) {
+			if (state == RecordingService.STATE_FULL) {
+				dialogTripFinish(true);
+				//scheduleTask(TASK_WAIT_SERVICE_CONNECT);
+			}
+		}
+		scheduleStatusUpdates(); // every second
+	}
+
+	/**
+	 * Creates and schedules a timer to update the trip duration.
+	 */
+	private void scheduleStatusUpdates() {
+		statusUpdateTimer = new Timer();
+		statusUpdateTimer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				try {
+					tripStatusHandler.post(tripStatusUpdateTask);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+		}, 0, 1000); // every second
+	}
+
+	private void scheduleServiceConnect() {
+		serviceConnectionTimer = new Timer();
+		serviceConnectionTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				serviceConnectionHandler.post(doServiceConnection);
+			}
+		}, 2000, 2000); // 2 second delay, at 2 second intervals
+	}
+
+	// *********************************************************************************
+	// *
+	// *********************************************************************************
 
 	/**
 	 * Handler: onPause
@@ -289,11 +381,9 @@ public class FragmentMainInput extends Fragment
 		try {
 			Log.v(MODULE_TAG, "Cycle: onPause()");
 
-			// Background GPS.
-			if (tripStatusTimer != null)
-				tripStatusTimer.cancel();
+			if (statusUpdateTimer != null)
+				statusUpdateTimer.cancel();
 
-			// Background GPS.
 			if (serviceConnectionTimer != null)
 				serviceConnectionTimer.cancel();
 
@@ -398,9 +488,6 @@ public class FragmentMainInput extends Fragment
 	// *                     WaitForServiceConnection Tasking
 	// *********************************************************************************
 
-	// Need handler for callbacks to the UI thread
-	final Handler serviceConnectionHandler = new Handler();
-
 	/**
 	 * Class: doServiceConnection
 	 * This task is to be executed after onResume has occurred to assure we still
@@ -411,38 +498,26 @@ public class FragmentMainInput extends Fragment
 		public void run() {
 
 			try {
-				Log.v(MODULE_TAG, "doServiceConnection()");
 
 				if (null == recordingService) {
+					Log.v(MODULE_TAG, "doServiceConnection(): Service not yet connected.");
 
 					// See if a service connection has been established
 					if (null != (recordingService = myApp.getRecordingService())) {
+						Log.v(MODULE_TAG, "doServiceConnection(): got connection!");
 
 						// We now have connection to the service so cancel the timer
 						serviceConnectionTimer.cancel();
 
-						Toast.makeText(getActivity(),
-							getResources().getString(R.string.fmi_service_connected),
-							Toast.LENGTH_SHORT).show();
-
 						recordingService.setListener(FragmentMainInput.this);
-
-						// Setup the UI buttons according to current state
-						setupButtons();
-
-						// If the recorder is has completed a recording, switch
-						// to activity for uploading the trip data
-						int state = recordingService.getState();
-						if (state > RecordingService.STATE_IDLE) {
-							if (state == RecordingService.STATE_FULL) {
-								dialogTripFinish(true);
-							}
-						}
-						else {
-							userProfileCheck();
-						}
-
+						//scheduleTask(TASK_SERVICE_CONNECT_COMPLETE);
+						syncDisplayToRecordingState();
 					}
+				}
+				else {
+					Log.v(MODULE_TAG, "doServiceConnection(): Service already connected.");
+					serviceConnectionTimer.cancel();
+					syncDisplayToRecordingState();
 				}
 			}
 			catch(Exception ex) {
@@ -452,11 +527,8 @@ public class FragmentMainInput extends Fragment
 	};
 
 	// *********************************************************************************
-
-	// *********************************************************************************
 	// *                              Button Handlers
 	// *********************************************************************************
-
 
 	/**
      * Class: ButtonStart_OnClickListener
@@ -691,39 +763,6 @@ public class FragmentMainInput extends Fragment
 	}
 
 	// *********************************************************************************
-	// *                         queryUserProfile Dialog
-	// *********************************************************************************
-
-	/**
-	 * Build dialog telling user that the GPS is not available
-	 */
-	private void queryUserProfile() {
-
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-		builder.setMessage(getResources().getString(R.string.fmi_query_user_profile));
-		builder.setCancelable(false);
-		builder.setPositiveButton(getResources().getString(R.string.fmi_qup_dialog_ok),
-				new QueryUserProfile_OkListener());
-		builder.setNegativeButton(getResources().getString(R.string.fmi_qup_dialog_later),
-				new QueryUserProfile_CancelListener());
-		final AlertDialog alert = builder.create();
-		alert.show();
-	}
-
-	class QueryUserProfile_OkListener implements DialogInterface.OnClickListener {
-		public void onClick(final DialogInterface dialog, final int id) {
-			transitionToUserInfoActivity();
-		}
-	}
-
-	class QueryUserProfile_CancelListener implements DialogInterface.OnClickListener {
-		public void onClick(final DialogInterface dialog, final int id) {
-			dialog.cancel();
-		}
-	}
-
-	// *********************************************************************************
 	// *                            Trip Finished Dialogs
 	// *********************************************************************************
 
@@ -735,13 +774,16 @@ public class FragmentMainInput extends Fragment
 		builder.setTitle(getResources().getString(R.string.fmi_dtf_save_trip));
 		if (allowSave) {
 			builder.setMessage(getResources().getString(R.string.fmi_dtf_query_save));
-			builder.setNegativeButton(getResources().getString(R.string.fmi_dtf_save), new DialogTripFinish_OnSaveTripClicked());
+			builder.setNegativeButton(getResources().getString(R.string.fmi_dtf_save),
+					new DialogTripFinish_OnSaveTripClicked());
 		}
 		else {
 			builder.setMessage(getResources().getString(R.string.fmi_no_gps_data));
 		}
-		builder.setNeutralButton(getResources().getString(R.string.fmi_dtf_discard), new DialogTripFinish_OnDiscardTripClicked());
-		builder.setPositiveButton(getResources().getString(R.string.fmi_dtf_resume), new DialogTripFinish_OnContinueTripClicked());
+		builder.setNeutralButton(getResources().getString(R.string.fmi_dtf_discard),
+				new DialogTripFinish_OnDiscardTripClicked());
+		builder.setPositiveButton(getResources().getString(R.string.fmi_dtf_resume),
+				new DialogTripFinish_OnContinueTripClicked());
 		final AlertDialog alert = builder.create();
 		alert.show();
 	}
@@ -889,23 +931,15 @@ public class FragmentMainInput extends Fragment
 	// *                            Misc & Helper Functions
 	// *********************************************************************************
 
-	private void userProfileCheck() {
-
-		if (!myApp.getCheckedForUserProfile()) {
-
-			myApp.setCheckedForUserProfile(true);
-
-			if (!myApp.getUserProfileUploaded() && (myApp.getFirstTripCompleted())) {
-				queryUserProfile();
-			}
-		}
-	}
-
 	private void alertUserNoGPSData() {
 		Toast.makeText(getActivity(),
 			getResources().getString(R.string.fmi_no_gps_data),
 			Toast.LENGTH_SHORT).show();
 	}
+
+	// *********************************************************************************
+	// *                            Transitions
+	// *********************************************************************************
 
 	private void transitionToTripQuestionsActivity(long tripId) {
 
@@ -952,5 +986,66 @@ public class FragmentMainInput extends Fragment
 		getActivity().finish();
 	}
 
+	private void transitionToORcycle() {
+		//Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MyApplication.ORCYCLE_URI));
+		//startActivityForResult(intent, DSA_ID_WELCOME_DIALOG_ID);
+		String title = getResources().getString(R.string.title_orcycle_instructions);
+		Intent intent = new Intent(getActivity(), WebViewActivity.class);
+		intent.putExtra(WebViewActivity.EXTRA_URL, MyApplication.ORCYCLE_URI);
+		intent.putExtra(WebViewActivity.EXTRA_TITLE, title);
+		startActivityForResult(intent, DSA_ID_WELCOME_DIALOG_ID);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+	}
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		switch(requestCode) {
+		case DSA_ID_WELCOME_DIALOG_ID:
+			backFromInstructions = true;
+			Log.e(MODULE_TAG, "back from ORcycle");
+			break;
+		case DSA_ID_USER_PROFILE_DIALOG_ID:
+			break;
+		}
+
+	}
+
+	private void transitionToDialogWelcome() {
+
+		Intent intent = new Intent(getActivity(), DsaDialogActivity.class);
+
+		String title = getResources().getString(R.string.fmi_welcome_title);
+		String message = getResources().getString(R.string.fmi_welcome_message);
+		String positiveText = getResources().getString(R.string.fmi_welcome_continue);
+		String negativeText = getResources().getString(R.string.fmi_welcome_instructions);
+
+		intent.putExtra(DsaDialogActivity.EXTRA_DIALOG_ID, DSA_ID_WELCOME_DIALOG_ID);
+		intent.putExtra(DsaDialogActivity.EXTRA_TITLE, title);
+		intent.putExtra(DsaDialogActivity.EXTRA_MESSAGE, message);
+		intent.putExtra(DsaDialogActivity.EXTRA_POSITIVE_TEXT, positiveText);
+		intent.putExtra(DsaDialogActivity.EXTRA_POSITIVE_ID, DSA_ID_WELCOME_DIALOG_CONTINUE);
+		intent.putExtra(DsaDialogActivity.EXTRA_NEGATIVE_TEXT, negativeText);
+		intent.putExtra(DsaDialogActivity.EXTRA_NEGATIVE_ID, DSA_ID_WELCOME_DIALOG_INSTRUCTIONS);
+		startActivity(intent);
+	}
+
+	private void transitionToDialogUserInfo() {
+
+		Intent intent = new Intent(getActivity(), DsaDialogActivity.class);
+
+		String title = getResources().getString(R.string.fmi_query_user_profile_title);
+		String message = getResources().getString(R.string.fmi_query_user_profile);
+		String positiveText = getResources().getString(R.string.fmi_qup_dialog_ok);
+		String negativeText = getResources().getString(R.string.fmi_qup_dialog_later);
+
+		intent.putExtra(DsaDialogActivity.EXTRA_DIALOG_ID, DSA_ID_USER_PROFILE_DIALOG_ID);
+		intent.putExtra(DsaDialogActivity.EXTRA_TITLE, title);
+		intent.putExtra(DsaDialogActivity.EXTRA_MESSAGE, message);
+		intent.putExtra(DsaDialogActivity.EXTRA_POSITIVE_TEXT, positiveText);
+		intent.putExtra(DsaDialogActivity.EXTRA_POSITIVE_ID, DSA_ID_USER_PROFILE_DIALOG_OK);
+		intent.putExtra(DsaDialogActivity.EXTRA_NEGATIVE_TEXT, negativeText);
+		intent.putExtra(DsaDialogActivity.EXTRA_NEGATIVE_ID, DSA_ID_USER_PROFILE_DIALOG_LATER);
+		startActivity(intent);
+	}
 }

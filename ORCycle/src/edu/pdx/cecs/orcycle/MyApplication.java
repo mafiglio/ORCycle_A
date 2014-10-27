@@ -32,7 +32,10 @@ public class MyApplication extends android.app.Application {
 	private final String MODULE_TAG = "MyApplication";
 
 	public static final String PREFS_APPLICATION = "PREFS_APPLICATION";
+	public static final String ORCYCLE_URI = "http://www.pdx.edu/transportation-lab/android-instructions";
+	public static final String PRIVACY_POLICY_URI = "http://www.pdx.edu/transportation-lab/privacy-policy";
 
+	private static final String SETTING_USER_WELCOME_ENABLED = "USER_WELCOME_ENABLED";
 	private static final String SETTING_USER_INFO_UPLOADED = "USER_INFO_UPLOADED";
 	private static final String SETTING_FIRST_TRIP_COMPLETED = "SETTING_FIRST_TRIP_COMPLETED";
 	private static final String SETTING_WARN_REPEAT_TRIPS = "SETTING_WARN_REPEAT_TRIPS";
@@ -44,10 +47,14 @@ public class MyApplication extends android.app.Application {
 	private String userId = null;
 	private int versionCode = -1;
 	private long firstUse = -1;
+	private boolean userProfileUploaded;
 	private boolean warnRepeatTrips;
+	private boolean userWelcomeEnabled;
+	private boolean firstTripCompleted;
 	private RecordingService recordingService = null;
 	private TripData trip;
 	private boolean checkedForUserProfile = false;
+	private boolean checkedForUserWelcome = false;
 	private final BellTimer bellTimer = new BellTimer();
 	private double lastTripStartTime = RESET_START_TIME;
 
@@ -84,8 +91,41 @@ public class MyApplication extends android.app.Application {
 
 		bellTimer.init(this.getBaseContext());
 
-		initSettings();
+		loadApplicationSettings();
     }
+
+	private void loadApplicationSettings() {
+
+		//generateUserId();  // For resetting while debugging
+		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		userId = settings.getString(SETTING_USER_ID, null);
+		if ((null == userId) || (userId.equals(""))) {
+			userId = generateUserId();
+		}
+
+		firstUse = settings.getLong(SETTING_FIRST_USE, -1);
+		if (-1 == firstUse) {
+			firstUse = generateFirstUse();
+		}
+
+		// setDefaultApplicationSettings();
+
+		firstTripCompleted = settings.getBoolean(SETTING_FIRST_TRIP_COMPLETED, true);
+
+		userProfileUploaded = settings.getBoolean(SETTING_USER_INFO_UPLOADED, false);
+
+		userWelcomeEnabled = settings.getBoolean(SETTING_USER_WELCOME_ENABLED, true);
+
+		warnRepeatTrips = settings.getBoolean(SETTING_WARN_REPEAT_TRIPS, true);
+	}
+
+	public void setDefaultApplicationSettings() {
+		setFirstTripCompleted(true); // for debugging
+		//setFirstTripCompleted(false);
+		setUserProfileUploaded(false);
+		setUserWelcomeEnabled(true);
+		setWarnRepeatTrips(true);
+	}
 
     /**
      * This is called when the overall system is running low on memory, and
@@ -245,6 +285,10 @@ public class MyApplication extends android.app.Application {
     	}
     }
 
+	// *********************************************************************************
+	// *
+	// *********************************************************************************
+
 	public void setCheckedForUserProfile(boolean value) {
 		checkedForUserProfile = value;
 	}
@@ -254,33 +298,61 @@ public class MyApplication extends android.app.Application {
 	}
 
 	public void setUserProfileUploaded(boolean value) {
+		userProfileUploaded = value;
 		SharedPreferences settings;
 		settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor = settings.edit();
-		editor.putBoolean(SETTING_USER_INFO_UPLOADED, value);
+		editor.putBoolean(SETTING_USER_INFO_UPLOADED, userProfileUploaded);
 		editor.apply();
 	}
 
 	public boolean getUserProfileUploaded() {
-		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
-		boolean value = settings.getBoolean(SETTING_USER_INFO_UPLOADED, false);
-		return value;
-	}
-
-	public boolean getFirstTripCompleted() {
-		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
-		boolean value = settings.getBoolean(SETTING_FIRST_TRIP_COMPLETED, false);
-		return value;
+		return userProfileUploaded;
 	}
 
 	public void setFirstTripCompleted(boolean value) {
+		firstTripCompleted = value;
 		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor = settings.edit();
-		editor.putBoolean(SETTING_FIRST_TRIP_COMPLETED, value);
+		editor.putBoolean(SETTING_FIRST_TRIP_COMPLETED, firstTripCompleted);
 		editor.apply();
 	}
+
+	public boolean getFirstTripCompleted() {
+		return firstTripCompleted;
+	}
+
+	// *********************************************************************************
+	// *
+	// *********************************************************************************
+
+	public void setCheckedForUserWelcome(boolean value) {
+		checkedForUserWelcome = value;
+	}
+
+	public boolean getCheckedForUserWelcome() {
+		return checkedForUserWelcome;
+	}
+
+	public void setUserWelcomeEnabled(boolean value) {
+		userWelcomeEnabled = value;
+		SharedPreferences settings;
+		settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor = settings.edit();
+		editor.putBoolean(SETTING_USER_WELCOME_ENABLED, userWelcomeEnabled);
+		editor.apply();
+	}
+
+	public boolean getUserWelcomeEnabled() {
+		return userWelcomeEnabled;
+	}
+
+	// *********************************************************************************
+	// *
+	// *********************************************************************************
 
 	public void setWarnRepeatTrips(boolean value) {
 		warnRepeatTrips = value;
@@ -295,23 +367,9 @@ public class MyApplication extends android.app.Application {
 		return warnRepeatTrips;
 	}
 
-	private void initSettings() {
-
-		//generateUserId();  // For resetting while debugging
-		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
-		userId = settings.getString(SETTING_USER_ID, null);
-		if ((null == userId) || (userId.equals(""))) {
-			userId = generateUserId();
-		}
-
-		firstUse = settings.getLong(SETTING_FIRST_USE, -1);
-		if (-1 == firstUse) {
-			firstUse = generateFirstUse();
-		}
-
-		// setWarnRepeatTrips(true);
-		warnRepeatTrips = settings.getBoolean(SETTING_WARN_REPEAT_TRIPS, true);
-	}
+	// *********************************************************************************
+	// *
+	// *********************************************************************************
 
 	/**
 	 * Sets SETTING_FIRST_USE, and SETTING_VERSION_CODE settings
@@ -349,6 +407,10 @@ public class MyApplication extends android.app.Application {
 		return value;
 	}
 
+	// *********************************************************************************
+	// *
+	// *********************************************************************************
+
 	public void ResumeNotification() {
 		if (isRecording()) {
 			startNotification(lastTripStartTime);
@@ -370,6 +432,10 @@ public class MyApplication extends android.app.Application {
 		MyNotifiers.cancelAll(this.getBaseContext());
 		bellTimer.cancel();
 	}
+
+	// *********************************************************************************
+	// *
+	// *********************************************************************************
 
 	public double[] getLastKnownLocation() {
 

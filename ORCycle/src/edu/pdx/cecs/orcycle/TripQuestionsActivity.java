@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,11 +19,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 public class TripQuestionsActivity extends Activity {
 
@@ -57,6 +54,7 @@ public class TripQuestionsActivity extends Activity {
 	private static final int PREF_TRIP_COMMENT     = 10;
 
 	private TripPurpose_OnClickListener tripPurpose_OnClick = null;
+	private DsaDialog dsaDialog;
 
 
 
@@ -752,24 +750,14 @@ public class TripQuestionsActivity extends Activity {
 
 	private void AlertUserRepeatTrips(String purpose) {
 
-		// Load custom layout for alert dialog
-		LayoutInflater inflater = getLayoutInflater();
-		View rootView = inflater.inflate(R.layout.dialog_text_checkbox, null);
+		DsaDialog dsaDialog = new DsaDialog(this,
+			null,
+			getResources().getString(R.string.tqa_alert_repeated_trips, purpose),
+			new AlertUserRepeatTrips_CheckedChangeListener(),
+			getResources().getString(R.string.tqa_alert_OK), new AlertUserRepeatTrips_OkListener(),
+			null, null, null, null);
 
-		// Reference custom layout's textbox and set text value
-		TextView textbox = (TextView) rootView.findViewById(R.id.tv_dtc_text);
-		textbox.setText(getResources().getString(R.string.tqa_alert_repeated_trips, purpose));
-
-		CheckBox cbDontShowAgain = (CheckBox) rootView.findViewById(R.id.cb_dtc_checkbox);
-		cbDontShowAgain.setOnCheckedChangeListener(new AlertUserRepeatTrips_CheckedChangeListener());
-
-		// Create alert dialog
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setView(rootView);
-		builder.setPositiveButton(getResources().getString(R.string.tqa_alert_OK),
-						new AlertUserRepeatTrips_OkListener());
-		final AlertDialog alert = builder.create();
-		alert.show();
+		dsaDialog.show();
 	}
 
     private final class AlertUserRepeatTrips_OkListener implements

@@ -23,6 +23,8 @@
     <string name="title_activity_rate_segment">Rate Segment</string>
     <string name="title_activity_rate_segment_detail">Rating Details</string>
     <string name="title_activity_user_info">Tell us about yourself&#8230;</string>
+    <string name="title_activity_dsa_dialog">DsaDialogActivity</string>
+    <string name="title_orcycle_instructions">Instructions</string>
     <string name="post_url">http://orcycle2.cecs.pdx.edu/post/</string>
     <string name="btn_lbl_start">Start Trip</string>
     <string name="btn_lbl_pause">Pause</string>
@@ -32,7 +34,7 @@
     <string name="btn_lbl_rate_segment_start">Rate segment&#8230;</string>
     <string name="btn_lbl_rate_segment_finish">Enter end of segment</string>
     <string name="chooser_image">Select Image</string>
-
+    <string name="fmi_query_user_profile_title">Tell us about yourself&#8230;</string>
     <string name="fmi_query_user_profile">If you are new to ORcycle, tell us about yourself.&#160;&#160;Please 
         answer at least the first 6 questions about your biking habits.</string>
     <string name="fmi_qup_dialog_ok">OK</string>
@@ -41,18 +43,23 @@
     <string name="fmi_no_gps_dialog_ok">GPS Settings&#8230;</string>
     <string name="fmi_no_gps_dialog_cancel">Cancel</string>
     <string name="fmi_no_gps_data">No GPS data acquired; nothing to submit.</string>
-	<string name="fmi_dtf_save_trip">Save Trip</string>
-	<string name="fmi_dtf_query_save">Do you want to save this trip?</string>
-	<string name="fmi_dtf_discard">Discard</string>
-	<string name="fmi_dtf_resume">Resume</string>
-	<string name="fmi_dtf_save">Save</string>
-	<string name="fmi_reset_duration">00:00:00</string>
-	<string name="fmi_reset_distance">0.0 miles</string>
-	<string name="fmi_reset_avg_speed">0.0 mph</string>
-	<string name="fmi_reset_calories">0.0 kcal</string>
-	<string name="fmi_reset_co2">0.0 lbs</string>
-	<string name="fmi_service_connected">Recording service connected&#8230;</string>
-									    
+    <string name="fmi_dtf_save_trip">Save Trip</string>
+    <string name="fmi_dtf_query_save">Do you want to save this trip?</string>
+    <string name="fmi_dtf_discard">Discard</string>
+    <string name="fmi_dtf_resume">Resume</string>
+    <string name="fmi_dtf_save">Save</string>
+    <string name="fmi_reset_duration">00:00:00</string>
+    <string name="fmi_reset_distance">0.0 miles</string>
+    <string name="fmi_reset_avg_speed">0.0 mph</string>
+    <string name="fmi_reset_calories">0.0 kcal</string>
+    <string name="fmi_reset_co2">0.0 lbs</string>
+    <string name="fmi_service_connected">Recording service connected&#8230;</string>
+    <string name="fmi_welcome_title">Welcome to ORcycle!</string>
+    <string name="fmi_welcome_continue">Continue</string>
+    <string name="fmi_welcome_instructions">Instructions</string>
+    <string name="fmi_welcome_message">This app will let you record your bicycle trips, 
+	display maps of your rides, and provide feedback regarding safety or infrastrcuture issues. 
+Your data and feedback are valuable and nesessary to plan and build better bicycle facilities in Oregon.</string>
     <string name="tqi_qsm_dialog_message">“You can now mark locations with safety issues&#8230;</string>
     <string name="tqi_qsm_dialog_ok">OK</string>
     <string name="tqi_qsm_dialog_later">Later</string>
@@ -62,7 +69,6 @@
     <string name="tqa_alert_repeated_trips">Data for this %s trip will be logged and uploaded.&#160;&#160;\
 If you repeat the same route there is no need to log it again.&#160;&#160;\
 Please use ORcycle to log new trip purposes, routes, or safety locations.</string>
-    
     <string name="ami_elapsed_time">Elapsed time</string>
     <string name="ami_initial_elapsed_time">00:00:00</string>
     <string name="ami_initial_miles">0.0 miles</string>
@@ -73,93 +79,79 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="ami_initial_calories">0.0 kcal</string>
     <string name="ami_co2">CO2 Offset</string>
     <string name="ami_initial_co2">0.0 lbs</string>
-    
     <string name="misc_generally_long_text_string">The quick brown fox jumps over the lazy dog</string>
     <string name="misc_longest_date_string">September 27, 2014 11:02 PM</string>
-    
     <string name="atm_trip_purpose">Trip Purpose:</string>
     <string name="atm_trip_info_long_string">Trip info: The quick brown fox jumps over the lazy dog</string>
     <string name="atm_crosshair_image_description">Map Crosshairs</string>
     <string name="atm_crosshair_distance_message">Cannot mark location! Target must be within 150 feet of bike path.</string>
-    
     <string name="note_note_asset">Note this asset</string>
-	<string name="note_water_fountain">Water fountain</string>
-	<string name="note_secret_passage">Secret passage</string>
-	<string name="note_public_restroom">Public restroom</string>
-	<string name="note_bike_shop">Bike shop</string>
-	<string name="note_bike_rack">Bike parking</string>
-	<string name="note_misc">Misc&#8230;</string>
-	<string name="note_pavement_issue">Pavement issue</string>
-	<string name="note_traffic_signal">Inadequate traffic signal</string>
-	<string name="note_enforcement">Enforcement issue</string>
-	<string name="note_needs_bike_rack">Needs bike parking</string>
-	<string name="note_bike_lane_issue">Bike lane issue</string>
-	<string name="note_note_issue">Note this issue</string>
-	
-	<string name="note_note_asset_details">Anything else we should map to help fellow cyclists? Share the details.</string>
-	<string name="note_water_fountain_details">Here\'s a spot to fill your water bottle&#8230; stay hydrated!</string>
-	<string name="note_secret_passage_details">Here\'s an access way under the tracks, through a park, onto a trail, or over a ravine. </string>
-	<string name="note_public_restroom_details">Here\'s a spot with public restroom facilities.</string>
-	<string name="note_bike_shop_details">Need a quick fix to get back in the saddle? Here\'s a bicycle shop to help. </string>
-	<string name="note_bike_rack_details">Here\'s a safe and secure place to park bicycles. Please only include racks or other objects intended for bikes.</string>
-	<string name="note_misc_details">Anything notable about this spot?</string>
-	<string name="note_pavement_issue_details">Here\'s a spot where the pavement needs to be repaired. This could be a pothole, rough pavement, excessive gravel in the road, a problematic sewer grate, etc.</string>
-	<string name="note_traffic_signal_details">Here\'s a signal that you can\'t activate with your bike.</string>
-	<string name="note_enforcement_details">The bike lane is always blocked here, cars disobey "no right on red"&#8230; or anything else where enforcement can help make cycling safer. </string>
-	<string name="note_needs_bike_rack_details">You wish you had a bike rack at this spot to securely park your bike.</string>
-	<string name="note_bike_lane_issue_details">The bike lane ends abruptly here or is too narrow to safely ride in.</string>
-	<string name="note_note_issue_details">Anywhere else in need of improvement:want a sharrow, sign, or a bike lane? Share the details.</string>
-
-	<string name="segment_rating_a">A Rating</string>
-	<string name="segment_rating_b">B Rating</string>
-	<string name="segment_rating_c">C Rating</string>
-	<string name="segment_rating_d">D Rating</string>
-	<string name="segment_rating_e">E Rating</string>
-	<string name="segment_rating_f">F Rating</string>
-					
-	<string name="segment_rating_details_a">A Rating Detailed</string>
-	<string name="segment_rating_details_b">B Rating Detailed</string>
-	<string name="segment_rating_details_c">C Rating Detailed</string>
-	<string name="segment_rating_details_d">D Rating Detailed</string>
-	<string name="segment_rating_details_e">E Rating Detailed</string>
-	<string name="segment_rating_details_f">F Rating Detailed</string>
-					
+    <string name="note_water_fountain">Water fountain</string>
+    <string name="note_secret_passage">Secret passage</string>
+    <string name="note_public_restroom">Public restroom</string>
+    <string name="note_bike_shop">Bike shop</string>
+    <string name="note_bike_rack">Bike parking</string>
+    <string name="note_misc">Misc&#8230;</string>
+    <string name="note_pavement_issue">Pavement issue</string>
+    <string name="note_traffic_signal">Inadequate traffic signal</string>
+    <string name="note_enforcement">Enforcement issue</string>
+    <string name="note_needs_bike_rack">Needs bike parking</string>
+    <string name="note_bike_lane_issue">Bike lane issue</string>
+    <string name="note_note_issue">Note this issue</string>
+    <string name="note_note_asset_details">Anything else we should map to help fellow cyclists? Share the details.</string>
+    <string name="note_water_fountain_details">Here\'s a spot to fill your water bottle&#8230; stay hydrated!</string>
+    <string name="note_secret_passage_details">Here\'s an access way under the tracks, through a park, onto a trail, or over a ravine. </string>
+    <string name="note_public_restroom_details">Here\'s a spot with public restroom facilities.</string>
+    <string name="note_bike_shop_details">Need a quick fix to get back in the saddle? Here\'s a bicycle shop to help. </string>
+    <string name="note_bike_rack_details">Here\'s a safe and secure place to park bicycles. Please only include racks or other objects intended for bikes.</string>
+    <string name="note_misc_details">Anything notable about this spot?</string>
+    <string name="note_pavement_issue_details">Here\'s a spot where the pavement needs to be repaired. This could be a pothole, rough pavement, excessive gravel in the road, a problematic sewer grate, etc.</string>
+    <string name="note_traffic_signal_details">Here\'s a signal that you can\'t activate with your bike.</string>
+    <string name="note_enforcement_details">The bike lane is always blocked here, cars disobey "no right on red"&#8230; or anything else where enforcement can help make cycling safer. </string>
+    <string name="note_needs_bike_rack_details">You wish you had a bike rack at this spot to securely park your bike.</string>
+    <string name="note_bike_lane_issue_details">The bike lane ends abruptly here or is too narrow to safely ride in.</string>
+    <string name="note_note_issue_details">Anywhere else in need of improvement:want a sharrow, sign, or a bike lane? Share the details.</string>
+    <string name="segment_rating_a">A Rating</string>
+    <string name="segment_rating_b">B Rating</string>
+    <string name="segment_rating_c">C Rating</string>
+    <string name="segment_rating_d">D Rating</string>
+    <string name="segment_rating_e">E Rating</string>
+    <string name="segment_rating_f">F Rating</string>
+    <string name="segment_rating_details_a">A Rating Detailed</string>
+    <string name="segment_rating_details_b">B Rating Detailed</string>
+    <string name="segment_rating_details_c">C Rating Detailed</string>
+    <string name="segment_rating_details_d">D Rating Detailed</string>
+    <string name="segment_rating_details_e">E Rating Detailed</string>
+    <string name="segment_rating_details_f">F Rating Detailed</string>
     <string name="atq_email_hint">name@domain</string>
     <string name="atq_requiredEntries">* = Required entries</string>
     <string name="atq_specific_questions">Specific Trip Related Questions</string>
-    
     <string name="snli_content_description_note_severity">Note Severity</string>
-
     <string name="anq_requiredEntries">* = Required entries</string>
-    
     <string name="ats_tell_us_about_yourself">Tell us about yourself&#8230;</string>
     <string name="ats_getting_started">Get started with ORCycle&#8230;</string>
     <string name="ats_provide_feedback">Provide feedback about the app&#8230;</string>
     <string name="ats_privacy_policy">ORcycle\'s Privacy Policy&#8230;</string>
-    
     <string name="auf_user_feedback">Comment here if you would like to provide feedback
         about ORcycle or desirable features:</string>
-        
     <string name="anmWaterFalls">Waterfalls</string>
     <string name="anmComment">Additional Details:</string>
     <string name="anmNoteImageContentDescription">Note Image</string>
-	<string name="anmSeverityOfProblem">Severity of the problem:</string>
-	<string name="anmSafetyIssue">Safety issues:</string>
-	
+    <string name="anmSeverityOfProblem">Severity of the problem:</string>
+    <string name="anmSafetyIssue">Safety issues:</string>
     <string name="atmComment">Additional Details:</string>
     <string name="tmaTripPurpose">What is the main trip purpose?</string>
     <string name="snliNoteSeverityExample">Major crash/accident</string>
-    	
     <string name="about_version">Version 1.00</string>
     <string name="about_version_code">vc:&#160;</string>
     <string name="about_copyright">&#169; 2014 ORcycle</string>
-    
+
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
     <!-- ********************************************************* -->
 
     <string name="q01_age">What is your age group?</string>
-   
+
     <string-array name="qa_01_age">
         <item></item>
         <item>Less than 18</item>
@@ -173,16 +165,16 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
 
     <string name="q02_email">E-Mail:</string>
     <string name="q03_gender">What is your gender?</string>
-   
+
     <string-array name="qa_03_gender">
         <item></item>
         <item>Female</item>
         <item>Male</item>
         <item>Other</item>
-        </string-array>
+    </string-array>
 
     <string name="q04_ethnicity">What is your ethnicity?</string>
-   
+
     <string-array name="qa_04_ethnicity">
         <item></item>
         <item>African American</item>
@@ -192,9 +184,9 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>White American</item>
         <item>Other</item>
     </string-array>
-    
+
     <string name="q05_occupation">What best describes your occupation or working status?</string>
-    
+
     <string-array name="qa_05_occupation">
         <item></item>
         <item>Employed</item>
@@ -203,9 +195,9 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Homemaker</item>
         <item>Other</item>
     </string-array>
-    
+
     <string name="q06_income">What is your approximate household income?</string>
-   
+
     <string-array name="qa_06_income">
         <item></item>
         <item>0 to $14,999</item>
@@ -216,10 +208,10 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>$75,000 to $99,999</item>
         <item>$100,000 to $149,999</item>
         <item>$150,000 or greater</item>
-        </string-array>
-    
+    </string-array>
+
     <string name="q07_hhWorkers">Number of people employed full-time in your household:</string>
-   
+
     <string-array name="qa_07_hhWorkers">
         <item></item>
         <item>0</item>
@@ -229,7 +221,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     </string-array>
 
     <string name="q08_hhVehicles">Vehicles available in your household:</string>
-   
+
     <string-array name="qa_08_hhVehicles">
         <item></item>
         <item>0 Vehicles</item>
@@ -237,8 +229,9 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>2 Vehicles</item>
         <item>3 or more Vehicles</item>
     </string-array>
-    
+
     <string name="q09_numBikes">How many bikes do you own?</string>
+
     <string-array name="qa_09_numBikes">
         <item></item>
         <item>None</item>
@@ -249,7 +242,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     </string-array>
 
     <string name="q10_bikeTypes">What type of bicycles do you own?\n(you can select more than one)</string>
-    
+
     <string-array name="qa_10_bikeTypes">
         <item>Commuter (with gears)</item>
         <item>Commuter (single speed)</item>
@@ -261,7 +254,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     </string-array>
 
     <string name="q14_cyclingFrequency">How often do you cycle?</string>
-    
+
     <string-array name="qa_14_cyclingFrequency">
         <item></item>
         <item>Almost every day</item>
@@ -269,9 +262,9 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Several times a month</item>
         <item>Several times a year</item>
     </string-array>
-    
+
     <string name="q15_cyclingWeather">Weather I cycle in:</string>
-    
+
     <string-array name="qa_15_cyclingWeather">
         <item></item>
         <item>In any kind of weather</item>
@@ -279,9 +272,9 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Usually with dry and warm weather</item>
         <item>Only with dry and warm weather</item>
     </string-array>
-    
+
     <string name="qa_16_riderAbility">How would you rate your overall skill and experience level regarding cycling?</string>
-    
+
     <string-array name="qa_16_riderAbility">
         <item></item>
         <item>Very high</item>
@@ -289,9 +282,10 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Average</item>
         <item>Low</item>
         <item>Very low</item>
-        </string-array>
-    
+    </string-array>
+
     <string name="q17_ridertype">I cycle mostly:</string>
+
     <string-array name="qa_17_ridertype">
         <item></item>
         <item>For almost all my trips</item>
@@ -300,13 +294,14 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>For shopping/errands/visiting friends</item>
         <item>Mainly to/from work but occasionally for exercise, shopping, etc.</item>
         <item>Other&#8230;</item>
-        </string-array>
+    </string-array>
 
     <!-- ********************************************************* -->
     <!-- *                     Trip Questions                    * -->
     <!-- ********************************************************* -->
 
     <string name="q19_TripFrequency">*How often do you ride this route?</string>
+
     <string-array name="qa_19_routeFrequency">
         <item></item>
         <item>Several times a week</item>
@@ -315,9 +310,10 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Once per year or less</item>
         <item>First time ever</item>
     </string-array>
-			
+
     <string name="q20_TripPurpose">*What is the main trip purpose?</string>
-	<string-array name="qa_20_tripPurpose">
+
+    <string-array name="qa_20_tripPurpose">
         <item></item>
         <item>Commute</item>
         <item>School</item>
@@ -327,10 +323,11 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Shopping/errands</item>
         <item>Access to transit or a vehicle</item>
         <item>Other&#8230;</item>
-        </string-array>
-			
+    </string-array>
+
     <string name="q21_routePreferences">I chose this route because&#8230;</string>
-	<string-array name="qa_21_routePreferences">
+
+    <string-array name="qa_21_routePreferences">
         <item>It is direct/fast</item>
         <item>It has good bike facilities</item>
         <item>It is enjoyable/has nice scenery</item>
@@ -343,58 +340,64 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>I do not know/have other route</item>
         <item>I found it on my phone/online</item>
         <item>Other&#8230;</item>
-        </string-array>
-			
+    </string-array>
+
     <string name="q22_routeComfort">In terms of comfort, this route is&#8230;</string>
-	<string-array name="qa_22_routeComfort">
+
+    <string-array name="qa_22_routeComfort">
         <item></item>
         <item>Very good (even for families/children)</item>
         <item>Good (for most riders)</item>
         <item>Average</item>
         <item>Bad (only for confident riders)</item>
         <item>Very bad (unacceptable for most riders)</item>
-        </string-array>
-			
+    </string-array>
+
     <string name="xx_q23_RouteSafety">How safe/comfortable was this ride?</string>
-	<string-array name="xx_qa_23_RouteSafety">
+
+    <string-array name="xx_qa_23_RouteSafety">
         <item></item>
         <item>Safe/comfortable for families, children or new riders</item>
         <item>Safe/comfortable for most riders</item>
         <item>Safe/comfortable for the average confident rider</item>
         <item>Only for highly experienced and/or confident riders (not necessarily comfortable)</item>
         <item>Unacceptable</item>
-        </string-array>
-			
+    </string-array>
+
     <string name="xx_q24_ridePassengers">Who accompanied you on this ride?</string>
-	<string-array name="xx_qa_24_ridePassengers">
+
+    <string-array name="xx_qa_24_ridePassengers">
         <item>Alone</item>
         <item>With a child under 2</item>
         <item>With a child between 2&#8211;10</item>
         <item>With a child/teen over 10</item>
         <item>With 1 adults</item>
         <item>With 2+ adults</item>
-        </string-array>
-			
+    </string-array>
+
     <string name="xx_q25_bikeAccessories">What bike accessories did you use?</string>
-	<string-array name="xx_qa_25_bikeAccessories">
+
+    <string-array name="xx_qa_25_bikeAccessories">
         <item>None</item>
         <item>Child seat(s)</item>
         <item>Electric-assist</item>
         <item>The cargo area</item>
         <item>Other&#8230;</item>
-        </string-array>
+    </string-array>
 
     <string name="xx_q26_rideConflict">On this route indicate what best fits your experience:</string>
-	<string-array name="xx_qa_26_rideConflict">
+
+    <string-array name="xx_qa_26_rideConflict">
         <item></item>
         <item>I have had a crash/accident</item>
         <item>I have had a near-crash/accident</item>
         <item>I never had a near-crash but I did not feel safe</item>
         <item>I did feel safe</item>
-        </string-array>
+    </string-array>
 
     <string name="q27_routeStressors">Along this route, you are concerned about conflicts/crashes with:</string>
-	<string-array name="qa_27_routeStressors">
+
+    <string-array name="qa_27_routeStressors">
         <item>NOT concerned</item>
         <item>Auto traffic</item>
         <item>Large commercial vehicles (trucks)</item>
@@ -403,35 +406,35 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Other cyclist</item>
         <item>Pedestrians</item>
         <item>Other&#8230;</item>
-        </string-array>
+    </string-array>
 
     <string name="tq_comment">Additional Details:</string>
-	
+
     <!-- ********************************************************* -->
     <!-- *                      Note Questions                   * -->
     <!-- ********************************************************* -->
 
-	<string name="nqaHeaderTitle">Specific Safety Related Questions</string>
+    <string name="nqaHeaderTitle">Specific Safety Related Questions</string>
+    <string name="nqaSeverityOfProblemTitle">* Severity of the problem?</string>
 
-	<string name="nqaSeverityOfProblemTitle">* Severity of the problem?</string>
-	<string-array name="nqaSeverityOfProblem">
+    <string-array name="nqaSeverityOfProblem">
         <item></item>
         <item>I have had a major crash/accident</item>
         <item>I have had a minor crash/accident</item>
         <item>I have had a near-crash/accident</item>
         <item>I do not feel safe</item>
         <item>I feel uncomfortable</item>
-        </string-array>
-
-	<string-array name="nmaSeverityOfProblem">
+    </string-array>
+    <string-array name="nmaSeverityOfProblem">
         <item>Major crash/accident</item>
         <item>Minor crash/accident</item>
         <item>Near-crash/accident</item>
         <item>I do not feel safe</item>
         <item>I feel uncomfortable</item>
-        </string-array>
+    </string-array>
 
-	<string name="nqaConflictTypeTitle">Type of conflict/Accident With</string>
+    <string name="nqaConflictTypeTitle">Type of conflict/Accident With</string>
+
     <string-array name="nqaConflictType">
         <item>Auto traffic</item>
         <item>Large commercial vehicles (trucks)</item>
@@ -441,9 +444,10 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Pedestrians</item>
         <item>Pole/barrier/infrastructure</item>
         <item>Other&#8230;</item>
-        </string-array>
-    			
-	<string name="nqaIssueTypeTitle"> * Safety issues?</string>
+    </string-array>
+
+    <string name="nqaIssueTypeTitle"> * Safety issues?</string>
+
     <string-array name="nqaIssueType">
         <item>Narrow Bike Lane</item>
         <item>No bike lane or separation</item>
@@ -457,6 +461,8 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Parked vehicles</item>
         <item>Pavement condition</item>
         <item>Other&#8230;</item>
-        </string-array>
-			
+    </string-array>
+
+    <string name="title_activity_web_view">WebViewActivity</string>
+
 </resources>
