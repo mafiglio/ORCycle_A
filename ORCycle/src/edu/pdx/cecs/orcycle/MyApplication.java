@@ -55,7 +55,6 @@ public class MyApplication extends android.app.Application {
 	private TripData trip;
 	private boolean checkedForUserProfile = false;
 	private boolean checkedForUserWelcome = false;
-	private final BellTimer bellTimer = new BellTimer();
 	private double lastTripStartTime = RESET_START_TIME;
 
 
@@ -88,9 +87,6 @@ public class MyApplication extends android.app.Application {
         myApp = this;
 
         ConnectRecordingService();
-
-		bellTimer.init(this.getBaseContext());
-
 		loadApplicationSettings();
     }
 
@@ -419,18 +415,12 @@ public class MyApplication extends android.app.Application {
 
 	public void startNotification(double startTime) {
 
-		if (startTime != RESET_START_TIME) {
-			bellTimer.cancel();
-			// Set up timer for bike bell
-			bellTimer.start(startTime);
-		}
 		// Add the notify bar and blinking light
 		MyNotifiers.setNotification(this);
 	}
 
 	public void clearNotifications() {
 		MyNotifiers.cancelAll(this.getBaseContext());
-		bellTimer.cancel();
 	}
 
 	// *********************************************************************************
