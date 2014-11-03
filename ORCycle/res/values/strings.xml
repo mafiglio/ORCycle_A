@@ -30,7 +30,7 @@
     <string name="btn_lbl_pause">Pause</string>
     <string name="btn_lbl_resume">Resume</string>
     <string name="btn_lbl_finish">Finish</string>
-    <string name="btn_lbl_mark_safety_problem">Mark Safety Problem</string>
+    <string name="btn_lbl_report">Report</string>
     <string name="btn_lbl_rate_segment_start">Rate segment&#8230;</string>
     <string name="btn_lbl_rate_segment_finish">Enter end of segment</string>
     <string name="chooser_image">Select Image</string>
@@ -145,7 +145,9 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="about_version">Version 1.00</string>
     <string name="about_version_code">vc:&#160;</string>
     <string name="about_copyright">&#169; 2014 ORcycle</string>
-
+    <string name="aumad_answer_required_questions" >Please answer all required questions.</string>
+    <string name="aumad_ok" >OK</string>
+    
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
     <!-- ********************************************************* -->
@@ -464,5 +466,125 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     </string-array>
 
     <string name="title_activity_web_view">WebViewActivity</string>
+    <string name="title_activity_report_type">Report Type</string>
+    
+    <!-- ********************************************************* -->
+    <!-- *                 activity_report_type                  * -->
+    <!-- ********************************************************* -->
 
+    <string name="btnTextArtReportCrash">Report crash or near miss</string>
+    <string name="btnTextArtReportSafetyIssue">Report safety issue</string>
+    <string name="btnTextArtCancel">Cancel</string>
+    <string name="textArtMessage">Please choose the type of report you want to file.</string>
+    <string name="title_activity_report_accidents">ReportAccidentsActivity</string>
+    <string name="title_activity_report_safety_issues">ReportSafetyIssuesActivity</string>
+    
+    <!-- ********************************************************* -->
+    <!-- *               activity_report_accidents               * -->
+    <!-- ********************************************************* -->
+
+    <string name="header_art_report_crash">Report crash or near miss</string>
+    <string name="header_art_report_location">Location of crash event</string>
+    
+    <string name="ara_q_severity"> * Severity of the crash event</string>
+    <string-array name="ara_a_severity">
+        <item></item>
+        <item>Major injuries (required hospitalization)</item>
+        <item>Severe (required a visit to ER)</item>
+        <item>Minor injury (no visit to ER)</item>
+        <item>Property damage only (bicycle damaged but no personal injuries)</item>
+        <item>Near-miss (no damage or injury)</item>
+    </string-array>
+
+    <string name="ara_q_object"> * Object (vehicle) related to the event</string>
+    <string-array name="ara_a_object">
+		<item>Small/medium car</item>
+		<item>Large car/Van/SUV</item>
+		<item>Pickup truck</item>
+		<item>Large commercial vehicles (trucks)</item>
+		<item>Public transportation (buses, light rail, streetcar)</item>
+		<item>Another bicycle</item>
+		<item>Pedestrian</item>
+		<item>Pole or fixed object</item>
+		<item>Cyclist fell (or almost fell)</item> 
+        <item>Other&#8230;</item>
+    </string-array>
+    
+    <string name="ara_q_actions"> * Actions related to the event</string>
+    <string-array name="ara_a_actions">
+		<item>Right-turning vehicle</item>
+		<item>Left-turning vehicle</item>
+		<item>Parking or backing up vehicle</item>
+		<item>Person exiting a vehicle</item>
+		<item>Cyclist changed lane or direction of travel</item>
+		<item>Vehicle changed lane or direction of travel</item>
+		<item>Cyclist did not stop</item>
+		<item>Driver did not stop</item>
+		<item>Cyclist lost control of the bike</item>
+        <item>Other&#8230;</item>
+    </string-array>
+    
+    <string name="ara_q_contributed"> * What contributed to the event</string>
+    <string-array name="ara_a_contributers">
+		<item>Debris or pavement quality</item>
+		<item>Poor lighting or visibility</item>
+		<item>Cyclist was outside bike lane or area</item>
+		<item>Vehicle entered bike lane or area</item>
+		<item>Cyclist did not obey stop sign or red light</item>
+		<item>Vehicle did not obey stop sign or red light</item>
+		<item>Cyclist did not yield</item>
+		<item>Vehicle did not yield</item>
+		<item>Cyclist was distracted</item>
+		<item>Careless driving or high vehicle speed</item>
+        <item>Other&#8230;</item>
+    </string-array>
+    
+    <string name="ara_q_location"> * Location of crash event?</string>
+    <string-array name="ara_a_location">
+        <item></item>
+        <item>Use current GPS location</item>
+        <item>Use custom location</item>
+    </string-array>
+    
+    <!-- ********************************************************* -->
+    <!-- *             activity_report_safety_issue              * -->
+    <!-- ********************************************************* -->
+
+    <string name="header_arsi_report_safety_issue">Report safety issue</string>
+
+    <string name="arsi_q_problem_type"> * Type of problem</string>
+    <string name="arsi_q_problem_type_title">Type of problem</string>
+    <string-array name="arsi_a_problem_type">
+        <item>Narrow Bike Lane</item>
+        <item>No bike lane or shoulder</item>
+        <item>High traffic Speed</item>
+        <item>High traffic volume</item>
+        <item>Right-turning vehicles</item>
+        <item>Left-turning vehicles</item>
+        <item>Short green time (traffic signal)</item>
+        <item>Long wait time (traffic signal)</item>
+        <item>No bike push button or detection (traffic signal)</item>
+        <item>Truck traffic</item>
+        <item>Bus traffic/stop</item>
+        <item>Parked vehicles</item>
+        <item>Pavement condition</item>
+        <item>Other&#8230;</item>
+    </string-array>
+    
+    <string name="arsi_q_urgency"> * Urgency of the problem\n(scale 1 to 5)?</string>
+    <string-array name="arsi_a_urgency">
+        <item></item>
+        <item>1. not urgent</item>
+        <item>2.</item>
+        <item>3. Somewhat urgent</item>
+        <item>4.</item>
+        <item>5. Urgent</item>
+    </string-array>
+    
+    <string name="arsi_q_location"> * Location of crash event?</string>
+    <string-array name="arsi_a_location">
+        <item></item>
+        <item>Use current GPS location</item>
+        <item>Use custom location</item>
+    </string-array>
 </resources>

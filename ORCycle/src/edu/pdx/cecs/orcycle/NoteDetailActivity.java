@@ -41,7 +41,6 @@ public class NoteDetailActivity extends Activity {
 	public static final int EXTRA_NOTE_SOURCE_UNDEFINED = -1;
 	public static final int EXTRA_NOTE_ID_UNDEFINED = -1;
 	public static final int EXTRA_NOTE_TYPE_UNDEFINED = -1;
-	public static final int EXTRA_NOTE_SEVERITY_UNDEFINED = -1;
 	public static final int EXTRA_NOTE_SOURCE_MAIN_INPUT = 0;
 	public static final int EXTRA_NOTE_SOURCE_TRIP_MAP = 1;
 
@@ -54,7 +53,6 @@ public class NoteDetailActivity extends Activity {
 	private static final int IMAGE_REQUEST = 1889;
 
 	long noteId;
-	int noteSeverity = EXTRA_NOTE_SEVERITY_UNDEFINED;
 	int noteSource;
 	private long tripId;
 	private int tripSource;
@@ -82,8 +80,6 @@ public class NoteDetailActivity extends Activity {
 		if (!((noteSource == EXTRA_NOTE_SOURCE_MAIN_INPUT) ||(noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP))) {
 			throw new IllegalArgumentException(MODULE_TAG + ": EXTRA_NOTE_SOURCE invalid argument.");
 		}
-
-		noteSeverity = myIntent.getIntExtra(EXTRA_NOTE_SEVERITY, EXTRA_NOTE_SEVERITY_UNDEFINED);
 
 		// Note: these extras are used for transitioning back to the TripMapActivity if done
 		if (EXTRA_TRIP_ID_UNDEFINED == (tripId = myIntent.getLongExtra(EXTRA_TRIP_ID, EXTRA_TRIP_ID_UNDEFINED))) {
@@ -265,7 +261,7 @@ public class NoteDetailActivity extends Activity {
 		if (null != latLng) {
 			note.updateNoteLatLng(latLng[0], latLng[1]);
 		}
-		note.updateNote(noteSeverity, fancyStartTime, noteDetailsToUpload, noteImage);
+		note.updateNote(fancyStartTime, noteDetailsToUpload, noteImage);
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 
 		if (note.noteStatus < NoteData.STATUS_SENT) {

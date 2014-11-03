@@ -37,4 +37,12 @@ public final class DbQuestions {
 	public static final int NOTE_SEVERITY    = 28; // severity
 	public static final int NOTE_CONFLICT    = 29; // conflictWith
 	public static final int NOTE_ISSUE       = 30; // issueType
+
+	public static final int ACCIDENT_SEVERITY = 28;
+	public static final int ACCIDENT_OBJECT   = 29;
+	public static final int ACCIDENT_ACTION   = 32;
+	public static final int ACCIDENT_CONTRIB  = 33;
+	public static final int SAFETY_ISSUE      = 30;
+	public static final int SAFETY_SEVERITY   = 31;
+
 }

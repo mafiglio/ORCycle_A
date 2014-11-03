@@ -40,6 +40,14 @@ public final class DbAnswers {
 	public static final int[] noteIssue    = { 164, 165, 166, 167, 168, 169,               // question_id = 30
 		                                    170, 171, 172, 173, 174, 175};
 
+	public static final int[] accidentSeverity = { 151, 152, 153, 154, 155};                        // question_id = 28
+	public static final int[] accidentObject   = { 156, 157, 158, 159, 160, 161, 162, 163, 177, 178};      // question_id = 29
+	public static final int[] accidentAction   = { 187, 188, 189, 190, 191, 192, 193, 194, 195, 207}; // question_id = 32
+	public static final int[] accidentContrib  = { 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206}; // question_id = 32
+	public static final int[] problemType     = { 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 179, 180}; // question_id = 30
+	public static final int[] problemSeverity   = { 181, 182, 183, 184, 185}; // question_id = 30
+
+
 	public static final int[] userDetailedAnswers = { 12, 58, 81}; // These are answers specified as other
 	public static final int[] tripDetailedAnswers = { 101, 114};   // These are answers specified as other
 	public static final int[] noteDetailedAnswers = { 163, 175};   // These are answers specified as other
@@ -55,6 +63,11 @@ public final class DbAnswers {
 	public static final int noteConflictOther = 163;
 	public static final int noteIssueOther = 175;
 	public static final int noteBikeAccessoriesOther = 176;
+
+	public static final int accidentObjectOther = 178;
+	public static final int accidentActionOther = 207;
+	public static final int accidentContribOther = 206;
+	public static final int problemTypeOther = 180;
 
 	public static final String PURPOSE_COMMUTE = "Commute";
 	public static final String PURPOSE_SCHOOL = "School";
@@ -97,6 +110,11 @@ public final class DbAnswers {
 		case 153: return R.drawable.note_severity_list_icon_orange;
 		case 154: return R.drawable.note_severity_list_icon_yellow;
 		case 155: return R.drawable.note_severity_list_icon_green;
+		case 181: return R.drawable.note_severity_list_icon_red;
+ 		case 182: return R.drawable.note_severity_list_icon_orange;
+		case 183: return R.drawable.note_severity_list_icon_orange;
+		case 184: return R.drawable.note_severity_list_icon_yellow;
+		case 185: return R.drawable.note_severity_list_icon_green;
 		default: return R.drawable.note_severity_list_icon_unknown;
 		}
 	}
@@ -109,6 +127,11 @@ public final class DbAnswers {
 		case 153: return R.drawable.note_severity_map_icon_orange;
 		case 154: return R.drawable.note_severity_map_icon_yellow;
 		case 155: return R.drawable.note_severity_map_icon_green;
+		case 181: return R.drawable.note_severity_map_icon_red;
+ 		case 182: return R.drawable.note_severity_map_icon_orange;
+		case 183: return R.drawable.note_severity_map_icon_orange;
+		case 184: return R.drawable.note_severity_map_icon_yellow;
+		case 185: return R.drawable.note_severity_map_icon_green;
 		default: return R.drawable.note_severity_map_icon_unknown;
 		}
 	}

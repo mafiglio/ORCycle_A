@@ -1,0 +1,222 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/NoteQuestionsScrollView"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent" >
+
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:background="#474334"
+		    android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_art_header_report_crash"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/psu_green"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            android:text="@string/header_art_report_crash"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/text_white" />
+
+		    	        <RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+		    		    
+			    <TextView
+	                android:id="@+id/tv_ara_severity_of_problem"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentRight="true"
+	                android:layout_alignParentTop="true"
+	                android:text="@string/ara_q_severity"
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="@color/psu_sienna" />
+
+	            <Spinner
+	                android:id="@+id/spn_ara_severity_of_problem"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignLeft="@id/tv_ara_severity_of_problem"
+	                android:layout_below="@id/tv_ara_severity_of_problem"
+	                android:layout_marginBottom="6dp"
+	                android:entries="@array/ara_a_severity"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+        	</RelativeLayout>
+            
+	        <RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+	            
+		        <TextView
+	                android:id="@+id/tv_ara_q_object"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentRight="true"
+	                android:layout_alignParentTop="true"
+	                android:text="@string/ara_q_object"
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="@color/psu_sienna" />
+	
+	            <edu.pdx.cecs.orcycle.MultiSelectionSpinner
+	                android:id="@+id/spn_ara_object"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignLeft="@id/tv_ara_q_object"
+	                android:layout_below="@id/tv_ara_q_object"
+	                android:layout_marginBottom="6dp"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />
+	            
+	       	</RelativeLayout>
+           	
+<RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+	            
+		        <TextView
+	                android:id="@+id/tv_ara_q_actions"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentRight="true"
+	                android:layout_alignParentTop="true"
+	                android:text="@string/ara_q_actions"
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="@color/psu_sienna" />
+	
+	            <edu.pdx.cecs.orcycle.MultiSelectionSpinner
+	                android:id="@+id/spn_ara_actions"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignLeft="@id/tv_ara_q_actions"
+	                android:layout_below="@id/tv_ara_q_actions"
+	                android:layout_marginBottom="6dp"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />
+	            
+	       	</RelativeLayout>   	        <RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+	            
+		        <TextView
+	                android:id="@+id/tv_ara_contributed"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentRight="true"
+	                android:layout_alignParentTop="true"
+	                android:text="@string/ara_q_contributed"
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="@color/psu_sienna" />
+	
+	            <edu.pdx.cecs.orcycle.MultiSelectionSpinner
+	                android:id="@+id/spn_ara_contributers"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignLeft="@id/tv_ara_contributed"
+	                android:layout_below="@id/tv_ara_contributed"
+	                android:layout_marginBottom="6dp"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+        	</RelativeLayout>
+	            
+	            
+			<RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+		    		    
+			    <TextView
+	                android:id="@+id/tv_ara_location"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentRight="true"
+	                android:layout_alignParentTop="true"
+	                android:text="@string/ara_q_location"
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="@color/psu_sienna" />
+
+	            <Spinner
+	                android:id="@+id/spn_ara_location"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignLeft="@id/tv_ara_location"
+	                android:layout_below="@id/tv_ara_location"
+	                android:layout_marginBottom="6dp"
+	                android:entries="@array/ara_a_location"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+        	</RelativeLayout>
+        	
+        	<RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+		        <TextView
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentRight="true"
+	                android:layout_alignParentTop="true"
+	                android:layout_marginTop="0dp"
+	                android:text="@string/anq_requiredEntries"
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="@color/psu_sienna" />
+        	</RelativeLayout>
+			
+		</LinearLayout>
+	    
+</ScrollView>
