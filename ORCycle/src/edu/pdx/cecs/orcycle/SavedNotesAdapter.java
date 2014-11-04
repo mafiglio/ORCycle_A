@@ -20,7 +20,8 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 	private final String[] from;
 	private final int[] to;
 	Cursor cursor;
-	private final String[] textNoteSeverities;
+	private final String[] accidentSeverities;
+	private final String[] problemSeverity;
 
 	public SavedNotesAdapter(Context context, int layout, Cursor c,
 			String[] from, int[] to, int flags) {
@@ -29,7 +30,8 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 		this.from = from;
 		this.to = to;
 		this.cursor = c;
-		this.textNoteSeverities = context.getResources().getStringArray(R.array.nmaSeverityOfProblem);
+		this.accidentSeverities = context.getResources().getStringArray(R.array.ara_a_severity);
+		this.problemSeverity = context.getResources().getStringArray(R.array.arsi_a_urgency);
 	}
 
 	@Override
@@ -76,11 +78,16 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 
 	private String getNoteSeverityText(int noteSeverity) {
 
-		int noteSeverityIndex = DbAnswers.findIndex(DbAnswers.noteSeverity, noteSeverity);
+		int index;
 
-		if (-1 != noteSeverityIndex) {
-			return textNoteSeverities[noteSeverityIndex];
+		if (-1 != (index = DbAnswers.findIndex(DbAnswers.accidentSeverity, noteSeverity))) {
+			return accidentSeverities[index + 1];
 		}
+
+		if (-1 != (index = DbAnswers.findIndex(DbAnswers.problemSeverity, noteSeverity))) {
+			return problemSeverity[index + 1];
+		}
+
 		return "Unknown";
 	}
 

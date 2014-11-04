@@ -105,16 +105,16 @@ public final class DbAnswers {
 	public static int getNoteSeverityImageResourceId(int noteSeverity) {
 
 		switch (noteSeverity) {
-		case 151: return R.drawable.note_severity_list_icon_red;
- 		case 152: return R.drawable.note_severity_list_icon_orange;
-		case 153: return R.drawable.note_severity_list_icon_orange;
-		case 154: return R.drawable.note_severity_list_icon_yellow;
-		case 155: return R.drawable.note_severity_list_icon_green;
-		case 181: return R.drawable.note_severity_list_icon_red;
- 		case 182: return R.drawable.note_severity_list_icon_orange;
-		case 183: return R.drawable.note_severity_list_icon_orange;
-		case 184: return R.drawable.note_severity_list_icon_yellow;
-		case 185: return R.drawable.note_severity_list_icon_green;
+		case 151: return R.drawable.warm_red_crash_small;
+ 		case 152: return R.drawable.warm_orange_crash_small;
+		case 153: return R.drawable.warm_yellow_crash_small;
+		case 154: return R.drawable.warm_green_crash_small;
+		case 155: return R.drawable.warm_blue_crash_small;
+		case 181: return R.drawable.noteassetmapglyph_high_blue;
+ 		case 182: return R.drawable.noteassetmapglyph_high_green;
+		case 183: return R.drawable.noteassetmapglyph_high_yellow;
+		case 184: return R.drawable.noteassetmapglyph_high_orange;
+		case 185: return R.drawable.noteassetmapglyph_high_red;
 		default: return R.drawable.note_severity_list_icon_unknown;
 		}
 	}
@@ -122,17 +122,17 @@ public final class DbAnswers {
 	public static int getNoteSeverityMapImageResourceId(int noteSeverity) {
 
 		switch (noteSeverity) {
-		case 151: return R.drawable.note_severity_map_icon_red;
- 		case 152: return R.drawable.note_severity_map_icon_orange;
-		case 153: return R.drawable.note_severity_map_icon_orange;
-		case 154: return R.drawable.note_severity_map_icon_yellow;
-		case 155: return R.drawable.note_severity_map_icon_green;
-		case 181: return R.drawable.note_severity_map_icon_red;
- 		case 182: return R.drawable.note_severity_map_icon_orange;
-		case 183: return R.drawable.note_severity_map_icon_orange;
-		case 184: return R.drawable.note_severity_map_icon_yellow;
-		case 185: return R.drawable.note_severity_map_icon_green;
-		default: return R.drawable.note_severity_map_icon_unknown;
+		case 151: return R.drawable.warm_red_crash_small;
+ 		case 152: return R.drawable.warm_orange_crash_small;
+		case 153: return R.drawable.warm_yellow_crash_small;
+		case 154: return R.drawable.warm_green_crash_small;
+		case 155: return R.drawable.warm_blue_crash_small;
+		case 181: return R.drawable.noteassetmapglyph_high_blue;
+ 		case 182: return R.drawable.noteassetmapglyph_high_green;
+		case 183: return R.drawable.noteassetmapglyph_high_yellow;
+		case 184: return R.drawable.noteassetmapglyph_high_orange;
+		case 185: return R.drawable.noteassetmapglyph_high_red;
+		default: return R.drawable.note_severity_list_icon_unknown;
 		}
 	}
 
