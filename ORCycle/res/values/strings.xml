@@ -12,14 +12,14 @@
     <string name="title_activity_main">ORcycle</string>
     <string name="title_activity_trip_purpose">Trip Purpose</string>
     <string name="title_activity_trip_questions">Trip Description</string>
-    <string name="title_activity_note_questions">Note Description</string>
+    <string name="title_activity_note_questions">Report Description</string>
     <string name="title_activity_trip_map">Trip Map</string>
     <string name="title_activity_saved_trips">Saved Trips</string>
     <string name="title_activity_user_feedback">User Feedback</string>
-    <string name="title_activity_note_type">Note Type</string>
-    <string name="title_activity_note_detail">Note Details</string>
-    <string name="title_activity_note_map">Note Map</string>
-    <string name="title_activity_saved_notes">Saved Notes</string>
+    <string name="title_activity_note_type">Report Type</string>
+    <string name="title_activity_note_detail">Report Details</string>
+    <string name="title_activity_note_map">Report Map</string>
+    <string name="title_activity_saved_notes">Saved Reports</string>
     <string name="title_activity_rate_segment">Rate Segment</string>
     <string name="title_activity_rate_segment_detail">Rating Details</string>
     <string name="title_activity_user_info">Tell us about yourself&#8230;</string>
@@ -88,7 +88,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="atm_trip_info_long_string">Trip info: The quick brown fox jumps over the lazy dog</string>
     <string name="atm_crosshair_image_description">Map Crosshairs</string>
     <string name="atm_crosshair_distance_message">Cannot mark location! Target must be within 150 feet of bike path.</string>
-    <string name="note_note_asset">Note this asset</string>
+    <string name="note_note_asset">Report this asset</string>
     <string name="note_water_fountain">Water fountain</string>
     <string name="note_secret_passage">Secret passage</string>
     <string name="note_public_restroom">Public restroom</string>
@@ -100,7 +100,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="note_enforcement">Enforcement issue</string>
     <string name="note_needs_bike_rack">Needs bike parking</string>
     <string name="note_bike_lane_issue">Bike lane issue</string>
-    <string name="note_note_issue">Note this issue</string>
+    <string name="note_note_issue">Report this issue</string>
     <string name="note_note_asset_details">Anything else we should map to help fellow cyclists? Share the details.</string>
     <string name="note_water_fountain_details">Here\'s a spot to fill your water bottle&#8230; stay hydrated!</string>
     <string name="note_secret_passage_details">Here\'s an access way under the tracks, through a park, onto a trail, or over a ravine. </string>
@@ -129,7 +129,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="atq_email_hint">name@domain</string>
     <string name="atq_requiredEntries">* = Required entries</string>
     <string name="atq_specific_questions">Specific Trip Related Questions</string>
-    <string name="snli_content_description_note_severity">Note Severity</string>
+    <string name="snli_content_description_note_severity">Report Severity</string>
     <string name="anq_requiredEntries">* = Required entries</string>
     <string name="ats_tell_us_about_yourself">Tell us about yourself&#8230;</string>
     <string name="ats_getting_started">Get started with ORCycle&#8230;</string>
@@ -139,7 +139,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         about ORcycle or desirable features:</string>
     <string name="anmWaterFalls">Waterfalls</string>
     <string name="anmComment">Additional Details:</string>
-    <string name="anmNoteImageContentDescription">Note Image</string>
+    <string name="anmNoteImageContentDescription">Report Image</string>
     <string name="anmSeverityOfProblem">Severity of the problem:</string>
     <string name="anmSafetyIssue">Safety issues:</string>
     <string name="atmComment">Additional Details:</string>

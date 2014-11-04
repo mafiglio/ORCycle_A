@@ -40,18 +40,31 @@
         </TextView>
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/ivNoteSeverity"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginBottom="0sp"
-        android:layout_marginLeft="0sp"
-        android:layout_marginRight="0sp"
-        android:layout_marginTop="0sp"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/snli_content_description_note_severity"
-        android:scaleType="center"
-        android:src="@drawable/note_severity_list_icon_red" />
+        android:layout_gravity="center"
+        android:layout_marginBottom="4sp"
+        android:layout_marginLeft="2sp"
+        android:layout_marginRight="4sp"
+        android:layout_marginTop="4sp"
+        android:layout_weight="6"
+        android:gravity="center"
+        android:orientation="horizontal" >
 
+	    <ImageView
+	        android:id="@+id/ivNoteSeverity"
+	        android:layout_width="0dip"
+	        android:layout_height="match_parent"
+	        android:layout_marginBottom="0sp"
+	        android:layout_marginLeft="0sp"
+	        android:layout_marginRight="0sp"
+	        android:layout_marginTop="0sp"
+	        android:layout_weight="1"
+	        android:adjustViewBounds="true"
+	        android:contentDescription="@string/snli_content_description_note_severity"
+	        android:scaleType="center"
+	        android:src="@drawable/note_severity_list_icon_red" />
+
+    </LinearLayout>
 </LinearLayout>
