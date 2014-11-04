@@ -1,14 +1,11 @@
 package edu.pdx.cecs.orcycle;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -204,33 +201,12 @@ public class ReportAccidentsActivity extends Activity {
 
 	private boolean setNoteLocation() {
 		Location location;
-		if (null != (location = getLastKnownLocation())) {
+		if (null != (location = MyApplication.getInstance().getLastKnownLocation())) {
 			NoteData note = NoteData.fetchNote(this, noteId);
 			note.setLocation(location);
 			return true;
 		}
 		return false;
-	}
-
-	public Location getLastKnownLocation() {
-
-		LocationManager lm = null;
-		List<String> providers = null;
-		Location location = null;
-
-		if (null != (lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE))) {
-			if (null != (providers = lm.getProviders(true))) {
-				/* Loop over the array backwards, and if you get a location, then break out the loop*/
-				for (int i = providers.size() - 1;  i >= 0; --i) {
-					if (null != (location = lm.getLastKnownLocation(providers.get(i)))) {
-						location.setLatitude(location.getLatitude() * 1e6);
-						location.setLongitude(location.getLongitude() * 1e6);
-						break;
-					}
-				}
-			}
-		}
-		return location;
 	}
 
 	private boolean useCustomLocation() {
