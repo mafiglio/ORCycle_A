@@ -25,6 +25,9 @@
     <string name="title_activity_user_info">Tell us about yourself&#8230;</string>
     <string name="title_activity_dsa_dialog">DsaDialogActivity</string>
     <string name="title_orcycle_instructions">Instructions</string>
+    <string name="title_activity_report_accidents">ORcycle</string>
+    <string name="title_activity_report_safety_issues">ORcycle</string>
+    
     <string name="post_url">http://orcycle2.cecs.pdx.edu/post/</string>
     <string name="btn_lbl_start">Start Trip</string>
     <string name="btn_lbl_pause">Pause</string>
@@ -476,8 +479,6 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="btnTextArtReportSafetyIssue">Report safety issue</string>
     <string name="btnTextArtCancel">Cancel</string>
     <string name="textArtMessage">Please choose the type of report you want to file.</string>
-    <string name="title_activity_report_accidents">ReportAccidentsActivity</string>
-    <string name="title_activity_report_safety_issues">ReportSafetyIssuesActivity</string>
 
     <!-- ********************************************************* -->
     <!-- *               activity_report_accidents               * -->
