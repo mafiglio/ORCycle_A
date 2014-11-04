@@ -61,7 +61,7 @@
     <string name="fmi_welcome_continue">Continue</string>
     <string name="fmi_welcome_instructions">Instructions</string>
     <string name="fmi_welcome_message">This app will let you record your bicycle trips, 
-	display maps of your rides, and provide feedback regarding safety or infrastrcuture issues. 
+	display maps of your rides, and provide feedback regarding crash, safety, or infrastrcuture issues. 
 Your data and feedback are valuable and nesessary to plan and build better bicycle facilities in Oregon.</string>
     <string name="tqi_qsm_dialog_message">“You can now mark locations with safety issues&#8230;</string>
     <string name="tqi_qsm_dialog_ok">OK</string>
@@ -70,7 +70,7 @@ Your data and feedback are valuable and nesessary to plan and build better bicyc
     <string name="tqa_alert_answer_required_questions">Please answer required questions</string>
     <string name="tqa_alert_OK">OK</string>
     <string name="tqa_alert_repeated_trips">Data for this %s trip will be logged and uploaded.&#160;&#160;\
-If you repeat the same route there is no need to log it again.&#160;&#160;\
+<b>If you repeat the same route there is no need to log it again</b>.&#160;&#160;\
 Please use ORcycle to log new trip purposes, routes, or safety locations.</string>
     <string name="ami_elapsed_time">Elapsed time</string>
     <string name="ami_initial_elapsed_time">00:00:00</string>
@@ -500,11 +500,11 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
 
     <string-array name="ara_a_severity_2">
         <item></item>
-        <item>Major injuries</item>
-        <item>Severe</item>
-        <item>Minor injury</item>
-        <item>Property damaged</item>
-        <item>Near-miss</item>
+        <item>Crash - Major injuries</item>
+        <item>Crash - Severe</item>
+        <item>Crash - Minor injury</item>
+        <item>Crash - Property damaged</item>
+        <item>Crash - Near-miss</item>
     </string-array>
 
     <string name="ara_q_object"> * Object (vehicle) related to the event</string>
@@ -600,11 +600,11 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
 
     <string-array name="arsi_a_urgency_2">
         <item></item>
-        <item>Not urgent</item>
-        <item>Somewhat urgent</item>
-        <item>Somewhat urgent</item>
-        <item>Somewhat urgent</item>
-        <item>Urgent</item>
+        <item>Safety Issue (urgency 1)</item>
+        <item>Safety Issue (urgency 2)</item>
+        <item>Safety Issue (urgency 3)</item>
+        <item>Safety Issue (urgency 4)t</item>
+        <item>Safety Issue (urgency 5)</item>
     </string-array>
 
     <string name="arsi_q_location"> * Location of crash event?</string>
