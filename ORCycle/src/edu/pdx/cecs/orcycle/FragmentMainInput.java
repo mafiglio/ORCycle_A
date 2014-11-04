@@ -647,9 +647,9 @@ public class FragmentMainInput extends Fragment
 				if (!myApp.getStatus().isProviderEnabled()) {
 					dialogNoGps();
 				}
-				else if (currentLocation == null) {
-					alertUserNoGPSData();
-				}
+				//else if (currentLocation == null) {
+				//	alertUserNoGPSData();
+				//}
 				else {
 					int state = recordingService.getState();
 					long tripId;
@@ -664,8 +664,7 @@ public class FragmentMainInput extends Fragment
 					}
 					NoteData note = NoteData.createNote(getActivity(), tripId);
 					note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
-					note.setLocation(currentLocation);
-					//transitionToNoteQuestionsActivity(note, tripId);
+					// note.setLocation(currentLocation);
 					transitionToReportTypeActivity(note, tripId);
 				}
 			}

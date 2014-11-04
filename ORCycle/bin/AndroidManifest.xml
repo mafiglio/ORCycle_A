@@ -115,6 +115,10 @@
             android:name="edu.pdx.cecs.orcycle.ReportSafetyIssuesActivity"
             android:label="@string/title_activity_report_safety_issues" >
         </activity>
+        <activity
+            android:name="edu.pdx.cecs.orcycle.CustomLocationActivity"
+            android:label="@string/title_activity_custom_location" >
+        </activity>
     </application>
 
 </manifest>

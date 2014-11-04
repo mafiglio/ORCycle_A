@@ -1,8 +1,14 @@
 package edu.pdx.cecs.orcycle;
 
+import java.util.List;
+
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -41,12 +47,15 @@ public class ReportAccidentsActivity extends Activity {
 	private static final int PREF_ACCIDENT_OBJECT = 2;
 	private static final int PREF_ACCIDENT_ACTIONS = 3;
 	private static final int PREF_ACCIDENT_CONTRIBUTERS = 4;
+	private static final int PREF_LOCATION = 5;
 
 	private Spinner spnSeverity;
 	private MultiSelectionSpinner spnAccidentObject;
 	private MultiSelectionSpinner spnAccidentActions;
 	private MultiSelectionSpinner spnAccidentContributers;
 	private Spinner spnLocation;
+	private static final int USE_GPS_LOCATION_POS = 1;
+	private static final int USE_CUSTOM_LOCATION_POS = 2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -164,13 +173,7 @@ public class ReportAccidentsActivity extends Activity {
 
 			case R.id.raa_menu_item_save_answers:
 
-				if (MandatoryQuestionsAnswered()) {
-					submitAnswers();
-					transitionToNoteDetailActivity();
-				}
-				else {
-					AlertUserMandatoryAnswers();
-				}
+				finishReport();
 				return true;
 			}
 		}
@@ -178,6 +181,83 @@ public class ReportAccidentsActivity extends Activity {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void finishReport() {
+
+		if (MandatoryQuestionsAnswered()) {
+			submitAnswers();
+			if (useCustomLocation()) {
+				transitionToCustomLocationActivity();
+			}
+			else if (setNoteLocation()) {
+				transitionToNoteDetailActivity();
+			}
+			else {
+				dialogNoGPS();
+			}
+		}
+		else {
+			AlertUserMandatoryAnswers();
+		}
+	}
+
+	private boolean setNoteLocation() {
+		Location location;
+		if (null != (location = getLastKnownLocation())) {
+			NoteData note = NoteData.fetchNote(this, noteId);
+			note.setLocation(location);
+			return true;
+		}
+		return false;
+	}
+
+	public Location getLastKnownLocation() {
+
+		LocationManager lm = null;
+		List<String> providers = null;
+		Location location = null;
+
+		if (null != (lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE))) {
+			if (null != (providers = lm.getProviders(true))) {
+				/* Loop over the array backwards, and if you get a location, then break out the loop*/
+				for (int i = providers.size() - 1;  i >= 0; --i) {
+					if (null != (location = lm.getLastKnownLocation(providers.get(i)))) {
+						location.setLatitude(location.getLatitude() * 1e6);
+						location.setLongitude(location.getLongitude() * 1e6);
+						break;
+					}
+				}
+			}
+		}
+		return location;
+	}
+
+	private boolean useCustomLocation() {
+		return spnLocation.getSelectedItemPosition() == USE_CUSTOM_LOCATION_POS;
+	}
+
+	private boolean useGPSLocation() {
+		return spnLocation.getSelectedItemPosition() == USE_GPS_LOCATION_POS;
+	}
+
+	/**
+	 * Build dialog telling user that the GPS is not available
+	 */
+	private void dialogNoGPS() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(getResources().getString(R.string.ara_no_gps));
+		builder.setCancelable(false);
+		builder.setPositiveButton(getResources().getString(R.string.ara_ok),
+				new DialogNoGPS_OkListener());
+		final AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	private final class DialogNoGPS_OkListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			dialog.cancel();
+		}
 	}
 
 	private boolean MandatoryQuestionsAnswered() {
@@ -219,6 +299,7 @@ public class ReportAccidentsActivity extends Activity {
 			prefs.save(spnAccidentObject,  PREF_ACCIDENT_OBJECT);
 			prefs.save(spnAccidentActions, PREF_ACCIDENT_ACTIONS);
 			prefs.save(spnAccidentContributers, PREF_ACCIDENT_CONTRIBUTERS);
+			prefs.save(spnLocation, PREF_LOCATION);
 			prefs.commit();
 		}
 		catch(Exception ex) {
@@ -238,6 +319,7 @@ public class ReportAccidentsActivity extends Activity {
 			prefs.recall(spnAccidentObject, PREF_ACCIDENT_OBJECT);
 			prefs.recall(spnAccidentActions, PREF_ACCIDENT_ACTIONS);
 			prefs.recall(spnAccidentContributers, PREF_ACCIDENT_CONTRIBUTERS);
+			prefs.recall(spnLocation, PREF_LOCATION);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -345,6 +427,24 @@ public class ReportAccidentsActivity extends Activity {
 
 		// Create intent to go to the NoteDetailActivity
 		Intent intent = new Intent(this, NoteDetailActivity.class);
+		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_ID, noteId);
+		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_SOURCE, noteSource);
+
+		// the NoteType activity needs these when the back button
+		// is pressed and we have to restart this activity
+		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_SOURCE, tripSource);
+
+		// Exit this activity
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		finish();
+	}
+
+	private void transitionToCustomLocationActivity() {
+
+		// Create intent to go to the NoteDetailActivity
+		Intent intent = new Intent(this, CustomLocationActivity.class);
 		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_ID, noteId);
 		intent.putExtra(NoteDetailActivity.EXTRA_NOTE_SOURCE, noteSource);
 
