@@ -187,7 +187,6 @@
 			            android:id="@+id/tvTmTripFrequency"
 			            android:layout_width="match_parent"
 			            android:layout_height="wrap_content"
-			            android:layout_alignLeft="@id/tvNmSeverityOfProblem"
 			            android:layout_below="@id/tvTmqTripFrequency"
 			            android:layout_marginTop="12dp"
 			            android:text="@string/misc_generally_long_text_string"

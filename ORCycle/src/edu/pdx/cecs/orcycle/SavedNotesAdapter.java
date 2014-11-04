@@ -30,8 +30,8 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 		this.from = from;
 		this.to = to;
 		this.cursor = c;
-		this.accidentSeverities = context.getResources().getStringArray(R.array.ara_a_severity);
-		this.problemSeverity = context.getResources().getStringArray(R.array.arsi_a_urgency);
+		this.accidentSeverities = context.getResources().getStringArray(R.array.ara_a_severity_2);
+		this.problemSeverity = context.getResources().getStringArray(R.array.arsi_a_urgency_2);
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class SavedNotesAdapter extends SimpleCursorAdapter {
 			return accidentSeverities[index + 1];
 		}
 
-		if (-1 != (index = DbAnswers.findIndex(DbAnswers.problemSeverity, noteSeverity))) {
+		if (-1 != (index = DbAnswers.findIndex(DbAnswers.safetyUrgency, noteSeverity))) {
 			return problemSeverity[index + 1];
 		}
 

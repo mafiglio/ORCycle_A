@@ -47,7 +47,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 	private static final int PREF_URGENCY = 2;
 	private static final int PREF_LOCATION = 3;
 
-	private MultiSelectionSpinner spnProblems;
+	private MultiSelectionSpinner spnSafetyIssues;
 	private Spinner spnUrgency;
 	private Spinner spnLocation;
 	private static final int USE_GPS_LOCATION_POS = 1;
@@ -61,10 +61,10 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 			loadVars(savedInstanceState);
 
-			spnProblems = (MultiSelectionSpinner) findViewById(R.id.spn_arsi_problem);
-			spnProblems.setItems(getResources().getStringArray(R.array.arsi_a_problem_type));
-			spnProblems.setTitle(getResources().getString(R.string.arsi_q_problem_type_title));
-			spnProblems.setOtherIndex(DbAnswers.findIndex(DbAnswers.problemType, DbAnswers.problemTypeOther));
+			spnSafetyIssues = (MultiSelectionSpinner) findViewById(R.id.spn_arsi_problem);
+			spnSafetyIssues.setItems(getResources().getStringArray(R.array.arsi_a_safety_issues));
+			spnSafetyIssues.setTitle(getResources().getString(R.string.arsi_q_problem_type_title));
+			spnSafetyIssues.setOtherIndex(DbAnswers.findIndex(DbAnswers.safetyIssue, DbAnswers.safetyUrgencyOther));
 
 			spnUrgency = (Spinner) findViewById(R.id.spn_arsi_urgency);
 			spnLocation = (Spinner) findViewById(R.id.spn_arsi_location);
@@ -246,7 +246,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 	private boolean MandatoryQuestionsAnswered() {
 
-		return ((spnProblems.getSelectedIndicies().size() > 0) &&
+		return ((spnSafetyIssues.getSelectedIndicies().size() > 0) &&
 				(spnUrgency.getSelectedItemPosition() > 0) &&
 				(spnLocation.getSelectedItemPosition() > 0));
 	}
@@ -277,7 +277,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 		try {
 			SpinnerPreferences prefs = new SpinnerPreferences(getSharedPreferences(PREFS_SAFETY_ISSUE_QUESTIONS, Context.MODE_PRIVATE));
-			prefs.save(spnProblems,  PREF_PROBLEMS);
+			prefs.save(spnSafetyIssues,  PREF_PROBLEMS);
 			prefs.save(spnUrgency,  PREF_URGENCY);
 			prefs.save(spnLocation, PREF_LOCATION);
 			prefs.commit();
@@ -295,7 +295,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 		try {
 			SpinnerPreferences prefs = new SpinnerPreferences(getSharedPreferences(PREFS_SAFETY_ISSUE_QUESTIONS, Context.MODE_PRIVATE) );
 
-			prefs.recall(spnProblems, PREF_PROBLEMS);
+			prefs.recall(spnSafetyIssues, PREF_PROBLEMS);
 			prefs.recall(spnUrgency, PREF_URGENCY);
 			prefs.recall(spnLocation, PREF_LOCATION);
 		}
@@ -324,13 +324,13 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 		// Enter the user selections into the local database
 		try {
-			spAdapter.put(spnProblems,  DbQuestions.NOTE_CONFLICT,
-							   DbAnswers.problemType, DbAnswers.problemTypeOther);
+			spAdapter.put(spnSafetyIssues,  DbQuestions.SAFETY_ISSUE,
+							   DbAnswers.safetyIssue, DbAnswers.safetyUrgencyOther);
 
-			spAdapter.put(spnUrgency , DbQuestions.NOTE_SEVERITY,
-					   DbAnswers.problemSeverity);
+			spAdapter.put(spnUrgency , DbQuestions.SAFETY_URGENCY,
+					   DbAnswers.safetyUrgency);
 
-			setSeverity(spnUrgency, DbAnswers.problemSeverity);
+			setSeverity(spnUrgency, DbAnswers.safetyUrgency);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());

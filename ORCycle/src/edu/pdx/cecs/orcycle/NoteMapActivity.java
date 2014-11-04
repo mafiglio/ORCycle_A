@@ -39,8 +39,8 @@ public class NoteMapActivity extends Activity {
 	private View questionsView;
 	private boolean noteHasImage;
 	private NoteMapView currentView = NoteMapView.map;
-	// Views
-
+	private String[] accidentSeverities;
+	private String[] problemSeverity;
 
 	// *********************************************************************************
 	// *                              Fragment Handlers
@@ -54,37 +54,57 @@ public class NoteMapActivity extends Activity {
 			setContentView(R.layout.activity_note_map);
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+			accidentSeverities = getResources().getStringArray(R.array.ara_a_severity_2);
+			problemSeverity = getResources().getStringArray(R.array.arsi_a_urgency_2);
+
 			imageView = (ImageView) findViewById(R.id.imageView);
 			imageView.setVisibility(View.INVISIBLE);
 
-			questionsView = findViewById(R.id.noteQuestionsRootView);
-			questionsView.setVisibility(View.INVISIBLE);
+			View accidentView = findViewById(R.id.report_accident_root_view);
+			accidentView.setVisibility(View.INVISIBLE);
+
+			View SafetyIssueView = findViewById(R.id.report_safety_issue_root_view);
+			SafetyIssueView.setVisibility(View.INVISIBLE);
 
 			// Set zoom controls
 			map = ((MapFragment) getFragmentManager().findFragmentById(
 					R.id.noteMap)).getMap();
 
 			Bundle cmds = getIntent().getExtras();
-			long noteid = cmds.getLong(EXTRA_NOTE_ID);
+			long noteId = cmds.getLong(EXTRA_NOTE_ID);
 
-			NoteData note = NoteData.fetchNote(this, noteid);
+			NoteData note = NoteData.fetchNote(this, noteId);
+
+			if (-1 != DbAnswers.findIndex(DbAnswers.accidentSeverity, note.noteSeverity)) {
+				questionsView = accidentView;
+			}
+			else {
+				questionsView = SafetyIssueView;
+			}
+
 
 			// Show note details
 			TextView tvHeaderSeverity = (TextView) findViewById(R.id.tvHeaderSeverity);
 			TextView tvHeaderFancyStart = (TextView) findViewById(R.id.tvHeaderFancyStart);
 			TextView tvNmComment = (TextView) findViewById(R.id.tvNmComment);
 
-			tvHeaderSeverity.setText(DbAnswers.getAnswerText(this, R.array.nmaSeverityOfProblem, DbAnswers.noteSeverity, note.noteSeverity));
+			tvHeaderSeverity.setText(getNoteSeverityText(note.noteSeverity));
 			tvHeaderFancyStart.setText(note.notefancystart);
 			tvNmComment.setText(note.notedetails);
 
-			TextView tvNmSeverityOfProblem = (TextView) findViewById(R.id.tvNmSeverityOfProblem);
-			TextView tvNmConflictType = (TextView) findViewById(R.id.tvNmConflictType);
-			TextView tvNmIssueType = (TextView) findViewById(R.id.tvNmIssueType);
+			TextView tvAccidentSeverity = (TextView) findViewById(R.id.tv_anm_a_severity_of_problem);
+			TextView tvAccidentObject = (TextView) findViewById(R.id.tv_anm_a_object);
+			TextView tvAccidentActions = (TextView) findViewById(R.id.tv_anm_a_actions);
+			TextView tvAccidentContrib = (TextView) findViewById(R.id.tv_anm_a_contrib);
+			TextView tvSafetyIssue = (TextView) findViewById(R.id.tv_anm_a_safety_issue);
+			TextView tvSafetyUrgency = (TextView) findViewById(R.id.tv_anm_a_urgency);
 
-			tvNmSeverityOfProblem.setText("");
-			tvNmConflictType.setText("");
-			tvNmIssueType.setText("");
+			tvAccidentSeverity.setText("");
+			tvAccidentObject.setText("");
+			tvAccidentActions.setText("");
+			tvAccidentContrib.setText("");
+			tvSafetyIssue.setText("");
+			tvSafetyUrgency.setText("");
 			// Center & zoom the map
 			LatLng center = new LatLng(note.latitude * 1E-6, note.longitude * 1E-6);
 
@@ -270,6 +290,21 @@ public class NoteMapActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	private String getNoteSeverityText(int noteSeverity) {
+
+		int index;
+
+		if (-1 != (index = DbAnswers.findIndex(DbAnswers.accidentSeverity, noteSeverity))) {
+			return accidentSeverities[index + 1];
+		}
+
+		if (-1 != (index = DbAnswers.findIndex(DbAnswers.safetyUrgency, noteSeverity))) {
+			return problemSeverity[index + 1];
+		}
+
+		return "Unknown";
+	}
+
 	// *********************************************************************************
 	// *                             Transition Functions
 	// *********************************************************************************
@@ -301,9 +336,12 @@ public class NoteMapActivity extends Activity {
 			int answerCol = answers.getColumnIndex(DbAdapter.K_NOTE_ANSWER_ANSWER_ID);
 			int otherCol = answers.getColumnIndex(DbAdapter.K_NOTE_ANSWER_OTHER_TEXT);
 
-			StringBuilder sbNoteSeverity = new StringBuilder();
-			StringBuilder sbNoteConflict = new StringBuilder();
-			StringBuilder sbNoteIssue = new StringBuilder();
+			StringBuilder sbAccidentSeverity = new StringBuilder();
+			StringBuilder sbAccidentObject = new StringBuilder();
+			StringBuilder sbAccidentAction = new StringBuilder();
+			StringBuilder sbAccidentContrib = new StringBuilder();
+			StringBuilder sbSafetyIssue = new StringBuilder();
+			StringBuilder sbSafetySeverity = new StringBuilder();
 
 			int questionId;
 			int answerId;
@@ -321,16 +359,28 @@ public class NoteMapActivity extends Activity {
 				try {
 					switch(questionId) {
 
-					case DbQuestions.NOTE_SEVERITY:
-						append(sbNoteSeverity, R.array.nqaSeverityOfProblem, DbAnswers.noteSeverity, answerId);
+					case DbQuestions.ACCIDENT_SEVERITY:
+						append(sbAccidentSeverity, R.array.ara_a_severity, DbAnswers.accidentSeverity, answerId);
 						break;
 
-					case DbQuestions.NOTE_CONFLICT:
-						append(sbNoteConflict, R.array.nqaConflictType, DbAnswers.noteConflict, answerId, otherText);
+					case DbQuestions.ACCIDENT_OBJECT:
+						append(sbAccidentObject, R.array.ara_a_object, DbAnswers.accidentObject, answerId, otherText);
 						break;
 
-					case DbQuestions.NOTE_ISSUE:
-						append(sbNoteIssue, R.array.nqaIssueType, DbAnswers.noteIssue, answerId, otherText);
+					case DbQuestions.ACCIDENT_ACTION:
+						append(sbAccidentAction, R.array.ara_a_actions, DbAnswers.accidentAction, answerId, otherText);
+						break;
+
+					case DbQuestions.ACCIDENT_CONTRIB:
+						append(sbAccidentContrib, R.array.ara_a_contributers, DbAnswers.accidentContrib, answerId, otherText);
+						break;
+
+					case DbQuestions.SAFETY_ISSUE:
+						append(sbSafetyIssue, R.array.arsi_a_safety_issues, DbAnswers.safetyIssue, answerId, otherText);
+						break;
+
+					case DbQuestions.SAFETY_URGENCY:
+						append(sbSafetySeverity, R.array.arsi_a_urgency, DbAnswers.safetyUrgency, answerId);
 						break;
 					}
 				}
@@ -343,13 +393,19 @@ public class NoteMapActivity extends Activity {
 			answers.close();
 
 			// Show note details
-			TextView tvNmSeverityOfProblem = (TextView) findViewById(R.id.tvNmSeverityOfProblem);
-			TextView tvNmConflictType = (TextView) findViewById(R.id.tvNmConflictType);
-			TextView tvNmIssueType = (TextView) findViewById(R.id.tvNmIssueType);
+			TextView tvAccidentSeverity = (TextView) findViewById(R.id.tv_anm_a_severity_of_problem);
+			TextView tvAccidentobject = (TextView) findViewById(R.id.tv_anm_a_object);
+			TextView tvAccidentActions = (TextView) findViewById(R.id.tv_anm_a_actions);
+			TextView tvAccidentContrib = (TextView) findViewById(R.id.tv_anm_a_contrib);
+			TextView tvSafetyIssue = (TextView) findViewById(R.id.tv_anm_a_safety_issue);
+			TextView tvSafetyUrgency = (TextView) findViewById(R.id.tv_anm_a_urgency);
 
-			tvNmSeverityOfProblem.setText(sbNoteSeverity.toString());
-			tvNmConflictType.setText(sbNoteConflict.toString());
-			tvNmIssueType.setText(sbNoteIssue.toString());
+			tvAccidentSeverity.setText(sbAccidentSeverity.toString());
+			tvAccidentobject.setText(sbAccidentObject.toString());
+			tvAccidentActions.setText(sbAccidentAction.toString());
+			tvAccidentContrib.setText(sbAccidentContrib.toString());
+			tvSafetyIssue.setText(sbSafetyIssue.toString());
+			tvSafetyUrgency.setText(sbSafetySeverity.toString());
 
 		}
 		catch(Exception ex) {

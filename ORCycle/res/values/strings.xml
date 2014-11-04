@@ -497,6 +497,15 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Near-miss (no damage or injury)</item>
     </string-array>
 
+    <string-array name="ara_a_severity_2">
+        <item></item>
+        <item>Major injuries</item>
+        <item>Severe</item>
+        <item>Minor injury</item>
+        <item>Property damaged</item>
+        <item>Near-miss</item>
+    </string-array>
+
     <string name="ara_q_object"> * Object (vehicle) related to the event</string>
 
     <string-array name="ara_a_object">
@@ -560,7 +569,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="arsi_q_problem_type_title">Type of problem</string>
     <string name="ara_no_gps">Your phone\'s GPS is disabled. ORCycle needs GPS to determine your location.\n\nGo to Settings to enable your GPS.</string>
     
-    <string-array name="arsi_a_problem_type">
+    <string-array name="arsi_a_safety_issues">
         <item>Narrow Bike Lane</item>
         <item>No bike lane or shoulder</item>
         <item>High traffic Speed</item>
@@ -581,11 +590,20 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
 
     <string-array name="arsi_a_urgency">
         <item></item>
-        <item>1. not urgent</item>
+        <item>1. Not urgent</item>
         <item>2.</item>
         <item>3. Somewhat urgent</item>
         <item>4.</item>
         <item>5. Urgent</item>
+    </string-array>
+
+    <string-array name="arsi_a_urgency_2">
+        <item></item>
+        <item>Not urgent</item>
+        <item>Somewhat urgent</item>
+        <item>Somewhat urgent</item>
+        <item>Somewhat urgent</item>
+        <item>Urgent</item>
     </string-array>
 
     <string name="arsi_q_location"> * Location of crash event?</string>
