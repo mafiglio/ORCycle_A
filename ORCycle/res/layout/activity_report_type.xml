@@ -44,12 +44,11 @@
 		    android:layout_marginRight="2dp"
 		    android:layout_weight="1"
 		    android:background="@color/text_black"
-		    android:onClick="OnSave"
 		    android:paddingLeft="6dp"
 		    android:paddingRight="6dp"
 		    android:text="@string/btnTextArtReportCrash"
 		    android:textColor="@color/user_button_text"
-		    android:textStyle="bold" />
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
 
 		<Button
 		    android:id="@+id/btnArtReportSafetyIssue"
@@ -65,7 +64,7 @@
 		    android:paddingRight="0dp"
 		    android:text="@string/btnTextArtReportSafetyIssue"
 		    android:textColor="@color/user_button_text"
-		    android:textStyle="bold" />
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
 
 		<Button
 		    android:id="@+id/btnArtCancel"
@@ -81,7 +80,7 @@
 		    android:paddingRight="0dp"
 		    android:text="@string/btnTextArtCancel"
 		    android:textColor="@color/user_button_text"
-		    android:textStyle="bold" />
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
 		
 		</LinearLayout>
 

@@ -60,40 +60,40 @@
         android:measureWithLargestChild="true"
         android:showDividers="none" >
 
-<Button
-    android:id="@+id/btnDsaPositive"
-    style="?android:attr/buttonBarButtonStyle"
-    android:layout_width="wrap_content"
-    android:layout_height="40dp"
-    android:layout_marginBottom="4dp"
-    android:layout_marginLeft="4dp"
-    android:layout_marginRight="2dp"
-    android:layout_marginTop="4dp"
-    android:layout_weight="1"
-    android:background="@color/black"
-    android:onClick="OnSave"
-    android:paddingLeft="6dp"
-    android:paddingRight="6dp"
-    android:text="positive"
-    android:textColor="@color/user_button_text"
-    android:textStyle="bold" />
+	<Button
+	    android:id="@+id/btnDsaPositive"
+	    style="?android:attr/buttonBarButtonStyle"
+	    android:layout_width="wrap_content"
+	    android:layout_height="40dp"
+	    android:layout_marginBottom="4dp"
+	    android:layout_marginLeft="4dp"
+	    android:layout_marginRight="2dp"
+	    android:layout_marginTop="4dp"
+	    android:layout_weight="1"
+	    android:background="@color/black"
+	    android:onClick="OnSave"
+	    android:paddingLeft="6dp"
+	    android:paddingRight="6dp"
+	    android:text="positive"
+	    android:textColor="@color/user_button_text"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
 
-			<Button
-			    android:id="@+id/btnDsaNeutral"
-			    style="?android:attr/buttonBarButtonStyle"
-			    android:layout_width="wrap_content"
-			    android:layout_height="40dp"
-			    android:layout_marginBottom="4dp"
-			    android:layout_marginLeft="2dp"
-			    android:layout_marginRight="2dp"
-			    android:layout_marginTop="4dp"
-			    android:layout_weight="1"
-			    android:background="@color/black"
-			    android:paddingLeft="6dp"
-			    android:paddingRight="6dp"
-			    android:text="neutral"
-			    android:textColor="@color/user_button_text"
-			    android:textStyle="bold" />
+		<Button
+		    android:id="@+id/btnDsaNeutral"
+		    style="?android:attr/buttonBarButtonStyle"
+		    android:layout_width="wrap_content"
+		    android:layout_height="40dp"
+		    android:layout_marginBottom="4dp"
+		    android:layout_marginLeft="2dp"
+		    android:layout_marginRight="2dp"
+		    android:layout_marginTop="4dp"
+		    android:layout_weight="1"
+		    android:background="@color/black"
+		    android:paddingLeft="6dp"
+		    android:paddingRight="6dp"
+		    android:text="neutral"
+		    android:textColor="@color/user_button_text"
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
 
 			<Button
 			    android:id="@+id/btnDsaNegative"
@@ -110,7 +110,7 @@
 			    android:paddingRight="0dp"
 			    android:text="negative"
 			    android:textColor="@color/user_button_text"
-			    android:textStyle="bold" />
+			    android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </LinearLayout>
 
