@@ -3,6 +3,7 @@ package edu.pdx.cecs.orcycle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -39,7 +40,7 @@ public class DsaDialog {
 
 		// Reference custom layout's textbox and set text value
 		TextView textbox = (TextView) rootView.findViewById(R.id.tv_dtc_text);
-		textbox.setText(text);
+		textbox.setText(Html.fromHtml(text));
 
 		CheckBox cbDontShowAgain = (CheckBox) rootView.findViewById(R.id.cb_dtc_checkbox);
 		if (null != onCheckedChangeListener)
