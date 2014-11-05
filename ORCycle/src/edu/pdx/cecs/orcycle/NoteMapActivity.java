@@ -87,10 +87,12 @@ public class NoteMapActivity extends Activity {
 			TextView tvHeaderSeverity = (TextView) findViewById(R.id.tvHeaderSeverity);
 			TextView tvHeaderFancyStart = (TextView) findViewById(R.id.tvHeaderFancyStart);
 			TextView tvNmComment = (TextView) findViewById(R.id.tvNmComment);
+			TextView tvNmComment2 = (TextView) findViewById(R.id.tvNmComment2);
 
 			tvHeaderSeverity.setText(getNoteSeverityText(note.noteSeverity));
 			tvHeaderFancyStart.setText(note.notefancystart);
 			tvNmComment.setText(note.notedetails);
+			tvNmComment2.setText(note.notedetails);
 
 			TextView tvAccidentSeverity = (TextView) findViewById(R.id.tv_anm_a_severity_of_problem);
 			TextView tvAccidentObject = (TextView) findViewById(R.id.tv_anm_a_object);

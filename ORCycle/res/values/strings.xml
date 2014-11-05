@@ -486,8 +486,9 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
 
     <string name="header_art_report_crash">Report crash or near miss</string>
     <string name="header_art_report_location">Location of crash event</string>
-    <string name="ara_q_severity"> * Severity of the crash event</string>
     <string name="ara_ok">OK</string>
+    
+    <string name="ara_q_severity"> * Severity of the crash event</string>
     
     <string-array name="ara_a_severity">
         <item></item>
@@ -508,7 +509,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     </string-array>
 
     <string name="ara_q_object"> * Object (vehicle) related to the event</string>
-
+    
     <string-array name="ara_a_object">
         <item>Small/medium car</item>
         <item>Large car/Van/SUV</item>
@@ -523,7 +524,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     </string-array>
 
     <string name="ara_q_actions"> * Actions related to the event</string>
-
+    
     <string-array name="ara_a_actions">
         <item>Right-turning vehicle</item>
         <item>Left-turning vehicle</item>
@@ -538,7 +539,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     </string-array>
 
     <string name="ara_q_contributed"> * What contributed to the event</string>
-
+    
     <string-array name="ara_a_contributers">
         <item>Debris or pavement quality</item>
         <item>Poor lighting or visibility</item>
@@ -566,9 +567,10 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <!-- ********************************************************* -->
 
     <string name="header_arsi_report_safety_issue">Report safety issue</string>
-    <string name="arsi_q_problem_type"> * Type of problem</string>
     <string name="arsi_q_problem_type_title">Type of problem</string>
     <string name="ara_no_gps">Your phone\'s GPS is disabled. ORCycle needs GPS to determine your location.\n\nGo to Settings to enable your GPS.</string>
+    
+    <string name="arsi_q_problem_type"> * Issue Type(s)</string>
     
     <string-array name="arsi_a_safety_issues">
         <item>Narrow Bike Lane</item>
@@ -587,15 +589,15 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Other&#8230;</item>
     </string-array>
 
-    <string name="arsi_q_urgency"> * Urgency of the problem\n(scale 1 to 5)?</string>
-
+    <string name="arsi_q_urgency"> * Urgency Level (scale 1 to 5)?</string>
+    
     <string-array name="arsi_a_urgency">
         <item></item>
-        <item>1. Not urgent</item>
-        <item>2.</item>
-        <item>3. Somewhat urgent</item>
-        <item>4.</item>
-        <item>5. Urgent</item>
+        <item>1 (Not urgent)</item>
+        <item>2</item>
+        <item>3 (Somewhat urgent)</item>
+        <item>4</item>
+        <item>5 (Urgent)</item>
     </string-array>
 
     <string-array name="arsi_a_urgency_2">
@@ -615,6 +617,12 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Use custom location</item>
     </string-array>
 
-    <string name="title_activity_custom_location">Select custom location</string>
-
+    <string name="title_activity_custom_location">Select custom location:</string>
+    <string name="rmap_q_severity">Severity of the crash event:</string>
+    <string name="rmap_q_object">Object (vehicle) related to the event:</string>
+    <string name="rmap_q_actions">Actions related to the event:</string>
+    <string name="rmap_q_contributed">What contributed to the event:</string>
+    <string name="rmap_q_problem_type">Issue Type(s):</string>
+    <string name="rmap_q_urgency">Urgency Level:</string>
+    
 </resources>

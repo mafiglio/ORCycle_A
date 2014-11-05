@@ -96,7 +96,7 @@
 	                android:layout_alignParentRight="true"
 	                android:layout_alignParentTop="true"
 	                android:layout_marginTop="0dp"
-	                android:text="@string/ara_q_severity"
+	                android:text="@string/rmap_q_severity"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#A33F1F" />
 	
@@ -132,7 +132,7 @@
        	                android:layout_alignParentRight="true"
        	                android:layout_alignParentTop="true"
        	                android:layout_marginTop="0dp"
-       	                android:text="@string/ara_q_object"
+       	                android:text="@string/rmap_q_object"
        	                android:textAppearance="?android:attr/textAppearanceMedium"
        	                android:textColor="#A33F1F" />
 		
@@ -168,7 +168,7 @@
 	   	                android:layout_alignParentRight="true"
 	   	                android:layout_alignParentTop="true"
 	   	                android:layout_marginTop="0dp"
-	   	                android:text="@string/ara_q_actions"
+	   	                android:text="@string/rmap_q_actions"
 	   	                android:textAppearance="?android:attr/textAppearanceMedium"
 	   	                android:textColor="#A33F1F" />
 		
@@ -204,7 +204,7 @@
 	   	                android:layout_alignParentRight="true"
 	   	                android:layout_alignParentTop="true"
 	   	                android:layout_marginTop="0dp"
-	   	                android:text="@string/ara_q_contributed"
+	   	                android:text="@string/rmap_q_contributed"
 	   	                android:textAppearance="?android:attr/textAppearanceMedium"
 	   	                android:textColor="#A33F1F" />
 		
@@ -220,7 +220,7 @@
 	
 				</RelativeLayout>
 	
-		        		        <RelativeLayout
+		        <RelativeLayout
 		            android:layout_width="fill_parent"
 		            android:layout_height="wrap_content"
 		            android:layout_marginTop="1dp"
@@ -304,7 +304,7 @@
 	                android:layout_alignParentRight="true"
 	                android:layout_alignParentTop="true"
 	                android:layout_marginTop="0dp"
-	                android:text="@string/arsi_q_problem_type"
+	                android:text="@string/rmap_q_problem_type"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#A33F1F" />
 	
@@ -340,7 +340,7 @@
        	                android:layout_alignParentRight="true"
        	                android:layout_alignParentTop="true"
        	                android:layout_marginTop="0dp"
-       	                android:text="@string/ara_q_object"
+       	                android:text="@string/rmap_q_urgency"
        	                android:textAppearance="?android:attr/textAppearanceMedium"
        	                android:textColor="#A33F1F" />
 		
@@ -355,6 +355,42 @@
 		                android:textAppearance="?android:attr/textAppearanceMedium" />
 	
 				</RelativeLayout>
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+	   	            <TextView
+	   	                android:id="@+id/tvNmqComment2"
+	   	                android:layout_width="match_parent"
+	   	                android:layout_height="wrap_content"
+	   	                android:layout_alignParentLeft="true"
+	   	                android:layout_alignParentRight="true"
+	   	                android:layout_alignParentTop="true"
+	   	                android:layout_marginTop="0dp"
+	   	                android:text="@string/anmComment"
+	   	                android:textAppearance="?android:attr/textAppearanceMedium"
+	   	                android:textColor="#A33F1F" />
+		
+		            <TextView
+		                android:id="@+id/tvNmComment2"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_below="@id/tvNmqComment2"
+		                android:layout_marginTop="16dp"
+		                android:textColor="#474334"
+		                android:text="@string/misc_generally_long_text_string"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+				</RelativeLayout>
+
 		        <RelativeLayout
 		            android:layout_width="fill_parent"
 		            android:layout_height="wrap_content"
