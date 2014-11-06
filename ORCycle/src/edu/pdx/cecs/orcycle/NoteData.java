@@ -183,11 +183,10 @@ public class NoteData {
 		}
 	}
 
-	public void updateNote(int noteSeverity, String noteFancyStart,
-			String noteDetails, byte[] image) {
+	public void updateNote(String noteFancyStart, String noteDetails, byte[] image) {
 		mDb.open();
 		try {
-			mDb.updateNote(noteId, noteFancyStart, noteSeverity, noteDetails, image);
+			mDb.updateNote(noteId, noteFancyStart, noteDetails, image);
 		}
 		finally {
 			mDb.close();

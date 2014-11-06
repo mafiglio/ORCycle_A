@@ -1,0 +1,88 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?android:attr/buttonBarStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="${packageName}.${activityClass}" >
+
+    <TextView
+        android:id="@+id/tvArtReportTypeMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:text="@string/textArtMessage"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <LinearLayout
+        android:id="@+id/llArtButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvArtReportTypeMessage"
+        android:layout_marginTop="1dp"
+        android:baselineAligned="false"
+        android:divider="?android:attr/dividerVertical"
+        android:dividerPadding="12dp"
+        android:gravity="center_horizontal"
+        android:measureWithLargestChild="true"
+        android:orientation="vertical"
+        android:showDividers="none" >
+
+		<Button
+		    android:id="@+id/btnArtReportAccident"
+		    style="?android:attr/buttonBarButtonStyle"
+		    android:layout_width="match_parent"
+		    android:layout_height="40dp"
+		    android:layout_marginLeft="2dp"
+		    android:layout_marginRight="2dp"
+		    android:layout_weight="1"
+		    android:background="@color/text_black"
+		    android:paddingLeft="6dp"
+		    android:paddingRight="6dp"
+		    android:text="@string/btnTextArtReportCrash"
+		    android:textColor="@color/user_button_text"
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+		<Button
+		    android:id="@+id/btnArtReportSafetyIssue"
+		    style="?android:attr/buttonBarButtonStyle"
+		    android:layout_width="match_parent"
+		    android:layout_height="40dp"
+		    android:layout_marginLeft="2dp"
+		    android:layout_marginRight="2dp"
+		    android:layout_marginTop="2dp"
+		    android:layout_weight="1"
+		    android:background="@color/text_black"
+		    android:paddingLeft="1dp"
+		    android:paddingRight="0dp"
+		    android:text="@string/btnTextArtReportSafetyIssue"
+		    android:textColor="@color/user_button_text"
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+		<Button
+		    android:id="@+id/btnArtCancel"
+		    style="?android:attr/buttonBarButtonStyle"
+		    android:layout_width="match_parent"
+		    android:layout_height="40dp"
+		    android:layout_marginLeft="2dp"
+		    android:layout_marginRight="2dp"
+		    android:layout_marginTop="2dp"
+		    android:layout_weight="1"
+		    android:background="@color/text_black"
+		    android:paddingLeft="1dp"
+		    android:paddingRight="0dp"
+		    android:text="@string/btnTextArtCancel"
+		    android:textColor="@color/user_button_text"
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		</LinearLayout>
+
+
+</RelativeLayout>

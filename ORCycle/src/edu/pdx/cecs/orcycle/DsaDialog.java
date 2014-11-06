@@ -3,6 +3,7 @@ package edu.pdx.cecs.orcycle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -12,94 +13,6 @@ import android.widget.TextView;
 public class DsaDialog {
 
 	private final AlertDialog alertDialog;
-
-	public DsaDialog(Activity activity, int titleId, int textId,
-			CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
-			int positiveTextId, DialogInterface.OnClickListener positiveListener,
-			int neutralTextId, DialogInterface.OnClickListener neutralListener,
-			int negativeTextId, DialogInterface.OnClickListener negativeListener
-			) {
-
-		String title;
-		String text;
-		String positiveText = null;
-		String neutralText = null;
-		String negativeText = null;
-
-		if (-1 == titleId) {
-			title = "";
-		}
-		else {
-			title = activity.getResources().getString(titleId);
-		}
-
-		if (-1 == textId) {
-			text = "";
-		}
-		else {
-			text = activity.getResources().getString(textId);
-		}
-
-		if (null != positiveListener) {
-			positiveText = activity.getResources().getString(positiveTextId);
-		}
-		if (null != neutralListener) {
-			neutralText = activity.getResources().getString(neutralTextId);
-		}
-		if (null != negativeListener) {
-			negativeText = activity.getResources().getString(negativeTextId);
-		}
-
-		alertDialog = createDialog(activity, title, text, onCheckedChangeListener,
-									positiveText, positiveListener,
-									neutralText, neutralListener,
-									negativeText, negativeListener);
-	}
-
-	public DsaDialog(Activity activity, int titleId, int textId, String parameter,
-		CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
-		int positiveTextId, DialogInterface.OnClickListener positiveListener,
-		int neutralTextId, DialogInterface.OnClickListener neutralListener,
-		int negativeTextId, DialogInterface.OnClickListener negativeListener
-		) {
-
-		String title;
-		String text;
-		String positiveText = null;
-		String neutralText = null;
-		String negativeText = null;
-
-		if (-1 == titleId) {
-			title = "";
-		}
-		else {
-			title = activity.getResources().getString(titleId, parameter);
-		}
-
-		if (-1 == textId) {
-			text = "";
-		}
-		else {
-			text = activity.getResources().getString(textId, parameter);
-		}
-
-		if (null != positiveListener) {
-			positiveText = activity.getResources().getString(positiveTextId);
-		}
-
-		if (null != neutralListener) {
-			neutralText = activity.getResources().getString(neutralTextId);
-		}
-
-		if (null != negativeListener) {
-			negativeText = activity.getResources().getString(negativeTextId);
-		}
-
-		alertDialog = createDialog(activity, title, text, onCheckedChangeListener,
-									positiveText, positiveListener,
-									neutralText, neutralListener,
-									negativeText, negativeListener);
-	}
 
 	public DsaDialog(Activity activity, String title, String text,
 		CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
@@ -127,7 +40,7 @@ public class DsaDialog {
 
 		// Reference custom layout's textbox and set text value
 		TextView textbox = (TextView) rootView.findViewById(R.id.tv_dtc_text);
-		textbox.setText(text);
+		textbox.setText(Html.fromHtml(text));
 
 		CheckBox cbDontShowAgain = (CheckBox) rootView.findViewById(R.id.cb_dtc_checkbox);
 		if (null != onCheckedChangeListener)

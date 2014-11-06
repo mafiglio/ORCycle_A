@@ -767,13 +767,11 @@ public class DbAdapter {
 		return numRows > 0;
 	}
 
-	public boolean updateNote(long noteId, String noteFancyStart, int noteSeverity,
-			 String noteDetails, byte[] imageBytes) {
+	public boolean updateNote(long noteId, String noteFancyStart, String noteDetails, byte[] imageBytes) {
 
 		ContentValues contentValues = new ContentValues();
 
 		contentValues.put(K_NOTE_FANCYSTART, noteFancyStart);
-		contentValues.put(K_NOTE_SEVERITY, noteSeverity);
 		contentValues.put(K_NOTE_DETAILS, noteDetails);
 
 		if (null == imageBytes) {
@@ -783,6 +781,16 @@ public class DbAdapter {
 			contentValues.put(K_NOTE_IMGURL, getNoteImageFileName(noteId));
 			saveToFile(noteId, imageBytes);
 		}
+
+		int numRows = mDb.update(DATA_TABLE_NOTES, contentValues, K_NOTE_ROWID + "=" + noteId, null);
+
+		return numRows > 0;
+	}
+
+	public boolean updateNoteSeverity(long noteId, int noteSeverity) {
+
+		ContentValues contentValues = new ContentValues();
+		contentValues.put(K_NOTE_SEVERITY, noteSeverity);
 
 		int numRows = mDb.update(DATA_TABLE_NOTES, contentValues, K_NOTE_ROWID + "=" + noteId, null);
 

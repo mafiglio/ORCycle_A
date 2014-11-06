@@ -64,7 +64,7 @@
             android:scaleType="centerCrop" />
         
 		<ScrollView
-		    android:id="@+id/noteQuestionsRootView"
+		    android:id="@+id/report_accident_root_view"
 		    android:layout_width="fill_parent"
 		    android:layout_height="fill_parent"
 		    android:background="#fcfcfc"
@@ -89,23 +89,22 @@
 	            tools:context=".UserInfo$DummySectionFragment" >
 		
 	            <TextView
-	                android:id="@+id/tvNmqSeverityOfProblem"
+	                android:id="@+id/tv_anm_q_severity_of_problem"
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_alignParentLeft="true"
 	                android:layout_alignParentRight="true"
 	                android:layout_alignParentTop="true"
 	                android:layout_marginTop="0dp"
-	                android:text="@string/anmSeverityOfProblem"
+	                android:text="@string/rmap_q_severity"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#A33F1F" />
 	
 	            <TextView
-	                android:id="@+id/tvNmSeverityOfProblem"
+	                android:id="@+id/tv_anm_a_severity_of_problem"
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
-	                android:layout_alignLeft="@id/tvNmSeverityOfProblem"
-	                android:layout_below="@id/tvNmqSeverityOfProblem"
+	                android:layout_below="@id/tv_anm_q_severity_of_problem"
 	                android:layout_marginTop="16dp"
 	                android:text="@string/misc_generally_long_text_string"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
@@ -125,23 +124,23 @@
 		            android:paddingTop="12dp"
 		            tools:context=".UserInfo$DummySectionFragment" >
 			
-		        	            <TextView
-		        	                android:id="@+id/tvNmqIssueType"
-		        	                android:layout_width="match_parent"
-		        	                android:layout_height="wrap_content"
-		        	                android:layout_alignParentLeft="true"
-		        	                android:layout_alignParentRight="true"
-		        	                android:layout_alignParentTop="true"
-		        	                android:layout_marginTop="0dp"
-		        	                android:text="@string/anmSafetyIssue"
-		        	                android:textAppearance="?android:attr/textAppearanceMedium"
-		        	                android:textColor="#A33F1F" />
+       	            <TextView
+       	                android:id="@+id/tv_anm_q_object"
+       	                android:layout_width="match_parent"
+       	                android:layout_height="wrap_content"
+       	                android:layout_alignParentLeft="true"
+       	                android:layout_alignParentRight="true"
+       	                android:layout_alignParentTop="true"
+       	                android:layout_marginTop="0dp"
+       	                android:text="@string/rmap_q_object"
+       	                android:textAppearance="?android:attr/textAppearanceMedium"
+       	                android:textColor="#A33F1F" />
 		
 		            <TextView
-		                android:id="@+id/tvNmIssueType"
+		                android:id="@+id/tv_anm_a_object"
 		                android:layout_width="match_parent"
 		                android:layout_height="wrap_content"
-		                android:layout_below="@id/tvNmqIssueType"
+		                android:layout_below="@id/tv_anm_q_object"
 		                android:layout_marginTop="16dp"
 		                android:textColor="#474334"
 		                android:text="@string/misc_generally_long_text_string"
@@ -162,22 +161,58 @@
 		            tools:context=".UserInfo$DummySectionFragment" >
 			
 	   	            <TextView
-	   	                android:id="@+id/tvNmqConflictType"
+	   	                android:id="@+id/tv_anm_q_actions"
 	   	                android:layout_width="match_parent"
 	   	                android:layout_height="wrap_content"
 	   	                android:layout_alignParentLeft="true"
 	   	                android:layout_alignParentRight="true"
 	   	                android:layout_alignParentTop="true"
 	   	                android:layout_marginTop="0dp"
-	   	                android:text="Type of conflict/accident, with:"
+	   	                android:text="@string/rmap_q_actions"
 	   	                android:textAppearance="?android:attr/textAppearanceMedium"
 	   	                android:textColor="#A33F1F" />
 		
 		            <TextView
-		                android:id="@+id/tvNmConflictType"
+		                android:id="@+id/tv_anm_a_actions"
 		                android:layout_width="match_parent"
 		                android:layout_height="wrap_content"
-		                android:layout_below="@id/tvNmqConflictType"
+		                android:layout_below="@id/tv_anm_q_actions"
+		                android:layout_marginTop="16dp"
+		                android:textColor="#474334"
+		                android:text="@string/misc_generally_long_text_string"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+				</RelativeLayout>
+	
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+	   	            <TextView
+	   	                android:id="@+id/tv_anm_q_contrib"
+	   	                android:layout_width="match_parent"
+	   	                android:layout_height="wrap_content"
+	   	                android:layout_alignParentLeft="true"
+	   	                android:layout_alignParentRight="true"
+	   	                android:layout_alignParentTop="true"
+	   	                android:layout_marginTop="0dp"
+	   	                android:text="@string/rmap_q_contributed"
+	   	                android:textAppearance="?android:attr/textAppearanceMedium"
+	   	                android:textColor="#A33F1F" />
+		
+		            <TextView
+		                android:id="@+id/tv_anm_a_contrib"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_below="@id/tv_anm_q_contrib"
 		                android:layout_marginTop="16dp"
 		                android:textColor="#474334"
 		                android:text="@string/misc_generally_long_text_string"
@@ -235,6 +270,141 @@
 				</RelativeLayout>
 		        		        
 		    </LinearLayout>
+		</ScrollView>
+		
+		<ScrollView
+		    android:id="@+id/report_safety_issue_root_view"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:background="#fcfcfc"
+		    android:visibility="visible" >
+
+			<LinearLayout
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:background="#474334"
+			    android:orientation="vertical" >
+	        <RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+		
+	            <TextView
+	                android:id="@+id/tv_anm_q_safety_issue"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentRight="true"
+	                android:layout_alignParentTop="true"
+	                android:layout_marginTop="0dp"
+	                android:text="@string/rmap_q_problem_type"
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="#A33F1F" />
+	
+	            <TextView
+	                android:id="@+id/tv_anm_a_safety_issue"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_below="@id/tv_anm_q_safety_issue"
+	                android:layout_marginTop="16dp"
+	                android:text="@string/misc_generally_long_text_string"
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="#474334" />
+	            
+	           	</RelativeLayout>
+	            
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+       	            <TextView
+       	                android:id="@+id/tv_anm_q_urgency"
+       	                android:layout_width="match_parent"
+       	                android:layout_height="wrap_content"
+       	                android:layout_alignParentLeft="true"
+       	                android:layout_alignParentRight="true"
+       	                android:layout_alignParentTop="true"
+       	                android:layout_marginTop="0dp"
+       	                android:text="@string/rmap_q_urgency"
+       	                android:textAppearance="?android:attr/textAppearanceMedium"
+       	                android:textColor="#A33F1F" />
+		
+		            <TextView
+		                android:id="@+id/tv_anm_a_urgency"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_below="@id/tv_anm_q_urgency"
+		                android:layout_marginTop="16dp"
+		                android:textColor="#474334"
+		                android:text="@string/misc_generally_long_text_string"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+				</RelativeLayout>
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+	   	            <TextView
+	   	                android:id="@+id/tvNmqComment2"
+	   	                android:layout_width="match_parent"
+	   	                android:layout_height="wrap_content"
+	   	                android:layout_alignParentLeft="true"
+	   	                android:layout_alignParentRight="true"
+	   	                android:layout_alignParentTop="true"
+	   	                android:layout_marginTop="0dp"
+	   	                android:text="@string/anmComment"
+	   	                android:textAppearance="?android:attr/textAppearanceMedium"
+	   	                android:textColor="#A33F1F" />
+		
+		            <TextView
+		                android:id="@+id/tvNmComment2"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_below="@id/tvNmqComment2"
+		                android:layout_marginTop="16dp"
+		                android:textColor="#474334"
+		                android:text="@string/misc_generally_long_text_string"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+				</RelativeLayout>
+
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment">
+				</RelativeLayout>
+		        	
+			</LinearLayout>
 		</ScrollView>
 	</RelativeLayout>
 </LinearLayout>

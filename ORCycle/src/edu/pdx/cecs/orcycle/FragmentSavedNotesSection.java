@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class FragmentSavedNotesSection extends Fragment {
 
@@ -66,11 +65,11 @@ public class FragmentSavedNotesSection extends Fragment {
 			try {
 				// Clean up any bad notes from crashes
 				int cleanedNotes = mDb.cleanNoteTables();
-				if (cleanedNotes > 0) {
+				/* if (cleanedNotes > 0) {
 					Toast.makeText(getActivity(),
 							"" + cleanedNotes + " bad notes(s) removed.",
 							Toast.LENGTH_SHORT).show();
-				}
+				} */
 			}
 			finally {
 				mDb.close();

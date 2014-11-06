@@ -162,7 +162,7 @@ public class FragmentMainInput extends Fragment
 
 			// Setup the button to add a note to the trip
 			buttonNote = (Button) rootView.findViewById(R.id.btn_ami_note_this);
-			buttonNote.setVisibility(View.VISIBLE);
+			buttonNote.setVisibility(View.GONE);
 			buttonNote.setOnClickListener(new ButtonNote_OnClickListener());
 
 			// Copy from Recording Activity
@@ -644,13 +644,7 @@ public class FragmentMainInput extends Fragment
 		public void onClick(View v) {
 
 			try {
-				if (!myApp.getStatus().isProviderEnabled()) {
-					dialogNoGps();
-				}
-				else if (currentLocation == null) {
-					alertUserNoGPSData();
-				}
-				else {
+				if (null != recordingService) {
 					int state = recordingService.getState();
 					long tripId;
 					if (state > RecordingService.STATE_IDLE) {
@@ -664,8 +658,8 @@ public class FragmentMainInput extends Fragment
 					}
 					NoteData note = NoteData.createNote(getActivity(), tripId);
 					note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
-					note.setLocation(currentLocation);
-					transitionToNoteQuestionsActivity(note, tripId);
+					// note.setLocation(currentLocation);
+					transitionToReportTypeActivity(note, tripId);
 				}
 			}
 			catch(Exception ex) {
@@ -954,13 +948,23 @@ public class FragmentMainInput extends Fragment
 
 		Intent intent = new Intent(getActivity(), NoteQuestionsActivity.class);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, note.noteId);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_TYPE, NoteQuestionsActivity.EXTRA_NOTE_TYPE_UNDEFINED);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, NoteQuestionsActivity.EXTRA_NOTE_SOURCE_MAIN_INPUT);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, NoteQuestionsActivity.EXTRA_TRIP_SOURCE_MAIN_INPUT);
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 		getActivity().finish();
+	}
+
+	private void transitionToReportTypeActivity(NoteData note, long tripId) {
+		Intent intent = new Intent(getActivity(), ReportTypeActivity.class);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, note.noteId);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, NoteQuestionsActivity.EXTRA_NOTE_SOURCE_MAIN_INPUT);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, NoteQuestionsActivity.EXTRA_TRIP_SOURCE_MAIN_INPUT);
+		startActivity(intent);
+		// getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		// getActivity().finish();
 	}
 
 	private void transitionToLocationServices() {

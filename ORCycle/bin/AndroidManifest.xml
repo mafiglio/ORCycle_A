@@ -102,6 +102,23 @@
             android:name="edu.pdx.cecs.orcycle.WebViewActivity"
             android:label="@string/title_activity_web_view" >
         </activity>
+        <activity
+            android:name="edu.pdx.cecs.orcycle.ReportTypeActivity"
+            android:label="@string/title_activity_report_type"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
+        <activity
+            android:name="edu.pdx.cecs.orcycle.ReportAccidentsActivity"
+            android:label="@string/title_activity_report_accidents" >
+        </activity>
+        <activity
+            android:name="edu.pdx.cecs.orcycle.ReportSafetyIssuesActivity"
+            android:label="@string/title_activity_report_safety_issues" >
+        </activity>
+        <activity
+            android:name="edu.pdx.cecs.orcycle.CustomLocationActivity"
+            android:label="@string/title_activity_custom_location" >
+        </activity>
     </application>
 
 </manifest>

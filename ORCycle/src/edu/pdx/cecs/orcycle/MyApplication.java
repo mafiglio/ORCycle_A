@@ -427,25 +427,23 @@ public class MyApplication extends android.app.Application {
 	// *
 	// *********************************************************************************
 
-	public double[] getLastKnownLocation() {
+	public Location getLastKnownLocation() {
 
-		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		List<String> providers = lm.getProviders(true);
+		LocationManager lm = null;
+		List<String> providers = null;
+		Location location = null;
 
-		/* Loop over the array backwards, and if you get an accurate location, then break out the loop*/
-		Location l = null;
-
-		for (int i=providers.size()-1; i>=0; i--) {
-		l = lm.getLastKnownLocation(providers.get(i));
-		if (l != null) break;
+		if (null != (lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE))) {
+			if (null != (providers = lm.getProviders(true))) {
+				/* Loop over the array backwards, and if you get a location, then break out the loop*/
+				for (int i = providers.size() - 1;  i >= 0; --i) {
+					if (null != (location = lm.getLastKnownLocation(providers.get(i)))) {
+						break;
+					}
+				}
+			}
 		}
-
-		double[] gps = new double[2];
-		if (l != null) {
-		gps[0] = l.getLatitude();
-		gps[1] = l.getLongitude();
-		}
-		return gps;
+		return location;
 	}
 
 	public int getVersionCode() {

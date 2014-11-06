@@ -54,9 +54,6 @@ public class TripQuestionsActivity extends Activity {
 	private static final int PREF_TRIP_COMMENT     = 10;
 
 	private TripPurpose_OnClickListener tripPurpose_OnClick = null;
-	private DsaDialog dsaDialog;
-
-
 
 	private long tripId = -1;
 
@@ -750,9 +747,15 @@ public class TripQuestionsActivity extends Activity {
 
 	private void AlertUserRepeatTrips(String purpose) {
 
+		//String message = getResources().getString(R.string.tqa_alert_repeated_trips, purpose);
+
+		String message = "Data for this " + purpose + " trip will be logged and uploaded.&#160;&#160;" +
+				"<b>If you repeat the same route there is no need to log it again</b>.&#160;&#160;" +
+				"Please use ORcycle to log new trip purposes, routes, or safety locations.";
+
 		DsaDialog dsaDialog = new DsaDialog(this,
 			null,
-			getResources().getString(R.string.tqa_alert_repeated_trips, purpose),
+			message,
 			new AlertUserRepeatTrips_CheckedChangeListener(),
 			getResources().getString(R.string.tqa_alert_OK), new AlertUserRepeatTrips_OkListener(),
 			null, null, null, null);

@@ -187,7 +187,7 @@
         android:background="@color/user_button_background"
         android:paddingLeft="6dp"
         android:paddingRight="6dp"
-        android:text="@string/btn_lbl_mark_safety_problem"
+        android:text="@string/btn_lbl_report"
         android:textColor="@color/user_button_text"
         android:textStyle="bold" />
 
