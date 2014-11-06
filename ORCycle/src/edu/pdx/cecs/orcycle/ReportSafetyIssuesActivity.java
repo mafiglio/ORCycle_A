@@ -11,7 +11,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 public class ReportSafetyIssuesActivity extends Activity {
 
@@ -47,6 +51,8 @@ public class ReportSafetyIssuesActivity extends Activity {
 	private MultiSelectionSpinner spnSafetyIssues;
 	private Spinner spnUrgency;
 	private Spinner spnLocation;
+	private final CustomLocation_OnClickListener customLocation_OnClickListener =
+			new CustomLocation_OnClickListener();
 	private static final int USE_GPS_LOCATION_POS = 1;
 	private static final int USE_CUSTOM_LOCATION_POS = 2;
 
@@ -65,6 +71,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 			spnUrgency = (Spinner) findViewById(R.id.spn_arsi_urgency);
 			spnLocation = (Spinner) findViewById(R.id.spn_arsi_location);
+			spnLocation.setOnItemSelectedListener(customLocation_OnClickListener);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -335,6 +342,46 @@ public class ReportSafetyIssuesActivity extends Activity {
 					mDb.close();
 			}
 		}
+	}
+
+    // *********************************************************************************
+	// *
+	// *********************************************************************************
+
+	/**
+     * Class: ButtonStart_OnClickListener
+     *
+     * Description: Callback to be invoked when startButton button is clicked
+     */
+	private final class CustomLocation_OnClickListener implements OnItemSelectedListener {
+
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+			try {
+				if (position == 2) {
+					ReportSafetyIssuesActivity.this.alertCustomLocation();
+				}
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+			try {
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+
+	}
+
+	private void alertCustomLocation() {
+		Toast.makeText(ReportSafetyIssuesActivity.this,
+				getResources().getString(R.string.fyi_custom_location),
+				Toast.LENGTH_LONG).show();
 	}
 
     // *********************************************************************************

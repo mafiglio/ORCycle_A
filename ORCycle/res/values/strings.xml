@@ -63,10 +63,10 @@
     <string name="fmi_welcome_message">This app will let you record your bicycle trips, 
 	display maps of your rides, and provide feedback regarding crash, safety, or infrastrcuture issues. 
 Your data and feedback are valuable and nesessary to plan and build better bicycle facilities in Oregon.</string>
-    <string name="tqi_qsm_dialog_message">“You can now mark locations with safety issues&#8230;</string>
+    <string name="tqi_qsm_dialog_message">“You can now report crash events or locations with safety issues along this trip&#8230;</string>
     <string name="tqi_qsm_dialog_ok">OK</string>
     <string name="tqi_qsm_dialog_later">Later</string>
-    <string name="tqa_alert_user_about_later">You can later go to \"Trips\", select a trip and mark a safety issue</string>
+    <string name="tqa_alert_user_about_later">You can later go to \"Trips\", select a trip and report crash events or locations with safety issues.</string>
     <string name="tqa_alert_answer_required_questions">Please answer required questions</string>
     <string name="tqa_alert_OK">OK</string>
     <string name="tqa_alert_repeated_trips">Data for this %s trip will be logged and uploaded.&#160;&#160;\
@@ -338,7 +338,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>It is enjoyable/has nice scenery</item>
         <item>It is good for a workout</item>
         <item>It has low traffic/low speeds</item>
-        <item>It has few intersections</item>
+        <item>It has few busy intersections</item>
         <item>It has few/easy hills</item>
         <item>It has other riders/people</item>
         <item>It is good for families/kids</item>
@@ -616,6 +616,8 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Use current GPS location</item>
         <item>Use custom location</item>
     </string-array>
+    <string name="fyi_custom_location">Select the custom location using the map in the next screen after pressing \"save\".</string>
+    
 
     <string name="title_activity_custom_location">Select custom location:</string>
     <string name="rmap_q_severity">Severity of the crash event:</string>

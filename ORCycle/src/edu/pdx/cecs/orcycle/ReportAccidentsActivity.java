@@ -11,7 +11,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 public class ReportAccidentsActivity extends Activity {
 
@@ -51,6 +55,8 @@ public class ReportAccidentsActivity extends Activity {
 	private MultiSelectionSpinner spnAccidentActions;
 	private MultiSelectionSpinner spnAccidentContributers;
 	private Spinner spnLocation;
+	private final CustomLocation_OnClickListener customLocation_OnClickListener =
+			new CustomLocation_OnClickListener();
 	private static final int USE_GPS_LOCATION_POS = 1;
 	private static final int USE_CUSTOM_LOCATION_POS = 2;
 
@@ -80,11 +86,14 @@ public class ReportAccidentsActivity extends Activity {
 			spnAccidentContributers.setOtherIndex(DbAnswers.findIndex(DbAnswers.accidentContrib, DbAnswers.accidentContribOther));
 
 			spnLocation = (Spinner) findViewById(R.id.spn_ara_location);
+			spnLocation.setOnItemSelectedListener(customLocation_OnClickListener);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
+
+
 
 	private void loadVars(Bundle savedInstanceState) {
 
@@ -363,6 +372,46 @@ public class ReportAccidentsActivity extends Activity {
 					mDb.close();
 			}
 		}
+	}
+
+    // *********************************************************************************
+	// *
+	// *********************************************************************************
+
+	/**
+     * Class: ButtonStart_OnClickListener
+     *
+     * Description: Callback to be invoked when startButton button is clicked
+     */
+	private final class CustomLocation_OnClickListener implements OnItemSelectedListener {
+
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+			try {
+				if (position == 2) {
+					ReportAccidentsActivity.this.alertCustomLocation();
+				}
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+			try {
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+
+	}
+
+	private void alertCustomLocation() {
+		Toast.makeText(ReportAccidentsActivity.this,
+				getResources().getString(R.string.fyi_custom_location),
+				Toast.LENGTH_LONG).show();
 	}
 
     // *********************************************************************************
