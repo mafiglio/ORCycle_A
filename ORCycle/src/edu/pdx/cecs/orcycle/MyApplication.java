@@ -398,7 +398,7 @@ public class MyApplication extends android.app.Application {
 		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor = settings.edit();
-		editor.putString(SETTING_USER_ID, userId);
+		editor.putString(SETTING_USER_ID, value);
 		editor.apply();
 		return value;
 	}
