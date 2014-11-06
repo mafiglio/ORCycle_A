@@ -128,7 +128,7 @@ public class UserFeedbackActivity extends Activity {
 				// this extra call to savePreferences is absolutely necessary.  It
 				// allows changes to be stored for later return to this activity.
 				savePreferences(false);
-				UserFeedbackUploader uploader = new UserFeedbackUploader(this);
+				UserFeedbackUploader uploader = new UserFeedbackUploader(this, MyApplication.getInstance().getUserId());
 				uploader.execute();
 			}
 			catch(Exception ex) {
