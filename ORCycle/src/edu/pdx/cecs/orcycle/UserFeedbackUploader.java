@@ -16,7 +16,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.provider.Settings.System;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,12 +27,14 @@ public class UserFeedbackUploader extends AsyncTask<Long, Integer, Boolean> {
 	private static final String fieldSep = "--cycle*******notedata*******atlanta\r\n";
 
 	public static final String USER_FEEDBACK = "feedback";
+	private final String userId;
 
 	private Context mCtx = null;
 
-	public UserFeedbackUploader(Context ctx) {
+	public UserFeedbackUploader(Context ctx, String userId) {
 		super();
 		this.mCtx = ctx;
+		this.userId = userId;
 	}
 
 	/**
@@ -67,30 +68,6 @@ public class UserFeedbackUploader extends AsyncTask<Long, Integer, Boolean> {
 			}
 		}
 		return userJson;
-	}
-
-	public String getDeviceId() {
-		String androidId = System.getString(this.mCtx.getContentResolver(),
-				System.ANDROID_ID);
-		String androidBase = "androidDeviceId-";
-
-		if (androidId == null) { // This happens when running in the Emulator
-			final String emulatorId = "android-RunningAsTestingDeleteMe";
-			return emulatorId;
-		}
-		String deviceId = androidBase.concat(androidId);
-
-		// Fix String Length
-		int a = deviceId.length();
-		if (a < 32) {
-			for (int i = 0; i < 32 - a; i++) {
-				deviceId = deviceId.concat("0");
-			}
-		} else {
-			deviceId = deviceId.substring(0, 32);
-		}
-
-		return deviceId;
 	}
 
 	public String getAppVersion() {
@@ -153,7 +130,7 @@ public class UserFeedbackUploader extends AsyncTask<Long, Integer, Boolean> {
 			JSONObject jsonUser;
 			if (null != (jsonUser = getUserJSON())) {
 				try {
-					String deviceId = getDeviceId();
+					String deviceId = userId;
 
 					dos.writeBytes(fieldSep + ContentField("user") + jsonUser.toString() + "\r\n");
 					dos.writeBytes(fieldSep + ContentField("version") + String.valueOf(kSaveProtocolVersion4) + "\r\n");
