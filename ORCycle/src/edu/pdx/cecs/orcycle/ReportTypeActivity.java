@@ -26,6 +26,12 @@ public class ReportTypeActivity extends Activity {
 	public static final int EXTRA_TRIP_SOURCE_MAIN_INPUT = 0;
 	public static final int EXTRA_TRIP_SOURCE_SAVED_TRIPS = 1;
 
+	public static final String EXTRA_REPORT_TYPE = "reportType";
+	public static final int EXTRA_REPORT_TYPE_UNDEFINED = -1;
+	public static final int EXTRA_REPORT_TYPE_ACCIDENT_REPORT = 0;
+	public static final int EXTRA_REPORT_TYPE_SAFETY_ISSUE_REPORT = 1;
+
+
 	private static final String PREFS_NOTE_QUESTIONS = "PREFS_NOTE_QUESTIONS";
 
 	private static final int PREF_SEVERITY = 1;
@@ -207,7 +213,7 @@ public class ReportTypeActivity extends Activity {
 
 		// Exit this activity
 		startActivity(intent);
-		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		//overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 		finish();
 	}
 
@@ -220,7 +226,7 @@ public class ReportTypeActivity extends Activity {
 
 		// Exit this activity
 		startActivity(intent);
-		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		//overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 		finish();
 	}
 }

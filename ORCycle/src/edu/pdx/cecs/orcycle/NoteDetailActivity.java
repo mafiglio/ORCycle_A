@@ -56,6 +56,7 @@ public class NoteDetailActivity extends Activity {
 	int noteSource;
 	private long tripId;
 	private int tripSource;
+	private int reportType;
 
 	private EditText noteDetails;
 	private ImageButton imageButton;
@@ -66,7 +67,43 @@ public class NoteDetailActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		try {
+			super.onCreate(savedInstanceState);
+
+			loadVars();
+
+			// setup main view
+			setContentView(R.layout.activity_note_detail);
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+			// get references to view widgets
+			noteDetails = (EditText) findViewById(R.id.editTextNoteDetail);
+			imageView = (ImageView) findViewById(R.id.imageView);
+			// imageView.setVisibility(4);
+			imageButton = (ImageButton) findViewById(R.id.imageButton);
+
+			// show input keyboard
+			this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+			// setup photo button
+			Button addPhotoButton = (Button) findViewById(R.id.addPhotoButton);
+			addPhotoButton.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					try {
+						showAttachDialog();
+					}
+					catch(Exception ex) {
+						Log.e(MODULE_TAG, ex.getMessage());
+					}
+				}
+			});
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
+	private void loadVars() {
 
 		// get input values for this view
 		Intent myIntent = getIntent();
@@ -90,31 +127,10 @@ public class NoteDetailActivity extends Activity {
 			throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_SOURCE");
 		}
 
-		// setup main view
-		setContentView(R.layout.activity_note_detail);
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-		// get references to view widgets
-		noteDetails = (EditText) findViewById(R.id.editTextNoteDetail);
-		imageView = (ImageView) findViewById(R.id.imageView);
-		// imageView.setVisibility(4);
-		imageButton = (ImageButton) findViewById(R.id.imageButton);
-
-		// show input keyboard
-		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-
-		// setup photo button
-		Button addPhotoButton = (Button) findViewById(R.id.addPhotoButton);
-		addPhotoButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				try {
-					showAttachDialog();
-				}
-				catch(Exception ex) {
-					Log.e(MODULE_TAG, ex.getMessage());
-				}
-			}
-		});
+		reportType = myIntent.getIntExtra(ReportTypeActivity.EXTRA_REPORT_TYPE, ReportTypeActivity.EXTRA_REPORT_TYPE_UNDEFINED);
+		if (ReportTypeActivity.EXTRA_REPORT_TYPE_UNDEFINED == reportType) {
+			throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_REPORT_TYPE");
+		}
 	}
 
 	// *********************************************************************************
@@ -283,9 +299,14 @@ public class NoteDetailActivity extends Activity {
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu items for use in the action bar
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.note_detail, menu);
+		try {
+			// Inflate the menu items for use in the action bar
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.note_detail, menu);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -327,8 +348,12 @@ public class NoteDetailActivity extends Activity {
 	 */
 	@Override
 	public void onBackPressed() {
-		// Go back to NoteTypeActivity.
-		transitionToNoteQuestionsActivity();
+		try {
+			transitionToPreviousActivity();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	// *********************************************************************************
@@ -440,15 +465,45 @@ public class NoteDetailActivity extends Activity {
 	// *                    Transitioning to other activities
 	// *********************************************************************************
 
-	private void transitionToNoteQuestionsActivity() {
+	private void transitionToPreviousActivity() {
+		// Cancel
+		if (reportType == ReportTypeActivity.EXTRA_REPORT_TYPE_ACCIDENT_REPORT) {
+			transitionToReportAccidentsActivity();
+		}
+		else if (reportType == ReportTypeActivity.EXTRA_REPORT_TYPE_SAFETY_ISSUE_REPORT) {
+			transitionToReportSafetyIssuesActivity();
+		}
+	}
 
-		Intent intent = new Intent(this, NoteQuestionsActivity.class);
+	private void transitionToReportSafetyIssuesActivity() {
+
+		// Create intent to go back to the recording screen in the Tabsconfig activity
+		Intent intent = new Intent(this, ReportSafetyIssuesActivity.class);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, noteId);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, noteSource);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, tripSource);
+		intent.putExtra(ReportAccidentsActivity.EXTRA_IS_BACK, true);
+
+		// Exit this activity
 		startActivity(intent);
-		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		finish();
+	}
+
+	private void transitionToReportAccidentsActivity() {
+
+		// Create intent to go back to the recording screen in the Tabsconfig activity
+		Intent intent = new Intent(this, ReportAccidentsActivity.class);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, noteId);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, noteSource);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, tripSource);
+		intent.putExtra(ReportSafetyIssuesActivity.EXTRA_IS_BACK, true);
+
+		// Exit this activity
+		startActivity(intent);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 		finish();
 	}
 
@@ -473,7 +528,7 @@ public class NoteDetailActivity extends Activity {
 
 		// Exit this activity
 		startActivity(intent);
-		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 		finish();
 	}
 

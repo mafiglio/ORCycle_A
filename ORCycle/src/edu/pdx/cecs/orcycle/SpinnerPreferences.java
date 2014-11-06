@@ -1,14 +1,19 @@
 package edu.pdx.cecs.orcycle;
 
+import java.util.List;
+
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.widget.Spinner;
 
 public class SpinnerPreferences {
 
 	private final SharedPreferences settings;
+	private final Editor editor;
 
 	public SpinnerPreferences(SharedPreferences settings) {
 		this.settings = settings;
+		this.editor = settings.edit();
 	}
 
 	/**
@@ -18,7 +23,7 @@ public class SpinnerPreferences {
 	 * @param key
 	 */
 	public void save(Spinner spinner, int key) {
-		settings.edit().putInt("" + key, spinner.getSelectedItemPosition());
+		editor.putInt("" + key, spinner.getSelectedItemPosition());
 	}
 
 	/**
@@ -28,11 +33,24 @@ public class SpinnerPreferences {
 	 * @param key
 	 */
 	public void save(MultiSelectionSpinner spinner, int key) {
-		settings.edit().putString("" + key, spinner.getSelectedIndicesAsString());
+		editor.putString("" + key, spinner.getSelectedIndicesAsString());
+	}
+
+	public void save(MultiSelectionSpinner spinner, int key, int[] answers, int otherPrefIndex, int otherId) {
+
+		editor.putString("" + key, spinner.getSelectedIndicesAsString());
+
+		// If other is one of the selections, save the text inormation
+		List<Integer> selectedIndicies = spinner.getSelectedIndicies();
+		for (int index : selectedIndicies) {
+			if ((otherId >= 0) && (answers[index] == otherId)) {
+				editor.putString("" + otherPrefIndex, spinner.getOtherText());
+			}
+		}
 	}
 
 	public void commit() {
-		settings.edit().commit();
+		editor.commit();
 	}
 
 	public void recall(Spinner spinner, int key) {
@@ -49,6 +67,11 @@ public class SpinnerPreferences {
 
 	public void recall(MultiSelectionSpinner spinner, String key) {
 		spinner.setSelection(settings.getString(key, ""));
+	}
+
+	public void recall(MultiSelectionSpinner spinner, int key, int keyOther) {
+		spinner.setSelection(settings.getString(String.valueOf(key), ""));
+		spinner.setOtherText(settings.getString(String.valueOf(keyOther), ""));
 	}
 
 }

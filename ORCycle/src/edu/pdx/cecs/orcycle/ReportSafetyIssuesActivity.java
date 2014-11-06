@@ -33,20 +33,25 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 	public static final String EXTRA_TRIP_ID = "EXTRA_TRIP_ID";
 	private static final int EXTRA_TRIP_ID_UNDEFINED = -1;
+
 	public static final String EXTRA_TRIP_SOURCE = "tripSource";
 	private static final int EXTRA_TRIP_SOURCE_UNDEFINED = -1;
 	public static final int EXTRA_TRIP_SOURCE_MAIN_INPUT = 0;
 	public static final int EXTRA_TRIP_SOURCE_SAVED_TRIPS = 1;
 
+	public static final String EXTRA_IS_BACK = "isBack";
+
 	private long tripId;
 	private long noteId;
 	private int noteSource = EXTRA_NOTE_SOURCE_UNDEFINED;
 	private int tripSource = EXTRA_TRIP_SOURCE_UNDEFINED;
+	private boolean isBack;
 
 	private static final String PREFS_SAFETY_ISSUE_QUESTIONS = "PREFS_SAFETY_ISSUE_QUESTIONS";
-	private static final int PREF_PROBLEMS = 1;
+	private static final int PREF_SAFETY_ISSUES = 1;
 	private static final int PREF_URGENCY = 2;
 	private static final int PREF_LOCATION = 3;
+	private static final int PREF_SAFETY_ISSUES_OTHER = 1001;
 
 	private MultiSelectionSpinner spnSafetyIssues;
 	private Spinner spnUrgency;
@@ -67,7 +72,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 			spnSafetyIssues = (MultiSelectionSpinner) findViewById(R.id.spn_arsi_problem);
 			spnSafetyIssues.setItems(getResources().getStringArray(R.array.arsi_a_safety_issues));
 			spnSafetyIssues.setTitle(getResources().getString(R.string.arsi_q_problem_type_title));
-			spnSafetyIssues.setOtherIndex(DbAnswers.findIndex(DbAnswers.safetyIssue, DbAnswers.safetyUrgencyOther));
+			spnSafetyIssues.setOtherIndex(DbAnswers.findIndex(DbAnswers.safetyIssue, DbAnswers.safetyIssueOther));
 
 			spnUrgency = (Spinner) findViewById(R.id.spn_arsi_urgency);
 			spnLocation = (Spinner) findViewById(R.id.spn_arsi_location);
@@ -86,6 +91,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 			noteSource = myIntent.getIntExtra(EXTRA_NOTE_SOURCE, EXTRA_NOTE_SOURCE_UNDEFINED);
 			tripId = myIntent.getLongExtra(EXTRA_TRIP_ID, EXTRA_TRIP_ID_UNDEFINED);
 			tripSource = myIntent.getIntExtra(EXTRA_TRIP_SOURCE, EXTRA_TRIP_SOURCE_UNDEFINED);
+			isBack = myIntent.getBooleanExtra(EXTRA_IS_BACK, false);
 		}
 		else {
 			noteId = savedInstanceState.getLong(EXTRA_NOTE_ID, EXTRA_NOTE_ID_UNDEFINED);
@@ -109,6 +115,20 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 		if (EXTRA_TRIP_SOURCE_UNDEFINED == tripSource) {
 			throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_SOURCE");
+		}
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+
+		try {
+			if (isBack) {
+				recallUiSettings();
+			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
 
@@ -175,6 +195,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 		if (MandatoryQuestionsAnswered()) {
 			submitAnswers();
+			saveUiSettings();
 			if (useCustomLocation()) {
 				transitionToCustomLocationActivity();
 			}
@@ -260,7 +281,9 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 		try {
 			SpinnerPreferences prefs = new SpinnerPreferences(getSharedPreferences(PREFS_SAFETY_ISSUE_QUESTIONS, Context.MODE_PRIVATE));
-			prefs.save(spnSafetyIssues,  PREF_PROBLEMS);
+			prefs.save(spnSafetyIssues,
+					PREF_SAFETY_ISSUES, DbAnswers.safetyIssue,
+					PREF_SAFETY_ISSUES_OTHER, DbAnswers.safetyIssueOther);
 			prefs.save(spnUrgency,  PREF_URGENCY);
 			prefs.save(spnLocation, PREF_LOCATION);
 			prefs.commit();
@@ -278,7 +301,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 		try {
 			SpinnerPreferences prefs = new SpinnerPreferences(getSharedPreferences(PREFS_SAFETY_ISSUE_QUESTIONS, Context.MODE_PRIVATE) );
 
-			prefs.recall(spnSafetyIssues, PREF_PROBLEMS);
+			prefs.recall(spnSafetyIssues, PREF_SAFETY_ISSUES);
 			prefs.recall(spnUrgency, PREF_URGENCY);
 			prefs.recall(spnLocation, PREF_LOCATION);
 		}
@@ -308,7 +331,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 		// Enter the user selections into the local database
 		try {
 			spAdapter.put(spnSafetyIssues,  DbQuestions.SAFETY_ISSUE,
-							   DbAnswers.safetyIssue, DbAnswers.safetyUrgencyOther);
+							   DbAnswers.safetyIssue, DbAnswers.safetyIssueOther);
 
 			spAdapter.put(spnUrgency , DbQuestions.SAFETY_URGENCY,
 					   DbAnswers.safetyUrgency);
@@ -404,7 +427,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 		intent.putExtra(TripMapActivity.EXTRA_IS_NEW_TRIP, true);
 		intent.putExtra(TripMapActivity.EXTRA_TRIP_SOURCE, TripMapActivity.EXTRA_TRIP_SOURCE_TRIP_QUESTIONS);
 		startActivity(intent);
-		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 		finish();
 	}
 
@@ -414,8 +437,8 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
 		startActivity(intent);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 		finish();
-		overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
 	}
 
 	private void transitionToNoteDetailActivity() {
@@ -429,6 +452,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 		// is pressed and we have to restart this activity
 		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_ID, tripId);
 		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_SOURCE, tripSource);
+		intent.putExtra(ReportTypeActivity.EXTRA_REPORT_TYPE, ReportTypeActivity.EXTRA_REPORT_TYPE_SAFETY_ISSUE_REPORT);
 
 		// Exit this activity
 		startActivity(intent);
@@ -447,6 +471,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 		// is pressed and we have to restart this activity
 		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_ID, tripId);
 		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_SOURCE, tripSource);
+		intent.putExtra(ReportTypeActivity.EXTRA_REPORT_TYPE, ReportTypeActivity.EXTRA_REPORT_TYPE_SAFETY_ISSUE_REPORT);
 
 		// Exit this activity
 		startActivity(intent);
