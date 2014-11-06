@@ -47,7 +47,7 @@ public class CustomLocationActivity extends Activity {
 	private long noteId;
 	private int noteSource;
 	private int tripSource;
-
+	private int reportType;
 
 	GoogleMap mapView;
 	ArrayList<CyclePoint> gpspoints;
@@ -145,6 +145,10 @@ public class CustomLocationActivity extends Activity {
 			throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_SOURCE");
 		}
 
+		reportType = myIntent.getIntExtra(ReportTypeActivity.EXTRA_REPORT_TYPE, ReportTypeActivity.EXTRA_REPORT_TYPE_UNDEFINED);
+		if (ReportTypeActivity.EXTRA_REPORT_TYPE_UNDEFINED == reportType) {
+			throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_REPORT_TYPE");
+		}
 	}
 
 	private void moveCameraToMyLocation(Location location) {
@@ -181,6 +185,7 @@ public class CustomLocationActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		try {
+			transitionToPreviousActivity();
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -231,6 +236,48 @@ public class CustomLocationActivity extends Activity {
 	// *
 	// *********************************************************************************
 
+	private void transitionToPreviousActivity() {
+		// Cancel
+		if (reportType == ReportTypeActivity.EXTRA_REPORT_TYPE_ACCIDENT_REPORT) {
+			transitionToReportAccidentsActivity();
+		}
+		else if (reportType == ReportTypeActivity.EXTRA_REPORT_TYPE_SAFETY_ISSUE_REPORT) {
+			transitionToReportSafetyIssuesActivity();
+		}
+	}
+
+	private void transitionToReportSafetyIssuesActivity() {
+
+		// Create intent to go back to the recording screen in the Tabsconfig activity
+		Intent intent = new Intent(this, ReportSafetyIssuesActivity.class);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, noteId);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, noteSource);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, tripSource);
+		intent.putExtra(ReportAccidentsActivity.EXTRA_IS_BACK, true);
+
+		// Exit this activity
+		startActivity(intent);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		finish();
+	}
+
+	private void transitionToReportAccidentsActivity() {
+
+		// Create intent to go back to the recording screen in the Tabsconfig activity
+		Intent intent = new Intent(this, ReportAccidentsActivity.class);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, noteId);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, noteSource);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
+		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, tripSource);
+		intent.putExtra(ReportSafetyIssuesActivity.EXTRA_IS_BACK, true);
+
+		// Exit this activity
+		startActivity(intent);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		finish();
+	}
+
 	private void transitionToNoteDetailActivity() {
 
 		// Create intent to go to the NoteDetailActivity
@@ -242,6 +289,7 @@ public class CustomLocationActivity extends Activity {
 		// is pressed and we have to restart this activity
 		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_ID, tripId);
 		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_SOURCE, tripSource);
+		intent.putExtra(ReportTypeActivity.EXTRA_REPORT_TYPE, reportType);
 
 		// Exit this activity
 		startActivity(intent);

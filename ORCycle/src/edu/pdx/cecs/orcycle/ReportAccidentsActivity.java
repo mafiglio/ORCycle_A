@@ -33,27 +33,36 @@ public class ReportAccidentsActivity extends Activity {
 
 	public static final String EXTRA_TRIP_ID = "EXTRA_TRIP_ID";
 	private static final int EXTRA_TRIP_ID_UNDEFINED = -1;
+
 	public static final String EXTRA_TRIP_SOURCE = "tripSource";
 	private static final int EXTRA_TRIP_SOURCE_UNDEFINED = -1;
 	public static final int EXTRA_TRIP_SOURCE_MAIN_INPUT = 0;
 	public static final int EXTRA_TRIP_SOURCE_SAVED_TRIPS = 1;
 
+	public static final String EXTRA_IS_BACK = "isBack";
+
 	private long tripId;
 	private long noteId;
 	private int noteSource = EXTRA_NOTE_SOURCE_UNDEFINED;
 	private int tripSource = EXTRA_TRIP_SOURCE_UNDEFINED;
+	private boolean isBack;
 
 	private static final String PREFS_ACCIDENT_QUESTIONS = "PREFS_ACCIDENT_QUESTIONS";
 	private static final int PREF_SEVERITY = 1;
 	private static final int PREF_ACCIDENT_OBJECT = 2;
 	private static final int PREF_ACCIDENT_ACTIONS = 3;
-	private static final int PREF_ACCIDENT_CONTRIBUTERS = 4;
+	private static final int PREF_ACCIDENT_CONTRIB = 4;
 	private static final int PREF_LOCATION = 5;
+
+	private static final int PREF_ACCIDENT_OBJECT_OTHER = 1002;
+	private static final int PREF_ACCIDENT_ACTIONS_OTHER = 1003;
+	private static final int PREF_ACCIDENT_CONTRIB_OTHER = 1004;
+
 
 	private Spinner spnSeverity;
 	private MultiSelectionSpinner spnAccidentObject;
 	private MultiSelectionSpinner spnAccidentActions;
-	private MultiSelectionSpinner spnAccidentContributers;
+	private MultiSelectionSpinner spnAccidentContrib;
 	private Spinner spnLocation;
 	private final CustomLocation_OnClickListener customLocation_OnClickListener =
 			new CustomLocation_OnClickListener();
@@ -80,10 +89,10 @@ public class ReportAccidentsActivity extends Activity {
 			spnAccidentActions.setTitle(getResources().getString(R.string.ara_q_actions));
 			spnAccidentActions.setOtherIndex(DbAnswers.findIndex(DbAnswers.accidentAction, DbAnswers.accidentActionOther));
 
-			spnAccidentContributers = (MultiSelectionSpinner) findViewById(R.id.spn_ara_contributers);
-			spnAccidentContributers.setItems(getResources().getStringArray(R.array.ara_a_contributers));
-			spnAccidentContributers.setTitle(getResources().getString(R.string.ara_q_contributed));
-			spnAccidentContributers.setOtherIndex(DbAnswers.findIndex(DbAnswers.accidentContrib, DbAnswers.accidentContribOther));
+			spnAccidentContrib = (MultiSelectionSpinner) findViewById(R.id.spn_ara_contributers);
+			spnAccidentContrib.setItems(getResources().getStringArray(R.array.ara_a_contributers));
+			spnAccidentContrib.setTitle(getResources().getString(R.string.ara_q_contributed));
+			spnAccidentContrib.setOtherIndex(DbAnswers.findIndex(DbAnswers.accidentContrib, DbAnswers.accidentContribOther));
 
 			spnLocation = (Spinner) findViewById(R.id.spn_ara_location);
 			spnLocation.setOnItemSelectedListener(customLocation_OnClickListener);
@@ -93,17 +102,29 @@ public class ReportAccidentsActivity extends Activity {
 		}
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
 
+		try {
+			if (isBack) {
+				recallUiSettings();
+			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
 
 	private void loadVars(Bundle savedInstanceState) {
 
 		if (null == savedInstanceState) {
-
 			Intent myIntent = getIntent();
 			noteId = myIntent.getLongExtra(EXTRA_NOTE_ID, EXTRA_NOTE_ID_UNDEFINED);
 			noteSource = myIntent.getIntExtra(EXTRA_NOTE_SOURCE, EXTRA_NOTE_SOURCE_UNDEFINED);
 			tripId = myIntent.getLongExtra(EXTRA_TRIP_ID, EXTRA_TRIP_ID_UNDEFINED);
 			tripSource = myIntent.getIntExtra(EXTRA_TRIP_SOURCE, EXTRA_TRIP_SOURCE_UNDEFINED);
+			isBack = myIntent.getBooleanExtra(EXTRA_IS_BACK, false);
 		}
 		else {
 			noteId = savedInstanceState.getLong(EXTRA_NOTE_ID, EXTRA_NOTE_ID_UNDEFINED);
@@ -128,7 +149,7 @@ public class ReportAccidentsActivity extends Activity {
 		if (EXTRA_TRIP_SOURCE_UNDEFINED == tripSource) {
 			throw new IllegalArgumentException(MODULE_TAG + ": invalid extra - EXTRA_TRIP_SOURCE");
 		}
-	}
+}
 
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -193,6 +214,7 @@ public class ReportAccidentsActivity extends Activity {
 
 		if (MandatoryQuestionsAnswered()) {
 			submitAnswers();
+			saveUiSettings();
 			if (useCustomLocation()) {
 				transitionToCustomLocationActivity();
 			}
@@ -250,7 +272,7 @@ public class ReportAccidentsActivity extends Activity {
 		return ((spnSeverity.getSelectedItemPosition() > 0) &&
 				(spnAccidentObject.getSelectedIndicies().size() > 0) &&
 				(spnAccidentActions.getSelectedIndicies().size() > 0) &&
-				(spnAccidentContributers.getSelectedIndicies().size() > 0) &&
+				(spnAccidentContrib.getSelectedIndicies().size() > 0) &&
 				(spnLocation.getSelectedItemPosition() > 0));
 	}
 
@@ -281,9 +303,15 @@ public class ReportAccidentsActivity extends Activity {
 		try {
 			SpinnerPreferences prefs = new SpinnerPreferences(getSharedPreferences(PREFS_ACCIDENT_QUESTIONS, Context.MODE_PRIVATE));
 			prefs.save(spnSeverity,  PREF_SEVERITY);
-			prefs.save(spnAccidentObject,  PREF_ACCIDENT_OBJECT);
-			prefs.save(spnAccidentActions, PREF_ACCIDENT_ACTIONS);
-			prefs.save(spnAccidentContributers, PREF_ACCIDENT_CONTRIBUTERS);
+			prefs.save(spnAccidentObject,
+					PREF_ACCIDENT_OBJECT, DbAnswers.accidentObject,
+					PREF_ACCIDENT_OBJECT_OTHER, DbAnswers.accidentObjectOther);
+			prefs.save(spnAccidentActions,
+					PREF_ACCIDENT_ACTIONS, DbAnswers.accidentAction,
+					PREF_ACCIDENT_ACTIONS_OTHER, DbAnswers.accidentActionOther);
+			prefs.save(spnAccidentContrib,
+					PREF_ACCIDENT_CONTRIB, DbAnswers.accidentContrib,
+					PREF_ACCIDENT_CONTRIB_OTHER, DbAnswers.accidentContribOther);
 			prefs.save(spnLocation, PREF_LOCATION);
 			prefs.commit();
 		}
@@ -301,9 +329,9 @@ public class ReportAccidentsActivity extends Activity {
 			SpinnerPreferences prefs = new SpinnerPreferences(getSharedPreferences(PREFS_ACCIDENT_QUESTIONS, Context.MODE_PRIVATE) );
 
 			prefs.recall(spnSeverity, PREF_SEVERITY);
-			prefs.recall(spnAccidentObject, PREF_ACCIDENT_OBJECT);
-			prefs.recall(spnAccidentActions, PREF_ACCIDENT_ACTIONS);
-			prefs.recall(spnAccidentContributers, PREF_ACCIDENT_CONTRIBUTERS);
+			prefs.recall(spnAccidentObject, PREF_ACCIDENT_OBJECT, PREF_ACCIDENT_OBJECT_OTHER);
+			prefs.recall(spnAccidentActions, PREF_ACCIDENT_ACTIONS, PREF_ACCIDENT_ACTIONS_OTHER);
+			prefs.recall(spnAccidentContrib, PREF_ACCIDENT_CONTRIB, PREF_ACCIDENT_CONTRIB_OTHER);
 			prefs.recall(spnLocation, PREF_LOCATION);
 		}
 		catch(Exception ex) {
@@ -340,7 +368,7 @@ public class ReportAccidentsActivity extends Activity {
 			spAdapter.put(spnAccidentActions, DbQuestions.ACCIDENT_ACTION,
 						  DbAnswers.accidentAction, DbAnswers.accidentActionOther);
 
-			spAdapter.put(spnAccidentContributers, DbQuestions.ACCIDENT_CONTRIB,
+			spAdapter.put(spnAccidentContrib, DbQuestions.ACCIDENT_CONTRIB,
 						  DbAnswers.accidentContrib, DbAnswers.accidentContribOther);
 
 			setSeverity(spnSeverity, DbAnswers.accidentSeverity);
@@ -434,7 +462,7 @@ public class ReportAccidentsActivity extends Activity {
 		intent.putExtra(TripMapActivity.EXTRA_IS_NEW_TRIP, true);
 		intent.putExtra(TripMapActivity.EXTRA_TRIP_SOURCE, TripMapActivity.EXTRA_TRIP_SOURCE_TRIP_QUESTIONS);
 		startActivity(intent);
-		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 		finish();
 	}
 
@@ -444,8 +472,8 @@ public class ReportAccidentsActivity extends Activity {
 
 		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
 		startActivity(intent);
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 		finish();
-		overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
 	}
 
 	private void transitionToNoteDetailActivity() {
@@ -459,6 +487,7 @@ public class ReportAccidentsActivity extends Activity {
 		// is pressed and we have to restart this activity
 		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_ID, tripId);
 		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_SOURCE, tripSource);
+		intent.putExtra(ReportTypeActivity.EXTRA_REPORT_TYPE, ReportTypeActivity.EXTRA_REPORT_TYPE_ACCIDENT_REPORT);
 
 		// Exit this activity
 		startActivity(intent);
@@ -477,6 +506,7 @@ public class ReportAccidentsActivity extends Activity {
 		// is pressed and we have to restart this activity
 		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_ID, tripId);
 		intent.putExtra(NoteDetailActivity.EXTRA_TRIP_SOURCE, tripSource);
+		intent.putExtra(ReportTypeActivity.EXTRA_REPORT_TYPE, ReportTypeActivity.EXTRA_REPORT_TYPE_ACCIDENT_REPORT);
 
 		// Exit this activity
 		startActivity(intent);

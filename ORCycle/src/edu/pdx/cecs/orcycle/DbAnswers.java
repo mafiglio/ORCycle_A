@@ -67,7 +67,7 @@ public final class DbAnswers {
 	public static final int accidentObjectOther = 178;
 	public static final int accidentActionOther = 207;
 	public static final int accidentContribOther = 206;
-	public static final int safetyUrgencyOther = 180;
+	public static final int safetyIssueOther = 180;
 
 	public static final String PURPOSE_COMMUTE = "Commute";
 	public static final String PURPOSE_SCHOOL = "School";
