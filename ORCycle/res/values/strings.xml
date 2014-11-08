@@ -145,7 +145,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="atmComment">Additional Details:</string>
     <string name="tmaTripPurpose">What is the main trip purpose?</string>
     <string name="snliNoteSeverityExample">Major crash/accident</string>
-    <string name="about_version">Version 2.0.1</string>
+    <string name="about_version">Version 2.0.2</string>
     <string name="about_version_code">vc:&#160;</string>
     <string name="about_copyright">&#169; 2014 ORcycle</string>
     <string name="aumad_answer_required_questions">Please answer all required questions.</string>
