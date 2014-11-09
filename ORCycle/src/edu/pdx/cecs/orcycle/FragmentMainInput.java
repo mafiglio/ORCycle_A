@@ -62,6 +62,10 @@ public class FragmentMainInput extends Fragment
 	private static final int DSA_ID_USER_PROFILE_DIALOG_OK = 2001;
 	private static final int DSA_ID_USER_PROFILE_DIALOG_LATER = 2002;
 
+	private static final int FMI_USER_PAUSED = 1;
+	private static final int FMI_NOTE_PAUSED = 2;
+	private static final int FMI_FINISH_PAUSED = 3;
+
 	// Reference to Global application object
 	private MyApplication myApp = null;
 
@@ -324,18 +328,34 @@ public class FragmentMainInput extends Fragment
 	 * Set up buttons, and enable status updates
 	 */
 	private void syncDisplayToRecordingState() {
-		// Setup the UI buttons according to current state
-		setupButtons();
 
-		// If the recorder is has completed a recording, switch
-		// to activity for uploading the trip data
-		int state = recordingService.getState();
-		if (state > RecordingService.STATE_IDLE) {
-			if (state == RecordingService.STATE_FULL) {
-				dialogTripFinish(true);
-				//scheduleTask(TASK_WAIT_SERVICE_CONNECT);
+		switch(recordingService.getState()) {
+
+		case RecordingService.STATE_IDLE:
+			setupButtons();
+			break;
+
+		case RecordingService.STATE_RECORDING:
+			setupButtons();
+			break;
+
+		case RecordingService.STATE_PAUSED:
+			if (recordingService.pauseId() == FMI_NOTE_PAUSED) {
+				recordingService.resumeRecording();
 			}
+			setupButtons();
+			break;
+
+		case RecordingService.STATE_FULL:
+			setupButtons();
+			dialogTripFinish(true);
+			break;
+
+		default:
+			Log.e(MODULE_TAG, "Undefined recording state encountered");
+			break;
 		}
+
 		scheduleStatusUpdates(); // every second
 	}
 
@@ -572,7 +592,7 @@ public class FragmentMainInput extends Fragment
 		 */
 		public void onClick(View v) {
 			try {
-				recordingService.pauseRecording();
+				recordingService.pauseRecording(FMI_USER_PAUSED);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -618,7 +638,7 @@ public class FragmentMainInput extends Fragment
 		 */
 		public void onClick(View v) {
 			try {
-				recordingService.pauseRecording();
+				recordingService.pauseRecording(FMI_FINISH_PAUSED);
 				setupButtons();
 
 				TripData tripData = myApp.getStatus().getTripData();
@@ -644,23 +664,40 @@ public class FragmentMainInput extends Fragment
 		public void onClick(View v) {
 
 			try {
-				if (null != recordingService) {
-					int state = recordingService.getState();
-					long tripId;
-					if (state > RecordingService.STATE_IDLE) {
-						// pause recording of trip data
-						recordingService.pauseRecording();
-						// update note entity
-						tripId = recordingService.getCurrentTripID();
-					}
-					else {
-						tripId = 0;
-					}
-					NoteData note = NoteData.createNote(getActivity(), tripId);
-					note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
-					// note.setLocation(currentLocation);
-					transitionToReportTypeActivity(note, tripId);
+				if (null == recordingService) {
+					Log.e(MODULE_TAG, "Connection to recording service not yet established");
+					return;
 				}
+
+				long tripId;
+
+				switch(recordingService.getState()) {
+
+				case RecordingService.STATE_IDLE:
+					tripId = 0;
+					break;
+
+				case RecordingService.STATE_RECORDING:
+					recordingService.pauseRecording(FMI_NOTE_PAUSED);
+					tripId = recordingService.getCurrentTripID();
+					break;
+
+				case RecordingService.STATE_PAUSED:
+					tripId = recordingService.getCurrentTripID();
+					break;
+
+				case RecordingService.STATE_FULL:
+					tripId = recordingService.getCurrentTripID();
+					break;
+
+				default:
+					Log.e(MODULE_TAG, "Invalid recording service state encountered.");
+					return;
+				}
+
+				NoteData note = NoteData.createNote(getActivity(), tripId);
+				note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
+				transitionToReportTypeActivity(note, tripId);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());

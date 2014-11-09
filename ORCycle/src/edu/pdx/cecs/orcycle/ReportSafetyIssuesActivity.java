@@ -234,7 +234,8 @@ public class ReportSafetyIssuesActivity extends Activity {
 	 */
 	private void dialogNoGPS() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(getResources().getString(R.string.ara_no_gps));
+		builder.setTitle(R.string.ara_no_gps_title);
+		builder.setMessage(R.string.ara_no_gps_message);
 		builder.setCancelable(false);
 		builder.setPositiveButton(getResources().getString(R.string.ara_ok),
 				new DialogNoGPS_OkListener());

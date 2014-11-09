@@ -42,7 +42,9 @@ public interface IRecordService {
 
 	public long getCurrentTripID(); // returns trip-id
 
-	public void pauseRecording();
+	public int pauseId();
+
+	public void pauseRecording(int pauseId);
 
 	public void resumeRecording();
 
