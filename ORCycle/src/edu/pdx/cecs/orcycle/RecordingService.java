@@ -66,6 +66,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	int state = STATE_IDLE;
 
 	private SpeedMonitor speedMonitor;
+	private int pauseId = -1;
 
 	private final MyServiceBinder myServiceBinder = new MyServiceBinder();
 
@@ -119,8 +120,8 @@ public class RecordingService extends Service implements IRecordService, Locatio
 			return RecordingService.this.getCurrentTripID();
 		}
 
-		public void pauseRecording() {
-			RecordingService.this.pauseRecording();
+		public void pauseRecording(int pauseId) {
+			RecordingService.this.pauseRecording(pauseId);
 		}
 
 		public void resumeRecording() {
@@ -129,6 +130,10 @@ public class RecordingService extends Service implements IRecordService, Locatio
 
 		public void reset() {
 			RecordingService.this.reset();
+		}
+
+		public int pauseId() {
+			return this.pauseId();
 		}
 
 		public void setListener(IRecordServiceListener mia) {
@@ -155,6 +160,10 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		return trip;
 	}
 
+	public int pauseId() {
+		return pauseId;
+	}
+
 	public void setListener(IRecordServiceListener listener) {
 		RecordingService.this.recordServiceListener = listener;
 		//notifyListeners();
@@ -173,6 +182,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	public void startRecording(TripData trip) {
 		this.state = STATE_RECORDING;
 		this.trip = trip;
+		this.pauseId = -1;
 
 		distanceMeters = 0.0f;
 		lastLocation = null;
@@ -194,7 +204,8 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	 *  - disable location manager updates
 	 *  - start recording paused time
 	 */
-	public void pauseRecording() {
+	public void pauseRecording(int pauseId) {
+		this.pauseId = pauseId;
 		this.state = STATE_PAUSED;
 		trip.startPause();
 		if (null != speedMonitor)
@@ -208,6 +219,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	 */
 	public void resumeRecording() {
 		this.state = STATE_RECORDING;
+		this.pauseId = -1;
 		trip.finishPause();
 		if (null != speedMonitor)
 			speedMonitor.start();

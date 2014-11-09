@@ -568,7 +568,8 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
 
     <string name="header_arsi_report_safety_issue">Report safety issue</string>
     <string name="arsi_q_problem_type_title">Type of problem</string>
-    <string name="ara_no_gps">Your phone\'s GPS is disabled. ORCycle needs GPS to determine your location.\n\nGo to Settings to enable your GPS.</string>
+    <string name="ara_no_gps_message">ORCycle needs GPS to determine your present location.\n\nYou may be in a bad location for receiving GPS data, or your phone\'s GPS may be disabled. If your GPS is disabled, go to <b>Settings</b> to enable it.</string>
+    <string name="ara_no_gps_title">GPS reception unavailable!</string>
     
     <string name="arsi_q_problem_type"> * Issue Type(s)</string>
     
