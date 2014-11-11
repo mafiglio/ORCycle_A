@@ -61,8 +61,8 @@
     <string name="fmi_welcome_continue">Continue</string>
     <string name="fmi_welcome_instructions">Instructions</string>
     <string name="fmi_welcome_message">This app will let you record your bicycle trips, 
-	display maps of your rides, and provide feedback regarding crash, safety, or infrastrcuture issues. 
-Your data and feedback are valuable and nesessary to plan and build better bicycle facilities in Oregon.</string>
+	display maps of your rides, and provide feedback regarding crash, safety, or infrastructure issues. 
+Your data and feedback are valuable and necessary to plan and build better bicycle facilities in Oregon.</string>
     <string name="tqi_qsm_dialog_message">“You can now report crash events or locations with safety issues along this trip&#8230;</string>
     <string name="tqi_qsm_dialog_ok">OK</string>
     <string name="tqi_qsm_dialog_later">Later</string>
@@ -113,7 +113,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="note_enforcement_details">The bike lane is always blocked here, cars disobey "no right on red"&#8230; or anything else where enforcement can help make cycling safer. </string>
     <string name="note_needs_bike_rack_details">You wish you had a bike rack at this spot to securely park your bike.</string>
     <string name="note_bike_lane_issue_details">The bike lane ends abruptly here or is too narrow to safely ride in.</string>
-    <string name="note_note_issue_details">Anywhere else in need of improvement:want a sharrow, sign, or a bike lane? Share the details.</string>
+    <string name="note_note_issue_details">Anywhere else in need of improvement: want a sign, or a bike lane? Share the details.</string>
     <string name="segment_rating_a">A Rating</string>
     <string name="segment_rating_b">B Rating</string>
     <string name="segment_rating_c">C Rating</string>
@@ -145,7 +145,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="atmComment">Additional Details:</string>
     <string name="tmaTripPurpose">What is the main trip purpose?</string>
     <string name="snliNoteSeverityExample">Major crash/accident</string>
-    <string name="about_version">Version 2.0.3</string>
+    <string name="about_version">Version 2.0.4</string>
     <string name="about_version_code">vc:&#160;</string>
     <string name="about_copyright">&#169; 2014 ORcycle</string>
     <string name="aumad_answer_required_questions">Please answer all required questions.</string>
