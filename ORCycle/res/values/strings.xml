@@ -150,7 +150,8 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="about_copyright">&#169; 2014 ORcycle</string>
     <string name="aumad_answer_required_questions">Please answer all required questions.</string>
     <string name="aumad_ok">OK</string>
-
+    <string name="aui_save">Save</string>
+    
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
     <!-- ********************************************************* -->
