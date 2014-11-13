@@ -13,7 +13,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -58,6 +60,7 @@ public class UserInfoActivity extends Activity {
 	private Spinner spnrOccupation;
 	private Spinner spnrGender;
 	private Spinner spnrEthnicity;
+	private Button btnSave;
 
 	private OnItemWithOtherSelectedListener spnrRiderType_OnItemSelected = null;
 	private OnItemWithOtherSelectedListener spnrOccupation_OnItemSelected = null;
@@ -133,7 +136,8 @@ public class UserInfoActivity extends Activity {
 
 			((EditText) findViewById(R.id.editEmail)).setImeOptions(EditorInfo.IME_ACTION_DONE);
 
-			//setHasOptionsMenu(true);
+			btnSave = (Button) findViewById(R.id.btn_aui_save_user_info);
+			btnSave.setOnClickListener(new ButtonSave_OnClickListener());
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -189,29 +193,33 @@ public class UserInfoActivity extends Activity {
 
 		case R.id.action_user_info_send:
 
-			try {
-				savePreferences(true);
-				// this extra call to savePreferences is absolutely necessary.  It
-				// allows changes to be stored for later return to this activity.
-				savePreferences(false);
-				UserInfoUploader uploader = new UserInfoUploader(this, MyApplication.getInstance().getUserId());
-				uploader.execute();
-			}
-			catch(Exception ex) {
-				Log.e(MODULE_TAG, ex.getMessage());
-			}
-
-			try {
-				transitionToTabsConfigActivity(ExitTransition.EXIT_SEND);
-			}
-			catch(Exception ex) {
-				Log.e(MODULE_TAG, ex.getMessage());
-			}
+			saveAndFinish();
 			return true;
 
 		default:
 
 			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private void saveAndFinish() {
+		try {
+			savePreferences(true);
+			// this extra call to savePreferences is absolutely necessary.  It
+			// allows changes to be stored for later return to this activity.
+			savePreferences(false);
+			UserInfoUploader uploader = new UserInfoUploader(this, MyApplication.getInstance().getUserId());
+			uploader.execute();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+
+		try {
+			transitionToTabsConfigActivity(ExitTransition.EXIT_SEND);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
 
@@ -228,6 +236,31 @@ public class UserInfoActivity extends Activity {
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
+	// *********************************************************************************
+	// *                              Button Handlers
+	// *********************************************************************************
+
+    /**
+     * Class: ButtonSave_OnClickListener
+     *
+     * Description: Callback to be invoked when btnSave button is clicked
+     */
+	private final class ButtonSave_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+
+			try {
+				saveAndFinish();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 		}
 	}
 
