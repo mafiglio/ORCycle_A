@@ -10,14 +10,13 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 public class SpeedMonitor {
 
 	private static final String MODULE_TAG = "SpeedMonitor";
 	private static final long ONE_MINUTE_MS = 60000;
 	private static final long TWO_MINUTES_MS = 120000;
-	private static final long THREE_MINUTES_MS = 180000;
+	private static final long THREE_MINUTES_MS = 180000; // For faster debugging, set this value to 18000
 	private static final float METERS_PER_SECOND_TO_MILES_PER_HOUR = 2.2369f;
 
 	private final LinkedList<ListItem> speeds = new LinkedList<ListItem>();
@@ -236,10 +235,13 @@ public class SpeedMonitor {
 	private void notifyUser(String message) {
 		try {
 			soundpool.play(bikebell, 1.0f, 1.0f, 1, 0, 1.0f);
-			Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+
+			CustomToast toast = new CustomToast(context, message, 30);
+			toast.show();
 		}
 		catch(Exception ex) {
 			Log.v(MODULE_TAG, ex.getMessage());
 		}
 	}
+
 }
