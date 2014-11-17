@@ -1,118 +1,122 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="?android:attr/buttonBarStyle"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="${packageName}.${activityClass}" >
+    android:id="@+id/NoteQuestionsScrollView"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent" >
 
-    <TextView
-        android:id="@+id/tvDsaTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="@color/psu_green"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="10dp"
-        android:text="Title"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/text_white" />
-
-    <TextView
-        android:id="@+id/tvDsaMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/tvDsaTitle"
-        android:layout_marginBottom="1dp"
-        android:layout_marginTop="1dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="10dp"
-        android:text="Message goes here"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <CheckBox
-        android:id="@+id/chkDsaCheckbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/tvDsaMessage"
-        android:layout_marginBottom="1dp"
-        android:layout_marginTop="1dp"
-        android:text="Don&apos;t show this again"
-        android:textAppearance="?android:attr/textAppearanceMedium"  />
-    
-    <LinearLayout
-        android:id="@+id/llDsaButtons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/chkDsaCheckbox"
-        android:layout_marginTop="1dp"
-        android:baselineAligned="false"
-        android:divider="?android:attr/dividerVertical"
-        android:dividerPadding="12dp"
-        android:gravity="center_horizontal"
-        android:measureWithLargestChild="true"
-        android:showDividers="none" >
-
-	<Button
-	    android:id="@+id/btnDsaPositive"
-	    style="?android:attr/buttonBarButtonStyle"
-	    android:layout_width="wrap_content"
-	    android:layout_height="40dp"
-	    android:layout_marginBottom="4dp"
-	    android:layout_marginLeft="4dp"
-	    android:layout_marginRight="2dp"
-	    android:layout_marginTop="4dp"
-	    android:layout_weight="1"
-	    android:background="@color/black"
-	    android:onClick="OnSave"
-	    android:paddingLeft="6dp"
-	    android:paddingRight="6dp"
-	    android:text="positive"
-	    android:textColor="@color/user_button_text"
-	    android:textAppearance="?android:attr/textAppearanceMedium" />
-
+	<RelativeLayout 
+	    style="?android:attr/buttonBarStyle"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+	    tools:context="${packageName}.${activityClass}" >
+	
+	    <TextView
+	        android:id="@+id/tvDsaTitle"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentTop="true"
+	        android:background="@color/psu_green"
+	        android:paddingBottom="10dp"
+	        android:paddingLeft="10dp"
+	        android:paddingRight="10dp"
+	        android:paddingTop="10dp"
+	        android:text="Title"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textColor="@color/text_white" />
+	
+	    <TextView
+	        android:id="@+id/tvDsaMessage"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/tvDsaTitle"
+	        android:layout_marginBottom="1dp"
+	        android:layout_marginTop="1dp"
+	        android:paddingBottom="10dp"
+	        android:paddingLeft="10dp"
+	        android:paddingRight="10dp"
+	        android:paddingTop="10dp"
+	        android:text="Message goes here"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+	    <CheckBox
+	        android:id="@+id/chkDsaCheckbox"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/tvDsaMessage"
+	        android:layout_marginBottom="1dp"
+	        android:layout_marginTop="1dp"
+	        android:text="Don&apos;t show this again"
+	        android:textAppearance="?android:attr/textAppearanceMedium"  />
+	    
+	    <LinearLayout
+	        android:id="@+id/llDsaButtons"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/chkDsaCheckbox"
+	        android:layout_marginTop="1dp"
+	        android:baselineAligned="false"
+	        android:divider="?android:attr/dividerVertical"
+	        android:dividerPadding="12dp"
+	        android:gravity="center_horizontal"
+	        android:measureWithLargestChild="true"
+	        android:showDividers="none" >
+	
 		<Button
-		    android:id="@+id/btnDsaNeutral"
+		    android:id="@+id/btnDsaPositive"
 		    style="?android:attr/buttonBarButtonStyle"
 		    android:layout_width="wrap_content"
 		    android:layout_height="40dp"
 		    android:layout_marginBottom="4dp"
-		    android:layout_marginLeft="2dp"
+		    android:layout_marginLeft="4dp"
 		    android:layout_marginRight="2dp"
 		    android:layout_marginTop="4dp"
 		    android:layout_weight="1"
 		    android:background="@color/black"
+		    android:onClick="OnSave"
 		    android:paddingLeft="6dp"
 		    android:paddingRight="6dp"
-		    android:text="neutral"
+		    android:text="positive"
 		    android:textColor="@color/user_button_text"
 		    android:textAppearance="?android:attr/textAppearanceMedium" />
-
+	
 			<Button
-			    android:id="@+id/btnDsaNegative"
+			    android:id="@+id/btnDsaNeutral"
 			    style="?android:attr/buttonBarButtonStyle"
 			    android:layout_width="wrap_content"
 			    android:layout_height="40dp"
 			    android:layout_marginBottom="4dp"
 			    android:layout_marginLeft="2dp"
-			    android:layout_marginRight="4dp"
+			    android:layout_marginRight="2dp"
 			    android:layout_marginTop="4dp"
 			    android:layout_weight="1"
 			    android:background="@color/black"
-			    android:paddingLeft="1dp"
-			    android:paddingRight="0dp"
-			    android:text="negative"
+			    android:paddingLeft="6dp"
+			    android:paddingRight="6dp"
+			    android:text="neutral"
 			    android:textColor="@color/user_button_text"
 			    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    </LinearLayout>
-
-
-</RelativeLayout>
+	
+				<Button
+				    android:id="@+id/btnDsaNegative"
+				    style="?android:attr/buttonBarButtonStyle"
+				    android:layout_width="wrap_content"
+				    android:layout_height="40dp"
+				    android:layout_marginBottom="4dp"
+				    android:layout_marginLeft="2dp"
+				    android:layout_marginRight="4dp"
+				    android:layout_marginTop="4dp"
+				    android:layout_weight="1"
+				    android:background="@color/black"
+				    android:paddingLeft="1dp"
+				    android:paddingRight="0dp"
+				    android:text="negative"
+				    android:textColor="@color/user_button_text"
+				    android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+	    </LinearLayout>
+	</RelativeLayout>
+</ScrollView>
