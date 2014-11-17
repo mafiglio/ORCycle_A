@@ -505,20 +505,20 @@
 	            android:paddingTop="12dp"
 	            tools:context=".UserInfo$DummySectionFragment" >
 	            
-		<Button
-		    android:id="@+id/btn_aui_save_user_info"
-		    style="?android:attr/buttonBarButtonStyle"
-		    android:layout_width="match_parent"
-		    android:layout_height="40dp"
-		    android:layout_marginLeft="2dp"
-		    android:layout_marginRight="2dp"
-		    android:layout_marginBottom="8dp"
-		    android:background="@color/user_button_background"
-		    android:paddingLeft="6dp"
-		    android:paddingRight="6dp"
-		    android:text="@string/aui_save"
-		    android:textColor="@color/user_button_text"
-		    android:textAppearance="?android:attr/textAppearanceMedium" />
+				<Button
+				    android:id="@+id/btn_aui_save_user_info"
+				    style="?android:attr/buttonBarButtonStyle"
+				    android:layout_width="match_parent"
+				    android:layout_height="40dp"
+				    android:layout_marginLeft="2dp"
+				    android:layout_marginRight="2dp"
+				    android:layout_marginBottom="8dp"
+				    android:background="@color/user_button_background"
+				    android:paddingLeft="6dp"
+				    android:paddingRight="6dp"
+				    android:text="@string/aui_save"
+				    android:textColor="@color/user_button_text"
+				    android:textAppearance="?android:attr/textAppearanceMedium" />
 
         	</RelativeLayout>
 

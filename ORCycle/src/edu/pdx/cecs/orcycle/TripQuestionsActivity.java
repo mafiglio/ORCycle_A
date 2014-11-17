@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -27,6 +28,7 @@ public class TripQuestionsActivity extends Activity {
 
 	private static final String MODULE_TAG = "TripQuestionsActivity";
 
+	private Button btnSave;
 	private MultiSelectionSpinner routePrefs;
 	private MultiSelectionSpinner routeStressors;
 	private Spinner tripFrequency;
@@ -116,6 +118,8 @@ public class TripQuestionsActivity extends Activity {
 
 			tripComment = (EditText) findViewById(R.id.editTextTripComment);
 
+			btnSave = (Button) findViewById(R.id.btn_atq_save);
+			btnSave.setOnClickListener(new ButtonSave_OnClickListener());
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -167,24 +171,12 @@ public class TripQuestionsActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
-		MyApplication myApp = MyApplication.getInstance();
-
 		try {
 			switch (item.getItemId()) {
 
 			case R.id.action_save_trip_questions:
 
-				if (mandatoryQuestionsAnswered()) {
-					String tripPurposeText = submitAnswers();
-					myApp.setFirstTripCompleted(true);
-					if (myApp.getWarnRepeatTrips())
-						AlertUserRepeatTrips(tripPurposeText);
-					else
-						querySafetyMarker();
-				}
-				else {
-					AlertUserMandatoryAnswers();
-				}
+				finishQuestions();
 				return true;
 			}
 		}
@@ -192,6 +184,23 @@ public class TripQuestionsActivity extends Activity {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void finishQuestions() {
+
+		MyApplication myApp = MyApplication.getInstance();
+
+		if (mandatoryQuestionsAnswered()) {
+			String tripPurposeText = submitAnswers();
+			myApp.setFirstTripCompleted(true);
+			if (myApp.getWarnRepeatTrips())
+				AlertUserRepeatTrips(tripPurposeText);
+			else
+				querySafetyMarker();
+		}
+		else {
+			AlertUserMandatoryAnswers();
+		}
 	}
 
 	private boolean mandatoryQuestionsAnswered() {
@@ -227,6 +236,26 @@ public class TripQuestionsActivity extends Activity {
 	// *                              Button Handlers
 	// *********************************************************************************
 
+	/**
+     * Class: ButtonSave_OnClickListener
+     *
+     * Description: Callback to be invoked when btnSave button is clicked
+     */
+	private final class ButtonSave_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+
+			try {
+				finishQuestions();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
 
 	/**
      * Class: ButtonStart_OnClickListener
