@@ -150,7 +150,49 @@
 	                android:textColor="@color/psu_sienna" />
         	</RelativeLayout>
 	        	
-			
-   	    </LinearLayout>
-	    
+	        <RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+	            
+				<Button
+				    android:id="@+id/btn_arsi_save_report"
+				    style="?android:attr/buttonBarButtonStyle"
+				    android:layout_width="match_parent"
+				    android:layout_height="40dp"
+				    android:layout_marginLeft="2dp"
+				    android:layout_marginRight="2dp"
+				    android:layout_marginBottom="8dp"
+				    android:background="@color/user_button_background"
+				    android:paddingLeft="6dp"
+				    android:paddingRight="6dp"
+				    android:text="@string/aui_save"
+				    android:textColor="@color/user_button_text"
+				    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        	</RelativeLayout>
+        	
+	        <RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+	            
+        	</RelativeLayout>
+	        
+	    </LinearLayout>
+   	    
 </ScrollView>

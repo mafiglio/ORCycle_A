@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 	private static final int PREF_LOCATION = 3;
 	private static final int PREF_SAFETY_ISSUES_OTHER = 1001;
 
+	private Button btnSave;
 	private MultiSelectionSpinner spnSafetyIssues;
 	private Spinner spnUrgency;
 	private Spinner spnLocation;
@@ -77,6 +79,9 @@ public class ReportSafetyIssuesActivity extends Activity {
 			spnUrgency = (Spinner) findViewById(R.id.spn_arsi_urgency);
 			spnLocation = (Spinner) findViewById(R.id.spn_arsi_location);
 			spnLocation.setOnItemSelectedListener(customLocation_OnClickListener);
+
+			btnSave = (Button) findViewById(R.id.btn_arsi_save_report);
+			btnSave.setOnClickListener(new ButtonSave_OnClickListener());
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -369,8 +374,29 @@ public class ReportSafetyIssuesActivity extends Activity {
 	}
 
     // *********************************************************************************
-	// *
+	// *                              Button Handlers
 	// *********************************************************************************
+
+	/**
+     * Class: ButtonSave_OnClickListener
+     *
+     * Description: Callback to be invoked when btnSave button is clicked
+     */
+	private final class ButtonSave_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+
+			try {
+				finishReport();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
 
 	/**
      * Class: ButtonStart_OnClickListener
