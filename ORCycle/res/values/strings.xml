@@ -38,8 +38,8 @@
     <string name="btn_lbl_rate_segment_finish">Enter end of segment</string>
     <string name="chooser_image">Select Image</string>
     <string name="fmi_query_user_profile_title">Tell us about yourself&#8230;</string>
-    <string name="fmi_query_user_profile">If you are new to ORcycle, tell us about yourself.&#160;&#160;Please 
-        answer at least the first 6 questions about your biking habits.</string>
+    <string name="fmi_query_user_profile">If you are new to ORcycle, tell us about yourself.&#160;&#160;Please
+answer at least the first 6 questions about your biking habits.</string>
     <string name="fmi_qup_dialog_ok">OK</string>
     <string name="fmi_qup_dialog_later">Later</string>
     <string name="fmi_no_gps">Your phone\'s GPS is disabled. ORCycle needs GPS to determine your location.\n\nGo to System Settings now to enable GPS?</string>
@@ -60,17 +60,18 @@
     <string name="fmi_welcome_title">Welcome to ORcycle!</string>
     <string name="fmi_welcome_continue">Continue</string>
     <string name="fmi_welcome_instructions">Instructions</string>
-    <string name="fmi_welcome_message">This app will let you record your bicycle trips, 
-	display maps of your rides, and provide feedback regarding crash, safety, or infrastructure issues. 
-Your data and feedback are valuable and necessary to plan and build better bicycle facilities in Oregon.</string>
+    <string name="fmi_welcome_message">This app lets you record bicycle trips, display trip maps,
+and provide bicycle safety feedback. You can report crashes, near-misses or safety issues from anywhere:
+home, office, along your trip, etc. <i>by</i> pressing the “Report” button. To record a trip you need to press
+start/finish buttons before/after your trip.</string>
     <string name="tqi_qsm_dialog_message">“You can now report crash events or locations with safety issues along this trip&#8230;</string>
     <string name="tqi_qsm_dialog_ok">OK</string>
     <string name="tqi_qsm_dialog_later">Later</string>
     <string name="tqa_alert_user_about_later">You can later go to \"Trips\", select a trip and report crash events or locations with safety issues.</string>
     <string name="tqa_alert_answer_required_questions">Please answer required questions</string>
     <string name="tqa_alert_OK">OK</string>
-    <string name="tqa_alert_repeated_trips">Data for this %s trip will be logged and uploaded.&#160;&#160;\
-<b>If you repeat the same route there is no need to log it again</b>.&#160;&#160;\
+    <string name="tqa_alert_repeated_trips">Data for this %s trip will be logged and uploaded.
+<b>If you repeat the same route there is no need to log it again</b>.
 Please use ORcycle to log new trip purposes, routes, or safety locations.</string>
     <string name="ami_elapsed_time">Elapsed time</string>
     <string name="ami_initial_elapsed_time">00:00:00</string>
@@ -135,8 +136,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="ats_getting_started">Get started with ORCycle&#8230;</string>
     <string name="ats_provide_feedback">Provide feedback about the app&#8230;</string>
     <string name="ats_privacy_policy">ORcycle\'s Privacy Policy&#8230;</string>
-    <string name="auf_user_feedback">Comment here if you would like to provide feedback
-        about ORcycle or desirable features:</string>
+    <string name="auf_user_feedback">Comment here if you would like to provide feedback about ORcycle or desirable features:</string>
     <string name="anmWaterFalls">Waterfalls</string>
     <string name="anmComment">Additional Details:</string>
     <string name="anmNoteImageContentDescription">Report Image</string>
