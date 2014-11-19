@@ -18,6 +18,8 @@ public class SpeedMonitor {
 	private static final long TWO_MINUTES_MS = 120000;
 	private static final long THREE_MINUTES_MS = 180000; // For faster debugging, set this value to 18000
 	private static final float METERS_PER_SECOND_TO_MILES_PER_HOUR = 2.2369f;
+	private static final String MESSAGE_TOO_SLOW = "You are going slower than 3 mph, if you are not biking anymore, please stop recording the trip. Thanks!";
+	private static final String MESSAGE_TOO_FAST = "You are going faster than 20 mph, if you are not biking anymore, please stop recording the trip. Thanks!";
 
 	private final LinkedList<ListItem> speeds = new LinkedList<ListItem>();
 	private final SoundPool soundpool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION, 0);
@@ -144,11 +146,11 @@ public class SpeedMonitor {
 			// Note: if we get here then there is 3 minutes
 			// or more data in speed buffer
 			if (mph < 3.0f) {
-				notifyUser("Running speed was less than 3 mph");
+				notifyUser(MESSAGE_TOO_SLOW);
 				truncateBufferTo(0);
 			}
 			else if (mph > 20.0f) {
-				notifyUser("Running speed exceeded 20 mph");
+				notifyUser(MESSAGE_TOO_FAST);
 				truncateBufferTo(0);
 			}
 			else {

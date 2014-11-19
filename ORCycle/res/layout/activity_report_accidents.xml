@@ -160,6 +160,7 @@
 	            
 	            
 			<RelativeLayout
+	            android:id="@+id/rl_ara_location"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_marginTop="1dp"
