@@ -814,19 +814,6 @@ public class TripMapActivity extends Activity {
 		overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
 	}
 
-	private void xxtransitionToNoteQuestionsActivity(NoteData note, long tripId) {
-
-		Intent intent = new Intent(this, NoteQuestionsActivity.class);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, note.noteId);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_TYPE, NoteQuestionsActivity.EXTRA_NOTE_TYPE_UNDEFINED);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, NoteQuestionsActivity.EXTRA_NOTE_SOURCE_TRIP_MAP);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, tripSource);
-		startActivity(intent);
-		finish();
-		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-	}
-
 	private void transitionToReportTypeActivity(NoteData note, long tripId) {
 		Intent intent = new Intent(this, ReportTypeActivity.class);
 		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, note.noteId);

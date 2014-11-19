@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -79,6 +80,10 @@ public class ReportSafetyIssuesActivity extends Activity {
 			spnUrgency = (Spinner) findViewById(R.id.spn_arsi_urgency);
 			spnLocation = (Spinner) findViewById(R.id.spn_arsi_location);
 			spnLocation.setOnItemSelectedListener(customLocation_OnClickListener);
+			if (noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP) {
+				RelativeLayout rl = (RelativeLayout) findViewById(R.id.rl_arsi_location);
+				rl.setVisibility(View.GONE);
+			}
 
 			btnSave = (Button) findViewById(R.id.btn_arsi_save_report);
 			btnSave.setOnClickListener(new ButtonSave_OnClickListener());
@@ -201,7 +206,10 @@ public class ReportSafetyIssuesActivity extends Activity {
 		if (MandatoryQuestionsAnswered()) {
 			submitAnswers();
 			saveUiSettings();
-			if (useCustomLocation()) {
+			if (noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP) {
+				transitionToNoteDetailActivity();
+			}
+			else if (useCustomLocation()) {
 				transitionToCustomLocationActivity();
 			}
 			else if (setNoteLocation()) {
@@ -256,9 +264,15 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 	private boolean MandatoryQuestionsAnswered() {
 
-		return ((spnSafetyIssues.getSelectedIndicies().size() > 0) &&
-				(spnUrgency.getSelectedItemPosition() > 0) &&
-				(spnLocation.getSelectedItemPosition() > 0));
+		if (noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP) {
+			return ((spnSafetyIssues.getSelectedIndicies().size() > 0) &&
+					(spnUrgency.getSelectedItemPosition() > 0));
+		}
+		else {
+			return ((spnSafetyIssues.getSelectedIndicies().size() > 0) &&
+					(spnUrgency.getSelectedItemPosition() > 0) &&
+					(spnLocation.getSelectedItemPosition() > 0));
+		}
 	}
 
 	private void AlertUserMandatoryAnswers() {

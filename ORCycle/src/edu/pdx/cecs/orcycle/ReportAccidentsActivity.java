@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -97,6 +98,10 @@ public class ReportAccidentsActivity extends Activity {
 
 			spnLocation = (Spinner) findViewById(R.id.spn_ara_location);
 			spnLocation.setOnItemSelectedListener(customLocation_OnClickListener);
+			if (noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP) {
+				RelativeLayout rl = (RelativeLayout) findViewById(R.id.rl_ara_location);
+				rl.setVisibility(View.GONE);
+			}
 
 			btnSave = (Button) findViewById(R.id.btn_ara_save_report);
 			btnSave.setOnClickListener(new ButtonSave_OnClickListener());
@@ -219,7 +224,10 @@ public class ReportAccidentsActivity extends Activity {
 		if (MandatoryQuestionsAnswered()) {
 			submitAnswers();
 			saveUiSettings();
-			if (useCustomLocation()) {
+			if (noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP) {
+				transitionToNoteDetailActivity();
+			}
+			else if (useCustomLocation()) {
 				transitionToCustomLocationActivity();
 			}
 			else if (setNoteLocation()) {
@@ -274,11 +282,19 @@ public class ReportAccidentsActivity extends Activity {
 
 	private boolean MandatoryQuestionsAnswered() {
 
-		return ((spnSeverity.getSelectedItemPosition() > 0) &&
-				(spnAccidentObject.getSelectedIndicies().size() > 0) &&
-				(spnAccidentActions.getSelectedIndicies().size() > 0) &&
-				(spnAccidentContrib.getSelectedIndicies().size() > 0) &&
-				(spnLocation.getSelectedItemPosition() > 0));
+		if (noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP) {
+			return ((spnSeverity.getSelectedItemPosition() > 0) &&
+					(spnAccidentObject.getSelectedIndicies().size() > 0) &&
+					(spnAccidentActions.getSelectedIndicies().size() > 0) &&
+					(spnAccidentContrib.getSelectedIndicies().size() > 0));
+		}
+		else {
+			return ((spnSeverity.getSelectedItemPosition() > 0) &&
+					(spnAccidentObject.getSelectedIndicies().size() > 0) &&
+					(spnAccidentActions.getSelectedIndicies().size() > 0) &&
+					(spnAccidentContrib.getSelectedIndicies().size() > 0) &&
+					(spnLocation.getSelectedItemPosition() > 0));
+		}
 	}
 
 	private void AlertUserMandatoryAnswers() {

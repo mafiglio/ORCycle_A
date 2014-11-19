@@ -19,8 +19,7 @@ public class SpeedMonitor {
 	private static final long THREE_MINUTES_MS = 180000; // For faster debugging, set this value to 18000
 	private static final float METERS_PER_SECOND_TO_MILES_PER_HOUR = 2.2369f;
 	private static final String MESSAGE_TOO_SLOW = "You are going slower than 3 mph, if you are not biking anymore, please stop recording the trip. Thanks!";
-	private static final String MESSAGE_TOO_FAST = "You are going faster than 20 mph, if you are not biking anymore, please stop recording the trip. Thanks!"";
-
+	private static final String MESSAGE_TOO_FAST = "You are going faster than 20 mph, if you are not biking anymore, please stop recording the trip. Thanks!";
 
 	private final LinkedList<ListItem> speeds = new LinkedList<ListItem>();
 	private final SoundPool soundpool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION, 0);
