@@ -34,7 +34,7 @@ public class CustomToast {
 		TextView text = (TextView) layout.findViewById(R.id.custom_toast_text);
 		text.setText(message);
 		Toast toast = new Toast(context);
-		toast.setGravity(Gravity.CENTER, 0, 0);
+		toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 0);
 		toast.setDuration(Toast.LENGTH_LONG);
 		toast.setView(layout);
 		return toast;
