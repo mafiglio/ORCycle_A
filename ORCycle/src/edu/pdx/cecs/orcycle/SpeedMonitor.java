@@ -238,7 +238,7 @@ public class SpeedMonitor {
 		try {
 			soundpool.play(bikebell, 1.0f, 1.0f, 1, 0, 1.0f);
 
-			CustomToast toast = new CustomToast(context, message, 30);
+			CustomToast toast = new CustomToast(context, message, 3);
 			toast.show();
 		}
 		catch(Exception ex) {

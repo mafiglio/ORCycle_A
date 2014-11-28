@@ -13,10 +13,10 @@ public class CustomToast {
 	private final String message;
 	private final int numShows;
 
-	public CustomToast(Context context, String message, int length) {
+	public CustomToast(Context context, String message, int numShows) {
 		this.context = context;
 		this.message = message;
-		numShows = (length < 4) ? 1 : 1 + (int)((length) / 3.5);
+		this.numShows = numShows;
 	}
 
 	public void show() {
