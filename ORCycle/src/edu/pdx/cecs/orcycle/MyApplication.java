@@ -36,6 +36,7 @@ public class MyApplication extends android.app.Application {
 	public static final String PRIVACY_POLICY_URI = "http://www.pdx.edu/transportation-lab/privacy-policy";
 
 	private static final String SETTING_USER_WELCOME_ENABLED = "USER_WELCOME_ENABLED";
+	private static final String SETTING_HOW_TO_ENABLED = "HOW_TO_ENABLED";
 	private static final String SETTING_USER_INFO_UPLOADED = "USER_INFO_UPLOADED";
 	private static final String SETTING_FIRST_TRIP_COMPLETED = "SETTING_FIRST_TRIP_COMPLETED";
 	private static final String SETTING_WARN_REPEAT_TRIPS = "SETTING_WARN_REPEAT_TRIPS";
@@ -47,14 +48,20 @@ public class MyApplication extends android.app.Application {
 	private String userId = null;
 	private int versionCode = -1;
 	private long firstUse = -1;
-	private boolean userProfileUploaded;
 	private boolean warnRepeatTrips;
-	private boolean userWelcomeEnabled;
 	private boolean firstTripCompleted;
 	private RecordingService recordingService = null;
 	private TripData trip;
+
 	private boolean checkedForUserProfile = false;
+	private boolean userProfileUploaded;
+
 	private boolean checkedForUserWelcome = false;
+	private boolean userWelcomeEnabled;
+
+	private boolean checkedForHowTo = false;
+	private boolean howToEnabled;
+
 	private double lastTripStartTime = RESET_START_TIME;
 
 
@@ -62,6 +69,8 @@ public class MyApplication extends android.app.Application {
     * Reference to class instance
     */
     private static MyApplication myApp = null;
+
+    private static Controller controller = new Controller();
 
     /**
      * Returns the class instance of the MyApplication object
@@ -112,6 +121,8 @@ public class MyApplication extends android.app.Application {
 
 		userWelcomeEnabled = settings.getBoolean(SETTING_USER_WELCOME_ENABLED, true);
 
+		howToEnabled = settings.getBoolean(SETTING_HOW_TO_ENABLED, true);
+
 		warnRepeatTrips = settings.getBoolean(SETTING_WARN_REPEAT_TRIPS, true);
 	}
 
@@ -120,6 +131,7 @@ public class MyApplication extends android.app.Application {
 		//setFirstTripCompleted(false);
 		setUserProfileUploaded(false);
 		setUserWelcomeEnabled(true);
+		setHowToEnabled(true);
 		setWarnRepeatTrips(true);
 	}
 
@@ -282,7 +294,7 @@ public class MyApplication extends android.app.Application {
     }
 
 	// *********************************************************************************
-	// *
+	// *                              UserProfile
 	// *********************************************************************************
 
 	public void setCheckedForUserProfile(boolean value) {
@@ -321,7 +333,7 @@ public class MyApplication extends android.app.Application {
 	}
 
 	// *********************************************************************************
-	// *
+	// *                                UserWelcome
 	// *********************************************************************************
 
 	public void setCheckedForUserWelcome(boolean value) {
@@ -347,7 +359,33 @@ public class MyApplication extends android.app.Application {
 	}
 
 	// *********************************************************************************
-	// *
+	// *                                HowTo
+	// *********************************************************************************
+
+	public void setCheckedForHowTo(boolean value) {
+		checkedForHowTo = value;
+	}
+
+	public boolean getCheckedForHowTo() {
+		return checkedForHowTo;
+	}
+
+	public void setHowToEnabled(boolean value) {
+		howToEnabled = value;
+		SharedPreferences settings;
+		settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor = settings.edit();
+		editor.putBoolean(SETTING_HOW_TO_ENABLED, howToEnabled);
+		editor.apply();
+	}
+
+	public boolean getHowToEnabled() {
+		return howToEnabled;
+	}
+
+	// *********************************************************************************
+	// *                                WarnRepeatTrips
 	// *********************************************************************************
 
 	public void setWarnRepeatTrips(boolean value) {
@@ -364,7 +402,7 @@ public class MyApplication extends android.app.Application {
 	}
 
 	// *********************************************************************************
-	// *
+	// *                                FirstUse
 	// *********************************************************************************
 
 	/**
@@ -498,5 +536,9 @@ public class MyApplication extends android.app.Application {
 		} else {
 			return Character.toUpperCase(first) + s.substring(1);
 		}
+	}
+
+	public Controller getController() {
+		return controller;
 	}
 }
