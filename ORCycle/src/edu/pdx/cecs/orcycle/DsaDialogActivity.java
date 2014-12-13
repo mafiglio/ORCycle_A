@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DsaDialogActivity extends Activity {
@@ -25,15 +26,18 @@ public class DsaDialogActivity extends Activity {
 	public static final String EXTRA_NEGATIVE_ID = "negative_id";
 	public static final String EXTRA_IS_CHECKED = "is_checked";
 	public static final int EXTRA_UNSET_ID = -1;
+	public static final String EXTRA_IMAGE_ID = "image_id";
 
 	private int dialogId;
 	private int positiveId;
 	private int neutralId;
 	private int negativeId;
+	private int imageId;
 	private Button btnPositive;
 	private Button btnNeutral;
 	private Button btnNegative;
 	private CheckBox cbDontShowAgain;
+	private ImageView imageView;
 
 	private final CheckboxChangeListener onCheckboxChangeListener = new CheckboxChangeListener();
 	private final class CheckboxChangeListener implements CompoundButton.OnCheckedChangeListener {
@@ -61,6 +65,7 @@ public class DsaDialogActivity extends Activity {
 			neutralId = extras.getInt(EXTRA_NEUTRAL_ID, EXTRA_UNSET_ID);
 			String negativeText = extras.getString(EXTRA_NEGATIVE_TEXT);
 			negativeId = extras.getInt(EXTRA_NEGATIVE_ID, EXTRA_UNSET_ID);
+			imageId = extras.getInt(EXTRA_IMAGE_ID, EXTRA_UNSET_ID);
 
 			// Set title
 			TextView tvTitle = (TextView) findViewById(R.id.tvDsaTitle);
@@ -71,6 +76,16 @@ public class DsaDialogActivity extends Activity {
 				tvTitle.setVisibility(View.GONE);
 				//tvTitle.setText(title);
 				this.setTitle(title);
+			}
+
+			// Set image
+			imageView = (ImageView) findViewById(R.id.imageDsa);
+			if (EXTRA_UNSET_ID == imageId) {
+				imageView.setVisibility(View.GONE);
+			}
+			else {
+				imageView.setImageResource(imageId);
+				imageView.setVisibility(View.VISIBLE);
 			}
 
 			// Set message

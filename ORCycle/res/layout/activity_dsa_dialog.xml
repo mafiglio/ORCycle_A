@@ -1,6 +1,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/NoteQuestionsScrollView"
+    android:id="@+id/scrollViewDsa"
     android:layout_width="wrap_content"
     android:layout_height="fill_parent" >
 
@@ -26,12 +26,30 @@
 	        android:textAppearance="?android:attr/textAppearanceLarge"
 	        android:textColor="@color/text_white" />
 	
+		<ImageView
+		    android:id="@+id/imageDsa"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/tvDsaTitle"
+		    android:layout_marginTop="1dp"
+		    android:adjustViewBounds="true"
+		    android:background="@color/psu_green"
+		    android:contentDescription="@string/dsaNoteImageContentDescription"
+		    android:maxHeight="300dp"
+		    android:paddingBottom="10dp"
+		    android:paddingLeft="10dp"
+		    android:paddingRight="10dp"
+		    android:paddingTop="10dp"
+		    android:scaleType="fitCenter"
+		    android:src="@drawable/how_to_1" />
+
 	    <TextView
 	        android:id="@+id/tvDsaMessage"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/tvDsaTitle"
+	        android:layout_below="@+id/imageDsa"
 	        android:layout_marginBottom="1dp"
 	        android:layout_marginTop="1dp"
 	        android:paddingBottom="10dp"

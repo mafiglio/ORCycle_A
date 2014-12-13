@@ -64,6 +64,9 @@ answer at least the first 6 questions about your biking habits.</string>
 and provide bicycle safety feedback. You can report crashes, near-misses or safety issues from anywhere:
 home, office, along your trip, etc. <i>by</i> pressing the “Report” button. To record a trip you need to press
 start/finish buttons before/after your trip.</string>
+    <string name="fmi_how_to_title">How To</string>
+    <string name="fmi_how_to_continue">Continue</string>
+    <string name="fmi_how_to_message">How to message goes here!</string>
     <string name="tqi_qsm_dialog_message">“You can now report crash events or locations with safety issues along this trip&#8230;</string>
     <string name="tqi_qsm_dialog_ok">OK</string>
     <string name="tqi_qsm_dialog_later">Later</string>
@@ -151,6 +154,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="aumad_answer_required_questions">Please answer all required questions.</string>
     <string name="aumad_ok">OK</string>
     <string name="aui_save">Save</string>
+    <string name="dsaNoteImageContentDescription">How to description</string>
     
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->

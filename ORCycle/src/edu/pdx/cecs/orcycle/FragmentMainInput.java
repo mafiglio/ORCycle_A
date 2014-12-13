@@ -7,13 +7,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,24 +48,19 @@ public class FragmentMainInput extends Fragment
 	private static final float CF1_MILES_TO_KCALORIES = 49.0f;  	// Conversion factor part 1 miles to Kcalories burned
 	private static final float CF2_MILES_TO_KCALORIES = -1.69f;  	// Conversion factor part 2 miles to Kcalories burned
 	private static final float METERS_PER_SECOND_TO_MILES_PER_HOUR = 2.2369f;
-	private static final String COM_ANDROID_SETTINGS = "com.android.settings";
-	private static final String COM_ANDROID_SETTINGS_SECURITY_SETTINGS = "com.android.settings.SecuritySettings";
-
-	private static final int DSA_ID_WELCOME_DIALOG_ID = 1000;
-	private static final int DSA_ID_WELCOME_DIALOG_CONTINUE = 1001;
-	private static final int DSA_ID_WELCOME_DIALOG_INSTRUCTIONS = 1002;
-	private static final int DSA_ID_WELCOME_BACK_FROM_INSTRUCTIONS = 1003;
-
-	private static final int DSA_ID_USER_PROFILE_DIALOG_ID = 2000;
-	private static final int DSA_ID_USER_PROFILE_DIALOG_OK = 2001;
-	private static final int DSA_ID_USER_PROFILE_DIALOG_LATER = 2002;
 
 	private static final int FMI_USER_PAUSED = 1;
 	private static final int FMI_NOTE_PAUSED = 2;
 	private static final int FMI_FINISH_PAUSED = 3;
 
+	public enum Result {UNDEFINED, SAVE_TRIP, REPORT, NO_GPS, GET_USER_INFO, SHOW_INSTRUCTIONS,
+		SHOW_WELCOME, SHOW_DIALOG_USER_INFO, HOW_TO };
+
+	private Result result;
+
 	// Reference to Global application object
 	private MyApplication myApp = null;
+	private Controller controller = null;
 
 	// Reference to recording service;
 	private IRecordService recordingService;
@@ -130,10 +123,12 @@ public class FragmentMainInput extends Fragment
 		Log.v(MODULE_TAG, "Cycle: onCreateView()");
 
 		View rootView = null;
+		result = Result.UNDEFINED;
 
 		try {
 			// Convenient pointer to global application object
 			myApp = MyApplication.getInstance();
+			controller = myApp.getController();
 
 			// Folloing line for debugging only
 			//myApp.setUserProfileUploaded(false);
@@ -263,35 +258,48 @@ public class FragmentMainInput extends Fragment
 			if (backFromInstructions) {
 				backFromInstructions = false;
 				if (myApp.getUserWelcomeEnabled()) {
-					transitionToDialogWelcome();
+					controller.finish(setResult(Result.SHOW_WELCOME));
 					return;
 				}
 			}
+			// Check for responses from User dialogs
 			else if (null != (intent = getActivity().getIntent())) {
 				if (null != (bundle = intent.getExtras())) {
 					String src = bundle.getString(TabsConfig.EXTRA_DSA_ACTIVITY);
 					if (null != src) {
+						// Respond to the dialog button that was pressed
 						int dialogId = bundle.getInt(TabsConfig.EXTRA_DSA_DIALOG_ID, -1);
 						int buttonPressed = bundle.getInt(TabsConfig.EXTRA_DSA_BUTTON_PRESSED, -1);
 						boolean ischecked = bundle.getBoolean(DsaDialogActivity.EXTRA_IS_CHECKED, false);
-						if (DSA_ID_WELCOME_DIALOG_ID == dialogId) {
+
+						// Check for Welcome Dialog
+						if (Controller.DSA_ID_WELCOME_DIALOG_ID == dialogId) {
 							if (ischecked) {
 								myApp.setUserWelcomeEnabled(false);
 							}
-							if (DSA_ID_WELCOME_DIALOG_INSTRUCTIONS == buttonPressed) {
-								transitionToORcycle();
+							if (Controller.DSA_ID_WELCOME_DIALOG_INSTRUCTIONS == buttonPressed) {
+								controller.finish(setResult(Result.SHOW_INSTRUCTIONS));
 								backFromInstructions = false;
-								//getActivity().finish();
 								return;
 							}
 						}
-						else if (DSA_ID_USER_PROFILE_DIALOG_ID == dialogId) {
+						// Check for HowTo dialog
+						else if (Controller.DSA_ID_HOW_TO_DIALOG_ID == dialogId) {
+							if (ischecked) {
+								myApp.setHowToEnabled(false);
+							}
+							else if (controller.setNextHowToScreen()){
+								controller.finish(setResult(Result.HOW_TO));
+								return;
+							}
+						}
+						// Check for UserInfo dialog
+						else if (Controller.DSA_ID_USER_PROFILE_DIALOG_ID == dialogId) {
 							if (ischecked) {
 								myApp.setUserProfileUploaded(true);
 							}
-							if (DSA_ID_USER_PROFILE_DIALOG_OK == buttonPressed) {
-								transitionToUserInfoActivity();
-								getActivity().finish();
+							if (Controller.DSA_ID_USER_PROFILE_DIALOG_OK == buttonPressed) {
+								controller.finish(setResult(Result.GET_USER_INFO));
 								return;
 							}
 						}
@@ -302,15 +310,20 @@ public class FragmentMainInput extends Fragment
 				}
 			}
 
+			// Show next dialog in sequence
 			if (!myApp.getCheckedForUserWelcome() && myApp.getUserWelcomeEnabled()) {
 				myApp.setCheckedForUserWelcome(true);
-				transitionToDialogWelcome();
+				controller.finish(setResult(Result.SHOW_WELCOME));
+			}
+			else if (!myApp.getCheckedForHowTo() && myApp.getHowToEnabled()) {
+				myApp.setCheckedForHowTo(true);
+				controller.finish(setResult(Result.HOW_TO));
 			}
 			else if (!myApp.getCheckedForUserProfile()
 					&& !myApp.getUserProfileUploaded()
 					&& (myApp.getFirstTripCompleted())) {
 				myApp.setCheckedForUserProfile(true);
-				transitionToDialogUserInfo();
+				controller.finish(setResult(Result.SHOW_DIALOG_USER_INFO));
 			}
 			else if (null == recordingService) {
 				scheduleServiceConnect();
@@ -321,6 +334,19 @@ public class FragmentMainInput extends Fragment
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		switch(requestCode) {
+		case Controller.DSA_ID_WELCOME_DIALOG_ID:
+			backFromInstructions = true;
+			Log.e(MODULE_TAG, "back from ORcycle");
+			break;
+		case Controller.DSA_ID_USER_PROFILE_DIALOG_ID:
+			break;
 		}
 	}
 
@@ -697,12 +723,21 @@ public class FragmentMainInput extends Fragment
 
 				NoteData note = NoteData.createNote(getActivity(), tripId);
 				note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
-				transitionToReportTypeActivity(note, tripId);
+				controller.finish(setResult(Result.REPORT), tripId, note.noteId);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
 			}
 		}
+	}
+
+	private FragmentMainInput setResult(Result result) {
+		this.result = result;
+		return this;
+	}
+
+	public FragmentMainInput.Result getResult() {
+		return this.result;
 	}
 
 	// *********************************************************************************
@@ -783,7 +818,7 @@ public class FragmentMainInput extends Fragment
 
 	private final class DialogNoGps_OkListener implements DialogInterface.OnClickListener {
 		public void onClick(final DialogInterface dialog, final int id) {
-			transitionToLocationServices();
+			controller.finish(setResult(Result.NO_GPS));
 		}
 	}
 
@@ -831,7 +866,7 @@ public class FragmentMainInput extends Fragment
 				TripData tripData = myApp.getStatus().getTripData();
 
 				if (tripData.getNumPoints() > 0) {
-					transitionToTripQuestionsActivity(tripData.tripid);
+					controller.finish(setResult(Result.SAVE_TRIP), tripData.tripid);
 				}
 				// Otherwise, cancel and go back to main screen
 				else {
@@ -972,121 +1007,4 @@ public class FragmentMainInput extends Fragment
 	// *                            Transitions
 	// *********************************************************************************
 
-	private void transitionToTripQuestionsActivity(long tripId) {
-
-		Intent intent = new Intent(getActivity(), TripQuestionsActivity.class);
-		intent.putExtra(TripQuestionsActivity.EXTRA_TRIP_ID, tripId);
-		startActivity(intent);
-		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		getActivity().finish();
-	}
-
-	private void transitionToNoteQuestionsActivity(NoteData note, long tripId) {
-
-		Intent intent = new Intent(getActivity(), NoteQuestionsActivity.class);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, note.noteId);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, NoteQuestionsActivity.EXTRA_NOTE_SOURCE_MAIN_INPUT);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, NoteQuestionsActivity.EXTRA_TRIP_SOURCE_MAIN_INPUT);
-		startActivity(intent);
-		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		getActivity().finish();
-	}
-
-	private void transitionToReportTypeActivity(NoteData note, long tripId) {
-		Intent intent = new Intent(getActivity(), ReportTypeActivity.class);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_ID, note.noteId);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_NOTE_SOURCE, NoteQuestionsActivity.EXTRA_NOTE_SOURCE_MAIN_INPUT);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_ID, tripId);
-		intent.putExtra(NoteQuestionsActivity.EXTRA_TRIP_SOURCE, NoteQuestionsActivity.EXTRA_TRIP_SOURCE_MAIN_INPUT);
-		startActivity(intent);
-		// getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		// getActivity().finish();
-	}
-
-	private void transitionToLocationServices() {
-		final ComponentName toLaunch = new ComponentName(
-				COM_ANDROID_SETTINGS,
-				COM_ANDROID_SETTINGS_SECURITY_SETTINGS);
-		final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-		intent.addCategory(Intent.CATEGORY_LAUNCHER);
-		intent.setComponent(toLaunch);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivityForResult(intent, 0);
-	}
-
-	private void transitionToUserInfoActivity() {
-
-		// Create intent to come back to this activity
-		Intent intent = new Intent(getActivity(), UserInfoActivity.class);
-		intent.putExtra(UserInfoActivity.EXTRA_PREVIOUS_ACTIVITY, UserInfoActivity.EXTRA_FRAGMENT_MAIN_INPUT);
-
-		// Exit this activity
-		startActivity(intent);
-		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		getActivity().finish();
-	}
-
-	private void transitionToORcycle() {
-		//Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MyApplication.ORCYCLE_URI));
-		//startActivityForResult(intent, DSA_ID_WELCOME_DIALOG_ID);
-		String title = getResources().getString(R.string.title_orcycle_instructions);
-		Intent intent = new Intent(getActivity(), WebViewActivity.class);
-		intent.putExtra(WebViewActivity.EXTRA_URL, MyApplication.ORCYCLE_URI);
-		intent.putExtra(WebViewActivity.EXTRA_TITLE, title);
-		startActivityForResult(intent, DSA_ID_WELCOME_DIALOG_ID);
-		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-		switch(requestCode) {
-		case DSA_ID_WELCOME_DIALOG_ID:
-			backFromInstructions = true;
-			Log.e(MODULE_TAG, "back from ORcycle");
-			break;
-		case DSA_ID_USER_PROFILE_DIALOG_ID:
-			break;
-		}
-
-	}
-
-	private void transitionToDialogWelcome() {
-
-		Intent intent = new Intent(getActivity(), DsaDialogActivity.class);
-
-		String title = getResources().getString(R.string.fmi_welcome_title);
-		String message = getResources().getString(R.string.fmi_welcome_message);
-		String positiveText = getResources().getString(R.string.fmi_welcome_continue);
-		String negativeText = getResources().getString(R.string.fmi_welcome_instructions);
-
-		intent.putExtra(DsaDialogActivity.EXTRA_DIALOG_ID, DSA_ID_WELCOME_DIALOG_ID);
-		intent.putExtra(DsaDialogActivity.EXTRA_TITLE, title);
-		intent.putExtra(DsaDialogActivity.EXTRA_MESSAGE, message);
-		intent.putExtra(DsaDialogActivity.EXTRA_POSITIVE_TEXT, positiveText);
-		intent.putExtra(DsaDialogActivity.EXTRA_POSITIVE_ID, DSA_ID_WELCOME_DIALOG_CONTINUE);
-		intent.putExtra(DsaDialogActivity.EXTRA_NEGATIVE_TEXT, negativeText);
-		intent.putExtra(DsaDialogActivity.EXTRA_NEGATIVE_ID, DSA_ID_WELCOME_DIALOG_INSTRUCTIONS);
-		startActivity(intent);
-	}
-
-	private void transitionToDialogUserInfo() {
-
-		Intent intent = new Intent(getActivity(), DsaDialogActivity.class);
-
-		String title = getResources().getString(R.string.fmi_query_user_profile_title);
-		String message = getResources().getString(R.string.fmi_query_user_profile);
-		String positiveText = getResources().getString(R.string.fmi_qup_dialog_ok);
-		String negativeText = getResources().getString(R.string.fmi_qup_dialog_later);
-
-		intent.putExtra(DsaDialogActivity.EXTRA_DIALOG_ID, DSA_ID_USER_PROFILE_DIALOG_ID);
-		intent.putExtra(DsaDialogActivity.EXTRA_TITLE, title);
-		intent.putExtra(DsaDialogActivity.EXTRA_MESSAGE, message);
-		intent.putExtra(DsaDialogActivity.EXTRA_POSITIVE_TEXT, positiveText);
-		intent.putExtra(DsaDialogActivity.EXTRA_POSITIVE_ID, DSA_ID_USER_PROFILE_DIALOG_OK);
-		intent.putExtra(DsaDialogActivity.EXTRA_NEGATIVE_TEXT, negativeText);
-		intent.putExtra(DsaDialogActivity.EXTRA_NEGATIVE_ID, DSA_ID_USER_PROFILE_DIALOG_LATER);
-		startActivity(intent);
-	}
 }
