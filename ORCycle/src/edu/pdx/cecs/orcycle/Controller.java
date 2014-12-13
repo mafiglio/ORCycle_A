@@ -183,16 +183,16 @@ public class Controller {
 
 		switch(nextHowToScreen) {
 		case 0:
-			intent.putExtra(DsaDialogActivity.EXTRA_IMAGE_ID, R.drawable.commute_high);
+			intent.putExtra(DsaDialogActivity.EXTRA_IMAGE_ID, R.drawable.how_to_1);
 			break;
 		case 1:
-			intent.putExtra(DsaDialogActivity.EXTRA_IMAGE_ID, R.drawable.school_high);
+			intent.putExtra(DsaDialogActivity.EXTRA_IMAGE_ID, R.drawable.how_to_2);
 			break;
 		case 2:
-			intent.putExtra(DsaDialogActivity.EXTRA_IMAGE_ID, R.drawable.workrel_high);
+			intent.putExtra(DsaDialogActivity.EXTRA_IMAGE_ID, R.drawable.how_to_3);
 			break;
 		default:
-			intent.putExtra(DsaDialogActivity.EXTRA_IMAGE_ID, R.drawable.exercise_high);
+			intent.putExtra(DsaDialogActivity.EXTRA_IMAGE_ID, R.drawable.how_to_3);
 			break;
 		}
 
