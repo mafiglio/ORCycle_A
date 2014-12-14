@@ -615,7 +615,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Safety Issue (urgency 5)</item>
     </string-array>
 
-    <string name="arsi_q_location"> * Location of crash event?</string>
+    <string name="arsi_q_location"> * Location of infrastructure/safety problem?</string>
 
     <string-array name="arsi_a_location">
         <item></item>
