@@ -46,7 +46,10 @@ public class MyApplication extends android.app.Application {
 	private static final String ANDROID_USER = "android";
 
 	private String userId = null;
-	private int versionCode = -1;
+	private int versionCode;
+	private String versionName;
+	private String appVersion;
+	private String deviceModel;
 	private long firstUse = -1;
 	private boolean warnRepeatTrips;
 	private boolean firstTripCompleted;
@@ -70,7 +73,7 @@ public class MyApplication extends android.app.Application {
     */
     private static MyApplication myApp = null;
 
-    private static Controller controller = new Controller();
+    private static final Controller controller = new Controller();
 
     /**
      * Returns the class instance of the MyApplication object
@@ -78,6 +81,10 @@ public class MyApplication extends android.app.Application {
     public static MyApplication getInstance() {
         return myApp;
     }
+
+	public Controller getController() {
+		return controller;
+	}
 
 	// *********************************************************************************
 	// *                   			Application Interface
@@ -124,6 +131,8 @@ public class MyApplication extends android.app.Application {
 		howToEnabled = settings.getBoolean(SETTING_HOW_TO_ENABLED, true);
 
 		warnRepeatTrips = settings.getBoolean(SETTING_WARN_REPEAT_TRIPS, true);
+
+		loadDeviceInfo();
 	}
 
 	public void setDefaultApplicationSettings() {
@@ -484,46 +493,46 @@ public class MyApplication extends android.app.Application {
 		return location;
 	}
 
-	public int getVersionCode() {
-		try {
-			if (versionCode == -1) {
-				PackageInfo pInfo;
-				if (null != (pInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0))) {
-					versionCode = pInfo.versionCode;
-				}
-			}
-			return versionCode;
-		} catch (PackageManager.NameNotFoundException e) {
-			e.printStackTrace();
-		}
-		return -1;
-	}
+	private void loadDeviceInfo() {
 
-	public String getAppVersion(Context context) {
-		String versionName = "";
-		int versionCode = 0;
-
+		// Determine application information
+		versionName = "";
+		versionCode = 0;
 		try {
-			PackageInfo pInfo = context.getPackageManager().getPackageInfo(
-					context.getPackageName(), 0);
+			Context context = this.getBaseContext();
+			PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
 			versionName = pInfo.versionName;
 			versionCode = pInfo.versionCode;
 		} catch (PackageManager.NameNotFoundException e) {
 			e.printStackTrace();
 		}
+		appVersion = versionName + " (" + versionCode + ") on Android " + Build.VERSION.RELEASE;
 
-		String systemVersion = Build.VERSION.RELEASE;
-
+		// Determine model information
 		String manufacturer = Build.MANUFACTURER;
 		String model = Build.MODEL;
+
 		if (model.startsWith(manufacturer)) {
-			return versionName + " (" + versionCode + ") on Android "
-					+ systemVersion + " " + capitalize(model);
+			deviceModel = capitalize(model);
 		} else {
-			return versionName + " (" + versionCode + ") on Android "
-					+ systemVersion + " " + capitalize(manufacturer) + " "
-					+ model;
+			deviceModel = capitalize(manufacturer) + " " + model;
 		}
+	}
+
+	public String getVersionName() {
+		return versionName;
+	}
+
+	public int getVersionCode() {
+		return versionCode;
+	}
+
+	public String getAppVersion() {
+		return appVersion;
+	}
+
+	public String getDeviceModel() {
+		return (deviceModel);
 	}
 
 	private String capitalize(String s) {
@@ -536,9 +545,5 @@ public class MyApplication extends android.app.Application {
 		} else {
 			return Character.toUpperCase(first) + s.substring(1);
 		}
-	}
-
-	public Controller getController() {
-		return controller;
 	}
 }

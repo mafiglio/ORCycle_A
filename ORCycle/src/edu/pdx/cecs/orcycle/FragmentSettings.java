@@ -55,9 +55,13 @@ public class FragmentSettings extends Fragment {
 			btnPrivacyPolicy = (Button) rootView.findViewById(R.id.btnPrivacyPolicy);
 			btnPrivacyPolicy.setOnClickListener(new PrivacyPolicy_OnClickListener());
 
+			StringBuilder version = new StringBuilder();
+			version.append(getResources().getString(R.string.about_version));
+			version.append(MyApplication.getInstance().getVersionName());
+			version.append(getResources().getString(R.string.about_version_code));
+			version.append(MyApplication.getInstance().getVersionCode());
 			tvVersionCode = (TextView) rootView.findViewById(R.id.as_version_code);
-			tvVersionCode.setText(getResources().getString(R.string.about_version_code) +
-					String.valueOf(MyApplication.getInstance().getVersionCode()));
+			tvVersionCode.setText(version);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());

@@ -124,7 +124,6 @@
             android:paddingBottom="5dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="@string/about_version"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/psu_sienna" />
         

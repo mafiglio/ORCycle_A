@@ -46,6 +46,8 @@ public class UserInfoActivity extends Activity {
 	public static final int PREF_ETHNICITY       = 12;
 	public static final int PREF_INCOME          = 13;
 	public static final int PREF_INSTALLED       = 14;
+	public static final int PREF_DEVICE_MODEL    = 15;
+	public static final int PREF_APP_VERSION     = 16;
 	public static final int PREF_RIDER_TYPE_OTHER = 1002;
 	public static final int PREF_BIKE_TYPE_OTHER  = 1006;
 	public static final int PREF_OCCUPATION_OTHER = 1007;
@@ -363,7 +365,9 @@ public class UserInfoActivity extends Activity {
 				PREF_ETHNICITY_OTHER, forUpload);
 
 		savePref( editor, PREF_INCOME,          (Spinner)  findViewById(R.id.spnrIncome         ), forUpload);
-		savePref(editor, PREF_INSTALLED, MyApplication.getInstance().getFirstUseString());
+		savePref( editor, PREF_INSTALLED, MyApplication.getInstance().getFirstUseString());
+		savePref( editor, PREF_DEVICE_MODEL, MyApplication.getInstance().getDeviceModel());
+		savePref( editor, PREF_APP_VERSION, MyApplication.getInstance().getAppVersion());
 
 		// Don't forget to commit your edits!!!
 		editor.commit();
