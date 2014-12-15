@@ -42,9 +42,13 @@ public class UserInfoUploader extends AsyncTask<Long, Integer, Boolean> {
 
 	public static final String USER_EMAIL = "email";
 	public static final String USER_INSTALLED = "installed";
+	public static final String USER_DEVICE_MODEL = "deviceModel";
+	public static final String USER_APP_VERSION = "app_version";
 
 	private String email;
 	private String installed; // DateTime
+	private String deviceModel;
+	private String appVersion;
 
 	private Context mCtx = null;
 	private String userId = null;
@@ -67,6 +71,8 @@ public class UserInfoUploader extends AsyncTask<Long, Integer, Boolean> {
 
 		userJson.put(USER_EMAIL, email);
 		userJson.put(USER_INSTALLED, installed);
+		userJson.put(USER_DEVICE_MODEL, deviceModel);
+		userJson.put(USER_APP_VERSION, appVersion);
 
 		return userJson;
 	}
@@ -187,10 +193,15 @@ public class UserInfoUploader extends AsyncTask<Long, Integer, Boolean> {
 				installed = (String) p.getValue();
 				break;
 
+			case UserInfoActivity.PREF_DEVICE_MODEL:
+				deviceModel = (String) p.getValue();
+				break;
+
+			case UserInfoActivity.PREF_APP_VERSION:
+				appVersion = (String) p.getValue();
+				break;
 			}
 		}
-
-
 
 		return jsonAnswers;
 	}
