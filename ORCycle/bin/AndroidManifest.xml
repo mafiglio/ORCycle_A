@@ -119,6 +119,10 @@
             android:name="edu.pdx.cecs.orcycle.CustomLocationActivity"
             android:label="@string/title_activity_custom_location" >
         </activity>
+        <activity
+            android:name="edu.pdx.cecs.orcycle.RemindersActivity"
+            android:label="@string/title_activity_reminders" >
+        </activity>
     </application>
 
 </manifest>
