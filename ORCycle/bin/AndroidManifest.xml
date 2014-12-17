@@ -120,7 +120,7 @@
             android:label="@string/title_activity_custom_location" >
         </activity>
         <activity
-            android:name="edu.pdx.cecs.orcycle.RemindersActivity"
+            android:name="edu.pdx.cecs.orcycle.SavedRemindersActivity"
             android:label="@string/title_activity_reminders" >
         </activity>
     </application>

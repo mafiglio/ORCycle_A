@@ -227,7 +227,7 @@ public class FragmentSettings extends Fragment {
 	}
 
 	private void transitionToReminders() {
-		Intent intent = new Intent(getActivity(), RemindersActivity.class);
+		Intent intent = new Intent(getActivity(), SavedRemindersActivity.class);
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 		//getActivity().finish();

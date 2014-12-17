@@ -5,7 +5,7 @@
     tools:context="${packageName}.${activityClass}" >
 
     <ListView
-        android:id="@+id/listViewReminders"
+        android:id="@+id/lvReminders"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
