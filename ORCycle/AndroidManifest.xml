@@ -123,6 +123,11 @@
             android:name="edu.pdx.cecs.orcycle.SavedRemindersActivity"
             android:label="@string/title_activity_reminders" >
         </activity>
+        <activity
+            android:name="edu.pdx.cecs.orcycle.EditReminderActivity"
+            android:label="@string/title_activity_edit_reminder"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
     </application>
 
 </manifest>

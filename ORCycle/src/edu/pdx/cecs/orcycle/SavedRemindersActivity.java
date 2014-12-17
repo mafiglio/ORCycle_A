@@ -137,11 +137,6 @@ public class SavedRemindersActivity extends Activity {
 					mode.finish(); // Action picked, so close the CAB
 					return true;
 
-				case R.id.action_upload_saved_notes:
-					// TODO add transition to reminder add activity
-					mode.finish(); // Action picked, so close the CAB
-					return true;
-
 				default:
 					return false;
 				}
@@ -181,9 +176,10 @@ public class SavedRemindersActivity extends Activity {
 			reminders = mDb.fetchAllReminders();
 			Log.e(MODULE_TAG, "------------------> populateNoteList()");
 
-			String[] from = new String[] { DbAdapter.K_REMINDER_DAYS, DbAdapter.K_REMINDER_TIME,
-					DbAdapter.K_REMINDER_ENABLED };
-			int[] to = new int[] { R.id.tvSnliNoteSeverity, R.id.tvSnliRecorded };
+			String[] from = new String[] { DbAdapter.K_REMINDER_DAYS, DbAdapter.K_REMINDER_HOURS,
+					DbAdapter.K_REMINDER_MINUTES, DbAdapter.K_REMINDER_ENABLED };
+
+			int[] to = new int[] { 0, 0, 0, 0 };
 
 			adapter = new SavedRemindersAdapter(this,
 					R.layout.saved_reminders_list_item, reminders, from, to,
@@ -282,6 +278,10 @@ public class SavedRemindersActivity extends Activity {
 				mActionModeNote = startActionMode(mActionModeCallbackNote);
 				return true;
 
+			case R.id.action_add_reminder:
+				transitionToAddReminderActivity();
+				return true;
+
 			default:
 				return super.onOptionsItemSelected(item);
 			}
@@ -312,6 +312,19 @@ public class SavedRemindersActivity extends Activity {
 		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_SETTINGS);
 		startActivity(intent);
 		finish();
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+	}
+
+	/**
+	 * Setup transition to the TabsConfigActivity
+	 */
+	private void transitionToAddReminderActivity() {
+
+		Intent intent = new Intent(this, EditReminderActivity.class);
+
+		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_SETTINGS);
+		startActivity(intent);
+		//finish();
 		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 	}
 }

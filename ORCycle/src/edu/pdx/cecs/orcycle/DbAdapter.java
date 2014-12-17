@@ -142,7 +142,8 @@ public class DbAdapter {
 	public static final String K_REMINDER_ID = "_id";
 	public static final String K_REMINDER_NAME = "name";
 	public static final String K_REMINDER_DAYS = "days";
-	public static final String K_REMINDER_TIME = "time";
+	public static final String K_REMINDER_HOURS = "hours";
+	public static final String K_REMINDER_MINUTES = "minutes";
 	public static final String K_REMINDER_ENABLED = "enabled";
 
 	private static final String MODULE_TAG = "DbAdapter";
@@ -186,7 +187,8 @@ public class DbAdapter {
 			+ "FOREIGN KEY(note_id) REFERENCES NOTES(_id));";
 
 	private static final String TABLE_CREATE_REMINDERS = "create table reminders "
-			+ "(_id integer primary key autoincrement, name text, days int, time double, enabled integer);";
+			+ "(_id integer primary key autoincrement, name text, days int, "
+			+ "hours int, minutes int, enabled integer);";
 
 	private static final String TABLE_DROP_NOTES = "drop table notes;";
 
@@ -1183,7 +1185,8 @@ public class DbAdapter {
 	public Cursor fetchAllReminders() {
 
 		Cursor cursor = mDb.query(DATA_TABLE_REMINDERS,
-				new String[] { K_REMINDER_ID, K_REMINDER_NAME, K_REMINDER_DAYS, K_REMINDER_TIME, K_REMINDER_ENABLED },
+				new String[] { K_REMINDER_ID, K_REMINDER_NAME, K_REMINDER_DAYS,
+				K_REMINDER_HOURS, K_REMINDER_MINUTES, K_REMINDER_ENABLED },
 				null, null, null, null, K_REMINDER_ID);
 
 		if ((cursor != null) && (cursor.getCount() > 0)) {
@@ -1204,6 +1207,32 @@ public class DbAdapter {
 		deleteNoteImageFile(id);
 
 		return mDb.delete(DATA_TABLE_REMINDERS, K_REMINDER_ID + "=" + id, null) > 0;
+	}
+
+	public long createReminder(String name, int days, int hours, int minutes, boolean enabled) {
+
+		ContentValues cv = new ContentValues();
+
+		cv.put(K_REMINDER_NAME, name);
+		cv.put(K_REMINDER_DAYS, days);
+		cv.put(K_REMINDER_HOURS, hours);
+		cv.put(K_REMINDER_MINUTES, minutes);
+		cv.put(K_REMINDER_ENABLED, enabled ? 1 : 0);
+
+		return mDb.insert(DATA_TABLE_REMINDERS, null, cv);
+	}
+
+	public boolean updateReminder(long id, String name, int days, int hours, int minutes, boolean enabled) {
+
+		ContentValues cv = new ContentValues();
+
+		cv.put(K_REMINDER_NAME, name);
+		cv.put(K_REMINDER_DAYS, days);
+		cv.put(K_REMINDER_HOURS, hours);
+		cv.put(K_REMINDER_MINUTES, minutes);
+		cv.put(K_REMINDER_ENABLED, enabled ? 1 : 0);
+
+		return mDb.update(DATA_TABLE_REMINDERS, cv, K_REMINDER_ID + "=" + id, null) > 0;
 	}
 
 }
