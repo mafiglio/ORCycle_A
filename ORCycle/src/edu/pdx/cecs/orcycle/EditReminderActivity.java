@@ -15,6 +15,14 @@ public class EditReminderActivity extends Activity {
 
 	private static final String MODULE_TAG = "EditReminderActivity";
 
+	public static final String EXTRA_NEW_REMINDER = "new_reminder";
+	public static final String EXTRA_REMINDER_ID = "reminder_id";
+	public static final String EXTRA_REMINDER_NAME = "reminder_name";
+	public static final String EXTRA_REMINDER_DAYS = "reminder_days";
+	public static final String EXTRA_REMINDER_HOURS = "reminder_hours";
+	public static final String EXTRA_REMINDER_MINUTES = "reminder_minutes";
+	public static final String EXTRA_REMINDER_ENABLED = "reminder_enabled";
+
 	// UI Elements
 	private EditText etName;
 	private Button buttonSave;
@@ -27,10 +35,16 @@ public class EditReminderActivity extends Activity {
 	private CheckBox chkFriday;
 	private CheckBox chkSaturday;
 	private TimePicker timePicker;
+
+	private long reminderId;
 	private String reminderName;
+	private int reminderDays;
+	private boolean reminderEnabled;
+	private int reminderHours;
+	private int reminderMinutes;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
 			setContentView(R.layout.activity_edit_reminder);
@@ -55,6 +69,19 @@ public class EditReminderActivity extends Activity {
 			chkSaturday = (CheckBox) findViewById(R.id.chk_aer_sat);
 
 			timePicker = (TimePicker) findViewById(R.id.time_picker_aer);
+
+			LoadReminderVars(savedInstanceState);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		try {
+			LoadReminderVars(savedInstanceState);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -65,6 +92,17 @@ public class EditReminderActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 		try {
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		try {
+			SaveReminderVars(savedInstanceState);
+			super.onSaveInstanceState(savedInstanceState);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -122,6 +160,92 @@ public class EditReminderActivity extends Activity {
 	// *                              Misc Methods
 	// *********************************************************************************
 
+	private void LoadReminderVars(Bundle savedInstanceState) {
+
+		// Default reminder values for a new reminder
+		reminderId = -1;
+		reminderName = "";
+		reminderDays = 0;
+		reminderHours = 0;
+		reminderMinutes = 0;
+		reminderEnabled = true;
+
+		// Searched the bundle for the values
+		if (null == savedInstanceState) {
+
+			Bundle extras = getIntent().getExtras();
+			if ((null != extras) && (extras.containsKey(EXTRA_REMINDER_ID))) {
+				reminderId = extras.getLong(EXTRA_REMINDER_ID);
+			}
+
+			if(reminderId > 0) {
+				ReminderHelper rh = new ReminderHelper(this, reminderId);
+				reminderName = rh.getName();
+				reminderDays = rh.getDays();
+				reminderHours = rh.getHours();
+				reminderMinutes = rh.getMinutes();
+				reminderEnabled = rh.getEnabled();
+			}
+		}
+		else { // Search then extras for the values
+			if (savedInstanceState.containsKey(EXTRA_REMINDER_ID)) {
+				reminderId = savedInstanceState.getLong(EXTRA_REMINDER_ID);
+			}
+			if (savedInstanceState.containsKey(EXTRA_REMINDER_NAME)) {
+				reminderName = savedInstanceState.getString(EXTRA_REMINDER_NAME);
+			}
+			if (savedInstanceState.containsKey(EXTRA_REMINDER_DAYS)) {
+				reminderDays = savedInstanceState.getInt(EXTRA_REMINDER_DAYS, 0);
+			}
+			if (savedInstanceState.containsKey(EXTRA_REMINDER_HOURS)) {
+				reminderHours = savedInstanceState.getInt(EXTRA_REMINDER_HOURS);
+			}
+			if (savedInstanceState.containsKey(EXTRA_REMINDER_MINUTES)) {
+				reminderMinutes = savedInstanceState.getInt(EXTRA_REMINDER_MINUTES);
+			}
+			if (savedInstanceState.containsKey(EXTRA_REMINDER_ENABLED)) {
+				reminderEnabled = (savedInstanceState.getInt(EXTRA_REMINDER_ENABLED) != 0);
+			}
+		}
+
+		// Set reminder name
+		etName.setText(reminderName);
+
+		// Set reminder days selected
+		ReminderHelper rh = new ReminderHelper();
+		rh.setDays(reminderDays);
+		chkSunday.setChecked(rh.getSunday());
+		chkMonday.setChecked(rh.getMonday());
+		chkTuesday.setChecked(rh.getTuesday());
+		chkWednesday.setChecked(rh.getWednesday());
+		chkThursday.setChecked(rh.getThursday());
+		chkFriday.setChecked(rh.getFriday());
+		chkSaturday.setChecked(rh.getSaturday());
+
+		// Set reminder time
+		timePicker.setCurrentHour(reminderHours);
+		timePicker.setCurrentMinute(reminderMinutes);
+	}
+
+	private void SaveReminderVars(Bundle savedInstanceState) {
+
+		ReminderHelper rh = new ReminderHelper();
+		rh.setSunday(chkSunday.isChecked())
+		  .setMonday(chkMonday.isChecked())
+		  .setTuesday(chkTuesday.isChecked())
+		  .setWednesday(chkWednesday.isChecked())
+		  .setThursday(chkThursday.isChecked())
+		  .setFriday(chkFriday.isChecked())
+		  .setSaturday(chkSaturday.isChecked());
+
+		savedInstanceState.putLong(EXTRA_REMINDER_ID, reminderId);
+		savedInstanceState.putString(EXTRA_REMINDER_NAME, reminderName);
+		savedInstanceState.putInt(EXTRA_REMINDER_DAYS, rh.getDays());
+		savedInstanceState.putInt(EXTRA_REMINDER_HOURS, reminderHours);
+		savedInstanceState.putInt(EXTRA_REMINDER_MINUTES, reminderMinutes);
+		savedInstanceState.putInt(EXTRA_REMINDER_ENABLED, reminderEnabled ? 1 : 0);
+	}
+
 	private boolean EntriesValidated() {
 
 		// Get the name in the edit text entry field
@@ -161,29 +285,20 @@ public class EditReminderActivity extends Activity {
 
 	private void saveReminder() {
 
-		final DbAdapter mDb = new DbAdapter(this);
+		ReminderHelper rh = new ReminderHelper(this);
 
-		ReminderHelper rh = new ReminderHelper();
-		rh.setSunday(chkSunday.isChecked())
+		rh.setId(reminderId)
+		  .setName(reminderName)
+		  .setSunday(chkSunday.isChecked())
 		  .setMonday(chkMonday.isChecked())
 		  .setTuesday(chkTuesday.isChecked())
 		  .setWednesday(chkWednesday.isChecked())
 		  .setThursday(chkThursday.isChecked())
 		  .setFriday(chkFriday.isChecked())
-		  .setSaturday(chkSaturday.isChecked());
-
-		try {
-			mDb.open();
-			mDb.createReminder(reminderName, rh.days(),
-					timePicker.getCurrentHour(), timePicker.getCurrentMinute(), true);
-		}
-		catch(Exception ex) {
-			Log.e(MODULE_TAG, ex.getMessage());
-		}
-		finally {
-			if (null != mDb) {
-				mDb.close();
-			}
-		}
+		  .setSaturday(chkSaturday.isChecked())
+		  .setHours(timePicker.getCurrentHour())
+		  .setMinutes(timePicker.getCurrentMinute())
+		  .setEnabled(reminderEnabled)
+		  .update();
 	}
 }

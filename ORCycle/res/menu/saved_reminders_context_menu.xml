@@ -3,4 +3,7 @@
     <item android:id="@+id/action_delete_reminders"
         android:showAsAction="always"
           android:title="delete" />
+    <item android:id="@+id/action_cancel_delete_reminders"
+        android:showAsAction="always"
+          android:title="cancel" />
 </menu>

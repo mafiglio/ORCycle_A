@@ -258,8 +258,8 @@
 		        </LinearLayout>
 		    </LinearLayout>
 
-	    <CheckBox
-	        android:id="@+id/chk_reminder_enabled"
+	    <TextView
+	        android:id="@+id/tv_reminder_enabled"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="6"

@@ -22,18 +22,18 @@ public class SavedRemindersActivity extends Activity {
 
 	private final class ReminderClickListener implements
 			AdapterView.OnItemClickListener {
-		public void onItemClick(AdapterView<?> parent, View v, int pos, long noteId) {
-			Log.v(MODULE_TAG, "onItemClick (id = " + String.valueOf(noteId) + ", pos = " + String.valueOf(pos) + ")");
+		public void onItemClick(AdapterView<?> parent, View v, int pos, long reminderId) {
+			Log.v(MODULE_TAG, "onItemClick (id = " + String.valueOf(reminderId) + ", pos = " + String.valueOf(pos) + ")");
 			try {
 				if (mActionModeNote == null) {
-
+					transitionToEditReminderActivity(reminderId);
 				} else {
 					// highlight
-					if (remindersToDelete.indexOf(noteId) > -1) {
-						remindersToDelete.remove(noteId);
+					if (remindersToDelete.indexOf(reminderId) > -1) {
+						remindersToDelete.remove(reminderId);
 						v.setBackgroundColor(Color.parseColor("#80ffffff"));
 					} else {
-						remindersToDelete.add(noteId);
+						remindersToDelete.add(reminderId);
 						v.setBackgroundColor(Color.parseColor("#ff33b5e5"));
 					}
 					// Toast.makeText(this, "Selected: " + noteIdArray,
@@ -123,18 +123,14 @@ public class SavedRemindersActivity extends Activity {
 
 			try {
 				switch (item.getItemId()) {
-				case R.id.action_delete_reminders:
 
-					try {
-						// delete selected notes
-						for (int i = 0; i < remindersToDelete.size(); i++) {
-							deleteReminder(remindersToDelete.get(i));
-						}
-					}
-					catch(Exception ex) {
-						Log.e(MODULE_TAG, ex.getMessage());
-					}
+				case R.id.action_delete_reminders:
+					deleteReminders();
 					mode.finish(); // Action picked, so close the CAB
+					return true;
+
+				case R.id.action_cancel_delete_reminders:
+					mode.finish();
 					return true;
 
 				default:
@@ -174,7 +170,6 @@ public class SavedRemindersActivity extends Activity {
 
 		try {
 			reminders = mDb.fetchAllReminders();
-			Log.e(MODULE_TAG, "------------------> populateNoteList()");
 
 			String[] from = new String[] { DbAdapter.K_REMINDER_DAYS, DbAdapter.K_REMINDER_HOURS,
 					DbAdapter.K_REMINDER_MINUTES, DbAdapter.K_REMINDER_ENABLED };
@@ -199,11 +194,24 @@ public class SavedRemindersActivity extends Activity {
 		registerForContextMenu(lv);
 	}
 
+	private void deleteReminders() {
+		try {
+			for (int i = 0; i < remindersToDelete.size(); i++) {
+				deleteReminder(remindersToDelete.get(i));
+			}
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
 	private void deleteReminder(long reminderId) {
 		DbAdapter mDbHelper = new DbAdapter(this);
 		mDbHelper.open();
 		try {
-			mDbHelper.deleteReminder(reminderId);
+			if (!mDbHelper.deleteReminder(reminderId)) {
+				Log.e(MODULE_TAG, "Could not delete reminder(" + String.valueOf(reminderId) + ")");
+			}
 		}
 		finally {
 			mDbHelper.close();
@@ -279,7 +287,11 @@ public class SavedRemindersActivity extends Activity {
 				return true;
 
 			case R.id.action_add_reminder:
-				transitionToAddReminderActivity();
+				transitionToEditReminderActivity(-1);
+				return true;
+
+			case R.id.action_cancel_reminder:
+				transitionToTabsConfigActivity();
 				return true;
 
 			default:
@@ -318,11 +330,13 @@ public class SavedRemindersActivity extends Activity {
 	/**
 	 * Setup transition to the TabsConfigActivity
 	 */
-	private void transitionToAddReminderActivity() {
+	private void transitionToEditReminderActivity(long reminderId) {
 
 		Intent intent = new Intent(this, EditReminderActivity.class);
 
-		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_SETTINGS);
+		if (reminderId > 0) {
+			intent.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, reminderId);
+		}
 		startActivity(intent);
 		//finish();
 		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);

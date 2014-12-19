@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -51,7 +50,7 @@ public class SavedRemindersAdapter extends SimpleCursorAdapter {
 			LinearLayout tvFri = (LinearLayout) rowView.findViewById(R.id.tv_srli_fri_underline);
 			LinearLayout tvSat = (LinearLayout) rowView.findViewById(R.id.tv_srli_sat_underline);
 
-			CheckBox chkEnabled = (CheckBox) rowView.findViewById(R.id.chk_reminder_enabled);
+			//CheckBox chkEnabled = (CheckBox) rowView.findViewById(R.id.chk_reminder_enabled);
 
 			cursor.moveToPosition(position);
 
@@ -72,10 +71,11 @@ public class SavedRemindersAdapter extends SimpleCursorAdapter {
 			}
 
 			tvName.setText(name);
-			tvTime.setText(String.format("%d:%02d %s", hours, minutes, ampm));
-			chkEnabled.setChecked(enabled != 0);
+			tvTime.setText(String.format("%d:%02d %s", ((hours == 0) ? 12 : hours), minutes, ampm));
+			//chkEnabled.setChecked(enabled != 0);
 
-			ReminderHelper rh = new ReminderHelper(days);
+			ReminderHelper rh = new ReminderHelper();
+			rh.setDays(days);
 
 			tvSun.setVisibility(rh.getSunday()    ? View.VISIBLE : View.INVISIBLE);
 			tvMon.setVisibility(rh.getMonday()    ? View.VISIBLE : View.INVISIBLE);

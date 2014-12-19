@@ -1128,7 +1128,6 @@ public class DbAdapter {
 	 * created return the new rowId for that segment, otherwise return a -1 to
 	 * indicate failure.
 	 */
-
 	public long createSegment(long tripId, int rating, String details, int startIndex, int endIndex) {
 
 		ContentValues initialValues = new ContentValues();
@@ -1203,9 +1202,6 @@ public class DbAdapter {
 	 * @return true if deleted, false otherwise
 	 */
 	public boolean deleteReminder(long id) {
-
-		deleteNoteImageFile(id);
-
 		return mDb.delete(DATA_TABLE_REMINDERS, K_REMINDER_ID + "=" + id, null) > 0;
 	}
 
@@ -1233,6 +1229,32 @@ public class DbAdapter {
 		cv.put(K_REMINDER_ENABLED, enabled ? 1 : 0);
 
 		return mDb.update(DATA_TABLE_REMINDERS, cv, K_REMINDER_ID + "=" + id, null) > 0;
+	}
+
+	/**
+	 * Return a Cursor positioned at the reminder that matches the given reminderId
+	 *
+	 * @param rowId
+	 *            id of note to retrieve
+	 * @return Cursor positioned to matching note, if found
+	 * @throws SQLException
+	 *             if note could not be found/retrieved
+	 */
+	public Cursor fetchReminder(long reminderID) throws SQLException {
+
+		// Columns to retrieve
+		String[] columns = new String[] {K_REMINDER_NAME, K_REMINDER_DAYS,
+				K_REMINDER_HOURS, K_REMINDER_MINUTES, K_REMINDER_ENABLED};
+
+		String whereClause = K_REMINDER_ID + "=" + reminderID;
+
+		Cursor mCursor = mDb.query(true, DATA_TABLE_REMINDERS, columns,
+				whereClause, null, null, null, null, null);
+
+		if (mCursor != null) {
+			mCursor.moveToFirst();
+		}
+		return mCursor;
 	}
 
 }
