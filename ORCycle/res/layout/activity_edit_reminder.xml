@@ -232,6 +232,30 @@
        	</RelativeLayout>
 		            
         <RelativeLayout
+		    android:id="@+id/rl_aer_enabled"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="#fcfcfc"
+            android:orientation="vertical"
+            android:paddingBottom="4dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="6dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+
+            <CheckBox
+                android:id="@+id/chk_aer_enabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/tv_aer_enabled"
+                android:text="Enable reminder"
+                android:textColor="@color/psu_sienna" />
+
+		</RelativeLayout>
+            
+	    <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
@@ -283,6 +307,5 @@
 	
 			</LinearLayout>
 		</RelativeLayout>
-       	
     </LinearLayout>
 </ScrollView>

@@ -6,15 +6,15 @@ import android.util.Log;
 
 public class ReminderHelper {
 
-	private final String MODULE_TAG = "ReminderHelper";
+	private static final String MODULE_TAG = "ReminderHelper";
 
-	private final byte SUNDAY_MASK = 1;
-	private final byte MONDAY_MASK = 2;
-	private final byte TUESDAY_MASK = 4;
-	private final byte WEDNESDAY_MASK = 8;
-	private final byte THURSDAY_MASK = 16;
-	private final byte FRIDAY_MASK = 32;
-	private final byte SATURDAY_MASK = 64;
+	private static final byte SUNDAY_MASK = 1;
+	private static final byte MONDAY_MASK = 2;
+	private static final byte TUESDAY_MASK = 4;
+	private static final byte WEDNESDAY_MASK = 8;
+	private static final byte THURSDAY_MASK = 16;
+	private static final byte FRIDAY_MASK = 32;
+	private static final byte SATURDAY_MASK = 64;
 
 	private long id;
 	private String name;
@@ -30,6 +30,16 @@ public class ReminderHelper {
 
 	public ReminderHelper(Context context) {
 		init(context);
+	}
+
+	public ReminderHelper(ReminderHelper rh) {
+		this.id = rh.id;
+		this.name = rh.name;
+		this.days = rh.days;
+		this.hours = rh.hours;
+		this.minutes = rh.minutes;
+		this.enabled = rh.enabled;
+		this.context = rh.context;
 	}
 
 	public ReminderHelper(Context context, long reminderId) {

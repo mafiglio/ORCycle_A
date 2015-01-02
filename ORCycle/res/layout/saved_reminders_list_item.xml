@@ -257,14 +257,5 @@
 		            
 		        </LinearLayout>
 		    </LinearLayout>
-
-	    <TextView
-	        android:id="@+id/tv_reminder_enabled"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="6"
-	        android:text="enabled" />
-
         </LinearLayout>
-
 </LinearLayout>

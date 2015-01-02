@@ -35,32 +35,32 @@ public class SavedRemindersAdapter extends SimpleCursorAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View rowView = null;
 		try {
-			//Log.v(MODULE_TAG, "getView: " + position);
-
+			// Inflate ui
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+			// Reference widgets
 			rowView = inflater.inflate(R.layout.saved_reminders_list_item, parent, false);
 			TextView tvName = (TextView) rowView.findViewById(R.id.tv_reminder_name);
 			TextView tvTime = (TextView) rowView.findViewById(R.id.tv_reminder_time);
+			LinearLayout llSun = (LinearLayout) rowView.findViewById(R.id.tv_srli_sun_underline);
+			LinearLayout llMon = (LinearLayout) rowView.findViewById(R.id.tv_srli_mon_underline);
+			LinearLayout llTue = (LinearLayout) rowView.findViewById(R.id.tv_srli_tue_underline);
+			LinearLayout llWed = (LinearLayout) rowView.findViewById(R.id.tv_srli_wed_underline);
+			LinearLayout llThu = (LinearLayout) rowView.findViewById(R.id.tv_srli_thu_underline);
+			LinearLayout llFri = (LinearLayout) rowView.findViewById(R.id.tv_srli_fri_underline);
+			LinearLayout llSat = (LinearLayout) rowView.findViewById(R.id.tv_srli_sat_underline);
 
-			LinearLayout tvSun = (LinearLayout) rowView.findViewById(R.id.tv_srli_sun_underline);
-			LinearLayout tvMon = (LinearLayout) rowView.findViewById(R.id.tv_srli_mon_underline);
-			LinearLayout tvTue = (LinearLayout) rowView.findViewById(R.id.tv_srli_tue_underline);
-			LinearLayout tvWed = (LinearLayout) rowView.findViewById(R.id.tv_srli_wed_underline);
-			LinearLayout tvThu = (LinearLayout) rowView.findViewById(R.id.tv_srli_thu_underline);
-			LinearLayout tvFri = (LinearLayout) rowView.findViewById(R.id.tv_srli_fri_underline);
-			LinearLayout tvSat = (LinearLayout) rowView.findViewById(R.id.tv_srli_sat_underline);
-
-			//CheckBox chkEnabled = (CheckBox) rowView.findViewById(R.id.chk_reminder_enabled);
-
+			// Move cursor to itemselected
 			cursor.moveToPosition(position);
 
+			// Get column values
 			String name = cursor.getString(cursor.getColumnIndex(DbAdapter.K_REMINDER_NAME));
 			int days = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_REMINDER_DAYS));
 			int hours = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_REMINDER_HOURS));
 			int minutes = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_REMINDER_MINUTES));
-			int enabled = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_REMINDER_ENABLED));
+			boolean enabled = (cursor.getInt(cursor.getColumnIndex(DbAdapter.K_REMINDER_ENABLED)) != 0);
 
-
+			// Set value of AM/PM
 			String ampm;
 			if (hours > 12) {
 				hours = hours - 12;
@@ -70,20 +70,27 @@ public class SavedRemindersAdapter extends SimpleCursorAdapter {
 				ampm = "AM";
 			}
 
-			tvName.setText(name);
+			// Set value for enabled / disabled
+			if (enabled) {
+				tvName.setText(name);
+			}
+			else {
+				tvName.setText(name + " (disabled)");
+			}
 			tvTime.setText(String.format("%d:%02d %s", ((hours == 0) ? 12 : hours), minutes, ampm));
-			//chkEnabled.setChecked(enabled != 0);
 
+			// Get helper to help with setting day selections
 			ReminderHelper rh = new ReminderHelper();
 			rh.setDays(days);
 
-			tvSun.setVisibility(rh.getSunday()    ? View.VISIBLE : View.INVISIBLE);
-			tvMon.setVisibility(rh.getMonday()    ? View.VISIBLE : View.INVISIBLE);
-			tvTue.setVisibility(rh.getTuesday()   ? View.VISIBLE : View.INVISIBLE);
-			tvWed.setVisibility(rh.getWednesday() ? View.VISIBLE : View.INVISIBLE);
-			tvThu.setVisibility(rh.getThursday()  ? View.VISIBLE : View.INVISIBLE);
-			tvFri.setVisibility(rh.getFriday()    ? View.VISIBLE : View.INVISIBLE);
-			tvSat.setVisibility(rh.getSaturday()  ? View.VISIBLE : View.INVISIBLE);
+			// Set day selections
+			llSun.setVisibility(rh.getSunday()    ? View.VISIBLE : View.INVISIBLE);
+			llMon.setVisibility(rh.getMonday()    ? View.VISIBLE : View.INVISIBLE);
+			llTue.setVisibility(rh.getTuesday()   ? View.VISIBLE : View.INVISIBLE);
+			llWed.setVisibility(rh.getWednesday() ? View.VISIBLE : View.INVISIBLE);
+			llThu.setVisibility(rh.getThursday()  ? View.VISIBLE : View.INVISIBLE);
+			llFri.setVisibility(rh.getFriday()    ? View.VISIBLE : View.INVISIBLE);
+			llSat.setVisibility(rh.getSaturday()  ? View.VISIBLE : View.INVISIBLE);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());

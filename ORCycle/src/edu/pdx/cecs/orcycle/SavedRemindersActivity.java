@@ -206,6 +206,9 @@ public class SavedRemindersActivity extends Activity {
 	}
 
 	private void deleteReminder(long reminderId) {
+
+		Reminder.cancel(this, reminderId);
+
 		DbAdapter mDbHelper = new DbAdapter(this);
 		mDbHelper.open();
 		try {
@@ -290,7 +293,7 @@ public class SavedRemindersActivity extends Activity {
 				transitionToEditReminderActivity(-1);
 				return true;
 
-			case R.id.action_cancel_reminder:
+			case R.id.action_done_reminder:
 				transitionToTabsConfigActivity();
 				return true;
 

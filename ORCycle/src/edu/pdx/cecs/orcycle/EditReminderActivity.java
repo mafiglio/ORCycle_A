@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TimePicker;
 
 public class EditReminderActivity extends Activity {
@@ -35,6 +36,8 @@ public class EditReminderActivity extends Activity {
 	private CheckBox chkFriday;
 	private CheckBox chkSaturday;
 	private TimePicker timePicker;
+	private RelativeLayout rlEnabled;
+	private CheckBox chkEnabled;
 
 	private long reminderId;
 	private String reminderName;
@@ -69,6 +72,8 @@ public class EditReminderActivity extends Activity {
 			chkSaturday = (CheckBox) findViewById(R.id.chk_aer_sat);
 
 			timePicker = (TimePicker) findViewById(R.id.time_picker_aer);
+			rlEnabled = (RelativeLayout) findViewById(R.id.rl_aer_enabled);
+			chkEnabled = (CheckBox) findViewById(R.id.chk_aer_enabled);
 
 			LoadReminderVars(savedInstanceState);
 		}
@@ -171,7 +176,7 @@ public class EditReminderActivity extends Activity {
 		reminderEnabled = true;
 
 		// Searched the bundle for the values
-		if (null == savedInstanceState) {
+		if (null == savedInstanceState) { // then this is being called from OnCreate
 
 			Bundle extras = getIntent().getExtras();
 			if ((null != extras) && (extras.containsKey(EXTRA_REMINDER_ID))) {
@@ -225,6 +230,17 @@ public class EditReminderActivity extends Activity {
 		// Set reminder time
 		timePicker.setCurrentHour(reminderHours);
 		timePicker.setCurrentMinute(reminderMinutes);
+
+		// Set enabled value
+		chkEnabled.setChecked(reminderEnabled);
+
+		// Only show enabled checkbox when editing an existing reminder
+		if(reminderId > 0) {
+			rlEnabled.setVisibility(View.VISIBLE);
+		}
+		else {
+			rlEnabled.setVisibility(View.GONE);
+		}
 	}
 
 	private void SaveReminderVars(Bundle savedInstanceState) {
@@ -298,7 +314,15 @@ public class EditReminderActivity extends Activity {
 		  .setSaturday(chkSaturday.isChecked())
 		  .setHours(timePicker.getCurrentHour())
 		  .setMinutes(timePicker.getCurrentMinute())
-		  .setEnabled(reminderEnabled)
+		  .setEnabled(chkEnabled.isChecked())
 		  .update();
+
+		Reminder reminder = new Reminder(this, rh);
+		if(chkEnabled.isChecked()) {
+			reminder.schedule();
+		}
+		else {
+			reminder.cancel();
+		}
 	}
 }
