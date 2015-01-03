@@ -56,6 +56,8 @@ public class MyApplication extends android.app.Application {
 	private RecordingService recordingService = null;
 	private TripData trip;
 
+	private boolean running;
+
 	private boolean checkedForUserProfile = false;
 	private boolean userProfileUploaded;
 
@@ -169,6 +171,18 @@ public class MyApplication extends android.app.Application {
     @Override
     public final void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+    }
+
+	// *********************************************************************************
+	// *
+	// *********************************************************************************
+
+    public boolean isRunning() {
+		return this.running;
+    }
+
+    public void setRunning(boolean value) {
+		running = value;
     }
 
 	// *********************************************************************************

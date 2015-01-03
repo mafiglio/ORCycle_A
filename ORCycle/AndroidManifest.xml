@@ -128,13 +128,18 @@
             android:label="@string/title_activity_edit_reminder"
             android:theme="@android:style/Theme.Dialog" >
         </activity>
-        <receiver 
-            android:name=".ReminderReceiver" >
-            
+
+        <receiver android:name="edu.pdx.cecs.orcycle.ReminderReceiver" >
             <intent-filter>
                 <action android:name="edu.pdx.cecs.orcycle.ACTION_REMIND_USER" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name="edu.pdx.cecs.orcycle.QueryStartActivity"
+            android:label="@string/title_activity_query_start"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
     </application>
 
 </manifest>

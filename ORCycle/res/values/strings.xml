@@ -29,7 +29,7 @@
     <string name="title_activity_report_safety_issues">ORcycle</string>
     <string name="title_activity_reminders">Reminders</string>
     <string name="title_activity_edit_reminder">Add/Edit Reminder</string>
-    
+    <string name="title_activity_query_start">ORcycle Reminder!</string>
     <string name="post_url">http://orcycle2.cecs.pdx.edu/post/</string>
     <string name="btn_lbl_start">Start Trip</string>
     <string name="btn_lbl_pause">Pause</string>
@@ -157,13 +157,16 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="aumad_ok">OK</string>
     <string name="aui_save">Save</string>
     <string name="dsaNoteImageContentDescription">How to description</string>
-
     <string name="aer_save">Save</string>
     <string name="aer_cancel">Cancel</string>
     <string name="aer_error_dialog_title">Reminder Help\:</string>
     <string name="aer_error_no_name">Please enter a name for the reminder before pressing save.</string>
     <string name="aer_error_no_days">Please select 1 or more days for the reminder before pressing save.</string>
     <string name="aer_alert_OK">OK</string>
+    <string name="qsa_title">ORcycle Reminder: %s</string>
+    <string name="qsa_message">Would you like to start ORcycle?</string>
+    <string name="qsa_btn_positive">Yes</string>
+    <string name="qsa_btn_negative">No</string>
     
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->

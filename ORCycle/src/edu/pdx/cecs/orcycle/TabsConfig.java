@@ -71,6 +71,7 @@ public class TabsConfig extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		try {
 			myApp = MyApplication.getInstance();
+			myApp.setRunning(true);
 
 			setContentView(R.layout.tabs_config);
 

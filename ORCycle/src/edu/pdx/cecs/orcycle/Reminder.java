@@ -12,6 +12,8 @@ public class Reminder {
 
 	private static final String MODULE_TAG = "Reminder";
 
+	public static final String EXTRA_REMINDER_NAME = "REMINDER_NAME";
+
     /**
      * Value specifying one week in milliseconds
      * milliseconds/sec * sec/min * min/hr * hr/day * days/week.
@@ -109,7 +111,7 @@ public class Reminder {
 
 			Log.i(MODULE_TAG, "Alarm set for: " + alarmCalendar.getTime().toString());
 
-			PendingIntent alarmIntent = getAlarmIntent(context, dayOfWeek, rh.getId());
+			PendingIntent alarmIntent = getAlarmIntent(context, dayOfWeek, rh.getId(), rh.getName());
 
 			// Set Repeating interval
 			alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarmCalendar.getTimeInMillis(),
@@ -168,13 +170,22 @@ public class Reminder {
 	}
 
 	private static PendingIntent getAlarmIntent(Context context, int dayOfWeek, long reminderId) throws Exception {
+		return getAlarmIntent(context, dayOfWeek, reminderId, null);
+	}
+
+	private static PendingIntent getAlarmIntent(Context context, int dayOfWeek, long reminderId, String name) throws Exception {
 
 		PendingIntent alarmIntent;
 
 		String ALARM_ACTION = ReminderReceiver.ACTION_REMIND_USER;
 
+		Intent intent = new Intent(ALARM_ACTION);
+		if (null != name) {
+			intent.putExtra(EXTRA_REMINDER_NAME, name);
+		}
+
 		// Construct the pending intent for broadcasting the alarm
-		alarmIntent = PendingIntent.getBroadcast(context, getAlarmId(dayOfWeek, reminderId), new Intent(ALARM_ACTION), 0);
+		alarmIntent = PendingIntent.getBroadcast(context, getAlarmId(dayOfWeek, reminderId), intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 		return alarmIntent;
 	}
