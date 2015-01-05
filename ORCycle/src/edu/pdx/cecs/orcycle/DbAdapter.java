@@ -69,7 +69,8 @@ public class DbAdapter {
 	private static final int DATABASE_VERSION_ANSWERS = 26;
 	private static final int DATABASE_VERSION_NOTE_ANSWERS = 27;
 	private static final int DATABASE_VERSION_NOTE_SEVERITY = 28;
-	private static final int DATABASE_VERSION = DATABASE_VERSION_NOTE_SEVERITY;
+	private static final int DATABASE_VERSION_REMINDERS = 29;
+	private static final int DATABASE_VERSION = DATABASE_VERSION_REMINDERS;
 
 	// Trips Table columns
 	public static final String K_TRIP_ROWID = "_id";
@@ -137,6 +138,14 @@ public class DbAdapter {
 	public static final String K_SEGMENT_END_INDEX = "endindex";
 	public static final String K_SEGMENT_STATUS = "status";
 
+	// Reminders Table columns
+	public static final String K_REMINDER_ID = "_id";
+	public static final String K_REMINDER_NAME = "name";
+	public static final String K_REMINDER_DAYS = "days";
+	public static final String K_REMINDER_HOURS = "hours";
+	public static final String K_REMINDER_MINUTES = "minutes";
+	public static final String K_REMINDER_ENABLED = "enabled";
+
 	private static final String MODULE_TAG = "DbAdapter";
 	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase mDb;
@@ -177,6 +186,10 @@ public class DbAdapter {
 			+ "(note_id integer, question_id integer, answer_id integer, other_text text, "
 			+ "FOREIGN KEY(note_id) REFERENCES NOTES(_id));";
 
+	private static final String TABLE_CREATE_REMINDERS = "create table reminders "
+			+ "(_id integer primary key autoincrement, name text, days int, "
+			+ "hours int, minutes int, enabled integer);";
+
 	private static final String TABLE_DROP_NOTES = "drop table notes;";
 
 	private static final String DATABASE_NAME = "data";
@@ -187,6 +200,7 @@ public class DbAdapter {
 	private static final String DATA_TABLE_SEGMENTS = "segments";
 	private static final String DATA_TABLE_ANSWERS = "answers";
 	private static final String DATA_TABLE_NOTE_ANSWERS = "note_answers";
+	private static final String DATA_TABLE_REMINDERS = "reminders";
 
 	private final Context mCtx;
 	private String noteImagesDirName = null;
@@ -210,6 +224,7 @@ public class DbAdapter {
 			db.execSQL(TABLE_CREATE_SEGMENTS);
 			db.execSQL(TABLE_CREATE_ANSWERS);
 			db.execSQL(TABLE_CREATE_NOTE_ANSWERS);
+			db.execSQL(TABLE_CREATE_REMINDERS);
 		}
 
 		@Override
@@ -265,10 +280,20 @@ public class DbAdapter {
 					Log.e(MODULE_TAG, ex.getMessage());
 				}
 			}
+
 			if (oldVersion < DATABASE_VERSION_NOTE_SEVERITY) {
 				try {
 					db.execSQL(TABLE_DROP_NOTES);
 					db.execSQL(TABLE_CREATE_NOTES);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+
+			if (oldVersion < DATABASE_VERSION_REMINDERS) {
+				try {
+					db.execSQL(TABLE_CREATE_REMINDERS);
 				}
 				catch(Exception ex) {
 					Log.e(MODULE_TAG, ex.getMessage());
@@ -1103,7 +1128,6 @@ public class DbAdapter {
 	 * created return the new rowId for that segment, otherwise return a -1 to
 	 * indicate failure.
 	 */
-
 	public long createSegment(long tripId, int rating, String details, int startIndex, int endIndex) {
 
 		ContentValues initialValues = new ContentValues();
@@ -1146,6 +1170,91 @@ public class DbAdapter {
 			c.moveToFirst();
 		}
 		return c;
+	}
+
+	// ************************************************************************
+	// *                       Reminders table methods
+	// ************************************************************************
+
+	/**
+	 * Return a Cursor over the list of all reminders in the database
+	 *
+	 * @return Cursor over all notes
+	 */
+	public Cursor fetchAllReminders() {
+
+		Cursor cursor = mDb.query(DATA_TABLE_REMINDERS,
+				new String[] { K_REMINDER_ID, K_REMINDER_NAME, K_REMINDER_DAYS,
+				K_REMINDER_HOURS, K_REMINDER_MINUTES, K_REMINDER_ENABLED },
+				null, null, null, null, K_REMINDER_ID);
+
+		if ((cursor != null) && (cursor.getCount() > 0)) {
+			cursor.moveToFirst();
+		}
+		return cursor;
+	}
+
+	/**
+	 * Delete the reminder with the given ID
+	 *
+	 * @param id
+	 *            id of note to delete
+	 * @return true if deleted, false otherwise
+	 */
+	public boolean deleteReminder(long id) {
+		return mDb.delete(DATA_TABLE_REMINDERS, K_REMINDER_ID + "=" + id, null) > 0;
+	}
+
+	public long createReminder(String name, int days, int hours, int minutes, boolean enabled) {
+
+		ContentValues cv = new ContentValues();
+
+		cv.put(K_REMINDER_NAME, name);
+		cv.put(K_REMINDER_DAYS, days);
+		cv.put(K_REMINDER_HOURS, hours);
+		cv.put(K_REMINDER_MINUTES, minutes);
+		cv.put(K_REMINDER_ENABLED, enabled ? 1 : 0);
+
+		return mDb.insert(DATA_TABLE_REMINDERS, null, cv);
+	}
+
+	public boolean updateReminder(long id, String name, int days, int hours, int minutes, boolean enabled) {
+
+		ContentValues cv = new ContentValues();
+
+		cv.put(K_REMINDER_NAME, name);
+		cv.put(K_REMINDER_DAYS, days);
+		cv.put(K_REMINDER_HOURS, hours);
+		cv.put(K_REMINDER_MINUTES, minutes);
+		cv.put(K_REMINDER_ENABLED, enabled ? 1 : 0);
+
+		return mDb.update(DATA_TABLE_REMINDERS, cv, K_REMINDER_ID + "=" + id, null) > 0;
+	}
+
+	/**
+	 * Return a Cursor positioned at the reminder that matches the given reminderId
+	 *
+	 * @param rowId
+	 *            id of note to retrieve
+	 * @return Cursor positioned to matching note, if found
+	 * @throws SQLException
+	 *             if note could not be found/retrieved
+	 */
+	public Cursor fetchReminder(long reminderID) throws SQLException {
+
+		// Columns to retrieve
+		String[] columns = new String[] {K_REMINDER_NAME, K_REMINDER_DAYS,
+				K_REMINDER_HOURS, K_REMINDER_MINUTES, K_REMINDER_ENABLED};
+
+		String whereClause = K_REMINDER_ID + "=" + reminderID;
+
+		Cursor mCursor = mDb.query(true, DATA_TABLE_REMINDERS, columns,
+				whereClause, null, null, null, null, null);
+
+		if (mCursor != null) {
+			mCursor.moveToFirst();
+		}
+		return mCursor;
 	}
 
 }

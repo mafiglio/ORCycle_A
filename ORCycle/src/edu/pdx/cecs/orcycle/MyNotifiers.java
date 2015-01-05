@@ -11,8 +11,42 @@ import android.content.Intent;
 public class MyNotifiers {
 
 	private static final int RECORDING_ID = 1;
+	private static final int REMINDER_ID = 2;
 
-	public static void setNotification(Context context) {
+	public static void setReminderNotification(Context context, String reminderName) {
+
+		CharSequence tickerText = "Reminder: " + reminderName + "Would you like to start ORcycle";
+		CharSequence contentTitle = "ORcycle Reminder";
+		CharSequence contentText = "Tap to start ORcycle";
+
+		//| Notification.FLAG_ONGOING_EVENT
+		//| Notification.FLAG_SHOW_LIGHTS | Notification.FLAG_INSISTENT
+		//| Notification.FLAG_NO_CLEAR;
+
+
+		// Define intent to be executed when notification is clicked
+		Intent intent = new Intent(context, TabsConfig.class);
+		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
+		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+		// Build notification
+		Notification.Builder builder = new Notification.Builder(context);
+		builder.setSmallIcon(R.drawable.ic_launcher)
+			   .setTicker(tickerText)
+			   .setWhen(System.currentTimeMillis())
+			   .setLights(0xffff00ff, 300, 3000)
+			   .setContentTitle(contentTitle)
+			   .setContentText(contentText)
+			   .setContentIntent(pendingIntent)
+			   .setAutoCancel(true);
+		Notification notification = builder.getNotification();
+
+		// Execute notification
+		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(REMINDER_ID, notification);
+	}
+
+	public static void setRecordingNotification(Context context) {
 
 		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		int icon = R.drawable.ic_launcher;
@@ -40,10 +74,16 @@ public class MyNotifiers {
 		mNotificationManager.notify(RECORDING_ID, notification);
 	}
 
-	public static void cancelAll(Context context) {
+	public static void cancelReminderNotification(Context context) {
 
 		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotificationManager.cancelAll();
+		mNotificationManager.cancel(REMINDER_ID);
+	}
+
+	public static void cancelRecordingNotification(Context context) {
+
+		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.cancel(RECORDING_ID);
 	}
 
 	public static void setNotification(Context context, double startTime) {

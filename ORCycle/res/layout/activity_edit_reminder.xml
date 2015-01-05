@@ -1,0 +1,311 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sv_aer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="#474334"
+	    android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="#fcfcfc"
+            android:orientation="vertical"
+            android:paddingBottom="4dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="12dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+		    
+		    <TextView
+		        android:id="@+id/tv_aer_0"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginBottom="3dp"
+		        android:textAppearance="?android:attr/textAppearanceMedium"
+		        android:textColor="@color/psu_sienna"
+		        android:text="Name this reminder..." />
+
+		    <EditText
+		        android:id="@+id/et_aer_name"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_alignParentRight="true"
+		        android:layout_below="@+id/tv_aer_0"
+		        android:ems="10"
+		        android:hint="Name"
+		        android:maxLength="32" />
+
+       	</RelativeLayout>
+    
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="#fcfcfc"
+            android:orientation="vertical"
+            android:paddingBottom="4dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="12dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+		    
+	        <TextView
+		        android:id="@+id/tv_aer_1"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginBottom="12dp"
+		        android:layout_marginTop="3dp"
+		        android:textAppearance="?android:attr/textAppearanceMedium"
+		        android:textColor="@color/psu_sienna"
+		        android:text="Select days to remind me..." />
+
+		    <LinearLayout
+		        android:id="@+id/ll_aer_days"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_alignParentRight="true"
+		        android:layout_below="@+id/tv_aer_1"
+		        android:layout_marginBottom="6dp"
+		        android:scrollbars="horizontal" >
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:measureWithLargestChild="false"
+		            android:orientation="vertical" >
+
+		            <TextView
+		                android:id="@+id/tv_aer_sun"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:text="Sun" />
+
+		            <CheckBox
+		                android:id="@+id/chk_aer_sun"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content" />
+
+		        </LinearLayout>
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:orientation="vertical" >
+		
+		            <TextView
+		                android:id="@+id/tv_aer_mon"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:text="Mon" />
+		
+		            <CheckBox
+		                android:id="@+id/chk_aer_mon"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content" />
+		        </LinearLayout>
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:orientation="vertical" >
+		
+		            <TextView
+		                android:id="@+id/tv_aer_tue"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:text="Tue" />
+		
+		            <CheckBox
+		                android:id="@+id/chk_aer_tue"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content" />
+		        </LinearLayout>
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:orientation="vertical" >
+		
+		            <TextView
+		                android:id="@+id/tv_aer_wed"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:text="Wed" />
+		
+		            <CheckBox
+		                android:id="@+id/chk_aer_wed"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content" />
+		        </LinearLayout>
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:orientation="vertical" >
+		
+		            <TextView
+		                android:id="@+id/tv_aer_thu"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:text="Thu" />
+		
+		            <CheckBox
+		                android:id="@+id/chk_aer_thu"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content" />
+		        </LinearLayout>
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:orientation="vertical" >
+		
+		            <TextView
+		                android:id="@+id/tv_aer_fri"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:text="Fri" />
+		
+		            <CheckBox
+		                android:id="@+id/chk_aer_fri"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content" />
+		        </LinearLayout>
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:orientation="vertical" >
+		
+		            <TextView
+		                android:id="@+id/tv_aer_sat"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:text="Sat" />
+		
+		            <CheckBox
+		                android:id="@+id/chk_aer_sat"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content" />
+		        </LinearLayout>
+		    </LinearLayout>
+       	</RelativeLayout>
+		    
+	    <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="#fcfcfc"
+            android:orientation="vertical"
+            android:paddingBottom="4dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="12dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+	    		    
+	        <TextView
+	            android:id="@+id/tv_aer_2"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginBottom="12dp"
+	            android:layout_marginTop="3dp"
+	            android:text="Select time to remind me..."
+	            android:textAppearance="?android:attr/textAppearanceMedium"
+	            android:textColor="@color/psu_sienna" />
+		
+		    <TimePicker
+		        android:id="@+id/time_picker_aer"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_below="@+id/tv_aer_2"
+		        android:layout_marginBottom="6dp" />
+		
+       	</RelativeLayout>
+		            
+        <RelativeLayout
+		    android:id="@+id/rl_aer_enabled"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="#fcfcfc"
+            android:orientation="vertical"
+            android:paddingBottom="4dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="6dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+
+            <CheckBox
+                android:id="@+id/chk_aer_enabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/tv_aer_enabled"
+                android:text="Enable reminder"
+                android:textColor="@color/psu_sienna" />
+
+		</RelativeLayout>
+            
+	    <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="#fcfcfc"
+            android:orientation="vertical"
+            android:paddingBottom="4dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="6dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+            
+			<LinearLayout
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_marginBottom="3dp"
+			    android:background="#fcfcfc"
+			    android:gravity="bottom"
+			    android:orientation="horizontal" >
+
+				<Button
+				    android:id="@+id/btn_aer_cancel"
+				    style="?android:attr/buttonBarButtonStyle"
+				    android:layout_width="wrap_content"
+				    android:layout_height="40dp"
+				    android:layout_marginLeft="4dp"
+				    android:layout_marginRight="4dp"
+				    android:layout_weight="1"
+				    android:background="@color/user_button_background"
+				    android:paddingLeft="6dp"
+				    android:paddingRight="6dp"
+				    android:text="@string/aer_cancel"
+				    android:textAppearance="?android:attr/textAppearanceMedium"
+				    android:textColor="@color/user_button_text" />
+
+			    <Button
+	   			    android:id="@+id/btn_aer_save"
+	   			    style="?android:attr/buttonBarButtonStyle"
+	   			    android:layout_width="wrap_content"
+	   			    android:layout_height="40dp"
+	   			    android:layout_marginLeft="4dp"
+	   			    android:layout_marginRight="4dp"
+	   			    android:layout_weight="1"
+	   			    android:background="@color/user_button_background"
+	   			    android:paddingLeft="6dp"
+	   			    android:paddingRight="6dp"
+	   			    android:text="@string/aer_save"
+	   			    android:textAppearance="?android:attr/textAppearanceMedium"
+	   			    android:textColor="@color/user_button_text" />
+	
+			</LinearLayout>
+		</RelativeLayout>
+    </LinearLayout>
+</ScrollView>

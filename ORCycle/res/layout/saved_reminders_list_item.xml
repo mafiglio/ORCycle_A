@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:id="@+id/ll_saved_reminders_root"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4sp"
+        android:layout_marginRight="2sp"
+        android:layout_marginTop="4sp"
+        android:layout_marginBottom="4sp"
+        android:layout_weight="6"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_reminder_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="4dp"
+            android:text="Name: Weekdays"
+            android:textColor="@color/psu_sienna"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_reminder_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="2dp"
+            android:text="12:00 AM"
+            android:textColor="@color/psu_sienna"
+            android:textSize="24sp"
+            android:textStyle="normal" >
+
+        </TextView>
+        
+<LinearLayout
+    android:id="@+id/ll_aer_days"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="6dp"
+    android:scrollbars="horizontal" >
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_marginBottom="4dp"
+		            android:layout_marginLeft="4dp"
+		            android:layout_marginRight="2dp"
+		            android:layout_marginTop="4dp"
+		            android:background="@color/off_white_2"
+		            android:measureWithLargestChild="false"
+		            android:orientation="vertical" >
+
+		            <TextView
+		                android:id="@+id/tv_srli_sun"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:text="Sun"
+		                android:textColor="@color/text_light_gray" />
+
+			        <LinearLayout
+		                android:id="@+id/tv_srli_sun_underline"
+			            android:layout_width="fill_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_marginBottom="4dp"
+			            android:layout_marginTop="0dp"
+			            android:background="@color/psu_sienna"
+			            android:measureWithLargestChild="false"
+			            android:minHeight="3dp"
+			            android:orientation="vertical" />
+
+   		        </LinearLayout>
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_marginBottom="4dp"
+		            android:layout_marginLeft="4dp"
+		            android:layout_marginRight="2dp"
+		            android:layout_marginTop="4dp"
+		            android:measureWithLargestChild="false"
+		            android:orientation="vertical" >
+		
+		            <TextView
+		                android:id="@+id/tv_srli_mon"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:text="Mon"
+		                android:textColor="@color/text_light_gray" />
+			        <LinearLayout
+		                android:id="@+id/tv_srli_mon_underline"
+			            android:layout_width="fill_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_marginBottom="4dp"
+			            android:layout_marginTop="0dp"
+			            android:background="@color/psu_sienna"
+			            android:measureWithLargestChild="false"
+			            android:minHeight="3dp"
+			            android:orientation="vertical" />
+		            
+		        </LinearLayout>
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_marginBottom="4dp"
+		            android:layout_marginLeft="4dp"
+		            android:layout_marginRight="2dp"
+		            android:layout_marginTop="4dp"
+		            android:background="@color/off_white_2"
+		            android:measureWithLargestChild="false"
+		            android:orientation="vertical" >
+		
+		            <TextView
+		                android:id="@+id/tv_srli_tue"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:text="Tue"
+		                android:textColor="@color/text_light_gray" />
+			        <LinearLayout
+		                android:id="@+id/tv_srli_tue_underline"
+			            android:layout_width="fill_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_marginBottom="4dp"
+			            android:layout_marginTop="0dp"
+			            android:background="@color/psu_sienna"
+			            android:measureWithLargestChild="false"
+			            android:minHeight="3dp"
+			            android:orientation="vertical" />
+		            
+		        </LinearLayout>
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_marginBottom="4dp"
+		            android:layout_marginLeft="4dp"
+		            android:layout_marginRight="2dp"
+		            android:layout_marginTop="4dp"
+		            android:background="@color/off_white_2"
+		            android:measureWithLargestChild="false"
+		            android:orientation="vertical" >
+		
+		            <TextView
+		                android:id="@+id/tv_srli_wed"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:text="Wed"
+		                android:textColor="@color/text_light_gray" />
+			        <LinearLayout
+		                android:id="@+id/tv_srli_wed_underline"
+			            android:layout_width="fill_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_marginBottom="4dp"
+			            android:layout_marginTop="0dp"
+			            android:background="@color/psu_sienna"
+			            android:measureWithLargestChild="false"
+			            android:minHeight="3dp"
+			            android:orientation="vertical" />
+		            
+		        </LinearLayout>
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_marginBottom="4dp"
+		            android:layout_marginLeft="4dp"
+		            android:layout_marginRight="2dp"
+		            android:layout_marginTop="4dp"
+		            android:background="@color/off_white_2"
+		            android:measureWithLargestChild="false"
+		            android:orientation="vertical" >
+		
+		            <TextView
+		                android:id="@+id/tv_srli_thu"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:text="Thu"
+		                android:textColor="@color/text_light_gray" />
+			        <LinearLayout
+		                android:id="@+id/tv_srli_thu_underline"
+			            android:layout_width="fill_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_marginBottom="4dp"
+			            android:layout_marginTop="0dp"
+			            android:background="@color/psu_sienna"
+			            android:measureWithLargestChild="false"
+			            android:minHeight="3dp"
+			            android:orientation="vertical" />
+		            
+		        </LinearLayout>
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_marginBottom="4dp"
+		            android:layout_marginLeft="4dp"
+		            android:layout_marginRight="2dp"
+		            android:layout_marginTop="4dp"
+		            android:background="@color/off_white_2"
+		            android:measureWithLargestChild="false"
+		            android:orientation="vertical" >
+		
+		            <TextView
+		                android:id="@+id/tv_srli_fri"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:text="Fri"
+		                android:textColor="@color/text_light_gray" />
+			        <LinearLayout
+		                android:id="@+id/tv_srli_fri_underline"
+			            android:layout_width="fill_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_marginBottom="4dp"
+			            android:layout_marginTop="0dp"
+			            android:background="@color/psu_sienna"
+			            android:measureWithLargestChild="false"
+			            android:minHeight="3dp"
+			            android:orientation="vertical" />
+		            
+		        </LinearLayout>
+		
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_marginBottom="4dp"
+		            android:layout_marginLeft="4dp"
+		            android:layout_marginRight="2dp"
+		            android:layout_marginTop="4dp"
+		            android:background="@color/off_white_2"
+		            android:measureWithLargestChild="false"
+		            android:orientation="vertical" >
+		
+		            <TextView
+		                android:id="@+id/tv_srli_sat"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:text="Sat"
+		                android:textColor="@color/text_light_gray" />
+			        <LinearLayout
+		                android:id="@+id/tv_srli_sat_underline"
+			            android:layout_width="fill_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_marginBottom="4dp"
+			            android:layout_marginTop="0dp"
+			            android:background="@color/psu_sienna"
+			            android:measureWithLargestChild="false"
+			            android:minHeight="3dp"
+			            android:orientation="vertical" />
+		            
+		        </LinearLayout>
+		    </LinearLayout>
+        </LinearLayout>
+</LinearLayout>

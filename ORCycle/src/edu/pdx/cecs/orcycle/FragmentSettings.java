@@ -20,6 +20,7 @@ public class FragmentSettings extends Fragment {
 	private Button btnGetStarted = null;
 	private Button btnFeedback = null;
 	private Button btnPrivacyPolicy = null;
+	private Button btnReminders = null;
 	private TextView tvVersionCode = null;
 
 	// *********************************************************************************
@@ -54,6 +55,9 @@ public class FragmentSettings extends Fragment {
 
 			btnPrivacyPolicy = (Button) rootView.findViewById(R.id.btnPrivacyPolicy);
 			btnPrivacyPolicy.setOnClickListener(new PrivacyPolicy_OnClickListener());
+
+			btnReminders = (Button) rootView.findViewById(R.id.btnReminders);
+			btnReminders.setOnClickListener(new Reminders_OnClickListener());
 
 			StringBuilder version = new StringBuilder();
 			version.append(getResources().getString(R.string.about_version));
@@ -188,6 +192,28 @@ public class FragmentSettings extends Fragment {
 		}
 	}
 
+	/**
+     * Class: ButtonAbout_OnClickListener
+     *
+     * Description: Callback to be invoked when startButton button is clicked
+     */
+	private final class Reminders_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+			try {
+				transitionToReminders();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			finally {
+			}
+		}
+	}
+
 	private void transitionToORcycle() {
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MyApplication.ORCYCLE_URI));
 		startActivity(intent);
@@ -198,6 +224,13 @@ public class FragmentSettings extends Fragment {
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MyApplication.PRIVACY_POLICY_URI));
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+	}
+
+	private void transitionToReminders() {
+		Intent intent = new Intent(getActivity(), SavedRemindersActivity.class);
+		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		//getActivity().finish();
 	}
 
 	private void transitionToUserFeedbackActivity() {

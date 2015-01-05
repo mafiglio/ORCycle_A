@@ -119,6 +119,27 @@
             android:name="edu.pdx.cecs.orcycle.CustomLocationActivity"
             android:label="@string/title_activity_custom_location" >
         </activity>
+        <activity
+            android:name="edu.pdx.cecs.orcycle.SavedRemindersActivity"
+            android:label="@string/title_activity_reminders" >
+        </activity>
+        <activity
+            android:name="edu.pdx.cecs.orcycle.EditReminderActivity"
+            android:label="@string/title_activity_edit_reminder"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
+
+        <receiver android:name="edu.pdx.cecs.orcycle.ReminderReceiver" >
+            <intent-filter>
+                <action android:name="edu.pdx.cecs.orcycle.ACTION_REMIND_USER" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name="edu.pdx.cecs.orcycle.QueryStartActivity"
+            android:label="@string/title_activity_query_start"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
     </application>
 
 </manifest>

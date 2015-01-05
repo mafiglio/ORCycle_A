@@ -27,7 +27,9 @@
     <string name="title_orcycle_instructions">Instructions</string>
     <string name="title_activity_report_accidents">ORcycle</string>
     <string name="title_activity_report_safety_issues">ORcycle</string>
-    
+    <string name="title_activity_reminders">Reminders</string>
+    <string name="title_activity_edit_reminder">Add/Edit Reminder</string>
+    <string name="title_activity_query_start">ORcycle Reminder!</string>
     <string name="post_url">http://orcycle2.cecs.pdx.edu/post/</string>
     <string name="btn_lbl_start">Start Trip</string>
     <string name="btn_lbl_pause">Pause</string>
@@ -73,8 +75,7 @@ start/finish buttons before/after your trip.</string>
     <string name="tqa_alert_user_about_later">You can later go to \"Trips\", select a trip and report crash events or locations with safety issues.</string>
     <string name="tqa_alert_answer_required_questions">Please answer required questions</string>
     <string name="tqa_alert_OK">OK</string>
-    <string name="tqa_alert_repeated_trips">Data for this %s trip will be logged and uploaded.
-<b>If you repeat the same route there is no need to log it again</b>.
+    <string name="tqa_alert_repeated_trips">Data for this %s trip will be logged and uploaded.<b>If you repeat the same route there is no need to log it again</b>.
 Please use ORcycle to log new trip purposes, routes, or safety locations.</string>
     <string name="ami_elapsed_time">Elapsed time</string>
     <string name="ami_initial_elapsed_time">00:00:00</string>
@@ -139,6 +140,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="ats_getting_started">Get started with ORCycle&#8230;</string>
     <string name="ats_provide_feedback">Provide feedback about the app&#8230;</string>
     <string name="ats_privacy_policy">ORcycle\'s Privacy Policy&#8230;</string>
+    <string name="ats_remind_me">Remind me to log a trip&#8230;</string>
     <string name="auf_user_feedback">Comment here if you would like to provide feedback about ORcycle or desirable features:</string>
     <string name="anmWaterFalls">Waterfalls</string>
     <string name="anmComment">Additional Details:</string>
@@ -155,6 +157,16 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="aumad_ok">OK</string>
     <string name="aui_save">Save</string>
     <string name="dsaNoteImageContentDescription">How to description</string>
+    <string name="aer_save">Save</string>
+    <string name="aer_cancel">Cancel</string>
+    <string name="aer_error_dialog_title">Reminder Help\:</string>
+    <string name="aer_error_no_name">Please enter a name for the reminder before pressing save.</string>
+    <string name="aer_error_no_days">Please select 1 or more days for the reminder before pressing save.</string>
+    <string name="aer_alert_OK">OK</string>
+    <string name="qsa_title">ORcycle Reminder: %s</string>
+    <string name="qsa_message">Would you like to start ORcycle?</string>
+    <string name="qsa_btn_positive">Yes</string>
+    <string name="qsa_btn_negative">No</string>
     
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
@@ -492,9 +504,8 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="header_art_report_crash">Report crash or near miss</string>
     <string name="header_art_report_location">Location of crash event</string>
     <string name="ara_ok">OK</string>
-    
     <string name="ara_q_severity"> * Severity of the crash event</string>
-    
+
     <string-array name="ara_a_severity">
         <item></item>
         <item>Major injuries (required hospitalization)</item>
@@ -503,7 +514,6 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Property damage only (bicycle damaged but no personal injuries)</item>
         <item>Near-miss (no damage or injury)</item>
     </string-array>
-
     <string-array name="ara_a_severity_2">
         <item></item>
         <item>Crash - Major injuries</item>
@@ -514,7 +524,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     </string-array>
 
     <string name="ara_q_object"> * Object (vehicle) related to the event</string>
-    
+
     <string-array name="ara_a_object">
         <item>Small/medium car</item>
         <item>Large car/Van/SUV</item>
@@ -529,7 +539,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     </string-array>
 
     <string name="ara_q_actions"> * Actions related to the event</string>
-    
+
     <string-array name="ara_a_actions">
         <item>Right-turning vehicle</item>
         <item>Left-turning vehicle</item>
@@ -544,7 +554,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     </string-array>
 
     <string name="ara_q_contributed"> * What contributed to the event</string>
-    
+
     <string-array name="ara_a_contributers">
         <item>Debris or pavement quality</item>
         <item>Poor lighting or visibility</item>
@@ -575,9 +585,8 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="arsi_q_problem_type_title">Type of problem</string>
     <string name="ara_no_gps_message">ORCycle needs GPS to determine your present location.\n\nYou may be in a bad location for receiving GPS data, or your phone\'s GPS may be disabled. If your GPS is disabled, go to <b>Settings</b> to enable it.</string>
     <string name="ara_no_gps_title">GPS reception unavailable!</string>
-    
     <string name="arsi_q_problem_type"> * Issue Type(s)</string>
-    
+
     <string-array name="arsi_a_safety_issues">
         <item>Narrow Bike Lane</item>
         <item>No bike lane or shoulder</item>
@@ -596,7 +605,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     </string-array>
 
     <string name="arsi_q_urgency"> * Urgency Level (scale 1 to 5)?</string>
-    
+
     <string-array name="arsi_a_urgency">
         <item></item>
         <item>1 (Not urgent)</item>
@@ -605,7 +614,6 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>4</item>
         <item>5 (Urgent)</item>
     </string-array>
-
     <string-array name="arsi_a_urgency_2">
         <item></item>
         <item>Safety Issue (urgency 1)</item>
@@ -622,9 +630,8 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Use current GPS location</item>
         <item>Use custom location</item>
     </string-array>
-    <string name="fyi_custom_location">Select the custom location using the map in the next screen after pressing \"save\".</string>
-    
 
+    <string name="fyi_custom_location">Select the custom location using the map in the next screen after pressing \"save\".</string>
     <string name="title_activity_custom_location">Select custom location:</string>
     <string name="rmap_q_severity">Severity of the crash event:</string>
     <string name="rmap_q_object">Object (vehicle) related to the event:</string>
@@ -632,5 +639,5 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="rmap_q_contributed">What contributed to the event:</string>
     <string name="rmap_q_problem_type">Issue Type(s):</string>
     <string name="rmap_q_urgency">Urgency Level:</string>
-    
+
 </resources>
