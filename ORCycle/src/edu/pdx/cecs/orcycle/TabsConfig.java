@@ -72,6 +72,7 @@ public class TabsConfig extends FragmentActivity implements
 		try {
 			myApp = MyApplication.getInstance();
 			myApp.setRunning(true);
+			myApp.clearReminderNotifications();
 
 			setContentView(R.layout.tabs_config);
 
@@ -165,7 +166,7 @@ public class TabsConfig extends FragmentActivity implements
 		super.onDestroy();
 		Log.v(MODULE_TAG, "Cycle: TabsConfig onDestroy");
 		try {
-			myApp.clearNotifications();
+			myApp.clearRecordingNotifications();
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());

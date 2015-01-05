@@ -13,18 +13,34 @@ public class ReminderReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
+
+		String reminderName;
+		BikeBell bell;
+
 		try {
-			BikeBell bell = new BikeBell(context);
-			bell.ring();
+			// Ring bell
+			if (null != (bell = new BikeBell(context))) {
+				bell.ring();
+			}
 
-			String reminderName = intent.getStringExtra(Reminder.EXTRA_REMINDER_NAME);
+			// Show reminder message
+			String message = "ORcycle reminder";
+			if (null != (reminderName = intent.getStringExtra(Reminder.EXTRA_REMINDER_NAME))) {
+				message = message + ": " + reminderName;
+			}
+			else {
+				message = message + "!";
+			}
+			Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 
-			Toast.makeText(context, "Alarm occurring...", Toast.LENGTH_LONG).show();
+			// If application is not running, display ORcycle start dialog
 			if (!MyApplication.getInstance().isRunning()) {
 				Intent startIntent = new Intent(context, QueryStartActivity.class);
 				startIntent.putExtra(QueryStartActivity.EXTRA_REMINDER_NAME, reminderName);
 				startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				context.startActivity(startIntent);
+
+				MyNotifiers.setReminderNotification(context, reminderName);
 			}
 		}
 		catch(Exception ex) {

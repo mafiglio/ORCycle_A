@@ -285,7 +285,7 @@ public class MyApplication extends android.app.Application {
 			break;
 		}
 
-		startNotification(lastTripStartTime = trip.getStartTime());
+		startRecordingNotification(lastTripStartTime = trip.getStartTime());
     }
 
     /**
@@ -293,7 +293,7 @@ public class MyApplication extends android.app.Application {
      */
     public void finishRecording() {
     	recordingService.finishRecording();
-		clearNotifications();
+		clearRecordingNotifications();
 		lastTripStartTime = RESET_START_TIME;
    }
 
@@ -302,7 +302,7 @@ public class MyApplication extends android.app.Application {
      */
     public void cancelRecording() {
     	recordingService.cancelRecording();
-		clearNotifications();
+		clearRecordingNotifications();
 		lastTripStartTime = RESET_START_TIME;
     }
 
@@ -470,18 +470,22 @@ public class MyApplication extends android.app.Application {
 
 	public void ResumeNotification() {
 		if (isRecording()) {
-			startNotification(lastTripStartTime);
+			startRecordingNotification(lastTripStartTime);
 		}
 	}
 
-	public void startNotification(double startTime) {
+	public void startRecordingNotification(double startTime) {
 
 		// Add the notify bar and blinking light
-		MyNotifiers.setNotification(this);
+		MyNotifiers.setRecordingNotification(this);
 	}
 
-	public void clearNotifications() {
-		MyNotifiers.cancelAll(this.getBaseContext());
+	public void clearRecordingNotifications() {
+		MyNotifiers.cancelRecordingNotification(this.getBaseContext());
+	}
+
+	public void clearReminderNotifications() {
+		MyNotifiers.cancelReminderNotification(this.getBaseContext());
 	}
 
 	// *********************************************************************************
