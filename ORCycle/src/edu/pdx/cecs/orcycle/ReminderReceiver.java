@@ -13,8 +13,10 @@ public class ReminderReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-
 		try {
+			BikeBell bell = new BikeBell(context);
+			bell.ring();
+
 			String reminderName = intent.getStringExtra(Reminder.EXTRA_REMINDER_NAME);
 
 			Toast.makeText(context, "Alarm occurring...", Toast.LENGTH_LONG).show();
