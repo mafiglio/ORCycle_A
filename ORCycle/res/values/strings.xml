@@ -69,11 +69,14 @@ start/finish buttons before/after your trip.</string>
     <string name="fmi_how_to_title">How To</string>
     <string name="fmi_how_to_continue">Continue</string>
     <string name="fmi_how_to_message">How to message goes here!</string>
+    <string name="tqi_qsm_dialog_title">Save Trip</string>
     <string name="tqi_qsm_dialog_message">“You can now report crash events or locations with safety issues along this trip&#8230;</string>
     <string name="tqi_qsm_dialog_ok">OK</string>
     <string name="tqi_qsm_dialog_later">Later</string>
+    <string name="tqa_alert_mandatory_title">Save Trip</string>
+    <string name="tqa_alert_title">Save Trip FYI:</string>
     <string name="tqa_alert_user_about_later">You can later go to \"Trips\", select a trip and report crash events or locations with safety issues.</string>
-    <string name="tqa_alert_answer_required_questions">Please answer required questions</string>
+    <string name="tqa_alert_answer_required_questions">Please answer all required questions.</string>
     <string name="tqa_alert_OK">OK</string>
     <string name="tqa_alert_repeated_trips">Data for this %s trip will be logged and uploaded.<b>If you repeat the same route there is no need to log it again</b>.
 Please use ORcycle to log new trip purposes, routes, or safety locations.</string>
@@ -364,7 +367,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Other&#8230;</item>
     </string-array>
 
-    <string name="q22_routeComfort">In terms of comfort, this route is&#8230;</string>
+    <string name="q22_routeComfort">*In terms of comfort, this route is&#8230;</string>
 
     <string-array name="qa_22_routeComfort">
         <item></item>

@@ -205,21 +205,27 @@ public class TripQuestionsActivity extends Activity {
 
 	private boolean mandatoryQuestionsAnswered() {
 		return (tripPurpose.getSelectedItemPosition() > 0) &&
-			(tripFrequency.getSelectedItemPosition() > 0);
+			   (tripFrequency.getSelectedItemPosition() > 0) &&
+			   (tripComfort.getSelectedItemPosition() > 0);
 	}
 
 	private void AlertUserMandatoryAnswers() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(getResources().getString(R.string.tqa_alert_answer_required_questions))
+		builder.setTitle(R.string.tqa_alert_mandatory_title)
+				.setMessage(R.string.tqa_alert_answer_required_questions)
 				.setCancelable(true)
-				.setPositiveButton(getResources().getString(R.string.tqa_alert_OK),
-						new DialogInterface.OnClickListener() {
-							public void onClick(final DialogInterface dialog, final int id) {
-								dialog.cancel();
-							}
-						});
+				.setPositiveButton(
+						getResources().getString(R.string.tqa_alert_OK),
+						new AlertUserMandatoryAnswers_OnClickListener());
 		final AlertDialog alert = builder.create();
 		alert.show();
+	}
+
+	private final class AlertUserMandatoryAnswers_OnClickListener implements
+			DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			dialog.cancel();
+		}
 	}
 
 	@Override
@@ -726,6 +732,7 @@ public class TripQuestionsActivity extends Activity {
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
+		builder.setTitle(R.string.tqi_qsm_dialog_title);
 		builder.setMessage(getResources().getString(R.string.tqi_qsm_dialog_message));
 		builder.setCancelable(false);
 		builder.setPositiveButton(getResources().getString(R.string.tqi_qsm_dialog_ok),
@@ -755,7 +762,8 @@ public class TripQuestionsActivity extends Activity {
 
 	private void AlertUserAboutLater() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(getResources().getString(R.string.tqa_alert_user_about_later))
+		builder.setTitle(R.string.tqa_alert_title)
+				.setMessage(getResources().getString(R.string.tqa_alert_user_about_later))
 				.setCancelable(true)
 				.setPositiveButton("OK", new AlertUserAboutLater_OkListener());
 		final AlertDialog alert = builder.create();
