@@ -188,6 +188,9 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>65+</item>
     </string-array>
 
+    <string name="q02_email_info1">To see your routes and reports in the future 
+and receive updates/news, please provide your e-mail.</string>
+    <string name="q02_email_info2">(E-mail will not be shared, see Privacy Policy).</string>
     <string name="q02_email">E-Mail:</string>
     <string name="q03_gender">What is your gender?</string>
 
