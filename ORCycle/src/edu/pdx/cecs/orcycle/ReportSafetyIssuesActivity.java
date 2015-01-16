@@ -59,6 +59,7 @@ public class ReportSafetyIssuesActivity extends Activity {
 	private MultiSelectionSpinner spnSafetyIssues;
 	private Spinner spnUrgency;
 	private Spinner spnLocation;
+	private Button btnIssueDate;
 	private final CustomLocation_OnClickListener customLocation_OnClickListener =
 			new CustomLocation_OnClickListener();
 	private static final int USE_GPS_LOCATION_POS = 1;
@@ -87,6 +88,9 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 			btnSave = (Button) findViewById(R.id.btn_arsi_save_report);
 			btnSave.setOnClickListener(new ButtonSave_OnClickListener());
+
+			btnIssueDate = (Button) findViewById(R.id.btn_issue_date);
+			btnIssueDate.setOnClickListener(new ButtonPickDate_OnClickListener());
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -266,11 +270,13 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 		if (noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP) {
 			return ((spnSafetyIssues.getSelectedIndicies().size() > 0) &&
-					(spnUrgency.getSelectedItemPosition() > 0));
+					(spnUrgency.getSelectedItemPosition() > 0) &&
+					(btnIssueDate.getText().length() > 0));
 		}
 		else {
 			return ((spnSafetyIssues.getSelectedIndicies().size() > 0) &&
 					(spnUrgency.getSelectedItemPosition() > 0) &&
+					(btnIssueDate.getText().length() > 0) &&
 					(spnLocation.getSelectedItemPosition() > 0));
 		}
 	}
@@ -447,6 +453,39 @@ public class ReportSafetyIssuesActivity extends Activity {
 				getResources().getString(R.string.fyi_custom_location),
 				Toast.LENGTH_LONG).show();
 	}
+
+	/**
+     * Class: ButtonPickDate_OnClickListener
+     *
+     * Description: Callback to be invoked when btnIssueDate button is clicked
+     */
+	private final class ButtonPickDate_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+
+			try {
+				showDatePicker();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+	 /**
+     * Builds a custom dialog based on the defined layout
+     * 'res/layout/datepicker_layout.xml' and shows it
+     */
+    public void showDatePicker() {
+
+    	DatePickerDialog datePickerDialog = new DatePickerDialog(this, btnIssueDate);
+
+    	datePickerDialog.show();
+        // Finish
+    }
 
     // *********************************************************************************
 	// *                    Transitioning to other activities

@@ -156,6 +156,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="about_version">Version:&#160;</string>
     <string name="about_version_code">&#160;vc:&#160;</string>
     <string name="about_copyright">&#169; 2014 ORcycle</string>
+    <string name="aumad_save_report_title">Save Report</string>
     <string name="aumad_answer_required_questions">Please answer all required questions.</string>
     <string name="aumad_ok">OK</string>
     <string name="aui_save">Save</string>
@@ -583,6 +584,9 @@ and receive updates/news, please provide your e-mail.</string>
         <item>Use custom location</item>
     </string-array>
 
+    <string name="ara_date">* Date of crash event?</string>
+    <string name="ara_select_date">Select date&#8230;</string>
+    
     <!-- ********************************************************* -->
     <!-- *             activity_report_safety_issue              * -->
     <!-- ********************************************************* -->
@@ -629,7 +633,7 @@ and receive updates/news, please provide your e-mail.</string>
         <item>Safety Issue (urgency 5)</item>
     </string-array>
 
-    <string name="arsi_q_location"> * Location of crash event?</string>
+    <string name="arsi_q_location"> * Location of safety issue?</string>
 
     <string-array name="arsi_a_location">
         <item></item>
@@ -637,6 +641,9 @@ and receive updates/news, please provide your e-mail.</string>
         <item>Use custom location</item>
     </string-array>
 
+    <string name="arsi_date"> * Date safety issue encountered?</string>
+    <string name="arsi_select_date">Select date&#8230;</string>
+    
     <string name="fyi_custom_location">Select the custom location using the map in the next screen after pressing \"save\".</string>
     <string name="title_activity_custom_location">Select custom location:</string>
     <string name="rmap_q_severity">Severity of the crash event:</string>
