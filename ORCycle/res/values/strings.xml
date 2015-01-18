@@ -652,5 +652,8 @@ and receive updates/news, please provide your e-mail.</string>
     <string name="rmap_q_contributed">What contributed to the event:</string>
     <string name="rmap_q_problem_type">Issue Type(s):</string>
     <string name="rmap_q_urgency">Urgency Level:</string>
-
+    <string name="rmap_q_crash_date">Date crash occurred:</string>
+    <string name="rmap_q_issue_date">Date issue encountered:</string>
+    <string name="rmap_a_date">1/25/2015</string>
+    
 </resources>

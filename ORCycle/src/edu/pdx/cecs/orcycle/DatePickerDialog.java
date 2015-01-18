@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
@@ -17,12 +18,12 @@ public class DatePickerDialog {
 
 	private static final String MODULE_TAG = "DatePickerDialog";
 
-	private final TextView tvCrashDate;
+	private final Button btnReportDate;
 	private final AlertDialog dialog;
 
-	public DatePickerDialog(Activity activity, TextView tvCrashDate) {
+	public DatePickerDialog(Activity activity, Button btnReportDate, SimpleDateFormat resultFormatter) {
 
-		this.tvCrashDate = tvCrashDate;
+		this.btnReportDate = btnReportDate;
 
         // Initializiation
         LayoutInflater inflater = activity.getLayoutInflater();
@@ -34,7 +35,6 @@ public class DatePickerDialog {
         final DatePicker datePicker = (DatePicker) customView.findViewById(R.id.dialog_datepicker);
         final TextView dateTextView = (TextView) customView.findViewById(R.id.dialog_dateview);
         final SimpleDateFormat dialogFormatter = new SimpleDateFormat("EEEE, MM/dd/yyyy", Locale.US);
-        final SimpleDateFormat resultFormatter = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 
         // Minimum date
         Calendar maxDate = Calendar.getInstance();
@@ -51,9 +51,9 @@ public class DatePickerDialog {
 
         // Set UI to passed in date
         try {
-        	String initDate = tvCrashDate.getText().toString();
-        	if (!initDate.equals("")) {
-	            cal.setTime(resultFormatter.parse(initDate));
+        	long initDate = (Long) btnReportDate.getTag();
+        	if (initDate > 0) {
+	            cal.setTimeInMillis(initDate);
 		        year = cal.get(Calendar.YEAR);
 		        month = cal.get(Calendar.MONTH);
 		        day = cal.get(Calendar.DAY_OF_MONTH);
@@ -67,59 +67,18 @@ public class DatePickerDialog {
         dateTextView.setText(dialogFormatter.format(dateToDisplay.getTime()));
 
         // Buttons
-        dialogBuilder.setNegativeButton("Today", new Dialog_OnNegativeButtonClicked(now, resultFormatter));
+        dialogBuilder.setPositiveButton("OK", new PositiveButton_OnClickListener(datePicker, resultFormatter));
 
-        dialogBuilder.setPositiveButton("OK", new Dialog_OnPositiveButtonClicked(datePicker, resultFormatter));
+        dialogBuilder.setNegativeButton("Today", new NegativeButton_OnClickListener(now, resultFormatter));
 
         dialog = dialogBuilder.create();
+
         // Initialize datepicker in dialog atepicker
-        datePicker.init(year, month, day, new DatePicker_OnDateChangedListener(dateTextView, dialog, now,
-					dialogFormatter));
+        datePicker.init(year, month, day, new DatePicker_OnDateChangedListener(dateTextView, dialog, now, dialogFormatter));
 	}
 
 	public void show() {
         dialog.show();
-	}
-
-	private final class Dialog_OnPositiveButtonClicked implements
-			DialogInterface.OnClickListener {
-		private final DatePicker datePicker;
-		private final SimpleDateFormat resultFormatter;
-
-		private Dialog_OnPositiveButtonClicked(DatePicker datePicker,
-				SimpleDateFormat dateViewFormatter) {
-			this.datePicker = datePicker;
-			this.resultFormatter = dateViewFormatter;
-		}
-
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-		    Calendar cal = Calendar.getInstance();
-		    cal.set(
-		        datePicker.getYear(),
-		        datePicker.getMonth(),
-		        datePicker.getDayOfMonth()
-		    );
-		    DatePickerDialog.this.tvCrashDate.setText(resultFormatter.format(cal.getTime()));
-		    dialog.dismiss();
-		}
-	}
-
-	private final class Dialog_OnNegativeButtonClicked implements
-			DialogInterface.OnClickListener {
-		private final Calendar now;
-		private final SimpleDateFormat resultFormatter;
-
-		private Dialog_OnNegativeButtonClicked(Calendar now, SimpleDateFormat formatter) {
-			this.now = now;
-			this.resultFormatter = formatter;
-		}
-
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			DatePickerDialog.this.tvCrashDate.setText(resultFormatter.format(now.getTime()));
-		    dialog.dismiss();
-		}
 	}
 
 	private final class DatePicker_OnDateChangedListener implements
@@ -145,6 +104,45 @@ public class DatePickerDialog {
 			cal.set(year, monthOfYear, dayOfMonth);
 
 			tvDate.setText(dateViewFormatter.format(cal.getTime()));
+		}
+	}
+
+	private final class PositiveButton_OnClickListener implements
+	DialogInterface.OnClickListener {
+
+	private final DatePicker datePicker;
+	private final SimpleDateFormat viewFormatter;
+
+	public PositiveButton_OnClickListener(DatePicker datePicker, SimpleDateFormat viewFormatter) {
+		this.datePicker = datePicker;
+		this.viewFormatter = viewFormatter;
+	}
+
+	@Override
+	public void onClick(DialogInterface dialog, int which) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+		DatePickerDialog.this.btnReportDate.setText(viewFormatter.format(cal.getTime()));
+		DatePickerDialog.this.btnReportDate.setTag(cal.getTimeInMillis());
+		dialog.dismiss();
+	}
+}
+
+	private final class NegativeButton_OnClickListener implements
+			DialogInterface.OnClickListener {
+		private final Calendar now;
+		private final SimpleDateFormat viewFormatter;
+
+		public NegativeButton_OnClickListener(Calendar now, SimpleDateFormat viewFormatter) {
+			this.now = now;
+			this.viewFormatter = viewFormatter;
+		}
+
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			DatePickerDialog.this.btnReportDate.setText(viewFormatter.format(now.getTime()));
+			DatePickerDialog.this.btnReportDate.setTag(now.getTimeInMillis());
+			dialog.dismiss();
 		}
 	}
 

@@ -219,7 +219,43 @@
 		                android:textAppearance="?android:attr/textAppearanceMedium" />
 	
 				</RelativeLayout>
+
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+	   	            <TextView
+	   	                android:id="@+id/tv_anm_q_crash_date"
+	   	                android:layout_width="match_parent"
+	   	                android:layout_height="wrap_content"
+	   	                android:layout_alignParentLeft="true"
+	   	                android:layout_alignParentRight="true"
+	   	                android:layout_alignParentTop="true"
+	   	                android:layout_marginTop="0dp"
+	   	                android:text="@string/rmap_q_crash_date"
+	   	                android:textAppearance="?android:attr/textAppearanceMedium"
+	   	                android:textColor="#A33F1F" />
+		
+		            <TextView
+		                android:id="@+id/tv_anm_a_crash_date"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_below="@id/tv_anm_q_crash_date"
+		                android:layout_marginTop="16dp"
+		                android:textColor="#474334"
+		                android:text="@string/rmap_a_date"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
 	
+				</RelativeLayout>
+
 		        <RelativeLayout
 		            android:layout_width="fill_parent"
 		            android:layout_height="wrap_content"
@@ -355,6 +391,42 @@
 		                android:textAppearance="?android:attr/textAppearanceMedium" />
 	
 				</RelativeLayout>
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
+			
+	   	            <TextView
+	   	                android:id="@+id/tv_anm_q_issue_date"
+	   	                android:layout_width="match_parent"
+	   	                android:layout_height="wrap_content"
+	   	                android:layout_alignParentLeft="true"
+	   	                android:layout_alignParentRight="true"
+	   	                android:layout_alignParentTop="true"
+	   	                android:layout_marginTop="0dp"
+	   	                android:text="@string/rmap_q_issue_date"
+	   	                android:textAppearance="?android:attr/textAppearanceMedium"
+	   	                android:textColor="#A33F1F" />
+		
+		            <TextView
+		                android:id="@+id/tv_anm_a_issue_date"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_below="@id/tv_anm_q_issue_date"
+		                android:layout_marginTop="16dp"
+		                android:textColor="#474334"
+		                android:text="@string/rmap_a_date"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+				</RelativeLayout>
+
 		        <RelativeLayout
 		            android:layout_width="fill_parent"
 		            android:layout_height="wrap_content"

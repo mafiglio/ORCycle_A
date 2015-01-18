@@ -70,7 +70,8 @@ public class DbAdapter {
 	private static final int DATABASE_VERSION_NOTE_ANSWERS = 27;
 	private static final int DATABASE_VERSION_NOTE_SEVERITY = 28;
 	private static final int DATABASE_VERSION_REMINDERS = 29;
-	private static final int DATABASE_VERSION = DATABASE_VERSION_REMINDERS;
+	private static final int DATABASE_VERSION_REPORT_DATES = 30;
+	private static final int DATABASE_VERSION = DATABASE_VERSION_REPORT_DATES;
 
 	// Trips Table columns
 	public static final String K_TRIP_ROWID = "_id";
@@ -111,6 +112,7 @@ public class DbAdapter {
 	public static final String K_NOTE_DETAILS = "notedetails";
 	public static final String K_NOTE_IMGURL = "noteimageurl";
 	public static final String K_NOTE_STATUS = "notestatus";
+	public static final String K_NOTE_REPORT_DATE = "notereportdate";
 
 	// Pauses Table columns
 	public static final String K_PAUSE_TRIP_ID = "_id";
@@ -166,7 +168,7 @@ public class DbAdapter {
 	private static final String TABLE_CREATE_NOTES = "create table notes "
 			+ "(_id integer primary key autoincrement, tripid int, notetype integer, noteseverity integer, noterecorded double, "
 			+ "notefancystart text, notedetails text, noteimageurl text, "
-			+ "notelat int, notelgt int, noteacc float, notealt double, notespeed float, notestatus integer);";
+			+ "notelat int, notelgt int, noteacc float, notealt double, notespeed float, notestatus integer, notereportdate double DEFAULT 0);";
 
 	private static final String TABLE_CREATE_PAUSES = "create table pauses "
 			+ "(_id integer, starttime double, endtime double, "
@@ -191,6 +193,8 @@ public class DbAdapter {
 			+ "hours int, minutes int, enabled integer);";
 
 	private static final String TABLE_DROP_NOTES = "drop table notes;";
+
+	private static final String NOTES_TABLE_ADD_COLUMN_REPORT_DATE = "ALTER TABLE notes ADD COLUMN notereportdate double DEFAULT 0;";
 
 	private static final String DATABASE_NAME = "data";
 	private static final String DATA_TABLE_TRIPS = "trips";
@@ -294,6 +298,15 @@ public class DbAdapter {
 			if (oldVersion < DATABASE_VERSION_REMINDERS) {
 				try {
 					db.execSQL(TABLE_CREATE_REMINDERS);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+
+			if (oldVersion < DATABASE_VERSION_REPORT_DATES) {
+				try {
+						db.execSQL(NOTES_TABLE_ADD_COLUMN_REPORT_DATE);
 				}
 				catch(Exception ex) {
 					Log.e(MODULE_TAG, ex.getMessage());
@@ -657,6 +670,7 @@ public class DbAdapter {
 		initialValues.put(K_NOTE_ALT, 0);
 		initialValues.put(K_NOTE_SPEED, 0);
 
+		initialValues.put(K_NOTE_REPORT_DATE, 0);
 		initialValues.put(K_NOTE_STATUS, NoteData.STATUS_INCOMPLETE);
 
 		return mDb.insert(DATA_TABLE_NOTES, null, initialValues);
@@ -747,7 +761,7 @@ public class DbAdapter {
 				new String[] { K_NOTE_ROWID, K_NOTE_TRIP_ID, K_NOTE_SEVERITY, K_NOTE_RECORDED,
 						K_NOTE_FANCYSTART, K_NOTE_DETAILS, K_NOTE_IMGURL,
 						K_NOTE_LAT, K_NOTE_LGT, K_NOTE_ACC,
-						K_NOTE_ALT, K_NOTE_SPEED, K_NOTE_STATUS },
+						K_NOTE_ALT, K_NOTE_SPEED, K_NOTE_STATUS, K_NOTE_REPORT_DATE},
 
 				K_NOTE_ROWID + "=" + rowId,
 
@@ -816,6 +830,16 @@ public class DbAdapter {
 
 		ContentValues contentValues = new ContentValues();
 		contentValues.put(K_NOTE_SEVERITY, noteSeverity);
+
+		int numRows = mDb.update(DATA_TABLE_NOTES, contentValues, K_NOTE_ROWID + "=" + noteId, null);
+
+		return numRows > 0;
+	}
+
+	public boolean updateNoteReportDate(long noteId, long reportDate) {
+
+		ContentValues contentValues = new ContentValues();
+		contentValues.put(K_NOTE_REPORT_DATE, reportDate);
 
 		int numRows = mDb.update(DATA_TABLE_NOTES, contentValues, K_NOTE_ROWID + "=" + noteId, null);
 
