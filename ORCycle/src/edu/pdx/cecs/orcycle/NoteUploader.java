@@ -36,6 +36,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
@@ -68,6 +69,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 	private static final String NOTE_TYPE = "t";
 	private static final String NOTE_DETAILS = "d";
 	private static final String NOTE_IMGURL = "i";
+	private static final String NOTE_REPORT_DATE = "reportDate";
 
 	private static final String FID_QUESTION_ID = "question_id";
 	private static final String FID_ANSWER_ID = "answer_id";
@@ -79,6 +81,8 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 	private static final String notesep = "--cycle*******notedata*******atlanta\r\n";
 
 	private static final Map<Long, Boolean> pendingUploads = new HashMap<Long, Boolean>();
+
+	private final SimpleDateFormat reportDateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
 	private final Context mCtx;
 	private final String userId;
@@ -133,6 +137,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 					fieldMap.put(NOTE_SPEED, noteCursor.getColumnIndex(DbAdapter.K_NOTE_SPEED));
 					fieldMap.put(NOTE_DETAILS, noteCursor.getColumnIndex(DbAdapter.K_NOTE_DETAILS));
 					fieldMap.put(NOTE_IMGURL, noteCursor.getColumnIndex(DbAdapter.K_NOTE_IMGURL));
+					fieldMap.put(NOTE_REPORT_DATE, noteCursor.getColumnIndex(DbAdapter.K_NOTE_REPORT_DATE));
 
 					JSONObject note = new JSONObject();
 
@@ -146,6 +151,10 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 					note.put(NOTE_SPEED, noteCursor.getDouble(fieldMap.get(NOTE_SPEED)));
 					note.put(NOTE_DETAILS, noteCursor.getString(fieldMap.get(NOTE_DETAILS)));
 					note.put(NOTE_IMGURL, noteImageFileName = noteCursor.getString(fieldMap.get(NOTE_IMGURL)));
+
+					long reportDate = noteCursor.getLong(fieldMap.get(NOTE_REPORT_DATE));
+					String formattedDate = reportDateFormatter.format(reportDate);
+					note.put(NOTE_REPORT_DATE, formattedDate);
 
 					if ((null != noteImageFileName) && (!noteImageFileName.equals("")))
 						imageData = mDb.getNoteImageData(noteId);
