@@ -42,6 +42,7 @@ public class NoteData {
 	String notefancystart, notedetails, noteimageurl;
 	byte[] noteimagedata;
 	int noteStatus;
+	long reportDate;
 
 	DbAdapter mDb;
 
@@ -82,6 +83,7 @@ public class NoteData {
 		accuracy = 0;
 		altitude = 0;
 		speed = 0;
+		reportDate = 0;
 
 		// updateNote();
 	}
@@ -104,6 +106,8 @@ public class NoteData {
 				notedetails    = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_DETAILS    ));
 				noteStatus     = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_STATUS     ));
 				noteimageurl   = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_IMGURL     ));
+				reportDate     = noteDetails.getLong  (noteDetails.getColumnIndex(DbAdapter.K_NOTE_REPORT_DATE));
+
 				if ((null != noteimageurl) && (!noteimageurl.equals("")))
 					noteimagedata = mDb.getNoteImageData(noteId);
 				else
@@ -171,7 +175,6 @@ public class NoteData {
 		}
 		return rtn;
 	}
-
 
 	public void updateNoteLatLng(float latitude, float longitude) {
 		mDb.open();

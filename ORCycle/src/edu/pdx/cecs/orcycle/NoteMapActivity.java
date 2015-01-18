@@ -1,5 +1,8 @@
 package edu.pdx.cecs.orcycle;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -29,6 +32,8 @@ public class NoteMapActivity extends Activity {
 
 	public static final String EXTRA_NOTE_ID = "shownote";
 	private static final String MODULE_TAG = "NoteMapActivity";
+
+	private static final SimpleDateFormat reportDateFormatter = new SimpleDateFormat("EEEE, MM/dd/yyyy", Locale.US);
 
 	public GoogleMap map;
 	private MenuItem mnuInfo;
@@ -100,6 +105,8 @@ public class NoteMapActivity extends Activity {
 			TextView tvAccidentContrib = (TextView) findViewById(R.id.tv_anm_a_contrib);
 			TextView tvSafetyIssue = (TextView) findViewById(R.id.tv_anm_a_safety_issue);
 			TextView tvSafetyUrgency = (TextView) findViewById(R.id.tv_anm_a_urgency);
+			TextView tvIssueDate = (TextView) findViewById(R.id.tv_anm_a_issue_date);
+			TextView tvCrashDate = (TextView) findViewById(R.id.tv_anm_a_crash_date);
 
 			tvAccidentSeverity.setText("");
 			tvAccidentObject.setText("");
@@ -107,6 +114,16 @@ public class NoteMapActivity extends Activity {
 			tvAccidentContrib.setText("");
 			tvSafetyIssue.setText("");
 			tvSafetyUrgency.setText("");
+
+			if (note.reportDate <= 0) {
+				tvIssueDate.setText("Not specified");
+				tvCrashDate.setText("Not specified");
+			}
+			else {
+				tvIssueDate.setText(reportDateFormatter.format(note.reportDate));
+				tvCrashDate.setText(reportDateFormatter.format(note.reportDate));
+			}
+
 			// Center & zoom the map
 			LatLng center = new LatLng(note.latitude * 1E-6, note.longitude * 1E-6);
 
@@ -408,7 +425,6 @@ public class NoteMapActivity extends Activity {
 			tvAccidentContrib.setText(sbAccidentContrib.toString());
 			tvSafetyIssue.setText(sbSafetyIssue.toString());
 			tvSafetyUrgency.setText(sbSafetySeverity.toString());
-
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());

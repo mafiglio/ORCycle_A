@@ -12,6 +12,7 @@ public class AlertUserMandatoryAnswersDialog {
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setMessage(context.getResources().getString(R.string.aumad_answer_required_questions))
+				.setTitle(R.string.aumad_save_report_title)
 				.setCancelable(true)
 				.setPositiveButton(context.getResources().getString(R.string.aumad_ok),
 						new DialogInterface.OnClickListener() {

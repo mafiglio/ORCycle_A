@@ -128,7 +128,48 @@
             
         	</RelativeLayout>
         	
-		    <RelativeLayout
+			<RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+
+				<TextView
+				    android:id="@+id/tv_arsi_date"
+				    android:layout_width="fill_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentLeft="true"
+				    android:layout_alignParentRight="true"
+				    android:layout_alignParentTop="true"
+				    android:layout_marginBottom="6dp"
+				    android:text="@string/arsi_date"
+				    android:textAppearance="?android:attr/textAppearanceMedium"
+				    android:textColor="@color/psu_sienna" />
+
+				<Button
+				    android:id="@+id/btn_issue_date"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentLeft="true"
+				    android:layout_alignParentRight="true"
+				    android:layout_below="@+id/tv_arsi_date"
+				    android:layout_marginBottom="6dp"
+				    android:ems="10"
+				    android:hint="@string/arsi_select_date"
+				    android:paddingLeft="12dp"
+				    android:textAppearance="?android:attr/textAppearanceMedium" >
+
+				</Button>
+
+			</RelativeLayout>
+
+			<RelativeLayout
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_marginTop="1dp"

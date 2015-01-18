@@ -1,5 +1,8 @@
 package edu.pdx.cecs.orcycle;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -55,6 +58,8 @@ public class ReportAccidentsActivity extends Activity {
 	private static final int PREF_ACCIDENT_ACTIONS = 3;
 	private static final int PREF_ACCIDENT_CONTRIB = 4;
 	private static final int PREF_LOCATION = 5;
+	private static final int PREF_REPORT_DATE = 6;
+	private static final int PREF_REPORT_DATE_TAG = 7;
 
 	private static final int PREF_ACCIDENT_OBJECT_OTHER = 1002;
 	private static final int PREF_ACCIDENT_ACTIONS_OTHER = 1003;
@@ -66,8 +71,13 @@ public class ReportAccidentsActivity extends Activity {
 	private MultiSelectionSpinner spnAccidentActions;
 	private MultiSelectionSpinner spnAccidentContrib;
 	private Spinner spnLocation;
+	private Button btnReportDate;
+	private final SimpleDateFormat reportDateFormatter = new SimpleDateFormat("EEEE, MM/dd/yyyy", Locale.US);
+	private double reportDate;
+
 	private final CustomLocation_OnClickListener customLocation_OnClickListener =
 			new CustomLocation_OnClickListener();
+
 	private static final int USE_GPS_LOCATION_POS = 1;
 	private static final int USE_CUSTOM_LOCATION_POS = 2;
 
@@ -105,6 +115,10 @@ public class ReportAccidentsActivity extends Activity {
 
 			btnSave = (Button) findViewById(R.id.btn_ara_save_report);
 			btnSave.setOnClickListener(new ButtonSave_OnClickListener());
+
+			btnReportDate = (Button) findViewById(R.id.btn_crash_date);
+			btnReportDate.setTag(0L);
+			btnReportDate.setOnClickListener(new ReportDate_OnClickListener());
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -286,13 +300,15 @@ public class ReportAccidentsActivity extends Activity {
 			return ((spnSeverity.getSelectedItemPosition() > 0) &&
 					(spnAccidentObject.getSelectedIndicies().size() > 0) &&
 					(spnAccidentActions.getSelectedIndicies().size() > 0) &&
-					(spnAccidentContrib.getSelectedIndicies().size() > 0));
+					(spnAccidentContrib.getSelectedIndicies().size() > 0) &&
+					(btnReportDate.getText().length() > 0));
 		}
 		else {
 			return ((spnSeverity.getSelectedItemPosition() > 0) &&
 					(spnAccidentObject.getSelectedIndicies().size() > 0) &&
 					(spnAccidentActions.getSelectedIndicies().size() > 0) &&
 					(spnAccidentContrib.getSelectedIndicies().size() > 0) &&
+					(btnReportDate.getText().length() > 0) &&
 					(spnLocation.getSelectedItemPosition() > 0));
 		}
 	}
@@ -334,6 +350,8 @@ public class ReportAccidentsActivity extends Activity {
 					PREF_ACCIDENT_CONTRIB, DbAnswers.accidentContrib,
 					PREF_ACCIDENT_CONTRIB_OTHER, DbAnswers.accidentContribOther);
 			prefs.save(spnLocation, PREF_LOCATION);
+			prefs.save(btnReportDate, PREF_REPORT_DATE);
+			prefs.saveTag(btnReportDate, PREF_REPORT_DATE_TAG);
 			prefs.commit();
 		}
 		catch(Exception ex) {
@@ -354,6 +372,8 @@ public class ReportAccidentsActivity extends Activity {
 			prefs.recall(spnAccidentActions, PREF_ACCIDENT_ACTIONS, PREF_ACCIDENT_ACTIONS_OTHER);
 			prefs.recall(spnAccidentContrib, PREF_ACCIDENT_CONTRIB, PREF_ACCIDENT_CONTRIB_OTHER);
 			prefs.recall(spnLocation, PREF_LOCATION);
+			prefs.recall(btnReportDate, PREF_REPORT_DATE);
+			prefs.recallTag(btnReportDate, PREF_REPORT_DATE_TAG);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -371,6 +391,10 @@ public class ReportAccidentsActivity extends Activity {
 
 		DbAdapter dbAdapter = new DbAdapter(this);
 		dbAdapter.open();
+
+		// Update report date
+		long reportDate = (Long)btnReportDate.getTag();
+		dbAdapter.updateNoteReportDate(noteId, reportDate);
 
 		// This activity can be entered into a number of times with
 		// the same noteId so we always delete any previous submissions
@@ -483,6 +507,38 @@ public class ReportAccidentsActivity extends Activity {
 				getResources().getString(R.string.fyi_custom_location),
 				Toast.LENGTH_LONG).show();
 	}
+
+	/**
+     * Class: ReportDate_OnClickListener
+     *
+     * Description: Callback to be invoked when btnReportDate button is clicked
+     */
+	private final class ReportDate_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+
+			try {
+				showDatePicker();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+	 /**
+     * Builds a custom dialog based on the defined layout
+     * 'res/layout/datepicker_layout.xml' and shows it
+     */
+    public void showDatePicker() {
+
+    	DatePickerDialog datePickerDialog = new DatePickerDialog(this, btnReportDate, reportDateFormatter);
+    	datePickerDialog.show();
+        // Finish
+    }
 
     // *********************************************************************************
 	// *                    Transitioning to other activities

@@ -1,5 +1,8 @@
 package edu.pdx.cecs.orcycle;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -53,12 +56,16 @@ public class ReportSafetyIssuesActivity extends Activity {
 	private static final int PREF_SAFETY_ISSUES = 1;
 	private static final int PREF_URGENCY = 2;
 	private static final int PREF_LOCATION = 3;
+	private static final int PREF_REPORT_DATE = 4;
+	private static final int PREF_REPORT_DATE_TAG = 5;
 	private static final int PREF_SAFETY_ISSUES_OTHER = 1001;
 
 	private Button btnSave;
 	private MultiSelectionSpinner spnSafetyIssues;
 	private Spinner spnUrgency;
 	private Spinner spnLocation;
+	private Button btnReportDate;
+	private final SimpleDateFormat reportDateFormatter = new SimpleDateFormat("EEEE, MM/dd/yyyy", Locale.US);
 	private final CustomLocation_OnClickListener customLocation_OnClickListener =
 			new CustomLocation_OnClickListener();
 	private static final int USE_GPS_LOCATION_POS = 1;
@@ -87,6 +94,10 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 			btnSave = (Button) findViewById(R.id.btn_arsi_save_report);
 			btnSave.setOnClickListener(new ButtonSave_OnClickListener());
+
+			btnReportDate = (Button) findViewById(R.id.btn_issue_date);
+			btnReportDate.setTag(0L);
+			btnReportDate.setOnClickListener(new ReportDate_OnClickListener());
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -266,11 +277,13 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 		if (noteSource == EXTRA_NOTE_SOURCE_TRIP_MAP) {
 			return ((spnSafetyIssues.getSelectedIndicies().size() > 0) &&
-					(spnUrgency.getSelectedItemPosition() > 0));
+					(spnUrgency.getSelectedItemPosition() > 0) &&
+					(btnReportDate.getText().length() > 0));
 		}
 		else {
 			return ((spnSafetyIssues.getSelectedIndicies().size() > 0) &&
 					(spnUrgency.getSelectedItemPosition() > 0) &&
+					(btnReportDate.getText().length() > 0) &&
 					(spnLocation.getSelectedItemPosition() > 0));
 		}
 	}
@@ -306,6 +319,8 @@ public class ReportSafetyIssuesActivity extends Activity {
 					PREF_SAFETY_ISSUES_OTHER, DbAnswers.safetyIssueOther);
 			prefs.save(spnUrgency,  PREF_URGENCY);
 			prefs.save(spnLocation, PREF_LOCATION);
+			prefs.save(btnReportDate, PREF_REPORT_DATE);
+			prefs.saveTag(btnReportDate, PREF_REPORT_DATE_TAG);
 			prefs.commit();
 		}
 		catch(Exception ex) {
@@ -324,6 +339,8 @@ public class ReportSafetyIssuesActivity extends Activity {
 			prefs.recall(spnSafetyIssues, PREF_SAFETY_ISSUES);
 			prefs.recall(spnUrgency, PREF_URGENCY);
 			prefs.recall(spnLocation, PREF_LOCATION);
+			prefs.recall(btnReportDate, PREF_REPORT_DATE);
+			prefs.recallTag(btnReportDate, PREF_REPORT_DATE_TAG);
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -341,6 +358,10 @@ public class ReportSafetyIssuesActivity extends Activity {
 
 		DbAdapter dbAdapter = new DbAdapter(this);
 		dbAdapter.open();
+
+		// Update report date
+		long reportDate = (Long)btnReportDate.getTag();
+		dbAdapter.updateNoteReportDate(noteId, reportDate);
 
 		// This activity can be entered into a number of times with
 		// the same noteId so we always delete any previous submissions
@@ -447,6 +468,39 @@ public class ReportSafetyIssuesActivity extends Activity {
 				getResources().getString(R.string.fyi_custom_location),
 				Toast.LENGTH_LONG).show();
 	}
+
+	/**
+     * Class: ReportDate_OnClickListener
+     *
+     * Description: Callback to be invoked when btnReportDate button is clicked
+     */
+	private final class ReportDate_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+
+			try {
+				showDatePicker();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+	 /**
+     * Builds a custom dialog based on the defined layout
+     * 'res/layout/datepicker_layout.xml' and shows it
+     */
+    public void showDatePicker() {
+
+    	DatePickerDialog datePickerDialog = new DatePickerDialog(this, btnReportDate, reportDateFormatter);
+
+    	datePickerDialog.show();
+        // Finish
+    }
 
     // *********************************************************************************
 	// *                    Transitioning to other activities
