@@ -34,6 +34,7 @@ public class MyApplication extends android.app.Application {
 	public static final String PREFS_APPLICATION = "PREFS_APPLICATION";
 	public static final String ORCYCLE_URI = "http://www.pdx.edu/transportation-lab/android-instructions";
 	public static final String PRIVACY_POLICY_URI = "http://www.pdx.edu/transportation-lab/privacy-policy";
+	public static final String REPORT_ROAD_HAZARDS_URI = "http://www.pdx.edu/transportation-lab/reporting-road-hazards";
 
 	private static final String SETTING_USER_WELCOME_ENABLED = "USER_WELCOME_ENABLED";
 	private static final String SETTING_HOW_TO_ENABLED = "HOW_TO_ENABLED";

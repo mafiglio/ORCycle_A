@@ -10,8 +10,10 @@ import java.text.SimpleDateFormat;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -51,6 +53,7 @@ public class NoteDetailActivity extends Activity {
 
 	private static final int CAMERA_REQUEST = 1888;
 	private static final int IMAGE_REQUEST = 1889;
+	private static final int WEB_VIEW_REQUEST = 1890;
 
 	long noteId;
 	int noteSource;
@@ -217,6 +220,9 @@ public class NoteDetailActivity extends Activity {
 					uri = data.getData();
 					imageView.setImageURI(uri);
 				}
+				else if (requestCode == WEB_VIEW_REQUEST) {
+					transitionToSourceActivity();
+				}
 			}
 		}
 		catch(Exception ex) {
@@ -287,11 +293,7 @@ public class NoteDetailActivity extends Activity {
 			uploader.execute(note.noteId);
 		}
 
-		if (noteSource == EXTRA_NOTE_SOURCE_MAIN_INPUT) {
-			transitionToTabsConfigActivity();
-		} else {
-			transitionToTripMapActivity();
-		}
+		dialogReportProblem();
 	}
 
 	/**
@@ -462,8 +464,50 @@ public class NoteDetailActivity extends Activity {
 	}
 
 	// *********************************************************************************
+	// *                            No GPS Dialog
+	// *********************************************************************************
+
+	/**
+	 * Build dialog telling user that the GPS is not available
+	 */
+	private void dialogReportProblem() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.nda_drp_title);
+		builder.setMessage(getResources().getString(R.string.nda_drp_message));
+		builder.setCancelable(false);
+		builder.setPositiveButton(getResources().getString(R.string.nda_drp_button_now),
+				new DialogReportProblem_NowListener());
+		builder.setNegativeButton(getResources().getString(R.string.nda_drp_button_later),
+				new DialogReportProblem_LaterListener());
+		final AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	private final class DialogReportProblem_NowListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			transitionToWebViewActivity();
+			dialog.cancel();
+		}
+	}
+
+	private final class DialogReportProblem_LaterListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			transitionToSourceActivity();
+			dialog.cancel();
+		}
+	}
+
+	// *********************************************************************************
 	// *                    Transitioning to other activities
 	// *********************************************************************************
+
+	private void transitionToSourceActivity() {
+		if (noteSource == EXTRA_NOTE_SOURCE_MAIN_INPUT) {
+			transitionToTabsConfigActivity();
+		} else {
+			transitionToTripMapActivity();
+		}
+	}
 
 	private void transitionToPreviousActivity() {
 		// Cancel
@@ -551,4 +595,12 @@ public class NoteDetailActivity extends Activity {
 		startActivityForResult(cameraIntent, CAMERA_REQUEST);
 	}
 
+	private void transitionToWebViewActivity() {
+		String title = getResources().getString(R.string.webview_title_report_problem);
+		Intent intent = new Intent(this, WebViewActivity.class);
+		intent.putExtra(WebViewActivity.EXTRA_URL, MyApplication.REPORT_ROAD_HAZARDS_URI);
+		intent.putExtra(WebViewActivity.EXTRA_TITLE, title);
+		startActivityForResult(intent, WEB_VIEW_REQUEST);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+	}
 }
