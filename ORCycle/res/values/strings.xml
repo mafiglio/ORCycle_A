@@ -30,6 +30,7 @@
     <string name="title_activity_reminders">Reminders</string>
     <string name="title_activity_edit_reminder">Add/Edit Reminder</string>
     <string name="title_activity_query_start">ORcycle Reminder!</string>
+    <string name="webview_title_report_problem">Report Problem</string>
     <string name="post_url">http://orcycle2.cecs.pdx.edu/post/</string>
     <string name="btn_lbl_start">Start Trip</string>
     <string name="btn_lbl_pause">Pause</string>
@@ -171,7 +172,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="qsa_message">Would you like to start ORcycle?</string>
     <string name="qsa_btn_positive">Yes</string>
     <string name="qsa_btn_negative">No</string>
-    
+
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
     <!-- ********************************************************* -->
@@ -586,7 +587,7 @@ and receive updates/news, please provide your e-mail.</string>
 
     <string name="ara_date">* Date of crash event?</string>
     <string name="ara_select_date">Select date&#8230;</string>
-    
+
     <!-- ********************************************************* -->
     <!-- *             activity_report_safety_issue              * -->
     <!-- ********************************************************* -->
@@ -643,7 +644,6 @@ and receive updates/news, please provide your e-mail.</string>
 
     <string name="arsi_date"> * Date safety issue encountered?</string>
     <string name="arsi_select_date">Select date&#8230;</string>
-    
     <string name="fyi_custom_location">Select the custom location using the map in the next screen after pressing \"save\".</string>
     <string name="title_activity_custom_location">Select custom location:</string>
     <string name="rmap_q_severity">Severity of the crash event:</string>
@@ -655,5 +655,11 @@ and receive updates/news, please provide your e-mail.</string>
     <string name="rmap_q_crash_date">Date crash occurred:</string>
     <string name="rmap_q_issue_date">Date issue encountered:</string>
     <string name="rmap_a_date">1/25/2015</string>
+    <string name="title_activity_report_problem">ReportProblemActivity</string>
+    <string name="nda_drp_title">Report Problem</string>
+    <string name="nda_drp_message">Contact the agency that has jurisdiction over the
+facility to ensure a prompt response to a road hazard.</string>
+    <string name="nda_drp_button_now">Now</string>
+    <string name="nda_drp_button_later">Later</string>
     
 </resources>
