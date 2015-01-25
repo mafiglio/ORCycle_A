@@ -1,0 +1,25 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="edu.pdx.cecs.orcycle.TutorialActivity$PlaceholderFragment" >
+
+    <TextView
+        android:id="@+id/section_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+<ImageView
+    android:id="@+id/iv_tutorial"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentLeft="true"
+    android:layout_marginTop="1dp"
+    android:adjustViewBounds="true"
+    android:background="@color/psu_green"
+    android:contentDescription="@string/dsaNoteImageContentDescription"
+    android:maxHeight="300dp"
+    android:scaleType="centerCrop" />
+"
+
+</RelativeLayout>

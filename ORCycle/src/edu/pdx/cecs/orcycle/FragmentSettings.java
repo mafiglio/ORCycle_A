@@ -21,6 +21,7 @@ public class FragmentSettings extends Fragment {
 	private Button btnFeedback = null;
 	private Button btnPrivacyPolicy = null;
 	private Button btnReminders = null;
+	private Button btnTutorial = null;
 	private TextView tvVersionCode = null;
 
 	// *********************************************************************************
@@ -58,6 +59,9 @@ public class FragmentSettings extends Fragment {
 
 			btnReminders = (Button) rootView.findViewById(R.id.btnReminders);
 			btnReminders.setOnClickListener(new Reminders_OnClickListener());
+
+			btnTutorial = (Button) rootView.findViewById(R.id.btnTutorial);
+			btnTutorial.setOnClickListener(new ButtonTutorial_OnClickListener());
 
 			StringBuilder version = new StringBuilder();
 			version.append(getResources().getString(R.string.about_version));
@@ -214,6 +218,30 @@ public class FragmentSettings extends Fragment {
 		}
 	}
 
+	/**
+     * Class: ButtonTutorial_OnClickListener
+     *
+     * Description: Callback to be invoked when Tutorial button is clicked
+     */
+	private final class ButtonTutorial_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+			try {
+				transitionToTutorial();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			finally {
+			}
+		}
+	}
+
+
+
 	private void transitionToORcycle() {
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MyApplication.ORCYCLE_URI));
 		startActivity(intent);
@@ -250,5 +278,11 @@ public class FragmentSettings extends Fragment {
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 		getActivity().finish();
+	}
+
+	private void transitionToTutorial() {
+		Intent intent = new Intent(getActivity(), TutorialActivity.class);
+		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}
 }
