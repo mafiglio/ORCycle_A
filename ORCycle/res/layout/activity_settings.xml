@@ -10,6 +10,29 @@
 	    android:background="#474334"
         android:orientation="vertical" >
 
+		<RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="@color/psu_green"
+            android:orientation="vertical"
+            android:paddingBottom="2dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="2dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+		    		    
+	        <TextView
+	            android:id="@+id/tv_more"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+	            android:background="@color/psu_green"
+        		android:textColor="@color/off_white"
+	            android:text="@string/ats_more" />
+
+        </RelativeLayout>
+        
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -33,6 +56,98 @@
 
        	</RelativeLayout>
             
+		<RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="#fcfcfc"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="8dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+		    		    
+	        <Button
+	            android:id="@+id/btnReminders"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+            	android:background="#fcfcfc"
+        		android:textColor="@color/psu_sienna"
+	            android:text="@string/ats_remind_me" />
+
+        </RelativeLayout>
+        
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="#fcfcfc"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="8dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+		    		    
+	        <Button
+	            android:id="@+id/btnFeedback"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+            	android:background="#fcfcfc"
+        		android:textColor="@color/psu_sienna"
+	            android:text="@string/ats_provide_feedback" />
+
+        </RelativeLayout>
+        
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="#fcfcfc"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="8dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+		    		    
+	        <Button
+	            android:id="@+id/btnTutorial"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+            	android:background="#fcfcfc"
+        		android:textColor="@color/psu_sienna"
+	            android:text="@string/ats_tutorial" />
+
+        </RelativeLayout>
+        
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="@color/psu_green"
+            android:orientation="vertical"
+            android:paddingBottom="2dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="2dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+		    		    
+	        <TextView
+	            android:id="@+id/tv_useful_links"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+	            android:background="@color/psu_green"
+        		android:textColor="@color/off_white"
+	            android:text="@string/ats_useful_links" />
+
+        </RelativeLayout>
+        
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -56,7 +171,9 @@
 
        	</RelativeLayout>
             
-        <RelativeLayout
+        
+
+		<RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
@@ -69,16 +186,39 @@
             tools:context=".UserInfo$DummySectionFragment" >
 		    		    
 	        <Button
-	            android:id="@+id/btnFeedback"
+	            android:id="@+id/btn_ats_report_maps"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_alignParentLeft="true"
             	android:background="#fcfcfc"
         		android:textColor="@color/psu_sienna"
-	            android:text="@string/ats_provide_feedback" />
+	            android:text="@string/ats_report_maps" />
 
         </RelativeLayout>
+		
+		<RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="#fcfcfc"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="8dp"
+            tools:context=".UserInfo$DummySectionFragment" >
+		    		    
+	        <Button
+	            android:id="@+id/btn_ats_transportation_agencies"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+            	android:background="#fcfcfc"
+        		android:textColor="@color/psu_sienna"
+	            android:text="@string/ats_transportation_agencies" />
 
+        </RelativeLayout>
+		
 		<RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -102,67 +242,33 @@
 
         </RelativeLayout>
 
-		<RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:background="#fcfcfc"
-            android:orientation="vertical"
-            android:paddingBottom="8dp"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="8dp"
-            tools:context=".UserInfo$DummySectionFragment" >
-		    		    
-	        <Button
-	            android:id="@+id/btnReminders"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_alignParentLeft="true"
-            	android:background="#fcfcfc"
-        		android:textColor="@color/psu_sienna"
-	            android:text="@string/ats_remind_me" />
-
-        </RelativeLayout>
 		
-		<RelativeLayout
+		
+		
+        
+        <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
-            android:background="#fcfcfc"
+            android:background="@color/psu_green"
             android:orientation="vertical"
-            android:paddingBottom="8dp"
+            android:paddingBottom="2dp"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="8dp"
+            android:paddingTop="2dp"
             tools:context=".UserInfo$DummySectionFragment" >
 		    		    
-        <TextView
-            android:id="@+id/as_orcycle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:background="#fcfcfc"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/psu_sienna" />
-        
         <TextView
             android:id="@+id/as_copyright"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/as_orcycle"
-            android:background="#fcfcfc"
-            android:paddingLeft="10dp"
+            android:background="@color/psu_green"
+            android:paddingLeft="2dp"
             android:paddingRight="10dp"
             android:text="@string/about_copyright"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/psu_sienna" />
+       		android:textColor="@color/off_white" />
         
         <TextView
             android:id="@+id/as_version_code"
@@ -170,15 +276,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_below="@id/as_orcycle"
             android:layout_toRightOf="@id/as_copyright"
-            android:background="#fcfcfc"
+            android:background="@color/psu_green"
             android:gravity="end"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:paddingRight="2dp"
             android:text="@string/about_version_code"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/psu_sienna" />
+            android:textColor="@color/off_white" />
         
         </RelativeLayout>
 

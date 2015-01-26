@@ -80,8 +80,8 @@ public class Controller {
 			transitionToDialogUserInfo(f);
 			break;
 
-		case HOW_TO:
-			transitionToDialogHowTo(f);
+		case SHOW_TUTORIAL:
+			transitionToTutorialActivity(f);
 			break;
 		}
 	}
@@ -198,6 +198,13 @@ public class Controller {
 
 		f.startActivity(intent);
 	}
+
+	private void transitionToTutorialActivity(FragmentMainInput f) {
+		Intent intent = new Intent(f.getActivity(), TutorialActivity.class);
+		intent.putExtra(TutorialActivity.EXTRA_PREVIOUS_ACTIVITY, TutorialActivity.EXTRA_PREVIOUS_ACTIVITY_MAIN_INPUT);
+		f.startActivity(intent);
+	}
+
 
 	private void transitionToDialogUserInfo(FragmentMainInput f) {
 

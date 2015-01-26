@@ -54,7 +54,7 @@ public class FragmentMainInput extends Fragment
 	private static final int FMI_FINISH_PAUSED = 3;
 
 	public enum Result {UNDEFINED, SAVE_TRIP, REPORT, NO_GPS, GET_USER_INFO, SHOW_INSTRUCTIONS,
-		SHOW_WELCOME, SHOW_DIALOG_USER_INFO, HOW_TO };
+		SHOW_WELCOME, SHOW_DIALOG_USER_INFO, SHOW_TUTORIAL };
 
 	private Result result;
 
@@ -286,10 +286,10 @@ public class FragmentMainInput extends Fragment
 						// Check for HowTo dialog
 						else if (Controller.DSA_ID_HOW_TO_DIALOG_ID == dialogId) {
 							if (ischecked) {
-								myApp.setHowToEnabled(false);
+								myApp.setTutorialEnabled(false);
 							}
 							else if (controller.setNextHowToScreen()){
-								controller.finish(setResult(Result.HOW_TO));
+								controller.finish(setResult(Result.SHOW_TUTORIAL));
 								return;
 							}
 						}
@@ -315,9 +315,9 @@ public class FragmentMainInput extends Fragment
 				myApp.setCheckedForUserWelcome(true);
 				controller.finish(setResult(Result.SHOW_WELCOME));
 			}
-			else if (!myApp.getCheckedForHowTo() && myApp.getHowToEnabled()) {
-				myApp.setCheckedForHowTo(true);
-				controller.finish(setResult(Result.HOW_TO));
+			else if (!myApp.getCheckedForTutorial() && myApp.getTutorialEnabled()) {
+				myApp.setCheckedForTutorial(true);
+				controller.finish(setResult(Result.SHOW_TUTORIAL));
 			}
 			else if (!myApp.getCheckedForUserProfile()
 					&& !myApp.getUserProfileUploaded()

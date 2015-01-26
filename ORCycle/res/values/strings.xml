@@ -145,6 +145,11 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="ats_provide_feedback">Provide feedback about the app&#8230;</string>
     <string name="ats_privacy_policy">ORcycle\'s Privacy Policy&#8230;</string>
     <string name="ats_remind_me">Remind me to log a trip&#8230;</string>
+    <string name="ats_tutorial">See Tutorial&#8230;</string>
+    <string name="ats_more">More</string>
+    <string name="ats_useful_links">Useful Links</string>
+    <string name="ats_report_maps">See Report Maps&#8230;</string>
+    <string name="ats_transportation_agencies">Report to transportation agencies&#8230;</string>
     <string name="auf_user_feedback">Comment here if you would like to provide feedback about ORcycle or desirable features:</string>
     <string name="anmWaterFalls">Waterfalls</string>
     <string name="anmComment">Additional Details:</string>
@@ -172,7 +177,15 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="qsa_message">Would you like to start ORcycle?</string>
     <string name="qsa_btn_positive">Yes</string>
     <string name="qsa_btn_negative">No</string>
-
+    <string name="turorial_btn_previous">&lt;&lt;</string>
+    <string name="turorial_btn_next">&gt;&gt;</string>
+    <string name="turorial_btn_done_main_input">Ready to use ORcycle!</string>
+    <string name="turorial_btn_done_user_settings">Done</string>
+    <string name="turorial_drt_title">Tutorial</string>
+    <string name="turorial_drt_message">Do you want to see the tutorial again next time you open ORcycle?</string>
+    <string name="turorial_drt_yes_button">Yes</string>
+    <string name="turorial_drt_no_button">No</string>
+    
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
     <!-- ********************************************************* -->
@@ -661,5 +674,6 @@ and receive updates/news, please provide your e-mail.</string>
 facility to ensure a prompt response to a road hazard.</string>
     <string name="nda_drp_button_now">Now</string>
     <string name="nda_drp_button_later">Later</string>
-    
+    <string name="title_activity_tutorial">Tutorial&#58;</string>
+
 </resources>

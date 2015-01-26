@@ -37,7 +37,7 @@ public class MyApplication extends android.app.Application {
 	public static final String REPORT_ROAD_HAZARDS_URI = "http://www.pdx.edu/transportation-lab/reporting-road-hazards";
 
 	private static final String SETTING_USER_WELCOME_ENABLED = "USER_WELCOME_ENABLED";
-	private static final String SETTING_HOW_TO_ENABLED = "HOW_TO_ENABLED";
+	private static final String SETTING_TUTORIAL_ENABLED = "TUTORIAL_ENABLED";
 	private static final String SETTING_USER_INFO_UPLOADED = "USER_INFO_UPLOADED";
 	private static final String SETTING_FIRST_TRIP_COMPLETED = "SETTING_FIRST_TRIP_COMPLETED";
 	private static final String SETTING_WARN_REPEAT_TRIPS = "SETTING_WARN_REPEAT_TRIPS";
@@ -65,8 +65,8 @@ public class MyApplication extends android.app.Application {
 	private boolean checkedForUserWelcome = false;
 	private boolean userWelcomeEnabled;
 
-	private boolean checkedForHowTo = false;
-	private boolean howToEnabled;
+	private boolean checkedForTutorial = false;
+	private boolean tutorialEnabled;
 
 	private double lastTripStartTime = RESET_START_TIME;
 
@@ -129,9 +129,11 @@ public class MyApplication extends android.app.Application {
 
 		userProfileUploaded = settings.getBoolean(SETTING_USER_INFO_UPLOADED, false);
 
-		userWelcomeEnabled = settings.getBoolean(SETTING_USER_WELCOME_ENABLED, true);
+		//userWelcomeEnabled = settings.getBoolean(SETTING_USER_WELCOME_ENABLED, true);
+		// We are purposely disabling the welcome screen for now
+		userWelcomeEnabled = false;
 
-		howToEnabled = settings.getBoolean(SETTING_HOW_TO_ENABLED, true);
+		tutorialEnabled = settings.getBoolean(SETTING_TUTORIAL_ENABLED, true);
 
 		warnRepeatTrips = settings.getBoolean(SETTING_WARN_REPEAT_TRIPS, true);
 
@@ -142,8 +144,8 @@ public class MyApplication extends android.app.Application {
 		setFirstTripCompleted(true); // for debugging
 		//setFirstTripCompleted(false);
 		setUserProfileUploaded(false);
-		setUserWelcomeEnabled(true);
-		setHowToEnabled(true);
+		setUserWelcomeEnabled(false);
+		setTutorialEnabled(true);
 		setWarnRepeatTrips(true);
 	}
 
@@ -386,26 +388,26 @@ public class MyApplication extends android.app.Application {
 	// *                                HowTo
 	// *********************************************************************************
 
-	public void setCheckedForHowTo(boolean value) {
-		checkedForHowTo = value;
+	public void setCheckedForTutorial(boolean value) {
+		checkedForTutorial = value;
 	}
 
-	public boolean getCheckedForHowTo() {
-		return checkedForHowTo;
+	public boolean getCheckedForTutorial() {
+		return checkedForTutorial;
 	}
 
-	public void setHowToEnabled(boolean value) {
-		howToEnabled = value;
+	public void setTutorialEnabled(boolean value) {
+		tutorialEnabled = value;
 		SharedPreferences settings;
 		settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor = settings.edit();
-		editor.putBoolean(SETTING_HOW_TO_ENABLED, howToEnabled);
+		editor.putBoolean(SETTING_TUTORIAL_ENABLED, tutorialEnabled);
 		editor.apply();
 	}
 
-	public boolean getHowToEnabled() {
-		return howToEnabled;
+	public boolean getTutorialEnabled() {
+		return tutorialEnabled;
 	}
 
 	// *********************************************************************************

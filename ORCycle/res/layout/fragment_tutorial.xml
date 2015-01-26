@@ -1,0 +1,59 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="edu.pdx.cecs.orcycle.TutorialFragment" >
+
+    <TextView
+        android:id="@+id/section_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+<ImageView
+    android:id="@+id/iv_tutorial"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentLeft="true"
+    android:layout_marginTop="1dp"
+    android:adjustViewBounds="true"
+    android:background="@color/psu_green"
+    android:contentDescription="@string/dsaNoteImageContentDescription"
+    android:maxHeight="300dp"
+    android:scaleType="centerCrop" />
+
+<Button
+    android:id="@+id/btn_tutorial_previous"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentLeft="true"
+    android:layout_marginBottom="24dp"
+    android:background="@color/user_button_background"
+    android:textColor="@color/user_button_text"
+    android:text="@string/turorial_btn_previous" />
+
+<Button
+    android:id="@+id/btn_tutorial_next"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentBottom="true"
+    android:layout_marginBottom="24dp"
+    android:background="@color/user_button_background"
+    android:textColor="@color/user_button_text"
+    android:text="@string/turorial_btn_next" />
+
+<Button
+    android:id="@+id/btn_tutorial_done"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:layout_marginBottom="24dp"
+    android:background="@color/user_button_background"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:text="@string/turorial_btn_done_main_input"
+    android:textColor="@color/user_button_text" />
+
+</RelativeLayout>

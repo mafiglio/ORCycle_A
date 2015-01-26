@@ -140,6 +140,10 @@
             android:label="@string/title_activity_query_start"
             android:theme="@android:style/Theme.Dialog" >
         </activity>
+        <activity
+            android:name="edu.pdx.cecs.orcycle.TutorialActivity"
+            android:label="@string/title_activity_tutorial" >
+        </activity>
     </application>
 
 </manifest>
