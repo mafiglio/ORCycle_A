@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,7 +34,7 @@ public class TutorialActivity extends Activity {
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
-	ViewPager mViewPager;
+	public ViewPager mViewPager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class TutorialActivity extends Activity {
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-
+		mSectionsPagerAdapter.setViewPager(mViewPager);
 	}
 
 	@Override
@@ -77,8 +78,11 @@ public class TutorialActivity extends Activity {
 	 */
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+		private ViewPager mViewPager;
+
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
+			mViewPager = null;
 		}
 
 		@Override
@@ -86,7 +90,7 @@ public class TutorialActivity extends Activity {
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a PlaceholderFragment (defined as a static inner class
 			// below).
-			return PlaceholderFragment.newInstance(position + 1);
+			return TutorialFragment.newInstance(position + 1, mViewPager);
 		}
 
 		@Override
@@ -108,30 +112,46 @@ public class TutorialActivity extends Activity {
 			}
 			return null;
 		}
+
+		public void setViewPager(ViewPager viewPager) {
+			mViewPager = viewPager;
+		}
+
+		public ViewPager getViewPager() {
+			return mViewPager;
+		}
 	}
 
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class PlaceholderFragment extends Fragment {
+	public static class TutorialFragment extends Fragment {
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
 		private static final String ARG_SECTION_NUMBER = "section_number";
 
+		private int section;
+		private Button btnPrev;
+		private Button btnNext;
+		private Button btnDone;
+
 		/**
 		 * Returns a new instance of this fragment for the given section number.
 		 */
-		public static PlaceholderFragment newInstance(int sectionNumber) {
-			PlaceholderFragment fragment = new PlaceholderFragment();
+		public static TutorialFragment newInstance(int sectionNumber, ViewPager viewPager) {
+			TutorialFragment fragment = new TutorialFragment();
 			Bundle args = new Bundle();
 			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 			fragment.setArguments(args);
 			return fragment;
 		}
 
-		public PlaceholderFragment() {
+		/**
+		 * Default constructor initializes internal variables
+		 */
+		public TutorialFragment() {
 		}
 
 		@Override
@@ -141,21 +161,57 @@ public class TutorialActivity extends Activity {
 			try {
 				rootView = inflater.inflate(R.layout.fragment_tutorial, container, false);
 
-				int section = getArguments().getInt(ARG_SECTION_NUMBER);
+				section = getArguments().getInt(ARG_SECTION_NUMBER);
 
 				TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 				textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
 
+				btnPrev = (Button) rootView.findViewById(R.id.btn_tutorial_previous);
+				btnPrev.setOnClickListener(new ButtonPrevious_OnClickListener(section));
+
+				btnNext = (Button) rootView.findViewById(R.id.btn_tutorial_next);
+				btnNext.setOnClickListener(new ButtonNext_OnClickListener(section));
+
+				btnDone = (Button) rootView.findViewById(R.id.btn_tutorial_done);
+				btnDone.setOnClickListener(new ButtonDone_OnClickListener(section));
+
 				ImageView imageView = (ImageView) rootView.findViewById(R.id.iv_tutorial);
 
 				switch(section) {
-				case 1: imageView.setImageResource(R.drawable.how_to_1); break;
-				case 2: imageView.setImageResource(R.drawable.how_to_2); break;
-				case 3: imageView.setImageResource(R.drawable.how_to_3); break;
-				default: imageView.setImageResource(R.drawable.how_to_1); break;
+				case 1:
+
+					imageView.setImageResource(R.drawable.how_to_1);
+					btnPrev.setVisibility(View.GONE);
+					btnNext.setVisibility(View.VISIBLE);
+					btnDone.setVisibility(View.GONE);
+					break;
+
+				case 2:
+
+					imageView.setImageResource(R.drawable.how_to_2);
+					btnPrev.setVisibility(View.VISIBLE);
+					btnNext.setVisibility(View.VISIBLE);
+					btnDone.setVisibility(View.GONE);
+					break;
+
+				case 3:
+
+					imageView.setImageResource(R.drawable.how_to_3);
+					btnPrev.setVisibility(View.VISIBLE);
+					btnNext.setVisibility(View.GONE);
+					btnDone.setVisibility(View.VISIBLE);
+					break;
+
+				default:
+
+					imageView.setImageResource(R.drawable.how_to_3);
+					btnPrev.setVisibility(View.VISIBLE);
+					btnNext.setVisibility(View.GONE);
+					btnDone.setVisibility(View.VISIBLE);
+					break;
 				}
 
-				getActivity().getActionBar().setDisplayShowTitleEnabled(false);
+				getActivity().getActionBar().setDisplayShowTitleEnabled(true);
 				getActivity().getActionBar().setDisplayShowHomeEnabled(false);
 			}
 			catch(Exception ex) {
@@ -163,6 +219,94 @@ public class TutorialActivity extends Activity {
 			}
 			return rootView;
 		}
+
+		/**
+	     * Class: ButtonPrevious_OnClickListener
+	     *
+	     * Description: Callback to be invoked when the previousButton button is clicked
+	     */
+		private final class ButtonPrevious_OnClickListener implements View.OnClickListener {
+
+			private final int mSection;
+
+			public ButtonPrevious_OnClickListener(int section) {
+				super();
+				mSection = section;
+			}
+
+			/**
+			 * Description: Handles onClick for view
+			 */
+			public void onClick(View v) {
+				try {
+					ViewPager viewPager = (ViewPager) TutorialFragment.this.getActivity().findViewById(R.id.pager);
+					viewPager.setCurrentItem(mSection - 2, true);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+		}
+
+		/**
+	     * Class: ButtonNext_OnClickListener
+	     *
+	     * Description: Callback to be invoked when the previousButton button is clicked
+	     */
+		private final class ButtonNext_OnClickListener implements View.OnClickListener {
+
+			private final int mSection;
+
+			public ButtonNext_OnClickListener(int section) {
+				super();
+				mSection = section;
+			}
+
+			/**
+			 * Description: Handles onClick for view
+			 */
+			public void onClick(View v) {
+				try {
+					ViewPager viewPager = (ViewPager) TutorialFragment.this.getActivity().findViewById(R.id.pager);
+					viewPager.setCurrentItem(mSection, true);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+				finally {
+				}
+			}
+		}
+
+		/**
+	     * Class: ButtonDone_OnClickListener
+	     *
+	     * Description: Callback to be invoked when the previousButton button is clicked
+	     */
+		private final class ButtonDone_OnClickListener implements View.OnClickListener {
+
+			private final int mSection;
+
+			public ButtonDone_OnClickListener(int section) {
+				super();
+				mSection = section;
+			}
+
+			/**
+			 * Description: Handles onClick for view
+			 */
+			public void onClick(View v) {
+				try {
+					TutorialFragment.this.getActivity().finish();
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+				finally {
+				}
+			}
+		}
 	}
+
 
 }

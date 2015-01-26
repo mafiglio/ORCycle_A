@@ -177,7 +177,10 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="qsa_message">Would you like to start ORcycle?</string>
     <string name="qsa_btn_positive">Yes</string>
     <string name="qsa_btn_negative">No</string>
-
+    <string name="turorial_btn_previous">&lt;&lt;</string>
+    <string name="turorial_btn_next">&gt;&gt;</string>
+    <string name="turorial_btn_done">Ready to use ORcycle!</string>
+    
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
     <!-- ********************************************************* -->
@@ -666,6 +669,6 @@ and receive updates/news, please provide your e-mail.</string>
 facility to ensure a prompt response to a road hazard.</string>
     <string name="nda_drp_button_now">Now</string>
     <string name="nda_drp_button_later">Later</string>
-    <string name="title_activity_tutorial">TutorialActivity</string>
+    <string name="title_activity_tutorial">Tutorial&#58;</string>
 
 </resources>
