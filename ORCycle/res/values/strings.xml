@@ -145,7 +145,11 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="ats_provide_feedback">Provide feedback about the app&#8230;</string>
     <string name="ats_privacy_policy">ORcycle\'s Privacy Policy&#8230;</string>
     <string name="ats_remind_me">Remind me to log a trip&#8230;</string>
-    <string name="ats_tutorial">Tutorial&#8230;</string>
+    <string name="ats_tutorial">See Tutorial&#8230;</string>
+    <string name="ats_more">More</string>
+    <string name="ats_useful_links">Useful Links</string>
+    <string name="ats_report_maps">See Report Maps&#8230;</string>
+    <string name="ats_transportation_agencies">Report to transportation agencies&#8230;</string>
     <string name="auf_user_feedback">Comment here if you would like to provide feedback about ORcycle or desirable features:</string>
     <string name="anmWaterFalls">Waterfalls</string>
     <string name="anmComment">Additional Details:</string>
