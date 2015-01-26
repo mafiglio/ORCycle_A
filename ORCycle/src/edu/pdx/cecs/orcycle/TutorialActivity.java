@@ -3,8 +3,11 @@ package edu.pdx.cecs.orcycle;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -21,6 +24,11 @@ import android.widget.TextView;
 public class TutorialActivity extends Activity {
 
 	private static final String MODULE_TAG = "TutorialActivity";
+	public static final String EXTRA_PREVIOUS_ACTIVITY = "previous_activity";
+	public static final int EXTRA_PREVIOUS_ACTIVITY_MAIN_INPUT = 1;
+	public static final int EXTRA_PREVIOUS_ACTIVITY_USER_SETTINGS = 2;
+
+	private int previousActivity;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -29,12 +37,12 @@ public class TutorialActivity extends Activity {
 	 * becomes too memory intensive, it may be best to switch to a
 	 * {@link android.support.v13.app.FragmentStatePagerAdapter}.
 	 */
-	SectionsPagerAdapter mSectionsPagerAdapter;
+	private SectionsPagerAdapter mSectionsPagerAdapter;
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
-	public ViewPager mViewPager;
+	private ViewPager mViewPager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +57,15 @@ public class TutorialActivity extends Activity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		mSectionsPagerAdapter.setViewPager(mViewPager);
+
+		if (null != savedInstanceState)
+			LoadExtras(savedInstanceState);
+		else
+			LoadExtras(getIntent().getExtras());
+	}
+
+	private void LoadExtras(Bundle extras) {
+		previousActivity = extras.getInt(EXTRA_PREVIOUS_ACTIVITY, EXTRA_PREVIOUS_ACTIVITY_MAIN_INPUT);
 	}
 
 	@Override
@@ -71,6 +88,35 @@ public class TutorialActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+	@Override
+	public void onBackPressed() {
+		try {
+			transitionToTabsConfigActivity();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
+	public void transitionToTabsConfigActivity() {
+
+		Intent intent = new Intent(this, TabsConfig.class);
+
+		if (previousActivity == EXTRA_PREVIOUS_ACTIVITY_MAIN_INPUT) {
+			intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
+		}
+		else {
+			intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_SETTINGS);
+		}
+		startActivity(intent);
+		finish();
+		overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
+	}
+
+	// *********************************************************************************
+	// *                        SectionsPagerAdapter Class
+	// *********************************************************************************
 
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -122,10 +168,15 @@ public class TutorialActivity extends Activity {
 		}
 	}
 
+	// *********************************************************************************
+	// *                        Placeholder Fragment Class
+	// *********************************************************************************
+
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class TutorialFragment extends Fragment {
+
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
@@ -136,6 +187,7 @@ public class TutorialActivity extends Activity {
 		private Button btnPrev;
 		private Button btnNext;
 		private Button btnDone;
+		private int previousActivity;
 
 		/**
 		 * Returns a new instance of this fragment for the given section number.
@@ -162,6 +214,9 @@ public class TutorialActivity extends Activity {
 				rootView = inflater.inflate(R.layout.fragment_tutorial, container, false);
 
 				section = getArguments().getInt(ARG_SECTION_NUMBER);
+				TutorialActivity tutorialActivity = (TutorialActivity) getActivity();
+				previousActivity = tutorialActivity.previousActivity;
+
 
 				TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 				textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
@@ -173,7 +228,12 @@ public class TutorialActivity extends Activity {
 				btnNext.setOnClickListener(new ButtonNext_OnClickListener(section));
 
 				btnDone = (Button) rootView.findViewById(R.id.btn_tutorial_done);
-				btnDone.setOnClickListener(new ButtonDone_OnClickListener(section));
+				btnDone.setOnClickListener(new ButtonDone_OnClickListener());
+
+				if (previousActivity == TutorialActivity.EXTRA_PREVIOUS_ACTIVITY_MAIN_INPUT)
+					btnDone.setText(R.string.turorial_btn_done_main_input);
+				else
+					btnDone.setText(R.string.turorial_btn_done_user_settings);
 
 				ImageView imageView = (ImageView) rootView.findViewById(R.id.iv_tutorial);
 
@@ -219,6 +279,10 @@ public class TutorialActivity extends Activity {
 			}
 			return rootView;
 		}
+
+		// *********************************************************************************
+		// *                              Button Handlers
+		// *********************************************************************************
 
 		/**
 	     * Class: ButtonPrevious_OnClickListener
@@ -285,19 +349,17 @@ public class TutorialActivity extends Activity {
 	     */
 		private final class ButtonDone_OnClickListener implements View.OnClickListener {
 
-			private final int mSection;
-
-			public ButtonDone_OnClickListener(int section) {
-				super();
-				mSection = section;
-			}
-
 			/**
 			 * Description: Handles onClick for view
 			 */
 			public void onClick(View v) {
 				try {
-					TutorialFragment.this.getActivity().finish();
+					if (previousActivity == TutorialActivity.EXTRA_PREVIOUS_ACTIVITY_MAIN_INPUT) {
+						dialogRepeatTutorial();
+					}
+					else {
+						((TutorialActivity) getActivity()).transitionToTabsConfigActivity();
+					}
 				}
 				catch(Exception ex) {
 					Log.e(MODULE_TAG, ex.getMessage());
@@ -306,7 +368,54 @@ public class TutorialActivity extends Activity {
 				}
 			}
 		}
+
+		// *********************************************************************************
+		// *                            Repeat Tutorial Dialog
+		// *********************************************************************************
+
+		/**
+		 * Build dialog telling user to save this trip
+		 */
+		private void dialogRepeatTutorial() {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle(getResources().getString(R.string.turorial_drt_title));
+			builder.setMessage(getResources().getString(R.string.turorial_drt_message));
+			builder.setPositiveButton(getResources().getString(R.string.turorial_drt_yes_button),
+					new DialogRepeatTutorial_OnPositiveButtonClicked());
+			builder.setNegativeButton(getResources().getString(R.string.turorial_drt_no_button),
+					new DialogRepeatTutorial_OnNegativeButtonClicked());
+			final AlertDialog alert = builder.create();
+			alert.show();
+		}
+
+		/**
+		 * Listener for "No" button in dialog
+		 */
+		private final class DialogRepeatTutorial_OnNegativeButtonClicked implements
+				DialogInterface.OnClickListener {
+			public void onClick(DialogInterface dialog, int id) {
+				try {
+					MyApplication.getInstance().setTutorialEnabled(false);
+					((TutorialActivity) getActivity()).transitionToTabsConfigActivity();
+				} catch (Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+		}
+
+		/**
+		 * Listener for "Yes" button in dialog
+		 */
+		private final class DialogRepeatTutorial_OnPositiveButtonClicked implements
+				DialogInterface.OnClickListener {
+			public void onClick(DialogInterface dialog, int id) {
+				try {
+					MyApplication.getInstance().setTutorialEnabled(true);
+					((TutorialActivity) getActivity()).transitionToTabsConfigActivity();
+				} catch (Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+		}
 	}
-
-
 }

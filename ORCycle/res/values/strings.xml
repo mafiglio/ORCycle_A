@@ -179,7 +179,12 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="qsa_btn_negative">No</string>
     <string name="turorial_btn_previous">&lt;&lt;</string>
     <string name="turorial_btn_next">&gt;&gt;</string>
-    <string name="turorial_btn_done">Ready to use ORcycle!</string>
+    <string name="turorial_btn_done_main_input">Ready to use ORcycle!</string>
+    <string name="turorial_btn_done_user_settings">Done</string>
+    <string name="turorial_drt_title">Tutorial</string>
+    <string name="turorial_drt_message">Do you want to see the tutorial again next time you open ORcycle?</string>
+    <string name="turorial_drt_yes_button">Yes</string>
+    <string name="turorial_drt_no_button">No</string>
     
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->

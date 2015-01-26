@@ -282,6 +282,7 @@ public class FragmentSettings extends Fragment {
 
 	private void transitionToTutorial() {
 		Intent intent = new Intent(getActivity(), TutorialActivity.class);
+		intent.putExtra(TutorialActivity.EXTRA_PREVIOUS_ACTIVITY, TutorialActivity.EXTRA_PREVIOUS_ACTIVITY_USER_SETTINGS);
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}

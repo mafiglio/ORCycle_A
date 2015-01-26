@@ -53,7 +53,7 @@
     android:background="@color/user_button_background"
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
-    android:text="@string/turorial_btn_done"
+    android:text="@string/turorial_btn_done_main_input"
     android:textColor="@color/user_button_text" />
 
 </RelativeLayout>
