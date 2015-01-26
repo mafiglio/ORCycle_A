@@ -129,7 +129,9 @@ public class MyApplication extends android.app.Application {
 
 		userProfileUploaded = settings.getBoolean(SETTING_USER_INFO_UPLOADED, false);
 
-		userWelcomeEnabled = settings.getBoolean(SETTING_USER_WELCOME_ENABLED, true);
+		//userWelcomeEnabled = settings.getBoolean(SETTING_USER_WELCOME_ENABLED, true);
+		// We are purposely disabling the welcome screen for now
+		userWelcomeEnabled = false;
 
 		howToEnabled = settings.getBoolean(SETTING_HOW_TO_ENABLED, true);
 
@@ -142,7 +144,7 @@ public class MyApplication extends android.app.Application {
 		setFirstTripCompleted(true); // for debugging
 		//setFirstTripCompleted(false);
 		setUserProfileUploaded(false);
-		setUserWelcomeEnabled(true);
+		setUserWelcomeEnabled(false);
 		setHowToEnabled(true);
 		setWarnRepeatTrips(true);
 	}

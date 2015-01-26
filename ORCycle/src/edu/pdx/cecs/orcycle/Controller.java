@@ -199,6 +199,7 @@ public class Controller {
 		f.startActivity(intent);
 	}
 
+
 	private void transitionToDialogUserInfo(FragmentMainInput f) {
 
 		Intent intent = new Intent(f.getActivity(), DsaDialogActivity.class);
