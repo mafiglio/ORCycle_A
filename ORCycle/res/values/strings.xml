@@ -368,7 +368,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Other&#8230;</item>
     </string-array>
 
-    <string name="q21_routePreferences">I chose this route because&#8230;</string>
+    <string name="q21_routePreferences">*I chose this route because&#8230;</string>
 
     <string-array name="qa_21_routePreferences">
         <item>It is direct/fast</item>
