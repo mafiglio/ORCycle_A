@@ -105,7 +105,8 @@
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_below="@id/tv_anm_q_severity_of_problem"
-	                android:layout_marginTop="16dp"
+	                android:layout_marginTop="12dp"
+	                android:layout_marginBottom="6dp"
 	                android:text="@string/misc_generally_long_text_string"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#474334" />
@@ -141,7 +142,8 @@
 		                android:layout_width="match_parent"
 		                android:layout_height="wrap_content"
 		                android:layout_below="@id/tv_anm_q_object"
-		                android:layout_marginTop="16dp"
+		                android:layout_marginTop="12dp"
+		                android:layout_marginBottom="6dp"
 		                android:textColor="#474334"
 		                android:text="@string/misc_generally_long_text_string"
 		                android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -177,7 +179,8 @@
 		                android:layout_width="match_parent"
 		                android:layout_height="wrap_content"
 		                android:layout_below="@id/tv_anm_q_actions"
-		                android:layout_marginTop="16dp"
+		                android:layout_marginTop="12dp"
+		                android:layout_marginBottom="6dp"
 		                android:textColor="#474334"
 		                android:text="@string/misc_generally_long_text_string"
 		                android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -213,7 +216,8 @@
 		                android:layout_width="match_parent"
 		                android:layout_height="wrap_content"
 		                android:layout_below="@id/tv_anm_q_contrib"
-		                android:layout_marginTop="16dp"
+		                android:layout_marginTop="12dp"
+		                android:layout_marginBottom="6dp"
 		                android:textColor="#474334"
 		                android:text="@string/misc_generally_long_text_string"
 		                android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -249,7 +253,8 @@
 		                android:layout_width="match_parent"
 		                android:layout_height="wrap_content"
 		                android:layout_below="@id/tv_anm_q_crash_date"
-		                android:layout_marginTop="16dp"
+		                android:layout_marginTop="12dp"
+		                android:layout_marginBottom="6dp"
 		                android:textColor="#474334"
 		                android:text="@string/rmap_a_date"
 		                android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -285,7 +290,8 @@
 		                android:layout_width="match_parent"
 		                android:layout_height="wrap_content"
 		                android:layout_below="@id/tvNmqComment"
-		                android:layout_marginTop="16dp"
+		                android:layout_marginTop="12dp"
+		                android:layout_marginBottom="6dp"
 		                android:textColor="#474334"
 		                android:text="@string/misc_generally_long_text_string"
 		                android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -320,17 +326,18 @@
 			    android:layout_height="wrap_content"
 			    android:background="#474334"
 			    android:orientation="vertical" >
-	        <RelativeLayout
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginTop="1dp"
-	            android:background="#fcfcfc"
-	            android:orientation="vertical"
-	            android:paddingBottom="4dp"
-	            android:paddingLeft="@dimen/activity_horizontal_margin"
-	            android:paddingRight="@dimen/activity_horizontal_margin"
-	            android:paddingTop="12dp"
-	            tools:context=".UserInfo$DummySectionFragment" >
+
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="1dp"
+		            android:background="#fcfcfc"
+		            android:orientation="vertical"
+		            android:paddingBottom="4dp"
+		            android:paddingLeft="@dimen/activity_horizontal_margin"
+		            android:paddingRight="@dimen/activity_horizontal_margin"
+		            android:paddingTop="12dp"
+		            tools:context=".UserInfo$DummySectionFragment" >
 		
 	            <TextView
 	                android:id="@+id/tv_anm_q_safety_issue"
@@ -349,7 +356,8 @@
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_below="@id/tv_anm_q_safety_issue"
-	                android:layout_marginTop="16dp"
+	                android:layout_marginTop="12dp"
+	                android:layout_marginBottom="6dp"
 	                android:text="@string/misc_generally_long_text_string"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
 	                android:textColor="#474334" />
@@ -385,7 +393,8 @@
 		                android:layout_width="match_parent"
 		                android:layout_height="wrap_content"
 		                android:layout_below="@id/tv_anm_q_urgency"
-		                android:layout_marginTop="16dp"
+		                android:layout_marginTop="12dp"
+		                android:layout_marginBottom="6dp"
 		                android:textColor="#474334"
 		                android:text="@string/misc_generally_long_text_string"
 		                android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -420,7 +429,8 @@
 		                android:layout_width="match_parent"
 		                android:layout_height="wrap_content"
 		                android:layout_below="@id/tv_anm_q_issue_date"
-		                android:layout_marginTop="16dp"
+		                android:layout_marginTop="12dp"
+		                android:layout_marginBottom="6dp"
 		                android:textColor="#474334"
 		                android:text="@string/rmap_a_date"
 		                android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -456,7 +466,8 @@
 		                android:layout_width="match_parent"
 		                android:layout_height="wrap_content"
 		                android:layout_below="@id/tvNmqComment2"
-		                android:layout_marginTop="16dp"
+		                android:layout_marginTop="12dp"
+		                android:layout_marginBottom="6dp"
 		                android:textColor="#474334"
 		                android:text="@string/misc_generally_long_text_string"
 		                android:textAppearance="?android:attr/textAppearanceMedium" />

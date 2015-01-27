@@ -206,7 +206,8 @@ public class TripQuestionsActivity extends Activity {
 	private boolean mandatoryQuestionsAnswered() {
 		return (tripPurpose.getSelectedItemPosition() > 0) &&
 			   (tripFrequency.getSelectedItemPosition() > 0) &&
-			   (tripComfort.getSelectedItemPosition() > 0);
+			   (tripComfort.getSelectedItemPosition() > 0) &&
+			   (routePrefs.getSelectedIndicies().size() > 0);
 	}
 
 	private void AlertUserMandatoryAnswers() {
