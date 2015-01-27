@@ -371,15 +371,15 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="q21_routePreferences">*I chose this route because&#8230;</string>
 
     <string-array name="qa_21_routePreferences">
-        <item>It is direct/fast</item>
-        <item>It has good bike facilities</item>
         <item>It is enjoyable/has nice scenery</item>
         <item>It is good for a workout</item>
         <item>It has low traffic/low speeds</item>
         <item>It has few busy intersections</item>
+        <item>It has good bike facilities</item>
         <item>It has few/easy hills</item>
         <item>It has other riders/people</item>
         <item>It is good for families/kids</item>
+        <item>It is direct/fast</item>
         <item>I do not know/have other route</item>
         <item>I found it on my phone/online</item>
         <item>Other&#8230;</item>
