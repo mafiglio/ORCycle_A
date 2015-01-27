@@ -435,15 +435,21 @@ public class NoteMapActivity extends Activity {
 	}
 
 	private void append(StringBuilder sb, int textArrayId, int[] answers, int answerId) {
-		sb.append(DbAnswers.getAnswerText(this, textArrayId, answers, answerId)).append("\r\n");
+		if (sb.length() > 0)
+			sb.append("\r\n");
+		sb.append(DbAnswers.getAnswerText(this, textArrayId, answers, answerId));
 	}
 
 	private void append(StringBuilder sb, int textArrayId, int[] answers, int answerId, String otherText) {
 		if ((null == otherText) || otherText.equals("")) {
-			sb.append(DbAnswers.getAnswerText(this, textArrayId, answers, answerId)).append("\r\n");
+			if (sb.length() > 0)
+				sb.append("\r\n");
+			sb.append(DbAnswers.getAnswerText(this, textArrayId, answers, answerId));
 		}
 		else {
-			sb.append(otherText).append("\r\n");
+			if (sb.length() > 0)
+				sb.append("\r\n");
+			sb.append(otherText);
 		}
 	}
 
