@@ -669,9 +669,8 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="rmap_q_issue_date">Date issue encountered:</string>
     <string name="rmap_a_date">1/25/2015</string>
     <string name="title_activity_report_problem">ReportProblemActivity</string>
-    <string name="nda_drp_title">Report Problem</string>
-    <string name="nda_drp_message">Contact the agency that has jurisdiction over the
-facility to ensure a prompt response to a road hazard.</string>
+    <string name="nda_drp_title">About Reports</string>
+    <string name="nda_drp_message">To see maps with reported safety issues visit the ORcycle webpage.</string>
     <string name="nda_drp_button_now">Now</string>
     <string name="nda_drp_button_later">Later</string>
     <string name="title_activity_tutorial">Tutorial&#58;</string>
