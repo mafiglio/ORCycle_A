@@ -36,9 +36,15 @@ public class DatePickerDialog {
         final TextView dateTextView = (TextView) customView.findViewById(R.id.dialog_dateview);
         final SimpleDateFormat dialogFormatter = new SimpleDateFormat("EEEE, MM/dd/yyyy", Locale.US);
 
-        // Minimum date
+        // Maximum date
         Calendar maxDate = Calendar.getInstance();
+        // Maximum date
+
+        Calendar minDate = Calendar.getInstance();
+        minDate.add(Calendar.YEAR, -5);
+
         datePicker.setMaxDate(maxDate.getTimeInMillis());
+        datePicker.setMinDate(minDate.getTimeInMillis());
 
         // View settings
         dialogBuilder.setTitle("Choose a date");
