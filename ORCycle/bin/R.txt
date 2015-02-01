@@ -522,6 +522,7 @@ int id btn_atm_rate_start 0x7f0700ed
 int id btn_atq_save 0x7f0700fd
 int id btn_ats_maps_link 0x7f0700d3
 int id btn_ats_report_hazards_link 0x7f0700d4
+int id btn_aui_privacy_policy 0x7f07011b
 int id btn_aui_save_user_info 0x7f07011e
 int id btn_crash_date 0x7f0700b7
 int id btn_issue_date 0x7f0700c2
@@ -698,7 +699,6 @@ int id tvDsaMessage 0x7f070044
 int id tvDsaTitle 0x7f070042
 int id tvEmail 0x7f07011c
 int id tvEmailInfo1 0x7f07011a
-int id tvEmailInfo2 0x7f07011b
 int id tvEthnicity 0x7f070116
 int id tvGender 0x7f070110
 int id tvHeaderFancyStart 0x7f07007b

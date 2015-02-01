@@ -24,7 +24,7 @@ public class FragmentSettings extends Fragment {
 	public static final int RESULT_MAPS_LINK_PRESSED = 7;
 	public static final int RESULT_REPORT_HAZARDS_LINK_PRESSED = 8;
 
-	private final FragmentSettingsController controller;
+	private FragmentSettingsController controller;
 
 	// UI Elements
 	private Button btnUserInfo = null;
@@ -36,15 +36,6 @@ public class FragmentSettings extends Fragment {
 	private Button btnMapsLink = null;
 	private Button btnReportHazardsLink = null;
 	private TextView tvVersionCode = null;
-
-	// *********************************************************************************
-	// *                              Constructor
-	// *********************************************************************************
-
-	public FragmentSettings() {
-		super();
-		controller = new FragmentSettingsController(getActivity());
-	}
 
 	// *********************************************************************************
 	// *                              Fragment Handlers
@@ -59,6 +50,7 @@ public class FragmentSettings extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		View rootView = null;
+		controller = new FragmentSettingsController(getActivity());
 
 		try {
 			Log.v(MODULE_TAG, "onCreateView");

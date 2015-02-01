@@ -216,7 +216,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
 
     <string name="q02_email_info1">To receive updates and news about project outcomes and enhancements 
 (e.g. data maps), please provide your email.</string>
-    <string name="q02_email_info2">Your E-mail will not be shared, see our strict privacy policy.</string>
+    <string name="q02_email_info2"><u>Your E-mail will not be shared, see our strict privacy policy.</u></string>
     <string name="q02_email">E-Mail:</string>
     <string name="q03_gender">What is your gender?</string>
 
