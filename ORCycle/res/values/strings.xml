@@ -189,6 +189,13 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="turorial_drt_message">Do you want to see the tutorial again next time you open ORcycle?</string>
     <string name="turorial_drt_yes_button">Yes</string>
     <string name="turorial_drt_no_button">No</string>
+    <string name="and_cd_add_photo">Add Photo</string>
+    <string name="and_tv_add">Add</string>
+    <string name="and_tv_photo">Photo</string>
+    <string name="and_cd_note_image">Report Image</string>
+    <string name="and_tv_additional_details">Please add bicycle direction of travel (e.g. northbound) and any additional details:</string>
+    
+    
     
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->

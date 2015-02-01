@@ -9,6 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin" >
 
     <TextView
+        android:id="@+id/tv_arsd_additional_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Additional Details:"
@@ -18,7 +19,7 @@
         android:id="@+id/editTextRateSegmentDetail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textView1"
+        android:layout_below="@id/tv_arsd_additional_details"
         android:layout_marginTop="6dp"
         android:ems="10"
         android:inputType="textMultiLine" >

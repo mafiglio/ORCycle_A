@@ -80,16 +80,16 @@ public class NoteDetailActivity extends Activity {
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 			// get references to view widgets
-			noteDetails = (EditText) findViewById(R.id.editTextNoteDetail);
-			imageView = (ImageView) findViewById(R.id.imageView);
+			noteDetails = (EditText) findViewById(R.id.et_and_note_detail);
+			imageView = (ImageView) findViewById(R.id.iv_and_image_view);
 			// imageView.setVisibility(4);
-			imageButton = (ImageButton) findViewById(R.id.imageButton);
+			imageButton = (ImageButton) findViewById(R.id.ib_and_image_button);
 
 			// show input keyboard
 			this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
 			// setup photo button
-			Button addPhotoButton = (Button) findViewById(R.id.addPhotoButton);
+			Button addPhotoButton = (Button) findViewById(R.id.btn_and_add_photo);
 			addPhotoButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					try {
