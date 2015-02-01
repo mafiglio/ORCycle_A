@@ -15,43 +15,41 @@
         android:paddingRight="@dimen/activity_horizontal_margin" >
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/ib_and_image_button"
             android:layout_width="102dp"
             android:layout_height="157dp"
             android:background="@drawable/note_image_button"
-            android:contentDescription="Add Photo"
+            android:contentDescription="@string/and_cd_add_photo"
             android:scaleType="fitXY" />
 
         <TextView
-            android:id="@+id/textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginTop="60dp"
             android:layout_marginLeft="40dp"
-            android:text="Add" />
+            android:text="@string/and_tv_add" />
 
         <TextView
-            android:id="@+id/textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginTop="75dp"
             android:layout_marginLeft="35dp"
-            android:text="Photo" />
+            android:text="@string/and_tv_photo" />
         
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/iv_and_image_view"
             android:layout_width="86dp"
             android:layout_height="134dp"
             android:layout_alignParentTop="true"
-            android:contentDescription="noteImage"
+            android:contentDescription="@string/and_cd_note_image"
             android:layout_marginTop="9dp"
             android:layout_marginLeft="8dp"
             android:scaleType="centerCrop" />
         
         <Button
-            android:id="@+id/addPhotoButton"
+            android:id="@+id/btn_and_add_photo"
             android:layout_width="102dp"
             android:layout_height="157dp"
             android:background="@android:color/transparent"
@@ -65,14 +63,13 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Additional Details:"
+            android:text="@string/and_tv_additional_details"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
-            android:id="@+id/editTextNoteDetail"
+            android:id="@+id/et_and_note_detail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"

@@ -479,8 +479,8 @@
 				    android:textAppearance="?android:attr/textAppearanceMedium"
 				    android:textColor="#A33F1F" />
 
-				<TextView
-				    android:id="@+id/tvEmailInfo2"
+				<Button
+				    android:id="@+id/btn_aui_privacy_policy"
 				    android:layout_width="fill_parent"
 				    android:layout_height="wrap_content"
 				    android:layout_alignParentLeft="true"

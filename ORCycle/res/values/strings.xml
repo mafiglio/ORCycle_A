@@ -30,7 +30,7 @@
     <string name="title_activity_reminders">Reminders</string>
     <string name="title_activity_edit_reminder">Add/Edit Reminder</string>
     <string name="title_activity_query_start">ORcycle Reminder!</string>
-    <string name="webview_title_report_problem">Report Problem</string>
+    <string name="webview_title_orcycle_maps">ORcycle Maps</string>
     <string name="post_url">http://orcycle2.cecs.pdx.edu/post/</string>
     <string name="btn_lbl_start">Start Trip</string>
     <string name="btn_lbl_pause">Pause</string>
@@ -148,8 +148,12 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="ats_tutorial">See Tutorial&#8230;</string>
     <string name="ats_more">More</string>
     <string name="ats_useful_links">Useful Links</string>
-    <string name="ats_report_maps">See Report Maps&#8230;</string>
+    <string name="ats_report_maps">See ORcycle Maps&#8230;</string>
     <string name="ats_transportation_agencies">Report to transportation agencies&#8230;</string>
+    <string name="ats_webview_title_orcycle">ORcycle Web Site</string>
+    <string name="ats_webview_title_maps">ORcycle Maps</string>
+    <string name="ats_webview_title_hazards">Report Road Hazards</string>
+    <string name="ats_webview_Title_privacy_policy">ORcycle Privacy Policy</string>
     <string name="auf_user_feedback">Comment here if you would like to provide feedback about ORcycle or desirable features:</string>
     <string name="anmWaterFalls">Waterfalls</string>
     <string name="anmComment">Additional Details:</string>
@@ -185,6 +189,13 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="turorial_drt_message">Do you want to see the tutorial again next time you open ORcycle?</string>
     <string name="turorial_drt_yes_button">Yes</string>
     <string name="turorial_drt_no_button">No</string>
+    <string name="and_cd_add_photo">Add Photo</string>
+    <string name="and_tv_add">Add</string>
+    <string name="and_tv_photo">Photo</string>
+    <string name="and_cd_note_image">Report Image</string>
+    <string name="and_tv_additional_details">Please add bicycle direction of travel (e.g. northbound) and any additional details:</string>
+    
+    
     
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
@@ -205,7 +216,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
 
     <string name="q02_email_info1">To receive updates and news about project outcomes and enhancements 
 (e.g. data maps), please provide your email.</string>
-    <string name="q02_email_info2">Your E-mail will not be shared, see our strict privacy policy.</string>
+    <string name="q02_email_info2"><u>Your E-mail will not be shared, see our strict privacy policy.</u></string>
     <string name="q02_email">E-Mail:</string>
     <string name="q03_gender">What is your gender?</string>
 
@@ -669,10 +680,10 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="rmap_q_issue_date">Date issue encountered:</string>
     <string name="rmap_a_date">1/25/2015</string>
     <string name="title_activity_report_problem">ReportProblemActivity</string>
-    <string name="nda_drp_title">About Reports</string>
-    <string name="nda_drp_message">To see maps with reported safety issues visit the ORcycle webpage.</string>
-    <string name="nda_drp_button_now">Now</string>
-    <string name="nda_drp_button_later">Later</string>
+    <string name="nda_dialog_maps_title">ORcycle Maps</string>
+    <string name="nda_dialog_maps_message">To see maps with reported safety issues visit the ORcycle webpage.</string>
+    <string name="nda_dialog_maps_button_now">Now</string>
+    <string name="nda_dialog_maps_button_later">Later</string>
     <string name="title_activity_tutorial">Tutorial&#58;</string>
 
 </resources>

@@ -33,8 +33,9 @@ public class MyApplication extends android.app.Application {
 
 	public static final String PREFS_APPLICATION = "PREFS_APPLICATION";
 	public static final String ORCYCLE_URI = "http://www.pdx.edu/transportation-lab/android-instructions";
-	public static final String PRIVACY_POLICY_URI = "http://www.pdx.edu/transportation-lab/privacy-policy";
-	public static final String REPORT_ROAD_HAZARDS_URI = "http://www.pdx.edu/transportation-lab/reporting-road-hazards";
+	public static final String URI_PRIVACY_POLICY = "http://www.pdx.edu/transportation-lab/privacy-policy";
+	public static final String URI_REPORT_ROAD_HAZARDS = "http://www.pdx.edu/transportation-lab/reporting-road-hazards";
+	public static final String URI_ORCYCLE_MAPS = "http://www.pdx.edu/transportation-lab/orcycle-maps";
 
 	private static final String SETTING_USER_WELCOME_ENABLED = "USER_WELCOME_ENABLED";
 	private static final String SETTING_TUTORIAL_ENABLED = "TUTORIAL_ENABLED";

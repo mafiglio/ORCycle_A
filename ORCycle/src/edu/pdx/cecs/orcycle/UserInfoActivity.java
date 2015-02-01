@@ -54,8 +54,6 @@ public class UserInfoActivity extends Activity {
 	public static final int PREF_GENDER_OTHER     = 1009;
 	public static final int PREF_ETHNICITY_OTHER  = 1012;
 
-
-
 	private enum ExitTransition { EXIT_BACK, EXIT_SEND };
 	private MultiSelectionSpinner spnrBikeTypes;
 	private Spinner spnrRiderType;
@@ -63,6 +61,7 @@ public class UserInfoActivity extends Activity {
 	private Spinner spnrGender;
 	private Spinner spnrEthnicity;
 	private Button btnSave;
+	private Button btnPrivacyPolicy;
 
 	private OnItemWithOtherSelectedListener spnrRiderType_OnItemSelected = null;
 	private OnItemWithOtherSelectedListener spnrOccupation_OnItemSelected = null;
@@ -140,6 +139,9 @@ public class UserInfoActivity extends Activity {
 
 			btnSave = (Button) findViewById(R.id.btn_aui_save_user_info);
 			btnSave.setOnClickListener(new ButtonSave_OnClickListener());
+
+			btnPrivacyPolicy = (Button) findViewById(R.id.btn_aui_privacy_policy);
+			btnPrivacyPolicy.setOnClickListener(new PrivacyPolicy_OnClickListener());
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -259,6 +261,27 @@ public class UserInfoActivity extends Activity {
 
 			try {
 				saveAndFinish();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+    /**
+     * Class: PrivacyPolicy_OnClickListener
+     *
+     * Description: Callback to be invoked when btnPrivacyPolicy button is clicked
+     */
+	private final class PrivacyPolicy_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+
+			try {
+				transitionToWebViewActivity(R.string.ats_webview_Title_privacy_policy, MyApplication.URI_PRIVACY_POLICY);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -556,5 +579,14 @@ public class UserInfoActivity extends Activity {
 		else {
 			overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
 		}
+	}
+
+	private void transitionToWebViewActivity(int titleId, String uri) {
+		String title = getResources().getString(titleId);
+		Intent intent = new Intent(this, WebViewActivity.class);
+		intent.putExtra(WebViewActivity.EXTRA_URL, uri);
+		intent.putExtra(WebViewActivity.EXTRA_TITLE, title);
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}
 }
