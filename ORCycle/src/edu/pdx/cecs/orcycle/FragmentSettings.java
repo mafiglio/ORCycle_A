@@ -1,7 +1,5 @@
 package edu.pdx.cecs.orcycle;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -13,7 +11,20 @@ import android.widget.TextView;
 
 public class FragmentSettings extends Fragment {
 
-	private static final String MODULE_TAG = "FragmentSettings";
+	// Module name
+	public static final String MODULE_TAG = "FragmentSettings";
+
+	// Activity results
+	public static final int RESULT_USER_INFO_PRESSED = 1;
+	public static final int RESULT_GET_STARTED_PRESSED = 2;
+	public static final int RESULT_FEEDBACK_PRESSED = 3;
+	public static final int RESULT_PRIVACY_POLICY_PRESSED = 4;
+	public static final int RESULT_REMINDERS_PRESSED = 5;
+	public static final int RESULT_TUTORIAL_PRESSED = 6;
+	public static final int RESULT_MAPS_LINK_PRESSED = 7;
+	public static final int RESULT_REPORT_HAZARDS_LINK_PRESSED = 8;
+
+	private final FragmentSettingsController controller;
 
 	// UI Elements
 	private Button btnUserInfo = null;
@@ -22,7 +33,18 @@ public class FragmentSettings extends Fragment {
 	private Button btnPrivacyPolicy = null;
 	private Button btnReminders = null;
 	private Button btnTutorial = null;
+	private Button btnMapsLink = null;
+	private Button btnReportHazardsLink = null;
 	private TextView tvVersionCode = null;
+
+	// *********************************************************************************
+	// *                              Constructor
+	// *********************************************************************************
+
+	public FragmentSettings() {
+		super();
+		controller = new FragmentSettingsController(getActivity());
+	}
 
 	// *********************************************************************************
 	// *                              Fragment Handlers
@@ -61,8 +83,15 @@ public class FragmentSettings extends Fragment {
 			btnReminders.setOnClickListener(new Reminders_OnClickListener());
 
 			btnTutorial = (Button) rootView.findViewById(R.id.btnTutorial);
-			btnTutorial.setOnClickListener(new ButtonTutorial_OnClickListener());
+			btnTutorial.setOnClickListener(new Tutorial_OnClickListener());
 
+			btnMapsLink = (Button) rootView.findViewById(R.id.btn_ats_maps_link);
+			btnMapsLink.setOnClickListener(new MapsLink_OnClickListener());
+
+			btnReportHazardsLink = (Button) rootView.findViewById(R.id.btn_ats_report_hazards_link);
+			btnReportHazardsLink.setOnClickListener(new ReportHazardsLink_OnClickListener());
+
+			// Create version string
 			StringBuilder version = new StringBuilder();
 			version.append(getResources().getString(R.string.about_version));
 			version.append(MyApplication.getInstance().getVersionName());
@@ -76,32 +105,6 @@ public class FragmentSettings extends Fragment {
 		}
 
 		return rootView;
-	}
-
-    /**
-     * Handler: onResume
-     * Called when the <code>activity<code/> will start interacting with the user. At this point
-     * the <code>activity<code/> is at the top of the <code>activity<code/> stack, with user
-     * input going to it. Always followed by <code>onPause()<code/>.
-     * @see <code>onPause<code/> class.
-     */
-	@Override
-	public void onResume() {
-		super.onResume();
-		try {
-			Log.v(MODULE_TAG, "onResume()");
-		}
-		catch(Exception ex) {
-			Log.e(MODULE_TAG, ex.getMessage());
-		}
-	}
-
-	/**
-	 * Handler: onPause
-	 */
-	@Override
-	public void onPause() {
-		super.onPause();
 	}
 
 	// *********************************************************************************
@@ -120,7 +123,7 @@ public class FragmentSettings extends Fragment {
 		 */
 		public void onClick(View v) {
 			try {
-				transitionToUserInfoActivity();
+				controller.setResult(RESULT_USER_INFO_PRESSED);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -142,7 +145,8 @@ public class FragmentSettings extends Fragment {
 		 */
 		public void onClick(View v) {
 			try {
-				transitionToORcycle();
+				//transitionToORcycle();
+				controller.setResult(RESULT_GET_STARTED_PRESSED);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -164,7 +168,7 @@ public class FragmentSettings extends Fragment {
 		 */
 		public void onClick(View v) {
 			try {
-				transitionToUserFeedbackActivity();
+				controller.setResult(RESULT_FEEDBACK_PRESSED);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -186,7 +190,7 @@ public class FragmentSettings extends Fragment {
 		 */
 		public void onClick(View v) {
 			try {
-				transitionToPrivacyPolicy();
+				controller.setResult(RESULT_PRIVACY_POLICY_PRESSED);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -208,7 +212,7 @@ public class FragmentSettings extends Fragment {
 		 */
 		public void onClick(View v) {
 			try {
-				transitionToReminders();
+				controller.setResult(RESULT_REMINDERS_PRESSED);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -219,18 +223,18 @@ public class FragmentSettings extends Fragment {
 	}
 
 	/**
-     * Class: ButtonTutorial_OnClickListener
+     * Class: Tutorial_OnClickListener
      *
      * Description: Callback to be invoked when Tutorial button is clicked
      */
-	private final class ButtonTutorial_OnClickListener implements View.OnClickListener {
+	private final class Tutorial_OnClickListener implements View.OnClickListener {
 
 		/**
 		 * Description: Handles onClick for view
 		 */
 		public void onClick(View v) {
 			try {
-				transitionToTutorial();
+				controller.setResult(RESULT_TUTORIAL_PRESSED);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -240,50 +244,50 @@ public class FragmentSettings extends Fragment {
 		}
 	}
 
+	/**
+     * Class: MapsLink_OnClickListener
+     *
+     * Description: Callback to be invoked when mapsLink button is clicked
+     */
+	private final class MapsLink_OnClickListener implements View.OnClickListener {
 
-
-	private void transitionToORcycle() {
-		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MyApplication.ORCYCLE_URI));
-		startActivity(intent);
-		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+			try {
+				//transitionToORcycle();
+				controller.setResult(RESULT_MAPS_LINK_PRESSED);
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			finally {
+			}
+		}
 	}
 
-	private void transitionToPrivacyPolicy() {
-		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MyApplication.PRIVACY_POLICY_URI));
-		startActivity(intent);
-		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+	/**
+     * Class: ReportHazardsLink_OnClickListener
+     *
+     * Description: Callback to be invoked when hazardsLink button is clicked
+     */
+	private final class ReportHazardsLink_OnClickListener implements View.OnClickListener {
+
+		/**
+		 * Description: Handles onClick for view
+		 */
+		public void onClick(View v) {
+			try {
+				//transitionToORcycle();
+				controller.setResult(RESULT_REPORT_HAZARDS_LINK_PRESSED);
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			finally {
+			}
+		}
 	}
 
-	private void transitionToReminders() {
-		Intent intent = new Intent(getActivity(), SavedRemindersActivity.class);
-		startActivity(intent);
-		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		//getActivity().finish();
-	}
-
-	private void transitionToUserFeedbackActivity() {
-		Intent intent = new Intent(getActivity(), UserFeedbackActivity.class);
-		startActivity(intent);
-		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		getActivity().finish();
-	}
-
-	private void transitionToUserInfoActivity() {
-
-		// Create intent to go back to the TripMapActivity
-		Intent intent = new Intent(getActivity(), UserInfoActivity.class);
-		intent.putExtra(UserInfoActivity.EXTRA_PREVIOUS_ACTIVITY, UserInfoActivity.EXTRA_FRAGMENT_SETTINGS);
-
-		// Exit this activity
-		startActivity(intent);
-		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		getActivity().finish();
-	}
-
-	private void transitionToTutorial() {
-		Intent intent = new Intent(getActivity(), TutorialActivity.class);
-		intent.putExtra(TutorialActivity.EXTRA_PREVIOUS_ACTIVITY, TutorialActivity.EXTRA_PREVIOUS_ACTIVITY_USER_SETTINGS);
-		startActivity(intent);
-		getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-	}
 }

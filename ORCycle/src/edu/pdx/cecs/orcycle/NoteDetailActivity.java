@@ -293,7 +293,7 @@ public class NoteDetailActivity extends Activity {
 			uploader.execute(note.noteId);
 		}
 
-		dialogReportProblem();
+		dialogMaps();
 	}
 
 	/**
@@ -464,33 +464,33 @@ public class NoteDetailActivity extends Activity {
 	}
 
 	// *********************************************************************************
-	// *                            No GPS Dialog
+	// *                            ORcycle Maps Dialog
 	// *********************************************************************************
 
 	/**
-	 * Build dialog telling user that the GPS is not available
+	 * Build dialog drecting user to ORcycle maps website
 	 */
-	private void dialogReportProblem() {
+	private void dialogMaps() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.nda_drp_title);
-		builder.setMessage(getResources().getString(R.string.nda_drp_message));
+		builder.setTitle(R.string.nda_dialog_maps_title);
+		builder.setMessage(getResources().getString(R.string.nda_dialog_maps_message));
 		builder.setCancelable(false);
-		builder.setPositiveButton(getResources().getString(R.string.nda_drp_button_now),
-				new DialogReportProblem_NowListener());
-		builder.setNegativeButton(getResources().getString(R.string.nda_drp_button_later),
-				new DialogReportProblem_LaterListener());
+		builder.setPositiveButton(getResources().getString(R.string.nda_dialog_maps_button_now),
+				new DialogMaps_NowListener());
+		builder.setNegativeButton(getResources().getString(R.string.nda_dialog_maps_button_later),
+				new DialogMaps_LaterListener());
 		final AlertDialog alert = builder.create();
 		alert.show();
 	}
 
-	private final class DialogReportProblem_NowListener implements DialogInterface.OnClickListener {
+	private final class DialogMaps_NowListener implements DialogInterface.OnClickListener {
 		public void onClick(final DialogInterface dialog, final int id) {
 			transitionToWebViewActivity();
 			dialog.cancel();
 		}
 	}
 
-	private final class DialogReportProblem_LaterListener implements DialogInterface.OnClickListener {
+	private final class DialogMaps_LaterListener implements DialogInterface.OnClickListener {
 		public void onClick(final DialogInterface dialog, final int id) {
 			transitionToSourceActivity();
 			dialog.cancel();
@@ -596,9 +596,9 @@ public class NoteDetailActivity extends Activity {
 	}
 
 	private void transitionToWebViewActivity() {
-		String title = getResources().getString(R.string.webview_title_report_problem);
+		String title = getResources().getString(R.string.webview_title_orcycle_maps);
 		Intent intent = new Intent(this, WebViewActivity.class);
-		intent.putExtra(WebViewActivity.EXTRA_URL, MyApplication.REPORT_ROAD_HAZARDS_URI);
+		intent.putExtra(WebViewActivity.EXTRA_URL, MyApplication.URI_ORCYCLE_MAPS);
 		intent.putExtra(WebViewActivity.EXTRA_TITLE, title);
 		startActivityForResult(intent, WEB_VIEW_REQUEST);
 		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

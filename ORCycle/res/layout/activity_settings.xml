@@ -10,29 +10,6 @@
 	    android:background="#474334"
         android:orientation="vertical" >
 
-		<RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:background="@color/psu_green"
-            android:orientation="vertical"
-            android:paddingBottom="2dp"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="2dp"
-            tools:context=".UserInfo$DummySectionFragment" >
-		    		    
-	        <TextView
-	            android:id="@+id/tv_more"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_alignParentLeft="true"
-	            android:background="@color/psu_green"
-        		android:textColor="@color/off_white"
-	            android:text="@string/ats_more" />
-
-        </RelativeLayout>
-        
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -186,7 +163,7 @@
             tools:context=".UserInfo$DummySectionFragment" >
 		    		    
 	        <Button
-	            android:id="@+id/btn_ats_report_maps"
+	            android:id="@+id/btn_ats_maps_link"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_alignParentLeft="true"
@@ -209,7 +186,7 @@
             tools:context=".UserInfo$DummySectionFragment" >
 		    		    
 	        <Button
-	            android:id="@+id/btn_ats_transportation_agencies"
+	            android:id="@+id/btn_ats_report_hazards_link"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_alignParentLeft="true"
