@@ -42,7 +42,7 @@
 		    android:paddingRight="10dp"
 		    android:paddingTop="10dp"
 		    android:scaleType="fitCenter"
-		    android:src="@drawable/how_to_1" />
+		    android:src="@drawable/tutorial_start_trip" />
 
 	    <TextView
 	        android:id="@+id/tvDsaMessage"

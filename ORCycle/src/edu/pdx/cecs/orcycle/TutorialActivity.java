@@ -1,7 +1,5 @@
 package edu.pdx.cecs.orcycle;
 
-import java.util.Locale;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -19,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 public class TutorialActivity extends Activity {
 
@@ -27,6 +24,9 @@ public class TutorialActivity extends Activity {
 	public static final String EXTRA_PREVIOUS_ACTIVITY = "previous_activity";
 	public static final int EXTRA_PREVIOUS_ACTIVITY_MAIN_INPUT = 1;
 	public static final int EXTRA_PREVIOUS_ACTIVITY_USER_SETTINGS = 2;
+	private static final int FIRST_TUTORIAL_PAGE = 1;
+	private static final int NUM_TUTORIAL_PAGES = 7;
+	private static final int LAST_TUTORIAL_PAGE = 7;
 
 	private int previousActivity;
 
@@ -57,6 +57,7 @@ public class TutorialActivity extends Activity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		mSectionsPagerAdapter.setViewPager(mViewPager);
+		getActionBar().setTitle(mSectionsPagerAdapter.getPageTitle(0).toString());
 
 		if (null != savedInstanceState)
 			LoadExtras(savedInstanceState);
@@ -141,20 +142,19 @@ public class TutorialActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			// Show 3 total pages.
-			return 3;
+			return NUM_TUTORIAL_PAGES;
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-			Locale l = Locale.getDefault();
 			switch (position) {
-			case 0:
-				return getString(R.string.title_section1).toUpperCase(l);
-			case 1:
-				return getString(R.string.title_section2).toUpperCase(l);
-			case 2:
-				return getString(R.string.title_section3).toUpperCase(l);
+			case 0: return getString(R.string.tutorial_title_start_trip);
+			case 1: return getString(R.string.tutorial_title_trips);
+			case 2: return getString(R.string.tutorial_title_add_report);
+			case 3: return getString(R.string.tutorial_title_reports);
+			case 4: return getString(R.string.tutorial_title_user);
+			case 5: return getString(R.string.tutorial_title_about_yourseld);
+			case 6: return getString(R.string.tutorial_title_add_reminder);
 			}
 			return null;
 		}
@@ -214,12 +214,9 @@ public class TutorialActivity extends Activity {
 				rootView = inflater.inflate(R.layout.fragment_tutorial, container, false);
 
 				section = getArguments().getInt(ARG_SECTION_NUMBER);
+
 				TutorialActivity tutorialActivity = (TutorialActivity) getActivity();
 				previousActivity = tutorialActivity.previousActivity;
-
-
-				TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-				textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
 
 				btnPrev = (Button) rootView.findViewById(R.id.btn_tutorial_previous);
 				btnPrev.setOnClickListener(new ButtonPrevious_OnClickListener(section));
@@ -236,39 +233,23 @@ public class TutorialActivity extends Activity {
 					btnDone.setText(R.string.turorial_btn_done_user_settings);
 
 				ImageView imageView = (ImageView) rootView.findViewById(R.id.iv_tutorial);
+				imageView.setImageResource(getTutorialImage(section));
 
-				switch(section) {
-				case 1:
-
-					imageView.setImageResource(R.drawable.how_to_1);
+				// set button visibilities
+				if(section == FIRST_TUTORIAL_PAGE) {
 					btnPrev.setVisibility(View.GONE);
 					btnNext.setVisibility(View.VISIBLE);
 					btnDone.setVisibility(View.GONE);
-					break;
-
-				case 2:
-
-					imageView.setImageResource(R.drawable.how_to_2);
+				}
+				else if (section == LAST_TUTORIAL_PAGE) {
+					btnPrev.setVisibility(View.VISIBLE);
+					btnNext.setVisibility(View.GONE);
+					btnDone.setVisibility(View.VISIBLE);
+				}
+				else {
 					btnPrev.setVisibility(View.VISIBLE);
 					btnNext.setVisibility(View.VISIBLE);
 					btnDone.setVisibility(View.GONE);
-					break;
-
-				case 3:
-
-					imageView.setImageResource(R.drawable.how_to_3);
-					btnPrev.setVisibility(View.VISIBLE);
-					btnNext.setVisibility(View.GONE);
-					btnDone.setVisibility(View.VISIBLE);
-					break;
-
-				default:
-
-					imageView.setImageResource(R.drawable.how_to_3);
-					btnPrev.setVisibility(View.VISIBLE);
-					btnNext.setVisibility(View.GONE);
-					btnDone.setVisibility(View.VISIBLE);
-					break;
 				}
 
 				getActivity().getActionBar().setDisplayShowTitleEnabled(true);
@@ -278,6 +259,85 @@ public class TutorialActivity extends Activity {
 				Log.e(MODULE_TAG, ex.getMessage());
 			}
 			return rootView;
+		}
+
+		@Override
+		public void onStart() {
+			super.onStart();
+
+			try {
+				Log.v(MODULE_TAG, "Cycle: onStart("+section+")");
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+
+		@Override
+		public void onResume() {
+			super.onResume();
+
+			try {
+				Log.v(MODULE_TAG, "Cycle: onResume("+section+")");
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+
+		@Override
+		public void onPause() {
+
+			try {
+				Log.v(MODULE_TAG, "Cycle: onPause("+section+")");
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			super.onPause();
+		}
+
+		@Override
+		public void onStop() {
+
+			try {
+				Log.v(MODULE_TAG, "Cycle: onStop("+section+")");
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			super.onStop();
+		}
+
+		@Override
+		public void onDestroyView() {
+			try {
+				Log.v(MODULE_TAG, "Cycle: onDestroyView("+section+")");
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			super.onDestroyView();
+		}
+
+		private int getTutorialImage(int section) {
+			switch(section) {
+			default: return R.drawable.tutorial_start_trip;
+			case 2: return R.drawable.tutorial_trips;
+			case 3: return R.drawable.tutorial_add_report;
+			case 4: return R.drawable.tutorial_reports;
+			case 5: return R.drawable.tutorial_user;
+			case 6: return R.drawable.tutorial_about_yourself;
+			case 7: return R.drawable.tutorial_add_reminder;
+
+/*			default: return R.drawable.tutorial_user;
+			case 2: return R.drawable.tutorial_trips;
+			case 3: return R.drawable.tutorial_user;
+			case 4: return R.drawable.tutorial_user;
+			case 5: return R.drawable.tutorial_user;
+			case 6: return R.drawable.tutorial_user;
+			case 7: return R.drawable.tutorial_add_reminder;*/
+			}
 		}
 
 		// *********************************************************************************
@@ -305,6 +365,8 @@ public class TutorialActivity extends Activity {
 				try {
 					ViewPager viewPager = (ViewPager) TutorialFragment.this.getActivity().findViewById(R.id.pager);
 					viewPager.setCurrentItem(mSection - 2, true);
+					String title = viewPager.getAdapter().getPageTitle(mSection - 2).toString();
+					getActivity().getActionBar().setTitle(title);
 				}
 				catch(Exception ex) {
 					Log.e(MODULE_TAG, ex.getMessage());
@@ -333,6 +395,8 @@ public class TutorialActivity extends Activity {
 				try {
 					ViewPager viewPager = (ViewPager) TutorialFragment.this.getActivity().findViewById(R.id.pager);
 					viewPager.setCurrentItem(mSection, true);
+					String title = viewPager.getAdapter().getPageTitle(mSection).toString();
+					getActivity().getActionBar().setTitle(title);
 				}
 				catch(Exception ex) {
 					Log.e(MODULE_TAG, ex.getMessage());
