@@ -199,9 +199,9 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="tutorial_title_trips">How to: View recorded trips</string>
     <string name="tutorial_title_add_report">How to: Add a report</string>
     <string name="tutorial_title_reports">How to: View reports</string>
-    <string name="tutorial_title_user">How to: View user information and links</string>
-    <string name="tutorial_title_about_yourseld">How to: Upload your user profile</string>
-    <string name="tutorial_title_add_reminder">How to: Add a reminder to use ORcycle</string>
+    <string name="tutorial_title_user">Additional features and links</string>
+    <string name="tutorial_title_about_yourseld">How to: Upload your profile</string>
+    <string name="tutorial_title_add_reminder">How to: Add a reminder</string>
             
     
     <!-- ********************************************************* -->

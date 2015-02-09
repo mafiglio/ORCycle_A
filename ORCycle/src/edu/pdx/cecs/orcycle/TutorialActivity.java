@@ -57,7 +57,15 @@ public class TutorialActivity extends Activity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		mSectionsPagerAdapter.setViewPager(mViewPager);
-		getActionBar().setTitle(mSectionsPagerAdapter.getPageTitle(0).toString());
+
+		//getActionBar().setDisplayOptions(options);
+		//getActionBar().setTitle(mSectionsPagerAdapter.getPageTitle(0).toString());
+
+		getActionBar().hide();
+		//actionBar.setDisplayShowTitleEnabled(false);
+		//actionBar.setDisplayShowHomeEnabled(false);
+		//actionBar.setDisplayUseLogoEnabled(false);
+		//actionBar.hide();
 
 		if (null != savedInstanceState)
 			LoadExtras(savedInstanceState);
@@ -152,9 +160,9 @@ public class TutorialActivity extends Activity {
 			case 1: return getString(R.string.tutorial_title_trips);
 			case 2: return getString(R.string.tutorial_title_add_report);
 			case 3: return getString(R.string.tutorial_title_reports);
-			case 4: return getString(R.string.tutorial_title_user);
-			case 5: return getString(R.string.tutorial_title_about_yourseld);
-			case 6: return getString(R.string.tutorial_title_add_reminder);
+			case 4: return getString(R.string.tutorial_title_about_yourseld);
+			case 5: return getString(R.string.tutorial_title_add_reminder);
+			case 6: return getString(R.string.tutorial_title_user);
 			}
 			return null;
 		}
@@ -252,8 +260,9 @@ public class TutorialActivity extends Activity {
 					btnDone.setVisibility(View.GONE);
 				}
 
-				getActivity().getActionBar().setDisplayShowTitleEnabled(true);
-				getActivity().getActionBar().setDisplayShowHomeEnabled(false);
+				//getActivity().getActionBar().setDisplayShowTitleEnabled(true);
+				//getActivity().getActionBar().setDisplayShowTitleEnabled(false);
+				//getActivity().getActionBar().setDisplayShowHomeEnabled(false);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -326,17 +335,9 @@ public class TutorialActivity extends Activity {
 			case 2: return R.drawable.tutorial_trips;
 			case 3: return R.drawable.tutorial_add_report;
 			case 4: return R.drawable.tutorial_reports;
-			case 5: return R.drawable.tutorial_user;
-			case 6: return R.drawable.tutorial_about_yourself;
-			case 7: return R.drawable.tutorial_add_reminder;
-
-/*			default: return R.drawable.tutorial_user;
-			case 2: return R.drawable.tutorial_trips;
-			case 3: return R.drawable.tutorial_user;
-			case 4: return R.drawable.tutorial_user;
-			case 5: return R.drawable.tutorial_user;
-			case 6: return R.drawable.tutorial_user;
-			case 7: return R.drawable.tutorial_add_reminder;*/
+			case 5: return R.drawable.tutorial_about_yourself;
+			case 6: return R.drawable.tutorial_add_reminder;
+			case 7: return R.drawable.tutorial_user;
 			}
 		}
 
@@ -365,8 +366,6 @@ public class TutorialActivity extends Activity {
 				try {
 					ViewPager viewPager = (ViewPager) TutorialFragment.this.getActivity().findViewById(R.id.pager);
 					viewPager.setCurrentItem(mSection - 2, true);
-					String title = viewPager.getAdapter().getPageTitle(mSection - 2).toString();
-					getActivity().getActionBar().setTitle(title);
 				}
 				catch(Exception ex) {
 					Log.e(MODULE_TAG, ex.getMessage());
@@ -395,8 +394,6 @@ public class TutorialActivity extends Activity {
 				try {
 					ViewPager viewPager = (ViewPager) TutorialFragment.this.getActivity().findViewById(R.id.pager);
 					viewPager.setCurrentItem(mSection, true);
-					String title = viewPager.getAdapter().getPageTitle(mSection).toString();
-					getActivity().getActionBar().setTitle(title);
 				}
 				catch(Exception ex) {
 					Log.e(MODULE_TAG, ex.getMessage());
