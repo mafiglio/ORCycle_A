@@ -66,13 +66,18 @@
 		        android:textColor="@color/psu_sienna"
 		        android:text="Select days to remind me..." />
 
+	        <HorizontalScrollView
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+	            android:layout_alignParentRight="true"
+	            android:layout_below="@+id/tv_aer_1"
+	            android:scrollbars="horizontal" >
+
 		    <LinearLayout
 		        android:id="@+id/ll_aer_days"
-		        android:layout_width="fill_parent"
+		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:layout_alignParentLeft="true"
-		        android:layout_alignParentRight="true"
-		        android:layout_below="@+id/tv_aer_1"
 		        android:layout_marginBottom="6dp"
 		        android:scrollbars="horizontal" >
 		
@@ -86,6 +91,7 @@
 		                android:id="@+id/tv_aer_sun"
 		                android:layout_width="fill_parent"
 		                android:layout_height="wrap_content"
+		                android:gravity="center_horizontal"
 		                android:text="Sun" />
 
 		            <CheckBox
@@ -102,8 +108,9 @@
 		
 		            <TextView
 		                android:id="@+id/tv_aer_mon"
-		                android:layout_width="wrap_content"
+		                android:layout_width="fill_parent"
 		                android:layout_height="wrap_content"
+		                android:gravity="center_horizontal"
 		                android:text="Mon" />
 		
 		            <CheckBox
@@ -119,8 +126,9 @@
 		
 		            <TextView
 		                android:id="@+id/tv_aer_tue"
-		                android:layout_width="wrap_content"
+		                android:layout_width="fill_parent"
 		                android:layout_height="wrap_content"
+		                android:gravity="center_horizontal"
 		                android:text="Tue" />
 		
 		            <CheckBox
@@ -136,8 +144,9 @@
 		
 		            <TextView
 		                android:id="@+id/tv_aer_wed"
-		                android:layout_width="wrap_content"
+		                android:layout_width="fill_parent"
 		                android:layout_height="wrap_content"
+		                android:gravity="center_horizontal"
 		                android:text="Wed" />
 		
 		            <CheckBox
@@ -153,8 +162,9 @@
 		
 		            <TextView
 		                android:id="@+id/tv_aer_thu"
-		                android:layout_width="wrap_content"
+		                android:layout_width="fill_parent"
 		                android:layout_height="wrap_content"
+		                android:gravity="center_horizontal"
 		                android:text="Thu" />
 		
 		            <CheckBox
@@ -170,8 +180,9 @@
 		
 		            <TextView
 		                android:id="@+id/tv_aer_fri"
-		                android:layout_width="wrap_content"
+		                android:layout_width="fill_parent"
 		                android:layout_height="wrap_content"
+		                android:gravity="center_horizontal"
 		                android:text="Fri" />
 		
 		            <CheckBox
@@ -187,8 +198,9 @@
 		
 		            <TextView
 		                android:id="@+id/tv_aer_sat"
-		                android:layout_width="wrap_content"
+		                android:layout_width="fill_parent"
 		                android:layout_height="wrap_content"
+		                android:gravity="center_horizontal"
 		                android:text="Sat" />
 		
 		            <CheckBox
@@ -196,7 +208,9 @@
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content" />
 		        </LinearLayout>
-		    </LinearLayout>
+
+		        </LinearLayout>
+		    </HorizontalScrollView>
        	</RelativeLayout>
 		    
 	    <RelativeLayout

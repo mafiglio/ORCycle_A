@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/action_trip_map_view_info"
-          android:showAsAction="always"
+          android:showAsAction="ifRoom"
           android:title="info"/>
     <item android:id="@+id/action_trip_map_view_map"
           android:showAsAction="always"

@@ -35,6 +35,7 @@ public class WebViewActivity extends Activity {
 			webView.getSettings().setBuiltInZoomControls(true);
 			webView.getSettings().setDisplayZoomControls(true);
 			webView.loadUrl(url);
+			getActionBar().hide();
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
