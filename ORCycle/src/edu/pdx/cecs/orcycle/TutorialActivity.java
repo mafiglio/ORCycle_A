@@ -11,7 +11,6 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,14 +57,8 @@ public class TutorialActivity extends Activity {
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		mSectionsPagerAdapter.setViewPager(mViewPager);
 
-		//getActionBar().setDisplayOptions(options);
-		//getActionBar().setTitle(mSectionsPagerAdapter.getPageTitle(0).toString());
-
+		// We need maximum space on this screen so hide action bar
 		getActionBar().hide();
-		//actionBar.setDisplayShowTitleEnabled(false);
-		//actionBar.setDisplayShowHomeEnabled(false);
-		//actionBar.setDisplayUseLogoEnabled(false);
-		//actionBar.hide();
 
 		if (null != savedInstanceState)
 			LoadExtras(savedInstanceState);
@@ -75,15 +68,6 @@ public class TutorialActivity extends Activity {
 
 	private void LoadExtras(Bundle extras) {
 		previousActivity = extras.getInt(EXTRA_PREVIOUS_ACTIVITY, EXTRA_PREVIOUS_ACTIVITY_MAIN_INPUT);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		// Inflate the menu; this adds items to the action bar if it is present.
-		//getMenuInflater().inflate(R.menu.tutorial, menu);
-		//return true;
-		return false;
 	}
 
 	@Override
@@ -260,9 +244,8 @@ public class TutorialActivity extends Activity {
 					btnDone.setVisibility(View.GONE);
 				}
 
-				//getActivity().getActionBar().setDisplayShowTitleEnabled(true);
-				//getActivity().getActionBar().setDisplayShowTitleEnabled(false);
-				//getActivity().getActionBar().setDisplayShowHomeEnabled(false);
+				//btnPrev.setVisibility(View.GONE);
+				//btnNext.setVisibility(View.GONE);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
