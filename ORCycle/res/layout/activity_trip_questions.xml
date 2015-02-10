@@ -10,25 +10,9 @@
         android:orientation="vertical"
         tools:context=".UserInfo$DummySectionFragment" >
 
-        <TextView
-            android:id="@+id/tvTripQuestionsHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:background="@color/psu_green"
-            android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="10dp"
-            android:text="@string/atq_specific_questions"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/text_white" />
-        
 		<LinearLayout
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent"
-            android:layout_below="@id/tvNoteQuestionsHeader"
 		    android:background="#474334"
 		    android:orientation="vertical" >
 

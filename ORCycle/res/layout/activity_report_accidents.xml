@@ -2,11 +2,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/NoteQuestionsScrollView"
     android:layout_width="wrap_content"
-    android:layout_height="fill_parent" >
+    android:layout_height="wrap_content" >
 
-		<LinearLayout
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context=".UserInfo$DummySectionFragment" >
+
+    	<LinearLayout
 		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
+		    android:layout_height="match_parent"
 		    android:background="#474334"
 		    android:orientation="vertical" >
 
@@ -23,7 +29,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/text_white" />
 
-		    	        <RelativeLayout
+		    <RelativeLayout
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_marginTop="1dp"
@@ -42,19 +48,20 @@
 	                android:layout_alignParentLeft="true"
 	                android:layout_alignParentRight="true"
 	                android:layout_alignParentTop="true"
+	                android:layout_marginTop="0dp"
 	                android:text="@string/ara_q_severity"
 	                android:textAppearance="?android:attr/textAppearanceMedium"
-	                android:textColor="@color/psu_sienna" />
-
+	                android:textColor="#A33F1F" >
+	                </TextView>
+			    
 	            <Spinner
 	                android:id="@+id/spn_ara_severity_of_problem"
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
-	                android:layout_alignLeft="@id/tv_ara_severity_of_problem"
+	                android:layout_alignParentLeft="true"
 	                android:layout_below="@id/tv_ara_severity_of_problem"
 	                android:layout_marginBottom="6dp"
-	                android:entries="@array/ara_a_severity"
-	                android:textAppearance="?android:attr/textAppearanceMedium" />
+	                android:entries="@array/ara_a_severity" />
             
         	</RelativeLayout>
             
@@ -303,5 +310,6 @@
         	</RelativeLayout>
 	        
 	        </LinearLayout>
-	    
+	</RelativeLayout>
+    			    
 </ScrollView>
