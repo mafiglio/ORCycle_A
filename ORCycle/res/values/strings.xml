@@ -22,7 +22,7 @@
     <string name="title_activity_saved_notes">Saved Reports</string>
     <string name="title_activity_rate_segment">Rate Segment</string>
     <string name="title_activity_rate_segment_detail">Rating Details</string>
-    <string name="title_activity_user_info">Tell us about yourself&#8230;</string>
+    <string name="title_activity_user_info">Biking Habits</string>
     <string name="title_activity_dsa_dialog">DsaDialogActivity</string>
     <string name="title_orcycle_instructions">Instructions</string>
     <string name="title_activity_report_accidents">ORcycle</string>
@@ -40,9 +40,9 @@
     <string name="btn_lbl_rate_segment_start">Rate segment&#8230;</string>
     <string name="btn_lbl_rate_segment_finish">Enter end of segment</string>
     <string name="chooser_image">Select Image</string>
-    <string name="fmi_query_user_profile_title">Tell us about yourself&#8230;</string>
-    <string name="fmi_query_user_profile">If you are new to ORcycle, tell us about yourself.&#160;&#160;Please
-answer at least the first 6 questions about your biking habits.</string>
+    <string name="fmi_query_user_profile_title">Tell us about your biking&#8230;</string>
+    <string name="fmi_query_user_profile">If you are new to ORcycle, tell us about your biking habits.&#160;&#160;Please
+answer at least the first 6 questions.</string>
     <string name="fmi_qup_dialog_ok">OK</string>
     <string name="fmi_qup_dialog_later">Later</string>
     <string name="fmi_no_gps">Your phone\'s GPS is disabled. ORCycle needs GPS to determine your location.\n\nGo to System Settings now to enable GPS?</string>
@@ -140,7 +140,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="atq_specific_questions">Specific Trip Related Questions</string>
     <string name="snli_content_description_note_severity">Report Severity</string>
     <string name="anq_requiredEntries">* = Required entries</string>
-    <string name="ats_tell_us_about_yourself">Tell us about yourself&#8230;</string>
+    <string name="ats_tell_us_about_yourself">Tell us about your biking habits&#8230;</string>
     <string name="ats_getting_started">Get started with ORCycle&#8230;</string>
     <string name="ats_provide_feedback">Provide feedback about the app&#8230;</string>
     <string name="ats_privacy_policy">ORcycle\'s Privacy Policy&#8230;</string>
@@ -170,6 +170,8 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="aumad_answer_required_questions">Please answer all required questions.</string>
     <string name="aumad_ok">OK</string>
     <string name="aui_save">Save</string>
+    <string name="aui_header_1">Tell us about your biking habits&#8230;</string>
+    <string name="aui_header_2">Please tell us about yourself&#8230;</string>
     <string name="dsaNoteImageContentDescription">How to description</string>
     <string name="aer_save">Save</string>
     <string name="aer_cancel">Cancel</string>

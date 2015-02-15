@@ -22,7 +22,7 @@
 	        android:paddingLeft="10dp"
 	        android:paddingRight="10dp"
 	        android:paddingTop="10dp"
-	        android:text="Title"
+	        android:text="@string/fmi_query_user_profile_title"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
 	        android:textColor="@color/text_white" />
 	
