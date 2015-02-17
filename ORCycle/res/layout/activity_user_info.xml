@@ -16,7 +16,30 @@
 		    android:background="#474334"
 		    android:orientation="vertical" >
 
-	        <RelativeLayout
+			<RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="@color/psu_green"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+	            
+				<TextView
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentRight="true"
+	                android:layout_alignParentTop="true"
+		            android:text="@string/aui_header_1"
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="@color/text_white" />
+        	</RelativeLayout>
+        	
+        	<RelativeLayout
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_marginTop="1dp"
@@ -217,6 +240,30 @@
 	                android:textAppearance="?android:attr/textAppearanceMedium" />
 		        
         	</RelativeLayout>
+        	
+			<RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="@color/psu_green"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+	            
+				<TextView
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentRight="true"
+	                android:layout_alignParentTop="true"
+		            android:text="@string/aui_header_2"
+	                android:textAppearance="?android:attr/textAppearanceMedium"
+	                android:textColor="@color/text_white" />
+        	</RelativeLayout>
+        	
 	        <RelativeLayout
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
