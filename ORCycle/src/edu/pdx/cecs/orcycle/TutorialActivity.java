@@ -29,6 +29,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -78,6 +80,7 @@ public class TutorialActivity extends Activity {
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
+		//mViewPager.setOffscreenPageLimit(0);
 		mSectionsPagerAdapter.setViewPager(mViewPager);
 
 		// We need maximum space on this screen so hide action bar
@@ -163,15 +166,15 @@ public class TutorialActivity extends Activity {
 		@Override
 		public CharSequence getPageTitle(int position) {
 			switch (position) {
-			case 0: return getString(R.string.tutorial_title_start_trip);
-			case 1: return getString(R.string.tutorial_title_trips);
-			case 2: return getString(R.string.tutorial_title_add_report);
-			case 3: return getString(R.string.tutorial_title_reports);
-			case 4: return getString(R.string.tutorial_title_about_yourseld);
-			case 5: return getString(R.string.tutorial_title_add_reminder);
-			case 6: return getString(R.string.tutorial_title_user);
+			default: return getString(R.string.tutorial_title_add_report);
+			case 1: return getString(R.string.tutorial_title_reports);
+			case 2: return getString(R.string.tutorial_title_start_trip);
+			case 3: return getString(R.string.tutorial_title_trips);
+			case 4: return getString(R.string.tutorial_title_trip_map);
+			case 5: return getString(R.string.tutorial_title_user);
+			case 6: return getString(R.string.tutorial_title_about_yourseld);
+			case 7: return getString(R.string.tutorial_title_add_reminder);
 			}
-			return null;
 		}
 
 		public void setViewPager(ViewPager viewPager) {
@@ -248,7 +251,13 @@ public class TutorialActivity extends Activity {
 					btnDone.setText(R.string.turorial_btn_done_user_settings);
 
 				ImageView imageView = (ImageView) rootView.findViewById(R.id.iv_tutorial);
-				imageView.setImageResource(getTutorialImage(section));
+				//imageView.setImageResource(getTutorialImage(section));
+
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inSampleSize = 2;
+				Bitmap bMap = BitmapFactory.decodeResource(getResources(), getTutorialImage(section), options);
+				imageView.setImageBitmap(bMap);
+
 
 				// set button visibilities
 				if(section == FIRST_TUTORIAL_PAGE) {
@@ -337,13 +346,14 @@ public class TutorialActivity extends Activity {
 
 		private int getTutorialImage(int section) {
 			switch(section) {
-			default: return R.drawable.tutorial_start_trip;
-			case 2: return R.drawable.tutorial_trips;
-			case 3: return R.drawable.tutorial_add_report;
-			case 4: return R.drawable.tutorial_reports;
-			case 5: return R.drawable.tutorial_about_yourself;
-			case 6: return R.drawable.tutorial_add_reminder;
-			case 7: return R.drawable.tutorial_user;
+			default: return R.drawable.tutorial_add_report;
+			case 2: return R.drawable.tutorial_reports;
+			case 3: return R.drawable.tutorial_start_trip;
+			case 4: return R.drawable.tutorial_trips;
+			case 5: return R.drawable.tutorial_trip_map;
+			case 6: return R.drawable.tutorial_user;
+			case 7: return R.drawable.tutorial_about_yourself;
+			case 8: return R.drawable.tutorial_add_reminder;
 			}
 		}
 

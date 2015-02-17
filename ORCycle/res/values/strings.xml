@@ -199,6 +199,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     
     <string name="tutorial_title_start_trip">How to: Record a trip</string>
     <string name="tutorial_title_trips">How to: View recorded trips</string>
+    <string name="tutorial_title_trip_map">How to: Mark report locations</string>
     <string name="tutorial_title_add_report">How to: Add a report</string>
     <string name="tutorial_title_reports">How to: View reports</string>
     <string name="tutorial_title_user">Additional features and links</string>
