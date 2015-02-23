@@ -48,7 +48,6 @@ public class TutorialActivity extends Activity {
 	public static final String EXTRA_PREVIOUS_ACTIVITY = "previous_activity";
 	public static final int EXTRA_PREVIOUS_ACTIVITY_MAIN_INPUT = 1;
 	public static final int EXTRA_PREVIOUS_ACTIVITY_USER_SETTINGS = 2;
-	private static final int FIRST_TUTORIAL_PAGE = 1;
 	private static final int NUM_TUTORIAL_PAGES = 7;
 	private static final int LAST_TUTORIAL_PAGE = 7;
 
@@ -202,8 +201,6 @@ public class TutorialActivity extends Activity {
 		private static final String ARG_SECTION_NUMBER = "section_number";
 
 		private int section;
-		private Button btnPrev;
-		private Button btnNext;
 		private Button btnDone;
 		private int previousActivity;
 
@@ -236,12 +233,6 @@ public class TutorialActivity extends Activity {
 				TutorialActivity tutorialActivity = (TutorialActivity) getActivity();
 				previousActivity = tutorialActivity.previousActivity;
 
-				btnPrev = (Button) rootView.findViewById(R.id.btn_tutorial_previous);
-				btnPrev.setOnClickListener(new ButtonPrevious_OnClickListener(section));
-
-				btnNext = (Button) rootView.findViewById(R.id.btn_tutorial_next);
-				btnNext.setOnClickListener(new ButtonNext_OnClickListener(section));
-
 				btnDone = (Button) rootView.findViewById(R.id.btn_tutorial_done);
 				btnDone.setOnClickListener(new ButtonDone_OnClickListener());
 
@@ -260,24 +251,12 @@ public class TutorialActivity extends Activity {
 
 
 				// set button visibilities
-				if(section == FIRST_TUTORIAL_PAGE) {
-					btnPrev.setVisibility(View.GONE);
-					btnNext.setVisibility(View.VISIBLE);
-					btnDone.setVisibility(View.GONE);
-				}
-				else if (section == LAST_TUTORIAL_PAGE) {
-					btnPrev.setVisibility(View.VISIBLE);
-					btnNext.setVisibility(View.GONE);
+				if (section == LAST_TUTORIAL_PAGE) {
 					btnDone.setVisibility(View.VISIBLE);
 				}
 				else {
-					btnPrev.setVisibility(View.VISIBLE);
-					btnNext.setVisibility(View.VISIBLE);
 					btnDone.setVisibility(View.GONE);
 				}
-
-				//btnPrev.setVisibility(View.GONE);
-				//btnNext.setVisibility(View.GONE);
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
@@ -360,64 +339,6 @@ public class TutorialActivity extends Activity {
 		// *********************************************************************************
 		// *                              Button Handlers
 		// *********************************************************************************
-
-		/**
-	     * Class: ButtonPrevious_OnClickListener
-	     *
-	     * Description: Callback to be invoked when the previousButton button is clicked
-	     */
-		private final class ButtonPrevious_OnClickListener implements View.OnClickListener {
-
-			private final int mSection;
-
-			public ButtonPrevious_OnClickListener(int section) {
-				super();
-				mSection = section;
-			}
-
-			/**
-			 * Description: Handles onClick for view
-			 */
-			public void onClick(View v) {
-				try {
-					ViewPager viewPager = (ViewPager) TutorialFragment.this.getActivity().findViewById(R.id.pager);
-					viewPager.setCurrentItem(mSection - 2, true);
-				}
-				catch(Exception ex) {
-					Log.e(MODULE_TAG, ex.getMessage());
-				}
-			}
-		}
-
-		/**
-	     * Class: ButtonNext_OnClickListener
-	     *
-	     * Description: Callback to be invoked when the previousButton button is clicked
-	     */
-		private final class ButtonNext_OnClickListener implements View.OnClickListener {
-
-			private final int mSection;
-
-			public ButtonNext_OnClickListener(int section) {
-				super();
-				mSection = section;
-			}
-
-			/**
-			 * Description: Handles onClick for view
-			 */
-			public void onClick(View v) {
-				try {
-					ViewPager viewPager = (ViewPager) TutorialFragment.this.getActivity().findViewById(R.id.pager);
-					viewPager.setCurrentItem(mSection, true);
-				}
-				catch(Exception ex) {
-					Log.e(MODULE_TAG, ex.getMessage());
-				}
-				finally {
-				}
-			}
-		}
 
 		/**
 	     * Class: ButtonDone_OnClickListener
