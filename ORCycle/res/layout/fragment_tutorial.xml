@@ -18,30 +18,6 @@
 	    android:scaleType="fitCenter" />
 
 		<Button
-		    android:id="@+id/btn_tutorial_previous"
-		    style="?android:attr/buttonBarButtonStyle"
-		    android:layout_width="45dp"
-		    android:layout_height="40dp"
-		    android:layout_alignParentLeft="true"
-		    android:layout_centerVertical="true"
-		    android:background="@color/psu_green"
-		    android:text="@string/turorial_btn_previous"
-		    android:textColor="@color/user_button_text"
-		    android:textStyle="bold" />
-
-		<Button
-		    android:id="@+id/btn_tutorial_next"
-		    style="?android:attr/buttonBarButtonStyle"
-		    android:layout_width="45dp"
-		    android:layout_height="40dp"
-		    android:layout_alignParentRight="true"
-		    android:layout_centerVertical="true"
-		    android:background="@color/psu_green"
-		    android:text="@string/turorial_btn_next"
-		    android:textColor="@color/user_button_text"
-		    android:textStyle="bold" />
-
-		<Button
 		    android:id="@+id/btn_tutorial_done"
 		    style="?android:attr/buttonBarButtonStyle"
 		    android:layout_width="wrap_content"
