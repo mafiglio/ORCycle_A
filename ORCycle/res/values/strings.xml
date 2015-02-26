@@ -203,9 +203,10 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="tutorial_title_add_report">How to: Add a report</string>
     <string name="tutorial_title_reports">How to: View reports</string>
     <string name="tutorial_title_user">Additional features and links</string>
-    <string name="tutorial_title_about_yourseld">How to: Upload your profile</string>
+    <string name="tutorial_title_biking_habits">How to: Upload your profile</string>
     <string name="tutorial_title_add_reminder">How to: Add a reminder</string>
-            
+    <string name="tutorial_title_links">How to: Go to linked sites</string>
+    
     
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->

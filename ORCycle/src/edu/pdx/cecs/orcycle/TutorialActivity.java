@@ -48,8 +48,8 @@ public class TutorialActivity extends Activity {
 	public static final String EXTRA_PREVIOUS_ACTIVITY = "previous_activity";
 	public static final int EXTRA_PREVIOUS_ACTIVITY_MAIN_INPUT = 1;
 	public static final int EXTRA_PREVIOUS_ACTIVITY_USER_SETTINGS = 2;
-	private static final int NUM_TUTORIAL_PAGES = 7;
-	private static final int LAST_TUTORIAL_PAGE = 7;
+	private static final int NUM_TUTORIAL_PAGES = 9;
+	private static final int LAST_TUTORIAL_PAGE = 9;
 
 	private int previousActivity;
 
@@ -170,9 +170,10 @@ public class TutorialActivity extends Activity {
 			case 2: return getString(R.string.tutorial_title_start_trip);
 			case 3: return getString(R.string.tutorial_title_trips);
 			case 4: return getString(R.string.tutorial_title_trip_map);
-			case 5: return getString(R.string.tutorial_title_user);
-			case 6: return getString(R.string.tutorial_title_about_yourseld);
-			case 7: return getString(R.string.tutorial_title_add_reminder);
+			case 5: return getString(R.string.tutorial_title_biking_habits);
+			case 6: return getString(R.string.tutorial_title_add_reminder);
+			case 7: return getString(R.string.tutorial_title_user);
+			case 8: return getString(R.string.tutorial_title_links);
 			}
 		}
 
@@ -330,9 +331,10 @@ public class TutorialActivity extends Activity {
 			case 3: return R.drawable.tutorial_start_trip;
 			case 4: return R.drawable.tutorial_trips;
 			case 5: return R.drawable.tutorial_trip_map;
-			case 6: return R.drawable.tutorial_user;
-			case 7: return R.drawable.tutorial_about_yourself;
-			case 8: return R.drawable.tutorial_add_reminder;
+			case 6: return R.drawable.tutorial_biking_habits;
+			case 7: return R.drawable.tutorial_add_reminder;
+			case 8: return R.drawable.tutorial_user;
+			case 9: return R.drawable.tutorial_links;
 			}
 		}
 
