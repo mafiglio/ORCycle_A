@@ -67,10 +67,12 @@ public class NoteData {
 	double startTime = 0;
 	Location noteLocation = new Location("");
 	int noteSeverity;
-	String notefancystart, notedetails, noteimageurl;
+	String notefancystart, notedetails;
 	byte[] noteimagedata;
 	int noteStatus;
 	long reportDate;
+
+	private String imageFileName;
 
 	DbAdapter mDb;
 
@@ -116,6 +118,14 @@ public class NoteData {
 		// updateNote();
 	}
 
+	public boolean hasImage() {
+		return !imageFileName.equals("") && (noteimagedata != null);
+	}
+
+	public String getImageFileName() {
+		return imageFileName;
+	}
+
 	// Get lat/long extremes, etc, from note record
 	void populateDetails() {
 
@@ -133,10 +143,10 @@ public class NoteData {
 				noteSeverity   = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_SEVERITY   ));
 				notedetails    = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_DETAILS    ));
 				noteStatus     = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_STATUS     ));
-				noteimageurl   = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_IMGURL     ));
+				imageFileName  = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_IMGURL     ));
 				reportDate     = noteDetails.getLong  (noteDetails.getColumnIndex(DbAdapter.K_NOTE_REPORT_DATE));
 
-				if ((null != noteimageurl) && (!noteimageurl.equals("")))
+				if ((null != imageFileName) && (!imageFileName.equals("")))
 					noteimagedata = mDb.getNoteImageData(noteId);
 				else
 					noteimagedata = null;
@@ -214,10 +224,18 @@ public class NoteData {
 		}
 	}
 
+	/**
+	 * Pushes the following note data to the database
+	 * @param noteFancyStart
+	 * @param noteDetails
+	 * @param image
+	 */
 	public void updateNote(String noteFancyStart, String noteDetails, byte[] image) {
 		mDb.open();
 		try {
 			mDb.updateNote(noteId, noteFancyStart, noteDetails, image);
+			this.notedetails = noteDetails;
+			this.imageFileName = (null == image) ? "" : mDb.getNoteImageFileName(noteId);
 		}
 		finally {
 			mDb.close();

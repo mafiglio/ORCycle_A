@@ -77,9 +77,11 @@ public class NoteDetailActivity extends Activity {
 	private static final int CAMERA_REQUEST = 1888;
 	private static final int IMAGE_REQUEST = 1889;
 	private static final int WEB_VIEW_REQUEST = 1890;
+	private static final int EMAIL_REQUEST = 1891;
 
-	long noteId;
-	int noteSource;
+	private long noteId;
+	private int noteSource;
+	private NoteData note;
 	private long tripId;
 	private int tripSource;
 	private int reportType;
@@ -90,6 +92,7 @@ public class NoteDetailActivity extends Activity {
 	private Bitmap photo;
 	private Uri uri;
 	private Dialog attachDialog;
+	private String noteDetailsToUpload;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -232,7 +235,10 @@ public class NoteDetailActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		try {
-			if (resultCode == RESULT_OK) {
+			if (requestCode == EMAIL_REQUEST) {
+				transitionToSourceActivity();
+			}
+			else if (resultCode == RESULT_OK) {
 				if (requestCode == CAMERA_REQUEST) {
 					uri = null;
 					photo = (Bitmap) data.getExtras().get("data");
@@ -282,9 +288,11 @@ public class NoteDetailActivity extends Activity {
 	@SuppressLint("SimpleDateFormat")
 	void submit(String noteDetailsToUpload) {
 
+		this.noteDetailsToUpload = noteDetailsToUpload;
+
 		byte[] noteImage;
 
-		NoteData note = NoteData.fetchNote(NoteDetailActivity.this, noteId);
+		note = NoteData.fetchNote(NoteDetailActivity.this, noteId);
 
 		// Start time format displayed in note list
 		String fancyStartTime = (new SimpleDateFormat("MMMM d, y  HH:mm a")).format(note.startTime);
@@ -316,7 +324,9 @@ public class NoteDetailActivity extends Activity {
 			uploader.execute(note.noteId);
 		}
 
-		dialogMaps();
+		//dialogMaps();
+
+		dialogEmail();
 	}
 
 	/**
@@ -487,6 +497,43 @@ public class NoteDetailActivity extends Activity {
 	}
 
 	// *********************************************************************************
+	// *                            ORcycle E-mail Dialog
+	// *********************************************************************************
+
+	/**
+	 * Build dialog asking user to send email
+	 */
+	private void dialogEmail() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.nda_dialog_email_title);
+		builder.setMessage(getResources().getString(R.string.nda_dialog_email_message));
+		builder.setCancelable(false);
+		builder.setPositiveButton(getResources().getString(R.string.nda_dialog_email_button_yes),
+				new DialogEmail_YesListener());
+		builder.setNegativeButton(getResources().getString(R.string.nda_dialog_email_button_no),
+				new DialogEmail_NoListener());
+		final AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	private final class DialogEmail_YesListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+
+			NoteEmail noteEmail = new NoteEmail(NoteDetailActivity.this, note);
+
+			transitionToEmailActivity(noteEmail);
+			dialog.cancel();
+		}
+	}
+
+	private final class DialogEmail_NoListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			transitionToSourceActivity();
+			dialog.cancel();
+		}
+	}
+
+	// *********************************************************************************
 	// *                            ORcycle Maps Dialog
 	// *********************************************************************************
 
@@ -625,5 +672,27 @@ public class NoteDetailActivity extends Activity {
 		intent.putExtra(WebViewActivity.EXTRA_TITLE, title);
 		startActivityForResult(intent, WEB_VIEW_REQUEST);
 		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+	}
+
+	private void transitionToEmailActivity(NoteEmail noteEmail) {
+		try {
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("plain/text");
+			//intent.setType("text/html");
+			intent.putExtra(Intent.EXTRA_EMAIL, new String[] { "robin5@pdx.edu" });
+			intent.putExtra(Intent.EXTRA_SUBJECT, noteEmail.getSubject());
+			intent.putExtra(Intent.EXTRA_TEXT, noteEmail.getText());
+
+			Uri attachment = null;
+		    if (null != (attachment = noteEmail.getAttachment())) {
+		    	intent.putExtra(Intent.EXTRA_STREAM, attachment);
+		    }
+
+		    startActivityForResult(Intent.createChooser(intent, ""), EMAIL_REQUEST);
+			overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		}
+		catch (Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 }
