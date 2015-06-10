@@ -1060,6 +1060,10 @@ int string hello_world 0x7f0c002f
 int string location_client_powered_by_google 0x7f0c0027
 int string misc_generally_long_text_string 0x7f0c007d
 int string misc_longest_date_string 0x7f0c007e
+int string nda_dialog_email_button_no 0x7f0c0139
+int string nda_dialog_email_button_yes 0x7f0c013a
+int string nda_dialog_email_message 0x7f0c0138
+int string nda_dialog_email_title 0x7f0c0137
 int string nda_dialog_maps_button_later 0x7f0c0135
 int string nda_dialog_maps_button_now 0x7f0c0134
 int string nda_dialog_maps_message 0x7f0c0133

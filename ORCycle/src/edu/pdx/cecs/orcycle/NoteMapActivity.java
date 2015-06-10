@@ -170,7 +170,7 @@ public class NoteMapActivity extends Activity {
 					.anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
 					.position(notePosition));
 
-				noteHasImage = !note.noteimageurl.equals("") && (note.noteimagedata != null);
+				noteHasImage = note.hasImage();
 			}
 
 			// If image exist, add it to the imageView widget
