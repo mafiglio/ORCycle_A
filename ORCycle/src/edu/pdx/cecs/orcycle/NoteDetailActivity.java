@@ -42,6 +42,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -247,7 +248,7 @@ public class NoteDetailActivity extends Activity {
 				else if (requestCode == IMAGE_REQUEST) {
 					photo = null;
 					uri = data.getData();
-					imageView.setImageURI(uri);
+					imageView.setImageBitmap(getReducedBitmap(uri));
 				}
 				else if (requestCode == WEB_VIEW_REQUEST) {
 					transitionToSourceActivity();
@@ -258,6 +259,84 @@ public class NoteDetailActivity extends Activity {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
 	}
+
+	private Bitmap getReducedBitmap(Uri uri) {
+
+		InputStream inStream = null;
+		Bitmap thumbnail = null;
+		try {
+			float scale = -1;
+			int width = imageView.getWidth();
+			int height = imageView.getHeight();
+
+			if ((scale = getScale(uri, width, height)) <= 0) {
+				return null;
+			}
+
+			// sampleSize must be a power of 2
+			int sampleSize = 1;
+			while (sampleSize < scale) {
+			    sampleSize *= 2;
+			}
+
+			Options bitmapOptions = new Options();
+			// this is why you can not have an image scaled as you would like to have
+			bitmapOptions.inSampleSize = sampleSize;
+			// now we want to load the image
+			bitmapOptions.inJustDecodeBounds = false;
+			// Let's load just the part of the image necessary for creating the thumbnail, not the whole image
+			inStream = getContentResolver().openInputStream(uri);
+			thumbnail = BitmapFactory.decodeStream(inStream, null, bitmapOptions);
+		}
+		catch(FileNotFoundException ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		finally {
+			if (null != inStream) {
+				try {
+					inStream.close();
+				}
+				catch(IOException ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+		}
+		return thumbnail;
+	}
+
+	private float getScale(Uri uri, int desiredWidth, int desiredHeight) {
+		InputStream inStream = null;
+		float scale = -1;
+
+		try {
+			inStream = getContentResolver().openInputStream(uri);
+
+			Options bitmapOptions = new Options();
+			// obtain the size of the image, without loading it in memory
+			bitmapOptions.inJustDecodeBounds = true;
+
+			BitmapFactory.decodeStream(inStream, null, bitmapOptions);
+			// find the best scaling factor for the desired dimensions
+			float widthScale = (float)bitmapOptions.outWidth/desiredWidth;
+			float heightScale = (float)bitmapOptions.outHeight/desiredHeight;
+			scale = Math.min(widthScale, heightScale);
+		}
+		catch(FileNotFoundException ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		finally {
+    		if (null != inStream) {
+		    	try {
+	    			inStream.close();
+		    	}
+				catch(IOException ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+    		}
+		}
+		return scale;
+	}
+
 
 	public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
 
