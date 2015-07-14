@@ -6,12 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -114,7 +108,9 @@ public class NoteEmail {
 		}
 
 		// Google maps link
-		text.append("Google Map Location: \n\n");
+		text.append("Google Map Location:");
+		text.append(NL2);
+		text.append(TAB);
 		//text.append("<a href=");
 		text.append("http://maps.google.com/maps?q=");
 		text.append(String.valueOf(noteData.latitude / 1E6));
@@ -130,22 +126,22 @@ public class NoteEmail {
 
 		// Final note comment
 		text.append("Additional Details: ");
+		text.append(NL2);
+		text.append(TAB);
 		text.append(noteData.notedetails);
 		text.append(NL2);
 
 		// Generate URI to image file
 		if ((null != imageFileName) && (!imageFileName.equals(""))){
 			File inFile = new File(imageFileName);
-			/*if (file.exists()) {
-				imageUri = Uri.fromFile(file);
-			}*/
 			File outFile = null;
 	        try {
 	            outFile = new File(Environment.getExternalStorageDirectory() + File.separator + "image.jpg");
 	            outFile.createNewFile();
 	            copyFile(inFile, outFile);
 		        imageUri = Uri.fromFile(outFile);
-	        } catch (IOException e) {
+	        } catch (IOException ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
 	        }
 		}
 	}
@@ -157,9 +153,11 @@ public class NoteEmail {
 	 * @throws IOException
 	 */
 	 void copyFile(File src, File dst) throws IOException {
-		    FileChannel inChannel = new FileInputStream(src).getChannel();
-		    FileChannel outChannel = new FileOutputStream(dst).getChannel();
+		    FileChannel inChannel = null;
+		    FileChannel outChannel = null;
 		    try {
+			    inChannel = new FileInputStream(src).getChannel();
+			    outChannel = new FileOutputStream(dst).getChannel();
 		        inChannel.transferTo(0, inChannel.size(), outChannel);
 		    } finally {
 		        if (inChannel != null)
@@ -182,71 +180,6 @@ public class NoteEmail {
 		//String s = Html.toHtml(Html.fromHtml(text.toString()));
 
 		return text.toString();
-	}
-
-	private void getNoteData(long noteId) throws JSONException {
-		try {
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			SimpleDateFormat reportDateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-			String noteImageFileName;
-
-			DbAdapter mDb = new DbAdapter(context);
-			mDb.openReadOnly();
-			try {
-				Cursor noteCursor = mDb.fetchNote(noteId);
-
-				try {
-					Map<String, Integer> fieldMap = new HashMap<String, Integer>();
-					int colTripId = noteCursor.getColumnIndex(DbAdapter.K_NOTE_TRIP_ID);
-					int colRecorded =  noteCursor.getColumnIndex(DbAdapter.K_NOTE_RECORDED);
-					int colLat = noteCursor.getColumnIndex(DbAdapter.K_NOTE_LAT);
-					int colLgt = noteCursor.getColumnIndex(DbAdapter.K_NOTE_LGT);
-					int colHAcc = noteCursor.getColumnIndex(DbAdapter.K_NOTE_ACC);
-					int colVAcc = noteCursor.getColumnIndex(DbAdapter.K_NOTE_ACC);
-					int colAlt = noteCursor.getColumnIndex(DbAdapter.K_NOTE_ALT);
-					int colSpeed = noteCursor.getColumnIndex(DbAdapter.K_NOTE_SPEED);
-					int colDetails = noteCursor.getColumnIndex(DbAdapter.K_NOTE_DETAILS);
-					int colImgUrl = noteCursor.getColumnIndex(DbAdapter.K_NOTE_IMGURL);
-					int colReportDate = noteCursor.getColumnIndex(DbAdapter.K_NOTE_REPORT_DATE);
-
-					JSONObject note = new JSONObject();
-
-					noteTripId = noteCursor.getInt(colTripId);
-					noteRecorded = df.format(noteCursor.getDouble(colRecorded));
-					noteLat = (noteCursor.getDouble(colLat) / 1E6);
-					noteLgt = (noteCursor.getDouble(colLgt) / 1E6);
-					noteHAcc = noteCursor.getDouble(colHAcc);
-					noteVAcc = noteCursor.getDouble(colVAcc);
-					noteAlt = noteCursor.getDouble(colAlt);
-					noteSpeed = noteCursor.getDouble(colSpeed);
-					noteDetails = noteCursor.getString(colDetails);
-					noteImgUrl = noteCursor.getString(colImgUrl);
-					noteReportDate = reportDateFormatter.format(noteCursor.getLong(colReportDate));
-
-					if ((null != noteImgUrl) && (!noteImgUrl.equals(""))) {
-						//imageData = mDb.getNoteImageData(noteId);
-					}
-					else {
-						//imageData = null;
-					}
-				}
-				catch(Exception ex) {
-					Log.e(MODULE_TAG, ex.getMessage());
-				}
-				finally {
-					noteCursor.close();
-				}
-			}
-			catch(Exception ex) {
-				Log.e(MODULE_TAG, ex.getMessage());
-			}
-			finally {
-				mDb.close();
-			}
-		}
-		catch(Exception ex) {
-			Log.e(MODULE_TAG, ex.getMessage());
-		}
 	}
 
 	private void getNoteResponses(long noteId) {
