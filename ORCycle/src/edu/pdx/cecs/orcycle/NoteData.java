@@ -215,9 +215,13 @@ public class NoteData {
 	}
 
 	public void updateNoteLatLng(float latitude, float longitude) {
+
+		this.latitude = (int) (latitude * 1E6);
+		this.longitude = (int) (longitude * 1E6);
+
 		mDb.open();
 		try {
-			mDb.updateNote(noteId, (int) (latitude * 1E6), (int) (longitude * 1E6), 0, 0, 0);
+			mDb.updateNote(noteId, this.latitude, this.longitude, 0, 0, 0);
 		}
 		finally {
 			mDb.close();

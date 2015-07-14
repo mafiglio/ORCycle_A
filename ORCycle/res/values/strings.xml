@@ -697,8 +697,9 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="nda_dialog_maps_button_later">Later</string>
     <string name="title_activity_tutorial">Tutorial&#58;</string>
     <string name="nda_dialog_email_title">Send E-mail?</string>
-    <string name="nda_dialog_email_message">Would you like to send an auto-generated e-mail to a transportation agency regarding your report?  Please
-    include your name and phone number so you can be contacted regarding the report.</string>
+    <string name="nda_dialog_email_message">Would you like to send an auto-generated e-mail to a transportation agency regarding your report?
+If so, press -Yes- and select an e-mail application to send the report.
+Please include your name and phone number so you can be contacted regarding the report.</string>
     <string name="nda_dialog_email_button_no">No</string>
     <string name="nda_dialog_email_button_yes">Yes</string>
     
