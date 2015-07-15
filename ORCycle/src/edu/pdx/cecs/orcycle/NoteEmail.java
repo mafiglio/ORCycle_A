@@ -45,21 +45,27 @@ public class NoteEmail {
 	private String noteDetails;
 	private String noteImgUrl;
 	private String noteReportDate;
+	private final boolean imageHasLatLng;
+	private final boolean hasImage;
 
 	/**
 	 *
 	 * @param context
 	 * @param noteData
 	 */
-	public NoteEmail(Context context, NoteData noteData) {
+	public NoteEmail(Context context, NoteData noteData,
+			boolean imageHasLatLng, double reportLat, double reportLng
+			, double imageLat, double imageLng) {
 
 		this.context = context;
+		this.imageHasLatLng = imageHasLatLng;
 
 		// Start time format displayed in note list
 		String reportDate = (new SimpleDateFormat("MMMM d, y  HH:mm a")).format(noteData.reportDate);
 
 		// get filename of image.
 		imageFileName = noteData.getImageFileName();
+		this.hasImage = ((null != imageFileName) && (!imageFileName.equals("")));
 
 		// Assemble answers to note questions
 		getNoteResponses(noteData.noteId);
@@ -107,22 +113,13 @@ public class NoteEmail {
 			text.append(NL2);
 		}
 
-		// Google maps link
-		text.append("Google Map Location:");
-		text.append(NL2);
-		text.append(TAB);
-		//text.append("<a href=");
-		text.append("http://maps.google.com/maps?q=");
-		text.append(String.valueOf(noteData.latitude / 1E6));
-		text.append(",");
-		text.append(String.valueOf(noteData.longitude / 1E6));
-		text.append("&ll=");
-		text.append(String.valueOf(noteData.latitude / 1E6));
-		text.append(",");
-		text.append(String.valueOf(noteData.longitude / 1E6));
-		text.append("&z=16");
-		//text.append("/>");
-		text.append(NL2);
+		if (imageHasLatLng) {
+			appendLocation("Report Location", reportLat / 1E6, reportLng / 1E6);
+			appendLocation("Image Location", imageLat / 1E6, imageLng / 1E6);
+		}
+		else {
+			appendLocation("Report Location", reportLat / 1E6, reportLng / 1E6);
+		}
 
 		// Final note comment
 		text.append("Additional Details: ");
@@ -132,7 +129,7 @@ public class NoteEmail {
 		text.append(NL2);
 
 		// Generate URI to image file
-		if ((null != imageFileName) && (!imageFileName.equals(""))){
+		if (hasImage){
 			File inFile = new File(imageFileName);
 			File outFile = null;
 	        try {
@@ -145,6 +142,28 @@ public class NoteEmail {
 	        }
 		}
 	}
+
+	private void appendLocation(String caption, double lat, double lng) {
+		// Google maps link
+		text.append(caption);
+		text.append(":");
+		text.append(NL2);
+		text.append(TAB);
+		//text.append("<a href=");
+		text.append("http://maps.google.com/maps?q=");
+		text.append(String.valueOf(lat));
+		text.append(",");
+		text.append(String.valueOf(lng));
+		text.append("&ll=");
+		text.append(String.valueOf(lat));
+		text.append(",");
+		text.append(String.valueOf(lng));
+		text.append("&z=16");
+		//text.append("/>");
+		text.append(NL2);
+
+	}
+
 
 	/**
 	 *

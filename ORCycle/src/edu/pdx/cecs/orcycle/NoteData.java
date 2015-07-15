@@ -77,13 +77,25 @@ public class NoteData {
 	DbAdapter mDb;
 
 	// CyclePoint pt;
-	int latitude, longitude;
+	private int latitude;
+	private int longitude;
+
 	float accuracy, speed;
 	double altitude;
 
 	public static int STATUS_INCOMPLETE = 0;
 	public static int STATUS_COMPLETE = 1;
 	public static int STATUS_SENT = 2;
+
+
+	public int getLatitude() {
+		return latitude;
+	}
+
+	public int getLongitude() {
+		return longitude;
+	}
+
 
 	public static NoteData createNote(Context c, long tripid) {
 		NoteData t = new NoteData(c.getApplicationContext(), 0);

@@ -61,6 +61,8 @@ public class NoteDetailActivity extends Activity {
 
 	public static final String MODULE_TAG = "NoteDetailActivity";
 
+	public static final String ORCYCLE_EMAIL_ADDRESS = "figliozzi@pdx.edu";
+
 	public static final String EXTRA_NOTE_ID = "noteId";
 	public static final String EXTRA_NOTE_SEVERITY = "noteSeverity";
 	public static final String EXTRA_NOTE_SOURCE = "noteSource";
@@ -86,6 +88,11 @@ public class NoteDetailActivity extends Activity {
 	private long tripId;
 	private int tripSource;
 	private int reportType;
+	private double emailReportLat;  // original latitude location of report set by user
+	private double emailReportLng;	// original longitude location of report set by user
+	private double emailImageLat;  // original latitude location of report set by user
+	private double emailImageLng;	// original longitude location of report set by user
+	private boolean imageHasLatLng = false;
 
 	private EditText noteDetails;
 	private ImageButton imageButton;
@@ -372,6 +379,8 @@ public class NoteDetailActivity extends Activity {
 		byte[] noteImage;
 
 		note = NoteData.fetchNote(NoteDetailActivity.this, noteId);
+		emailReportLat = note.getLatitude();
+		emailReportLng = note.getLongitude();
 
 		// Start time format displayed in note list
 		String fancyStartTime = (new SimpleDateFormat("MMMM d, y  HH:mm a")).format(note.startTime);
@@ -389,10 +398,18 @@ public class NoteDetailActivity extends Activity {
 			noteImage = null;
 		}
 
+		imageHasLatLng = (null != latLng);
 		// store note details in local database
-		if (null != latLng) {
+		if (imageHasLatLng) {
+			// replace report location with the location from the image
 			note.updateNoteLatLng(latLng[0], latLng[1]);
+
+			int iLat = (int) (latLng[0] * 1E6);
+			int iLng = (int) (latLng[1] * 1E6);
+			emailImageLat = iLat;
+			emailImageLng = iLng;
 		}
+
 		note.updateNote(fancyStartTime, noteDetailsToUpload, noteImage);
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 
@@ -598,7 +615,8 @@ public class NoteDetailActivity extends Activity {
 	private final class DialogEmail_YesListener implements DialogInterface.OnClickListener {
 		public void onClick(final DialogInterface dialog, final int id) {
 
-			NoteEmail noteEmail = new NoteEmail(NoteDetailActivity.this, note);
+			NoteEmail noteEmail = new NoteEmail(NoteDetailActivity.this, note, imageHasLatLng,
+					emailReportLat, emailReportLng, emailImageLat, emailImageLng);
 
 			transitionToEmailActivity(noteEmail);
 			dialog.cancel();
@@ -758,7 +776,7 @@ public class NoteDetailActivity extends Activity {
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("plain/text");
 			//intent.setType("text/html");
-			intent.putExtra(Intent.EXTRA_EMAIL, new String[] { "robin5@pdx.edu" });
+			intent.putExtra(Intent.EXTRA_EMAIL, new String[] { ORCYCLE_EMAIL_ADDRESS });
 			intent.putExtra(Intent.EXTRA_SUBJECT, noteEmail.getSubject());
 			intent.putExtra(Intent.EXTRA_TEXT, noteEmail.getText());
 
