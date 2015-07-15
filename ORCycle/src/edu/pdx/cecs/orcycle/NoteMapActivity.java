@@ -148,7 +148,7 @@ public class NoteMapActivity extends Activity {
 			}
 
 			// Center & zoom the map
-			LatLng center = new LatLng(note.latitude * 1E-6, note.longitude * 1E-6);
+			LatLng center = new LatLng(note.getLatitude() * 1E-6, note.getLongitude() * 1E-6);
 
 			try {
 				map.animateCamera(CameraUpdateFactory.newLatLngZoom(center, 16));
@@ -161,7 +161,7 @@ public class NoteMapActivity extends Activity {
 			noteHasImage = false;
 			if (note != null) {
 
-				LatLng notePosition = new LatLng(note.latitude * 1E-6, note.longitude * 1E-6);
+				LatLng notePosition = new LatLng(note.getLatitude() * 1E-6, note.getLongitude() * 1E-6);
 
 				int noteDrawable = DbAnswers.getNoteSeverityMapImageResourceId(note.noteSeverity);
 
