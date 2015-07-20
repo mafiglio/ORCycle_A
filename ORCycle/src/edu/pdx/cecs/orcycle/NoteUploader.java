@@ -98,6 +98,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 	private static final String NOTE_DETAILS = "d";
 	private static final String NOTE_IMGURL = "i";
 	private static final String NOTE_REPORT_DATE = "reportDate";
+	private static final String NOTE_EMAIL_SENT = "e";
 
 	private static final String FID_QUESTION_ID = "question_id";
 	private static final String FID_ANSWER_ID = "answer_id";
@@ -166,6 +167,7 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 					fieldMap.put(NOTE_DETAILS, noteCursor.getColumnIndex(DbAdapter.K_NOTE_DETAILS));
 					fieldMap.put(NOTE_IMGURL, noteCursor.getColumnIndex(DbAdapter.K_NOTE_IMGURL));
 					fieldMap.put(NOTE_REPORT_DATE, noteCursor.getColumnIndex(DbAdapter.K_NOTE_REPORT_DATE));
+					fieldMap.put(NOTE_EMAIL_SENT, noteCursor.getColumnIndex(DbAdapter.K_NOTE_EMAIL_SENT));
 
 					JSONObject note = new JSONObject();
 
@@ -183,6 +185,9 @@ public class NoteUploader extends AsyncTask<Long, Integer, Boolean> {
 					long reportDate = noteCursor.getLong(fieldMap.get(NOTE_REPORT_DATE));
 					String formattedDate = reportDateFormatter.format(reportDate);
 					note.put(NOTE_REPORT_DATE, formattedDate);
+
+					boolean emailSent = (noteCursor.getInt(fieldMap.get(NOTE_EMAIL_SENT)) == 1 ? true : false);
+					note.put(NOTE_EMAIL_SENT, emailSent);
 
 					if ((null != noteImageFileName) && (!noteImageFileName.equals("")))
 						imageData = mDb.getNoteImageData(noteId);

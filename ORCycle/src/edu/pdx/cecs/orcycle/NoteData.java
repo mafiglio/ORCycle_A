@@ -71,6 +71,7 @@ public class NoteData {
 	byte[] noteimagedata;
 	int noteStatus;
 	long reportDate;
+	private boolean emailSent;
 
 	private String imageFileName;
 
@@ -157,6 +158,7 @@ public class NoteData {
 				noteStatus     = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_STATUS     ));
 				imageFileName  = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_IMGURL     ));
 				reportDate     = noteDetails.getLong  (noteDetails.getColumnIndex(DbAdapter.K_NOTE_REPORT_DATE));
+				emailSent      = (noteDetails.getInt  (noteDetails.getColumnIndex(DbAdapter.K_NOTE_EMAIL_SENT)) == 1 ? true : false);
 
 				if ((null != imageFileName) && (!imageFileName.equals("")))
 					noteimagedata = mDb.getNoteImageData(noteId);
@@ -252,6 +254,17 @@ public class NoteData {
 			mDb.updateNote(noteId, noteFancyStart, noteDetails, image);
 			this.notedetails = noteDetails;
 			this.imageFileName = (null == image) ? "" : mDb.getNoteImageFileName(noteId);
+		}
+		finally {
+			mDb.close();
+		}
+	}
+
+	public void updateEmailSent(boolean value) {
+		mDb.open();
+		try {
+			mDb.updateNoteEmailSent(noteId, value);
+			this.emailSent = value;
 		}
 		finally {
 			mDb.close();
