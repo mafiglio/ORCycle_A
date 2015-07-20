@@ -95,12 +95,10 @@ public class NoteDetailActivity extends Activity {
 	private boolean imageHasLatLng = false;
 
 	private EditText noteDetails;
-	private ImageButton imageButton;
 	private ImageView imageView;
 	private Bitmap photo;
 	private Uri uri;
 	private Dialog attachDialog;
-	private String noteDetailsToUpload;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +114,6 @@ public class NoteDetailActivity extends Activity {
 			// get references to view widgets
 			noteDetails = (EditText) findViewById(R.id.et_and_note_detail);
 			imageView = (ImageView) findViewById(R.id.iv_and_image_view);
-			// imageView.setVisibility(4);
-			imageButton = (ImageButton) findViewById(R.id.ib_and_image_button);
 
 			// show input keyboard
 			this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -244,7 +240,14 @@ public class NoteDetailActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		try {
 			if (requestCode == EMAIL_REQUEST) {
-				transitionToSourceActivity();
+				if (resultCode == RESULT_OK) {
+					note.updateEmailSent(true);
+					uploadNote();
+					transitionToSourceActivity();
+				}
+				else {
+					dialogEmail();
+				}
 			}
 			else if (resultCode == RESULT_OK) {
 				if (requestCode == CAMERA_REQUEST) {
@@ -344,7 +347,6 @@ public class NoteDetailActivity extends Activity {
 		return scale;
 	}
 
-
 	public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -373,8 +375,6 @@ public class NoteDetailActivity extends Activity {
 
 	@SuppressLint("SimpleDateFormat")
 	void submit(String noteDetailsToUpload) {
-
-		this.noteDetailsToUpload = noteDetailsToUpload;
 
 		byte[] noteImage;
 
@@ -413,16 +413,21 @@ public class NoteDetailActivity extends Activity {
 		note.updateNote(fancyStartTime, noteDetailsToUpload, noteImage);
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 
+		// Query user to upload an email
+		dialogEmail();
+	}
+
+	/**
+	 * Instantiates NoteUploader and launches upload thread.
+	 */
+	private void uploadNote() {
+
 		if (note.noteStatus < NoteData.STATUS_SENT) {
 			// And upload to the cloud database, too! W00t W00t!
 			NoteUploader uploader = new NoteUploader(NoteDetailActivity.this, MyApplication.getInstance().getUserId());
 			NoteUploader.setPending(note.noteId, true);
 			uploader.execute(note.noteId);
 		}
-
-		//dialogMaps();
-
-		dialogEmail();
 	}
 
 	/**
@@ -565,13 +570,18 @@ public class NoteDetailActivity extends Activity {
 
 	/**
 	 * Retrieves Exif metadata from a photo bitmap
-	 * @param photo
-	 * @return
+	 * @param photo bitmap
+	 * @return always null
 	 */
 	private float[] getLatLng(Bitmap photo) {
 		return null;
 	}
 
+	/**
+	 * Retrieves Exif metadata from a bitmap file
+	 * @param fileName file name of bitmap file
+	 * @return an array of floats with first entry latitude, and second entry longitude
+	 */
 	private float[] getLatLng(String fileName) {
 
 		float[] latLng = new float[2];
@@ -625,40 +635,7 @@ public class NoteDetailActivity extends Activity {
 
 	private final class DialogEmail_NoListener implements DialogInterface.OnClickListener {
 		public void onClick(final DialogInterface dialog, final int id) {
-			transitionToSourceActivity();
-			dialog.cancel();
-		}
-	}
-
-	// *********************************************************************************
-	// *                            ORcycle Maps Dialog
-	// *********************************************************************************
-
-	/**
-	 * Build dialog drecting user to ORcycle maps website
-	 */
-	private void dialogMaps() {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.nda_dialog_maps_title);
-		builder.setMessage(getResources().getString(R.string.nda_dialog_maps_message));
-		builder.setCancelable(false);
-		builder.setPositiveButton(getResources().getString(R.string.nda_dialog_maps_button_now),
-				new DialogMaps_NowListener());
-		builder.setNegativeButton(getResources().getString(R.string.nda_dialog_maps_button_later),
-				new DialogMaps_LaterListener());
-		final AlertDialog alert = builder.create();
-		alert.show();
-	}
-
-	private final class DialogMaps_NowListener implements DialogInterface.OnClickListener {
-		public void onClick(final DialogInterface dialog, final int id) {
-			transitionToWebViewActivity();
-			dialog.cancel();
-		}
-	}
-
-	private final class DialogMaps_LaterListener implements DialogInterface.OnClickListener {
-		public void onClick(final DialogInterface dialog, final int id) {
+			uploadNote();
 			transitionToSourceActivity();
 			dialog.cancel();
 		}
@@ -762,31 +739,27 @@ public class NoteDetailActivity extends Activity {
 		startActivityForResult(cameraIntent, CAMERA_REQUEST);
 	}
 
-	private void transitionToWebViewActivity() {
-		String title = getResources().getString(R.string.webview_title_orcycle_maps);
-		Intent intent = new Intent(this, WebViewActivity.class);
-		intent.putExtra(WebViewActivity.EXTRA_URL, MyApplication.URI_ORCYCLE_MAPS);
-		intent.putExtra(WebViewActivity.EXTRA_TITLE, title);
-		startActivityForResult(intent, WEB_VIEW_REQUEST);
-		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-	}
-
 	private void transitionToEmailActivity(NoteEmail noteEmail) {
 		try {
 			Intent intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("plain/text");
-			//intent.setType("text/html");
+			intent.setType("plain/text"); // TODO: intent.setType("text/html");
 			intent.putExtra(Intent.EXTRA_EMAIL, new String[] { ORCYCLE_EMAIL_ADDRESS });
 			intent.putExtra(Intent.EXTRA_SUBJECT, noteEmail.getSubject());
 			intent.putExtra(Intent.EXTRA_TEXT, noteEmail.getText());
 
+			// Add the image attachment to the email if one exists
 			Uri attachment = null;
 		    if (null != (attachment = noteEmail.getAttachment())) {
 		    	intent.putExtra(Intent.EXTRA_STREAM, attachment);
 		    }
 
+		    // launch the email chooser activity and return the result to this activity
 		    startActivityForResult(Intent.createChooser(intent, ""), EMAIL_REQUEST);
+
+		    // use a slide out transition
 			overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+			// Note that this activity is left on the activity stack.
 		}
 		catch (Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
