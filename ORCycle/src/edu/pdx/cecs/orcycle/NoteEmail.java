@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -53,7 +54,7 @@ public class NoteEmail {
 		this.context = context;
 
 		// Start time format displayed in note list
-		String reportDate = (new SimpleDateFormat("MMMM d, y  HH:mm a")).format(noteData.reportDate);
+		String reportDate = (new SimpleDateFormat("yyyy-MM-dd", Locale.US)).format(noteData.reportDate);
 
 		// get filename of image.
 		imageFileName = noteData.getImageFileName();
