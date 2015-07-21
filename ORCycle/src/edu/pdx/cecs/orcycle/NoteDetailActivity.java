@@ -244,7 +244,7 @@ public class NoteDetailActivity extends Activity {
 				if (resultCode == RESULT_OK) {
 					note.updateEmailSent(true);
 					uploadNote();
-					transitionToSourceActivity();
+					dialogEmailEpilog();
 				}
 				else {
 					dialogEmail();
@@ -649,6 +649,36 @@ public class NoteDetailActivity extends Activity {
 		public void onClick(final DialogInterface dialog, final int id) {
 			try {
 				uploadNote();
+				transitionToSourceActivity();
+			}
+			catch (Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			dialog.cancel();
+		}
+	}
+
+	// *********************************************************************************
+	// *                            ORcycle E-mail Epilog Dialog
+	// *********************************************************************************
+
+	/**
+	 * Build dialog telling user reporting process
+	 */
+	private void dialogEmailEpilog() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.nda_dialog_epilog_title);
+		builder.setMessage(getResources().getString(R.string.nda_dialog_epilog_message));
+		builder.setCancelable(false);
+		builder.setPositiveButton(getResources().getString(R.string.nda_dialog_epilog_button_ok),
+				new DialogEmailEpilog_OkListener());
+		final AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	private final class DialogEmailEpilog_OkListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			try {
 				transitionToSourceActivity();
 			}
 			catch (Exception ex) {

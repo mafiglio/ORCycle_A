@@ -702,5 +702,10 @@ If so, press -Yes- and select an e-mail application to send the report.
 Please include your name and phone number so you can be contacted regarding the report.</string>
     <string name="nda_dialog_email_button_no">No</string>
     <string name="nda_dialog_email_button_yes">Yes</string>
+    <string name="nda_dialog_epilog_title">Send E-mail?</string>
+    <string name="nda_dialog_epilog_message">Thank you for sending this report to ODOT. 
+Reports are typically processed within 5 business days. If the location is not within ODOT 
+jurisdiction the email will be forwarded to a county or city that has jurisdiction over the facility.</string>
+    <string name="nda_dialog_epilog_button_ok">OK</string>
     
 </resources>
