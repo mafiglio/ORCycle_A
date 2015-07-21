@@ -63,15 +63,20 @@ import android.database.Cursor;
 import android.location.Location;
 
 public class NoteData {
+
+	private static final String MODULE_TAG = "NoteData";
+
 	long noteId;
 	double startTime = 0;
 	Location noteLocation = new Location("");
-	int noteSeverity;
+	private int noteSeverity;
 	String notefancystart, notedetails;
 	byte[] noteimagedata;
 	int noteStatus;
 	long reportDate;
 	private boolean emailSent;
+	private int isSafetyIssue;
+	private int isAccident;
 
 	private String imageFileName;
 
@@ -88,7 +93,6 @@ public class NoteData {
 	public static int STATUS_COMPLETE = 1;
 	public static int STATUS_SENT = 2;
 
-
 	public int getLatitude() {
 		return latitude;
 	}
@@ -97,6 +101,9 @@ public class NoteData {
 		return longitude;
 	}
 
+	public int getNoteSeverity() {
+		return noteSeverity;
+	}
 
 	public static NoteData createNote(Context c, long tripid) {
 		NoteData t = new NoteData(c.getApplicationContext(), 0);
@@ -127,7 +134,8 @@ public class NoteData {
 		altitude = 0;
 		speed = 0;
 		reportDate = 0;
-
+		isSafetyIssue = -1;
+		isAccident = -1;
 		// updateNote();
 	}
 
@@ -164,6 +172,15 @@ public class NoteData {
 					noteimagedata = mDb.getNoteImageData(noteId);
 				else
 					noteimagedata = null;
+
+				if (DbAnswers.isAccidentSeverity(noteSeverity)) {
+					isAccident = 1;    // true
+					isSafetyIssue = 0; // false
+				}
+				else if (DbAnswers.isSafetyUrgency(noteSeverity)) {
+					isAccident = 0;    // false
+					isSafetyIssue = 1; // true
+				}
 			}
 			finally {
 				noteDetails.close();
@@ -269,5 +286,35 @@ public class NoteData {
 		finally {
 			mDb.close();
 		}
+	}
+
+	/**
+	 * Returns true if the report data is from a safety issue
+	 * @return true if safety issue, false otherwise
+	 * @throws IllegalStateException if the value was not set from the database
+	 */
+	public boolean isSafetyIssue() throws IllegalStateException {
+
+		if (0 == this.isSafetyIssue)
+			return false;
+		else if (1 == this.isSafetyIssue)
+			return true;
+
+		throw new IllegalStateException(MODULE_TAG + ": isSafetyIssue value not set");
+	}
+
+	/**
+	 * Returns true if the report data is from an accident
+	 * @return true if accident, false otherwise
+	 * @throws IllegalStateException if the value was not set from the database
+	 */
+	public boolean isAccident() throws IllegalStateException {
+
+		if (0 == this.isAccident)
+			return false;
+		else if (1 == this.isAccident)
+			return true;
+
+		throw new IllegalStateException(MODULE_TAG + ": isAccident value not set");
 	}
 }

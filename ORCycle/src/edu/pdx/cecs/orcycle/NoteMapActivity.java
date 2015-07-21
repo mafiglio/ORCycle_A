@@ -103,7 +103,7 @@ public class NoteMapActivity extends Activity {
 
 			NoteData note = NoteData.fetchNote(this, noteId);
 
-			if (-1 != DbAnswers.findIndex(DbAnswers.accidentSeverity, note.noteSeverity)) {
+			if (note.isAccident()) {
 				questionsView = accidentView;
 			}
 			else {
@@ -117,7 +117,7 @@ public class NoteMapActivity extends Activity {
 			TextView tvNmComment = (TextView) findViewById(R.id.tvNmComment);
 			TextView tvNmComment2 = (TextView) findViewById(R.id.tvNmComment2);
 
-			tvHeaderSeverity.setText(getNoteSeverityText(note.noteSeverity));
+			tvHeaderSeverity.setText(getNoteSeverityText(note.getNoteSeverity()));
 			tvHeaderFancyStart.setText(note.notefancystart);
 			tvNmComment.setText(note.notedetails);
 			tvNmComment2.setText(note.notedetails);
@@ -163,7 +163,7 @@ public class NoteMapActivity extends Activity {
 
 				LatLng notePosition = new LatLng(note.getLatitude() * 1E-6, note.getLongitude() * 1E-6);
 
-				int noteDrawable = DbAnswers.getNoteSeverityMapImageResourceId(note.noteSeverity);
+				int noteDrawable = DbAnswers.getNoteSeverityMapImageResourceId(note.getNoteSeverity());
 
 				map.addMarker(new MarkerOptions()
 					.icon(BitmapDescriptorFactory.fromResource(noteDrawable))

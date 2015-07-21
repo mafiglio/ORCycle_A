@@ -400,6 +400,9 @@ public class ReportSafetyIssuesActivity extends Activity {
 			spAdapter.put(spnUrgency , DbQuestions.SAFETY_URGENCY,
 					   DbAnswers.safetyUrgency);
 
+			// This is utterly bad programming!!! We are setting the severity
+			// column in the database with urgency values.  Later we key off this value
+			// to determine if the report is a safety or accident report
 			setSeverity(spnUrgency, DbAnswers.safetyUrgency);
 		}
 		catch(Exception ex) {

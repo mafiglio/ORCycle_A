@@ -125,6 +125,22 @@ public final class DbAnswers {
 		return -1;
 	}
 
+	public static boolean isAccidentSeverity(int value) {
+		for (int entry: accidentSeverity) {
+			if (entry == value)
+				return true;
+		}
+		return false;
+	}
+
+	public static boolean isSafetyUrgency(int value) {
+		for (int entry: safetyUrgency) {
+			if (entry == value)
+				return true;
+		}
+		return false;
+	}
+
 	public static int getNoteSeverityImageResourceId(int noteSeverity) {
 
 		switch (noteSeverity) {

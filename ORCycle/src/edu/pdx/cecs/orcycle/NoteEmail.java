@@ -34,31 +34,23 @@ public class NoteEmail {
 	private final StringBuilder sbSafetyIssue = new StringBuilder();
 	private final StringBuilder sbSafetySeverity = new StringBuilder();
 
-	private int noteTripId;
-	private String noteRecorded;
-	private double noteLat;
-	private double noteLgt;
-	private double noteHAcc;
-	private double noteVAcc;
-	private double noteAlt;
-	private double noteSpeed;
-	private String noteDetails;
-	private String noteImgUrl;
-	private String noteReportDate;
-	private final boolean imageHasLatLng;
 	private final boolean hasImage;
 
 	/**
-	 *
+	 * Instantiates an object containing note information to be emailed to application owner
 	 * @param context
 	 * @param noteData
+	 * @param imageHasLatLng
+	 * @param reportLat
+	 * @param reportLng
+	 * @param imageLat
+	 * @param imageLng
 	 */
 	public NoteEmail(Context context, NoteData noteData,
-			boolean imageHasLatLng, double reportLat, double reportLng
-			, double imageLat, double imageLng) {
+			boolean imageHasLatLng, double reportLat, double reportLng,
+			double imageLat, double imageLng) {
 
 		this.context = context;
-		this.imageHasLatLng = imageHasLatLng;
 
 		// Start time format displayed in note list
 		String reportDate = (new SimpleDateFormat("MMMM d, y  HH:mm a")).format(noteData.reportDate);
@@ -74,7 +66,7 @@ public class NoteEmail {
 		text.append("Phone number for contact: <enter here>\n\n");
 		text.append("E-mail address: <enter here>\n\n");
 
-		if (-1 != DbAnswers.findIndex(DbAnswers.accidentSeverity, noteData.noteSeverity)) {
+		if (noteData.isAccident()) {
 
 			subject = "Crash or near miss report: " + reportDate;
 
@@ -96,7 +88,7 @@ public class NoteEmail {
 			text.append(reportDate);
 			text.append(NL2);
 		}
-		else {
+		else if (noteData.isSafetyIssue()){
 
 			subject = "Safety issue report: " + reportDate;
 
@@ -111,6 +103,9 @@ public class NoteEmail {
 			text.append(TAB);
 			text.append(reportDate);
 			text.append(NL2);
+		}
+		else {
+			subject = "Unknown Report: " + reportDate;
 		}
 
 		if (imageHasLatLng) {
@@ -161,7 +156,6 @@ public class NoteEmail {
 		text.append("&z=16");
 		//text.append("/>");
 		text.append(NL2);
-
 	}
 
 
