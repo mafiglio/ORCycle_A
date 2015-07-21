@@ -61,7 +61,8 @@ public class NoteDetailActivity extends Activity {
 
 	public static final String MODULE_TAG = "NoteDetailActivity";
 
-	public static final String ORCYCLE_EMAIL_ADDRESS = "figliozzi@pdx.edu";
+	//public static final String ORCYCLE_EMAIL_ADDRESS = "figliozzi@pdx.edu";
+	public static final String ORCYCLE_EMAIL_ADDRESS = "robin5@pdx.edu";
 
 	public static final String EXTRA_NOTE_ID = "noteId";
 	public static final String EXTRA_NOTE_SEVERITY = "noteSeverity";
@@ -414,7 +415,14 @@ public class NoteDetailActivity extends Activity {
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 
 		// Query user to upload an email
-		dialogEmail();
+
+		if (note.isSafetyIssue()) {
+			dialogEmail();
+		}
+		else {
+			uploadNote();
+			transitionToSourceActivity();
+		}
 	}
 
 	/**
@@ -624,19 +632,28 @@ public class NoteDetailActivity extends Activity {
 
 	private final class DialogEmail_YesListener implements DialogInterface.OnClickListener {
 		public void onClick(final DialogInterface dialog, final int id) {
+			try {
+				NoteEmail noteEmail = new NoteEmail(NoteDetailActivity.this, note, imageHasLatLng,
+						emailReportLat, emailReportLng, emailImageLat, emailImageLng);
+				transitionToEmailActivity(noteEmail);
+			}
+			catch (Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 
-			NoteEmail noteEmail = new NoteEmail(NoteDetailActivity.this, note, imageHasLatLng,
-					emailReportLat, emailReportLng, emailImageLat, emailImageLng);
-
-			transitionToEmailActivity(noteEmail);
 			dialog.cancel();
 		}
 	}
 
 	private final class DialogEmail_NoListener implements DialogInterface.OnClickListener {
 		public void onClick(final DialogInterface dialog, final int id) {
-			uploadNote();
-			transitionToSourceActivity();
+			try {
+				uploadNote();
+				transitionToSourceActivity();
+			}
+			catch (Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 			dialog.cancel();
 		}
 	}
