@@ -61,8 +61,7 @@ public class NoteDetailActivity extends Activity {
 
 	public static final String MODULE_TAG = "NoteDetailActivity";
 
-	//public static final String ORCYCLE_EMAIL_ADDRESS = "figliozzi@pdx.edu";
-	public static final String ORCYCLE_EMAIL_ADDRESS = "robin5@pdx.edu";
+	public static final String ORCYCLE_EMAIL_ADDRESS = "figliozzi@pdx.edu";
 
 	public static final String EXTRA_NOTE_ID = "noteId";
 	public static final String EXTRA_NOTE_SEVERITY = "noteSeverity";
@@ -241,14 +240,9 @@ public class NoteDetailActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		try {
 			if (requestCode == EMAIL_REQUEST) {
-				if (resultCode == RESULT_OK) {
-					note.updateEmailSent(true);
-					uploadNote();
-					dialogEmailEpilog();
-				}
-				else {
-					dialogEmail();
-				}
+				note.updateEmailSent(true);
+				uploadNote();
+				dialogEmailEpilog();
 			}
 			else if (resultCode == RESULT_OK) {
 				if (requestCode == CAMERA_REQUEST) {
