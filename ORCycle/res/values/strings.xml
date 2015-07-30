@@ -660,6 +660,7 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>4</item>
         <item>5 (Urgent)</item>
     </string-array>
+    
     <string-array name="arsi_a_urgency_2">
         <item></item>
         <item>Safety Issue (urgency 1)</item>
@@ -668,7 +669,16 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
         <item>Safety Issue (urgency 4)</item>
         <item>Safety Issue (urgency 5)</item>
     </string-array>
-
+    
+    <string-array name="email_subject_line_urgency">
+        <item></item>
+        <item>Safety issue report: level 1</item>
+        <item>Safety issue report: level 2</item>
+        <item>Safety issue report: level 3</item>
+        <item>Safety issue report: level 4</item>
+        <item>Safety issue report: level 5</item>
+    </string-array>
+    
     <string name="arsi_q_location"> * Location of safety issue?</string>
 
     <string-array name="arsi_a_location">

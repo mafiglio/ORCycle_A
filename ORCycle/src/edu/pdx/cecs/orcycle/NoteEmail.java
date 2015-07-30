@@ -34,6 +34,7 @@ public class NoteEmail {
 	private final StringBuilder sbAccidentContrib = new StringBuilder();
 	private final StringBuilder sbSafetyIssue = new StringBuilder();
 	private final StringBuilder sbSafetySeverity = new StringBuilder();
+	private final StringBuilder sbSubjectLineUrgency = new StringBuilder();
 
 	private final boolean hasImage;
 
@@ -54,14 +55,15 @@ public class NoteEmail {
 		this.context = context;
 
 		// Start time format displayed in note list
-		String reportDate = (new SimpleDateFormat("yyyy-MM-dd", Locale.US)).format(noteData.reportDate);
+		String recordedDate = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)).format(noteData.getRecorded());
+		String reportDate = (new SimpleDateFormat("yyyy-MM-dd", Locale.US)).format(noteData.getReportDate());
 
 		// get filename of image.
 		imageFileName = noteData.getImageFileName();
 		this.hasImage = ((null != imageFileName) && (!imageFileName.equals("")));
 
 		// Assemble answers to note questions
-		getNoteResponses(noteData.noteId);
+		getNoteResponses(noteData.getNoteId());
 
 		// Generate note text
 		text.append("Phone number for contact: <enter here>\n\n");
@@ -69,8 +71,12 @@ public class NoteEmail {
 
 		if (noteData.isAccident()) {
 
-			subject = "Crash or near miss report: " + reportDate;
+			subject = "Crash or near miss report";
 
+			text.append("Report Date:\n\n");
+			text.append(TAB);
+			text.append(recordedDate);
+			text.append(NL2);
 			text.append("Severity of the crash event:\n\n");
 			text.append(sbAccidentSeverity.toString());
 			text.append(NL2);
@@ -91,8 +97,12 @@ public class NoteEmail {
 		}
 		else if (noteData.isSafetyIssue()){
 
-			subject = "Safety issue report: " + reportDate;
+			subject = sbSubjectLineUrgency.toString();
 
+			text.append("Report Date:\n\n");
+			text.append(TAB);
+			text.append(recordedDate);
+			text.append(NL2);
 			text.append("Issue Type(s):\n\n");
 			text.append(sbSafetyIssue);
 			text.append(NL2);
@@ -121,7 +131,7 @@ public class NoteEmail {
 		text.append("Additional Details: ");
 		text.append(NL2);
 		text.append(TAB);
-		text.append(noteData.notedetails);
+		text.append(noteData.getNotedetails());
 		text.append(NL2);
 
 		// Generate URI to image file
@@ -247,6 +257,7 @@ public class NoteEmail {
 
 					case DbQuestions.SAFETY_URGENCY:
 						append(sbSafetySeverity, R.array.arsi_a_urgency, DbAnswers.safetyUrgency, answerId);
+						append(sbSubjectLineUrgency, R.array.email_subject_line_urgency, DbAnswers.safetyUrgency, answerId);
 						break;
 					}
 				}

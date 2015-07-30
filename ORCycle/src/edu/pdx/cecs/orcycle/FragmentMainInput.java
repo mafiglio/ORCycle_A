@@ -746,7 +746,7 @@ public class FragmentMainInput extends Fragment
 
 				NoteData note = NoteData.createNote(getActivity(), tripId);
 				note.updateNoteStatus(NoteData.STATUS_INCOMPLETE);
-				controller.finish(setResult(Result.REPORT), tripId, note.noteId);
+				controller.finish(setResult(Result.REPORT), tripId, note.getNoteId());
 			}
 			catch(Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());

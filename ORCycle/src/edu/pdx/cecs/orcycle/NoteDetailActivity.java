@@ -29,7 +29,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -61,7 +60,8 @@ public class NoteDetailActivity extends Activity {
 
 	public static final String MODULE_TAG = "NoteDetailActivity";
 
-	public static final String ORCYCLE_EMAIL_ADDRESS = "figliozzi@pdx.edu";
+	//public static final String ORCYCLE_EMAIL_ADDRESS = "figliozzi@pdx.edu";
+	public static final String ORCYCLE_EMAIL_ADDRESS = "robin5@pdx.edu";
 
 	public static final String EXTRA_NOTE_ID = "noteId";
 	public static final String EXTRA_NOTE_SEVERITY = "noteSeverity";
@@ -377,8 +377,6 @@ public class NoteDetailActivity extends Activity {
 		emailReportLat = note.getLatitude();
 		emailReportLng = note.getLongitude();
 
-		// Start time format displayed in note list
-		String fancyStartTime = (new SimpleDateFormat("MMMM d, y  HH:mm a")).format(note.startTime);
 		float[] latLng = null;
 
 		if (photo != null) {
@@ -405,7 +403,7 @@ public class NoteDetailActivity extends Activity {
 			emailImageLng = iLng;
 		}
 
-		note.updateNote(fancyStartTime, noteDetailsToUpload, noteImage);
+		note.updateNote(noteDetailsToUpload, noteImage);
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 
 		// Query user to upload an email
@@ -424,11 +422,11 @@ public class NoteDetailActivity extends Activity {
 	 */
 	private void uploadNote() {
 
-		if (note.noteStatus < NoteData.STATUS_SENT) {
+		if (note.getNoteStatus() < NoteData.STATUS_SENT) {
 			// And upload to the cloud database, too! W00t W00t!
 			NoteUploader uploader = new NoteUploader(NoteDetailActivity.this, MyApplication.getInstance().getUserId());
-			NoteUploader.setPending(note.noteId, true);
-			uploader.execute(note.noteId);
+			NoteUploader.setPending(note.getNoteId(), true);
+			uploader.execute(note.getNoteId());
 		}
 	}
 

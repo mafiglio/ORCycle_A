@@ -18,10 +18,11 @@ int array ara_a_location 0x7f0e001f
 int array ara_a_object 0x7f0e001c
 int array ara_a_severity 0x7f0e001a
 int array ara_a_severity_2 0x7f0e001b
-int array arsi_a_location 0x7f0e0023
+int array arsi_a_location 0x7f0e0024
 int array arsi_a_safety_issues 0x7f0e0020
 int array arsi_a_urgency 0x7f0e0021
 int array arsi_a_urgency_2 0x7f0e0022
+int array email_subject_line_urgency 0x7f0e0023
 int array nmaSeverityOfProblem 0x7f0e0017
 int array nqaConflictType 0x7f0e0018
 int array nqaIssueType 0x7f0e0019
