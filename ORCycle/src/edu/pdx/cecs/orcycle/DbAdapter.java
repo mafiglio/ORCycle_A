@@ -65,6 +65,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -694,16 +695,21 @@ public class DbAdapter {
 	 * created return the new rowId for that note, otherwise return a -1 to
 	 * indicate failure.
 	 */
+	public long createNote(long tripId, long recorded) {
 
-	public long createNote(long tripId, int noteSeverity, double noteRecorded,
-			String noteFancyStart, String noteDetails, String imageUrl) {
+		int severity = -1;
+		String fancyStartTime = (new SimpleDateFormat("MMMM d, y  HH:mm a")).format(recorded);
+		String details = "";
+		String imgUrl = "";
+
 		ContentValues initialValues = new ContentValues();
+
 		initialValues.put(K_NOTE_TRIP_ID, tripId);
-		initialValues.put(K_NOTE_SEVERITY, noteSeverity);
-		initialValues.put(K_NOTE_RECORDED, noteRecorded);
-		initialValues.put(K_NOTE_FANCYSTART, noteFancyStart);
-		initialValues.put(K_NOTE_DETAILS, noteDetails);
-		initialValues.put(K_NOTE_IMGURL, imageUrl);
+		initialValues.put(K_NOTE_SEVERITY, severity);
+		initialValues.put(K_NOTE_RECORDED, (double) recorded);
+		initialValues.put(K_NOTE_FANCYSTART, fancyStartTime);
+		initialValues.put(K_NOTE_DETAILS, details);
+		initialValues.put(K_NOTE_IMGURL, imgUrl);
 
 		initialValues.put(K_NOTE_LAT, 0);
 		initialValues.put(K_NOTE_LGT, 0);
@@ -716,10 +722,6 @@ public class DbAdapter {
 		initialValues.put(K_NOTE_STATUS, NoteData.STATUS_INCOMPLETE);
 
 		return mDb.insert(DATA_TABLE_NOTES, null, initialValues);
-	}
-
-	public long createNote(long tripId) {
-		return createNote(tripId, -1, System.currentTimeMillis(), "", "", "");
 	}
 
 	/**
@@ -848,11 +850,10 @@ public class DbAdapter {
 		return numRows > 0;
 	}
 
-	public boolean updateNote(long noteId, String noteFancyStart, String noteDetails, byte[] imageBytes) {
+	public boolean updateNote(long noteId, String noteDetails, byte[] imageBytes) {
 
 		ContentValues contentValues = new ContentValues();
 
-		contentValues.put(K_NOTE_FANCYSTART, noteFancyStart);
 		contentValues.put(K_NOTE_DETAILS, noteDetails);
 
 		if (null == imageBytes) {

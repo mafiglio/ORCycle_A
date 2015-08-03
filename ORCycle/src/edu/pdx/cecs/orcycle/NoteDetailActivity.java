@@ -29,7 +29,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -241,14 +240,9 @@ public class NoteDetailActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		try {
 			if (requestCode == EMAIL_REQUEST) {
-				if (resultCode == RESULT_OK) {
-					note.updateEmailSent(true);
-					uploadNote();
-					transitionToSourceActivity();
-				}
-				else {
-					dialogEmail();
-				}
+				note.updateEmailSent(true);
+				uploadNote();
+				dialogEmailEpilog();
 			}
 			else if (resultCode == RESULT_OK) {
 				if (requestCode == CAMERA_REQUEST) {
@@ -383,8 +377,6 @@ public class NoteDetailActivity extends Activity {
 		emailReportLat = note.getLatitude();
 		emailReportLng = note.getLongitude();
 
-		// Start time format displayed in note list
-		String fancyStartTime = (new SimpleDateFormat("MMMM d, y  HH:mm a")).format(note.startTime);
 		float[] latLng = null;
 
 		if (photo != null) {
@@ -411,7 +403,7 @@ public class NoteDetailActivity extends Activity {
 			emailImageLng = iLng;
 		}
 
-		note.updateNote(fancyStartTime, noteDetailsToUpload, noteImage);
+		note.updateNote(noteDetailsToUpload, noteImage);
 		note.updateNoteStatus(NoteData.STATUS_COMPLETE);
 
 		// Query user to upload an email
@@ -430,11 +422,11 @@ public class NoteDetailActivity extends Activity {
 	 */
 	private void uploadNote() {
 
-		if (note.noteStatus < NoteData.STATUS_SENT) {
+		if (note.getNoteStatus() < NoteData.STATUS_SENT) {
 			// And upload to the cloud database, too! W00t W00t!
 			NoteUploader uploader = new NoteUploader(NoteDetailActivity.this, MyApplication.getInstance().getUserId());
-			NoteUploader.setPending(note.noteId, true);
-			uploader.execute(note.noteId);
+			NoteUploader.setPending(note.getNoteId(), true);
+			uploader.execute(note.getNoteId());
 		}
 	}
 
@@ -649,6 +641,36 @@ public class NoteDetailActivity extends Activity {
 		public void onClick(final DialogInterface dialog, final int id) {
 			try {
 				uploadNote();
+				transitionToSourceActivity();
+			}
+			catch (Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			dialog.cancel();
+		}
+	}
+
+	// *********************************************************************************
+	// *                            ORcycle E-mail Epilog Dialog
+	// *********************************************************************************
+
+	/**
+	 * Build dialog telling user reporting process
+	 */
+	private void dialogEmailEpilog() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.nda_dialog_epilog_title);
+		builder.setMessage(getResources().getString(R.string.nda_dialog_epilog_message));
+		builder.setCancelable(false);
+		builder.setPositiveButton(getResources().getString(R.string.nda_dialog_epilog_button_ok),
+				new DialogEmailEpilog_OkListener());
+		final AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	private final class DialogEmailEpilog_OkListener implements DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			try {
 				transitionToSourceActivity();
 			}
 			catch (Exception ex) {

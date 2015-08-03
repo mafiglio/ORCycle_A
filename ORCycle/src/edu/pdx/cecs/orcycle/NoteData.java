@@ -64,34 +64,54 @@ import android.location.Location;
 
 public class NoteData {
 
-	private static final String MODULE_TAG = "NoteData";
+	public static final String MODULE_TAG = "NoteData";
+	public static int STATUS_INCOMPLETE = 0;
+	public static int STATUS_COMPLETE = 1;
+	public static int STATUS_SENT = 2;
 
-	long noteId;
-	double startTime = 0;
-	Location noteLocation = new Location("");
-	private int noteSeverity;
-	String notefancystart, notedetails;
-	byte[] noteimagedata;
-	int noteStatus;
-	long reportDate;
+	private final DbAdapter mDb;
+
+	private long noteId;
+	private double recorded = 0;
+	private int severity;
+	private String fancyStart;
+
+	private String details;
+	private byte[] image;
+	private int noteStatus;
+	private long reportDate;
+
 	private boolean emailSent;
 	private int isSafetyIssue;
 	private int isAccident;
 
-	private String imageFileName;
-
-	DbAdapter mDb;
-
-	// CyclePoint pt;
 	private int latitude;
 	private int longitude;
 
-	float accuracy, speed;
-	double altitude;
+	private float accuracy;
+	private float speed;
+	private double altitude;
+	private String imageFileName;
 
-	public static int STATUS_INCOMPLETE = 0;
-	public static int STATUS_COMPLETE = 1;
-	public static int STATUS_SENT = 2;
+	public long getNoteId() {
+		return noteId;
+	}
+
+	public int getNoteStatus() {
+		return noteStatus;
+	}
+
+	public String getNotedetails() {
+		return details;
+	}
+
+	public double getRecorded() {
+		return recorded;
+	}
+
+	public long getReportDate() {
+		return reportDate;
+	}
 
 	public int getLatitude() {
 		return latitude;
@@ -102,32 +122,57 @@ public class NoteData {
 	}
 
 	public int getNoteSeverity() {
-		return noteSeverity;
+		return severity;
 	}
 
-	public static NoteData createNote(Context c, long tripid) {
-		NoteData t = new NoteData(c.getApplicationContext(), 0);
-		t.createNoteInDatabase(c, tripid);
-		t.initializeData();
-		return t;
+	public float getAccuracy() {
+		return accuracy;
 	}
 
-	public static NoteData fetchNote(Context c, long noteid) {
-		NoteData t = new NoteData(c.getApplicationContext(), noteid);
-		t.populateDetails();
-		return t;
+	public float getSpeed() {
+		return speed;
 	}
 
-	public NoteData(Context ctx, long noteid) {
+	public double getAltitude() {
+		return altitude;
+	}
+
+	public String getFancyStart() {
+		return fancyStart;
+	}
+
+	public byte[] getImage() {
+		return image;
+	}
+
+	public boolean isEmailSent() {
+		return emailSent;
+	}
+
+	public static NoteData createNote(Context context, long tripId) {
+		NoteData noteData = new NoteData(context.getApplicationContext(), 0);
+		long recorded = System.currentTimeMillis();
+		noteData.createNoteInDatabase(tripId, recorded);
+		noteData.initializeData(recorded);
+		return noteData;
+	}
+
+	public static NoteData fetchNote(Context context, long noteId) {
+		NoteData noteData = new NoteData(context.getApplicationContext(), noteId);
+		noteData.populateDetails();
+		return noteData;
+	}
+
+	private NoteData(Context ctx, long noteid) {
 		Context context = ctx.getApplicationContext();
 		this.noteId = noteid;
 		mDb = new DbAdapter(context);
 	}
 
-	void initializeData() {
-		startTime = System.currentTimeMillis();
-		noteSeverity = -1;
-		notefancystart = notedetails = "";
+	private void initializeData(long recorded) {
+		this.recorded = recorded;
+		severity = -1;
+		fancyStart = details = "";
 		latitude = 0;
 		longitude = 0;
 		accuracy = 0;
@@ -136,48 +181,49 @@ public class NoteData {
 		reportDate = 0;
 		isSafetyIssue = -1;
 		isAccident = -1;
-		// updateNote();
 	}
 
 	public boolean hasImage() {
-		return !imageFileName.equals("") && (noteimagedata != null);
+		return !imageFileName.equals("") && (image != null);
 	}
 
 	public String getImageFileName() {
 		return imageFileName;
 	}
 
-	// Get lat/long extremes, etc, from note record
-	void populateDetails() {
+	/**
+	 * load values from database using global noteId
+	 */
+	private void populateDetails() {
 
 		mDb.openReadOnly();
 		try {
 			Cursor noteDetails = mDb.fetchNote(noteId);
 			try {
-				startTime      = noteDetails.getDouble(noteDetails.getColumnIndex(DbAdapter.K_NOTE_RECORDED   ));
-				notefancystart = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_FANCYSTART ));
+				recorded       = noteDetails.getDouble(noteDetails.getColumnIndex(DbAdapter.K_NOTE_RECORDED   ));
+				fancyStart = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_FANCYSTART ));
 				latitude       = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_LAT        ));
 				longitude      = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_LGT        ));
 				accuracy       = noteDetails.getFloat (noteDetails.getColumnIndex(DbAdapter.K_NOTE_ACC        ));
 				altitude       = noteDetails.getDouble(noteDetails.getColumnIndex(DbAdapter.K_NOTE_ALT        ));
 				speed          = noteDetails.getFloat (noteDetails.getColumnIndex(DbAdapter.K_NOTE_SPEED      ));
-				noteSeverity   = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_SEVERITY   ));
-				notedetails    = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_DETAILS    ));
+				severity       = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_SEVERITY   ));
+				details        = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_DETAILS    ));
 				noteStatus     = noteDetails.getInt   (noteDetails.getColumnIndex(DbAdapter.K_NOTE_STATUS     ));
 				imageFileName  = noteDetails.getString(noteDetails.getColumnIndex(DbAdapter.K_NOTE_IMGURL     ));
 				reportDate     = noteDetails.getLong  (noteDetails.getColumnIndex(DbAdapter.K_NOTE_REPORT_DATE));
 				emailSent      = (noteDetails.getInt  (noteDetails.getColumnIndex(DbAdapter.K_NOTE_EMAIL_SENT)) == 1 ? true : false);
 
 				if ((null != imageFileName) && (!imageFileName.equals("")))
-					noteimagedata = mDb.getNoteImageData(noteId);
+					image = mDb.getNoteImageData(noteId);
 				else
-					noteimagedata = null;
+					image = null;
 
-				if (DbAnswers.isAccidentSeverity(noteSeverity)) {
+				if (DbAnswers.isAccidentSeverity(severity)) {
 					isAccident = 1;    // true
 					isSafetyIssue = 0; // false
 				}
-				else if (DbAnswers.isSafetyUrgency(noteSeverity)) {
+				else if (DbAnswers.isSafetyUrgency(severity)) {
 					isAccident = 0;    // false
 					isSafetyIssue = 1; // true
 				}
@@ -191,28 +237,27 @@ public class NoteData {
 		}
 	}
 
-	void createNoteInDatabase(Context c, long tripid) {
+	/**
+	 * Create a note in the local database
+	 * @param tripId
+	 * @param recorded
+	 */
+	private void createNoteInDatabase(long tripId, long recorded) {
 		mDb.open();
 		try {
-			noteId = mDb.createNote(tripid);
+			noteId = mDb.createNote(tripId, recorded);
 		}
 		finally {
 			mDb.close();
 		}
 	}
 
-	void dropNote() {
-		mDb.open();
-		try {
-			mDb.deleteNote(noteId);
-		}
-		finally {
-			mDb.close();
-		}
-	}
-
-	// from MainInput, add time and location point
-	boolean setLocation(Location loc) {
+	/**
+	 * Add location point
+	 * @param loc
+	 * @return
+	 */
+	public boolean setLocation(Location loc) {
 
 		boolean rtn;
 
@@ -265,11 +310,11 @@ public class NoteData {
 	 * @param noteDetails
 	 * @param image
 	 */
-	public void updateNote(String noteFancyStart, String noteDetails, byte[] image) {
+	public void updateNote(String noteDetails, byte[] image) {
 		mDb.open();
 		try {
-			mDb.updateNote(noteId, noteFancyStart, noteDetails, image);
-			this.notedetails = noteDetails;
+			mDb.updateNote(noteId, noteDetails, image);
+			this.details = noteDetails;
 			this.imageFileName = (null == image) ? "" : mDb.getNoteImageFileName(noteId);
 		}
 		finally {

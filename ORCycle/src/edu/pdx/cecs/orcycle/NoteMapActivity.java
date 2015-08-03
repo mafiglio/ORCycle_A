@@ -118,9 +118,9 @@ public class NoteMapActivity extends Activity {
 			TextView tvNmComment2 = (TextView) findViewById(R.id.tvNmComment2);
 
 			tvHeaderSeverity.setText(getNoteSeverityText(note.getNoteSeverity()));
-			tvHeaderFancyStart.setText(note.notefancystart);
-			tvNmComment.setText(note.notedetails);
-			tvNmComment2.setText(note.notedetails);
+			tvHeaderFancyStart.setText(note.getFancyStart());
+			tvNmComment.setText(note.getNotedetails());
+			tvNmComment2.setText(note.getNotedetails());
 
 			TextView tvAccidentSeverity = (TextView) findViewById(R.id.tv_anm_a_severity_of_problem);
 			TextView tvAccidentObject = (TextView) findViewById(R.id.tv_anm_a_object);
@@ -138,13 +138,13 @@ public class NoteMapActivity extends Activity {
 			tvSafetyIssue.setText("");
 			tvSafetyUrgency.setText("");
 
-			if (note.reportDate <= 0) {
+			if (note.getReportDate() <= 0) {
 				tvIssueDate.setText("Not specified");
 				tvCrashDate.setText("Not specified");
 			}
 			else {
-				tvIssueDate.setText(reportDateFormatter.format(note.reportDate));
-				tvCrashDate.setText(reportDateFormatter.format(note.reportDate));
+				tvIssueDate.setText(reportDateFormatter.format(note.getReportDate()));
+				tvCrashDate.setText(reportDateFormatter.format(note.getReportDate()));
 			}
 
 			// Center & zoom the map
@@ -176,8 +176,7 @@ public class NoteMapActivity extends Activity {
 			// If image exist, add it to the imageView widget
 			if (noteHasImage) {
 				// Store photo error, retrieve error
-				photo = BitmapFactory.decodeByteArray(note.noteimagedata, 0,
-						note.noteimagedata.length);
+				photo = BitmapFactory.decodeByteArray(note.getImage(), 0, note.getImage().length);
 				if (photo.getHeight() > photo.getWidth()) {
 					imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 				} else {
@@ -186,7 +185,7 @@ public class NoteMapActivity extends Activity {
 				imageView.setImageBitmap(photo);
 			}
 
-			getNoteResponses(note.noteId);
+			getNoteResponses(note.getNoteId());
 
 		} catch (Exception ex) {
 			Log.e(MODULE_TAG, ex.toString());
