@@ -36,16 +36,8 @@ public class MyNotifiers {
 	private static final int RECORDING_ID = 1;
 	private static final int REMINDER_ID = 2;
 
-	public static void setReminderNotification(Context context, String reminderName) {
-
-		CharSequence tickerText = "Reminder: " + reminderName + "Would you like to start ORcycle";
-		CharSequence contentTitle = "ORcycle Reminder";
-		CharSequence contentText = "Tap to start ORcycle";
-
-		//| Notification.FLAG_ONGOING_EVENT
-		//| Notification.FLAG_SHOW_LIGHTS | Notification.FLAG_INSISTENT
-		//| Notification.FLAG_NO_CLEAR;
-
+	public static void setReminderNotification(Context context, CharSequence tickerText,
+			CharSequence contentTitle, CharSequence contentText) {
 
 		// Define intent to be executed when notification is clicked
 		Intent intent = new Intent(context, TabsConfig.class);
