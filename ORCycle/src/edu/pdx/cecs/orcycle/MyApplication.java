@@ -94,7 +94,6 @@ public class MyApplication extends android.app.Application {
 
 	private double lastTripStartTime = RESET_START_TIME;
 
-
     /**
     * Reference to class instance
     */
@@ -140,6 +139,7 @@ public class MyApplication extends android.app.Application {
 		userId = settings.getString(SETTING_USER_ID, null);
 		if ((null == userId) || (userId.equals(""))) {
 			userId = generateUserId();
+			SixMonthReminder.reschedule(this.getBaseContext());
 		}
 
 		firstUse = settings.getLong(SETTING_FIRST_USE, -1);
@@ -299,6 +299,7 @@ public class MyApplication extends android.app.Application {
      * startRecording
      */
     public void startRecording(FragmentActivity activity) {
+
 		switch (recordingService.getState()) {
 
 		case RecordingService.STATE_IDLE:
@@ -313,6 +314,8 @@ public class MyApplication extends android.app.Application {
 		}
 
 		startRecordingNotification(lastTripStartTime = trip.getStartTime());
+
+		SixMonthReminder.reschedule(activity);
     }
 
     /**

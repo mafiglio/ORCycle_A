@@ -132,6 +132,7 @@
         <receiver android:name="edu.pdx.cecs.orcycle.ReminderReceiver" >
             <intent-filter>
                 <action android:name="edu.pdx.cecs.orcycle.ACTION_REMIND_USER" />
+                <action android:name="edu.pdx.cecs.orcycle.ACTION_SIX_MONTH_REMINDER" />
             </intent-filter>
         </receiver>
 
