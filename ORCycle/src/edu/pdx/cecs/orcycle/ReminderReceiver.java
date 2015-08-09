@@ -34,8 +34,15 @@ public class ReminderReceiver extends BroadcastReceiver {
 	public static final String MODULE_TAG = "ReminderReceiver";
 	public static final String ACTION_REMIND_USER = "edu.pdx.cecs.orcycle.ACTION_REMIND_USER";
 	public static final String ACTION_SIX_MONTH_REMINDER = "edu.pdx.cecs.orcycle.ACTION_SIX_MONTH_REMINDER";
+	public static final String ACTION_ONE_WEEK_REMINDER = "edu.pdx.cecs.orcycle.ACTION_ONE_WEEK_REMINDER";
 	public static final String SIX_MONTH_TOAST_MESSAGE = "Please use ORcycle to log your typical commute, social, recreational, etc. trip";
+	public static final String SIX_MONTH_TICKER_TEXT = "It's been 6 months!  Would you like to start ORcycle";
+	public static final String SIX_MONTH_CONTENT_TITLE = "It's been 6 months!";
+	public static final String SIX_MONTH_CONTENT_TEXT = "Tap to start ORcycle";
 
+	/**
+	 * Process an alarm event
+	 */
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
@@ -44,7 +51,6 @@ public class ReminderReceiver extends BroadcastReceiver {
 		CharSequence tickerText;
 		CharSequence contentTitle;
 		CharSequence contentText;
-
 
 		try {
 			// Ring bell
@@ -57,10 +63,17 @@ public class ReminderReceiver extends BroadcastReceiver {
 				Toast.makeText(context, SIX_MONTH_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
 				Toast.makeText(context, SIX_MONTH_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
 				Toast.makeText(context, SIX_MONTH_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
-				tickerText = "Reminder: It's been 6 months!  Would you like to start ORcycle";
-				contentTitle = "It's been 6 months!";
-				contentText = "Tap to start ORcycle";
-				MyNotifiers.setReminderNotification(context, tickerText, contentTitle, contentText);
+				MyNotifiers.setReminderNotification(context, SIX_MONTH_TICKER_TEXT,
+						SIX_MONTH_CONTENT_TITLE, SIX_MONTH_CONTENT_TEXT);
+				SixMonthReminder.scheduleOneWeekAlarm(context);
+			}
+			else if (action.equals(ACTION_ONE_WEEK_REMINDER)) {
+				Toast.makeText(context, SIX_MONTH_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
+				Toast.makeText(context, SIX_MONTH_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
+				Toast.makeText(context, SIX_MONTH_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
+				MyNotifiers.setReminderNotification(context, SIX_MONTH_TICKER_TEXT,
+						SIX_MONTH_CONTENT_TITLE, SIX_MONTH_CONTENT_TEXT);
+				SixMonthReminder.rescheduleSixMonthAlarm(context);
 			}
 			else if (action.equals(ACTION_REMIND_USER)) {
 				// Show reminder message

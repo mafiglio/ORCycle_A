@@ -67,6 +67,7 @@ public class MyApplication extends android.app.Application {
 	private static final String SETTING_WARN_REPEAT_TRIPS = "SETTING_WARN_REPEAT_TRIPS";
 	private static final String SETTING_USER_ID = "SETTING_USER_ID";
 	private static final String SETTING_FIRST_USE = "SETTING_FIRST_USE";
+	private static final String SETTING_SIX_MONTH_ALARM_ENABLED = "SETTING_SIX_MONTH_ALARM_ENABLED";
 	private static final double RESET_START_TIME = 0.0;
 	private static final String ANDROID_USER = "android";
 
@@ -78,6 +79,7 @@ public class MyApplication extends android.app.Application {
 	private long firstUse = -1;
 	private boolean warnRepeatTrips;
 	private boolean firstTripCompleted;
+	private boolean sixMonthAlarmEnabled;
 	private RecordingService recordingService = null;
 	private TripData trip;
 
@@ -139,7 +141,6 @@ public class MyApplication extends android.app.Application {
 		userId = settings.getString(SETTING_USER_ID, null);
 		if ((null == userId) || (userId.equals(""))) {
 			userId = generateUserId();
-			SixMonthReminder.reschedule(this.getBaseContext());
 		}
 
 		firstUse = settings.getLong(SETTING_FIRST_USE, -1);
@@ -161,6 +162,11 @@ public class MyApplication extends android.app.Application {
 
 		warnRepeatTrips = settings.getBoolean(SETTING_WARN_REPEAT_TRIPS, true);
 
+		if (false == (sixMonthAlarmEnabled = settings.getBoolean(SETTING_SIX_MONTH_ALARM_ENABLED, false))) {
+			SixMonthReminder.rescheduleSixMonthAlarm(this.getBaseContext());
+			setSixMonthAlarmEnabled(true);
+		}
+
 		loadDeviceInfo();
 	}
 
@@ -171,6 +177,7 @@ public class MyApplication extends android.app.Application {
 		setUserWelcomeEnabled(false);
 		setTutorialEnabled(true);
 		setWarnRepeatTrips(true);
+		setSixMonthAlarmEnabled(false);
 	}
 
     /**
@@ -315,7 +322,8 @@ public class MyApplication extends android.app.Application {
 
 		startRecordingNotification(lastTripStartTime = trip.getStartTime());
 
-		SixMonthReminder.reschedule(activity);
+		SixMonthReminder.rescheduleSixMonthAlarm(activity);
+		SixMonthReminder.cancelOneWeekAlarm(activity);
     }
 
     /**
@@ -435,6 +443,15 @@ public class MyApplication extends android.app.Application {
 
 	public boolean getTutorialEnabled() {
 		return tutorialEnabled;
+	}
+
+	public void setSixMonthAlarmEnabled(boolean value) {
+		sixMonthAlarmEnabled = value;
+		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor = settings.edit();
+		editor.putBoolean(SETTING_SIX_MONTH_ALARM_ENABLED, sixMonthAlarmEnabled);
+		editor.apply();
 	}
 
 	// *********************************************************************************
