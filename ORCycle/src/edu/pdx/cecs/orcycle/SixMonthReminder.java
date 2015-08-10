@@ -59,8 +59,8 @@ public class SixMonthReminder {
 			alarmCalendar.setTimeInMillis(System.currentTimeMillis());
 
 			// Add six months to the calendar
-			alarmCalendar.add(Calendar.MONTH, 6);
-			//alarmCalendar.add(Calendar.MINUTE, 1);
+			//alarmCalendar.add(Calendar.MONTH, 6);
+			alarmCalendar.add(Calendar.HOUR, 24);
 
 			Log.i(MODULE_TAG, "Alarm set for: " + alarmCalendar.getTime().toString());
 
@@ -91,8 +91,8 @@ public class SixMonthReminder {
 			alarmCalendar.setTimeInMillis(System.currentTimeMillis());
 
 			// Add six months to the calendar
-			alarmCalendar.add(Calendar.HOUR, 24 * 7);
-			//alarmCalendar.add(Calendar.SECOND, 30);
+			//alarmCalendar.add(Calendar.HOUR, 24 * 7);
+			alarmCalendar.add(Calendar.HOUR, 1);
 
 			Log.i(MODULE_TAG, "Alarm set for: " + alarmCalendar.getTime().toString());
 
