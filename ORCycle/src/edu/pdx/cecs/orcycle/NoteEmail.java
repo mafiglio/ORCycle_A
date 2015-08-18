@@ -71,7 +71,7 @@ public class NoteEmail {
 
 		if (noteData.isAccident()) {
 
-			subject = "Crash or near miss report";
+			subject = "ORcycle - Crash or near miss report";
 
 			text.append("Report Date:\n\n");
 			text.append(TAB);
@@ -97,7 +97,7 @@ public class NoteEmail {
 		}
 		else if (noteData.isSafetyIssue()){
 
-			subject = sbSubjectLineUrgency.toString();
+			subject = "ORcycle - " + sbSubjectLineUrgency.toString();
 
 			text.append("Report Date:\n\n");
 			text.append(TAB);
@@ -116,7 +116,7 @@ public class NoteEmail {
 			text.append(NL2);
 		}
 		else {
-			subject = "Unknown Report: " + reportDate;
+			subject = "ORcycle - Unknown Report: " + reportDate;
 		}
 
 		if (imageHasLatLng) {
