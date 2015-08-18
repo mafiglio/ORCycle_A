@@ -24,152 +24,216 @@
 package edu.pdx.cecs.orcycle;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.TimeZone;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+@SuppressLint("SimpleDateFormat")
 public class SavedTripsAdapter extends SimpleCursorAdapter {
 
 	private final static String MODULE_TAG = "SavedTripsAdapter";
 
-	private final Context context;
-	private final String[] from;
-	private final int[] to;
-	Cursor cursor;
+	private final static String[] from = new String[] { DbAdapter.K_TRIP_ROWID };
+	private final static SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  h:mm a");
+	private final static SimpleDateFormat sdfDuration = new SimpleDateFormat("HH:mm:ss");
 
-	public SavedTripsAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to, int flags) {
-		super(context, R.layout.saved_trips_list_item, c, from, to, flags);
-		this.context = context;
-		this.from = from;
-		this.to = to;
-		this.cursor = c;
+	private static class ViewHolder {
+		public TextView tvStartTime = null;
+		public TextView tvTripPurpose = null;
+		public TextView tvTripDuration = null;
+		public ImageView ivIcon = null;
+	}
+
+	private final Cursor cursor;
+	private final int listItemLayout;
+	private final int defaultColor;
+	private final int selectedColor;
+	private final LayoutInflater layoutInflater;
+	private final ArrayList<Long> selectedItems = new ArrayList<Long>();
+
+	public SavedTripsAdapter(Context context, int listItemLayout, Cursor cursor,
+			int defaultColor, int selectedColor) {
+		super(context, listItemLayout, cursor, from, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+
+		SavedTripsAdapter.sdfDuration.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+		this.cursor = cursor;
+		this.listItemLayout = listItemLayout;
+		this.defaultColor = defaultColor;
+		this.selectedColor = selectedColor;
+		this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	}
+
+	public ArrayList<Long> getSelectedItems() {
+		return selectedItems;
+	}
+
+	public long[] getSelectedItemsArray() {
+
+		long[] selectedItemsArray = new long[selectedItems.size()];
+
+		for(int i = 0; i < selectedItems.size(); ++i) {
+			selectedItemsArray[i] = selectedItems.get(i);
+		}
+
+		return selectedItemsArray;
+	}
+
+	public void setSelectedItems(long[] selectedItemsArray) {
+		selectedItems.clear();
+		for (long tripId: selectedItemsArray) {
+			selectedItems.add(tripId);
+		}
+	}
+
+	public boolean isSelected(long id) {
+		return selectedItems.indexOf(id) >= 0;
+	}
+
+	public void select(long id, boolean select) {
+		if (select) {
+			selectedItems.add(id);
+		}
+		else {
+			selectedItems.remove(id);
+		}
+	}
+
+	public int numSelectedItems() {
+		return selectedItems.size();
+	}
+
+	public void toggleSelection(long id) {
+		if (isSelected(id)) {
+			select(id, false);
+		}
+		else {
+			select(id, true);
+		}
+	}
+
+	public void clearSelectedItems() {
+		selectedItems.clear();
+	}
+
+	public ArrayList<Long> getSelectedTrips() {
+
+		ArrayList<Long> selectedTripIds = new ArrayList<Long>(selectedItems);
+
+		return selectedTripIds;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		View rowView = null;
+
 		try {
-			//Log.v(MODULE_TAG, "getView(Position): " + position);
-
-			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-			rowView = inflater.inflate(R.layout.saved_trips_list_item, parent, false);
-			TextView textViewStart = (TextView) rowView.findViewById(R.id.TextViewStart);
-			TextView textViewPurpose = (TextView) rowView.findViewById(R.id.TextViewPurpose);
-			TextView textViewInfo = (TextView) rowView.findViewById(R.id.TextViewInfo);
-			ImageView imageTripPurpose = (ImageView) rowView.findViewById(R.id.ImageTripPurpose);
-			//TextView textViewCO2 = (TextView) rowView.findViewById(R.id.TextViewCO2);
-			//TextView textViewCalory = (TextView) rowView.findViewById(R.id.TextViewCalory);
-			//View llCaloryCo2 = rowView.findViewById(R.id.RelativeLayout2);
-
+			// move cursor to item to be displayed
 			cursor.moveToPosition(position);
 
-			SimpleDateFormat sdfStart = new SimpleDateFormat("MMMM d, y  h:mm a");
-			Double startTime = cursor.getDouble(cursor.getColumnIndex("start"));
-			String start = sdfStart.format(startTime);
+			// get list item data
+			long tripId = cursor.getLong(cursor.getColumnIndex(DbAdapter.K_TRIP_ROWID));
+			Double startTime = cursor.getDouble(cursor.getColumnIndex(DbAdapter.K_TRIP_START));
+			String formattedStartTime = sdfStart.format(startTime);
+			Double endTime = cursor.getDouble(cursor.getColumnIndex(DbAdapter.K_TRIP_END));
+			String formattedDuration = sdfDuration.format(endTime - startTime);
+			int uploadStatus = cursor.getInt(cursor.getColumnIndex(DbAdapter.K_TRIP_STATUS));
+			String purpose = cursor.getString(cursor.getColumnIndex(DbAdapter.K_TRIP_PURP));
+			int imageResource = getImageResource(uploadStatus);
 
-			textViewStart.setText(start);
-			textViewPurpose.setText(cursor.getString(cursor.getColumnIndex("purp")));
+			// Create view holder
+			ViewHolder holder = null;
+			if (convertView == null) { // then this is the first time this item is being drawn
 
-			SimpleDateFormat sdfDuration = new SimpleDateFormat("HH:mm:ss");
-			sdfDuration.setTimeZone(TimeZone.getTimeZone("UTC"));
-			Double endTime = cursor.getDouble(cursor.getColumnIndex("endtime"));
-			String duration = sdfDuration.format(endTime - startTime);
+				// Inflate the standard list item layout
+				convertView = layoutInflater.inflate(listItemLayout, null);
 
-			//Log.v(MODULE_TAG, "Duration: " + duration);
+				// populate the view data
+				holder = new ViewHolder();
+				holder.tvStartTime = (TextView) convertView.findViewById(R.id.tv_start_time);
+				holder.tvTripPurpose = (TextView) convertView.findViewById(R.id.tv_trip_purpose);
+				holder.tvTripDuration = (TextView) convertView.findViewById(R.id.tv_trip_duration);
+				holder.ivIcon = (ImageView) convertView.findViewById(R.id.image_trip_purpose);
 
-			textViewInfo.setText(duration);
+				// Optimization: Tag the row with it's child views, so we don't have to
+				// call findViewById() later when we reuse the row.
+				convertView.setTag(holder);
+			} else { // this list item's view already exist
+				holder = (ViewHolder) convertView.getTag();
+			}
 
-			//Double CO2 = cursor.getFloat(cursor.getColumnIndex("distance")) * 0.0006212 * 0.93;
-			//DecimalFormat df = new DecimalFormat("0.#");
-			//String CO2String = df.format(CO2);
-			//textViewCO2.setText("CO2 Saved: " + CO2String + " lbs");
-
-			//Double calory = cursor.getFloat(cursor.getColumnIndex("distance")) * 0.0006212 * 49 - 1.69;
-			//String caloryString = df.format(calory);
-			//if (calory <= 0) {
-			//	textViewCalory.setText("Calories Burned: " + 0 + " kcal");
-			//} else {
-			//	textViewCalory
-			//			.setText("Calories Burned: " + caloryString + " kcal");
-			//}
-
-			// ----------------------------------------------------------
-			// For the moment, these elements will be invisible until we
-			// have a more accurate solution for calories burned
-			// ----------------------------------------------------------
-
-			//llCaloryCo2.setVisibility(View.GONE);
-
-			//textViewCO2.setVisibility(View.GONE);
-			//textViewCalory.setVisibility(View.GONE);
-
-			// -------------------------------------------------------
-			//
-			// -------------------------------------------------------
-
-			int status = cursor.getInt(cursor.getColumnIndex("status"));
-
-			//Log.v(MODULE_TAG, "Status: " + status);
-
-			if (status == 0){
-				//textViewPurpose.setText("In Progress");
-				rowView.setVisibility(View.GONE);
-				rowView = inflater.inflate(R.layout.saved_trips_list_item_null, parent, false);
+			if ((uploadStatus == TripData.STATUS_COMPLETE /* 1 */) || (uploadStatus == TripData.STATUS_SENT /* 2 */)) {
+				holder.tvStartTime.setText(formattedStartTime);
+				holder.tvTripPurpose.setText(purpose);
+				holder.tvTripDuration.setText(formattedDuration);
+				holder.ivIcon.setImageResource(imageResource);
 			}
 			else {
-				rowView.setVisibility(View.VISIBLE);
+				holder.tvStartTime.setText(formattedStartTime);
+				holder.tvTripPurpose.setText("Invalid");
+				holder.tvTripDuration.setText("00:00:00");
+				holder.ivIcon.setImageResource(imageResource);
 			}
-
-			int columnIndex;
-			String value;
-
-			if (status == 2) {
-				if (-1 != (columnIndex = cursor.getColumnIndex("purp"))) {
-					if (null != (value = cursor.getString(columnIndex))) {
-						if (value.equals(DbAnswers.PURPOSE_COMMUTE)) {
-							imageTripPurpose.setImageResource(R.drawable.commute_high);
-						}
-						else if (value.equals(DbAnswers.PURPOSE_SCHOOL)) {
-							imageTripPurpose.setImageResource(R.drawable.school_high);
-						}
-						else if (value.equals(DbAnswers.PURPOSE_WORK_RELATED)) {
-							imageTripPurpose.setImageResource(R.drawable.workrel_high);
-						}
-						else if (value.equals(DbAnswers.PURPOSE_EXERCISE)) {
-							imageTripPurpose.setImageResource(R.drawable.exercise_high);
-						}
-						else if (value.equals(DbAnswers.PURPOSE_SOCIAL)) {
-							imageTripPurpose.setImageResource(R.drawable.social_high);
-						}
-						else if (value.equals(DbAnswers.PURPOSE_SHOPPING)) {
-							imageTripPurpose.setImageResource(R.drawable.shopping_high);
-						}
-						else if (value.equals(DbAnswers.PURPOSE_TRANSIT_OR_VEHICLE)) {
-							imageTripPurpose.setImageResource(R.drawable.errands_high);
-						}
-						else if (value.equals(DbAnswers.PURPOSE_OTHER)) {
-							imageTripPurpose.setImageResource(R.drawable.other_high);
-						}
-					}
-				}
-			} else if (status == 1) {
-				imageTripPurpose.setImageResource(R.drawable.failedupload_high);
-			}
-			return rowView;
+			convertView.setBackgroundColor(isSelected(tripId) ? selectedColor : defaultColor);
+			return convertView;
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
-		return rowView;
+		return convertView;
+	}
+
+	private int getImageResource(int status) {
+
+		int imageResource = -1;
+		int columnIndex;
+		String value;
+
+		if (status == TripData.STATUS_SENT /* 2 */) {
+			if (-1 != (columnIndex = cursor.getColumnIndex("purp"))) {
+				if (null != (value = cursor.getString(columnIndex))) {
+					if (value.equals(DbAnswers.PURPOSE_COMMUTE)) {
+						imageResource = R.drawable.commute_high;
+					}
+					else if (value.equals(DbAnswers.PURPOSE_SCHOOL)) {
+						imageResource = R.drawable.school_high;
+					}
+					else if (value.equals(DbAnswers.PURPOSE_WORK_RELATED)) {
+						imageResource = R.drawable.workrel_high;
+					}
+					else if (value.equals(DbAnswers.PURPOSE_EXERCISE)) {
+						imageResource = R.drawable.exercise_high;
+					}
+					else if (value.equals(DbAnswers.PURPOSE_SOCIAL)) {
+						imageResource = R.drawable.social_high;
+					}
+					else if (value.equals(DbAnswers.PURPOSE_SHOPPING)) {
+						imageResource = R.drawable.shopping_high;
+					}
+					else if (value.equals(DbAnswers.PURPOSE_TRANSIT_OR_VEHICLE)) {
+						imageResource = R.drawable.errands_high;
+					}
+					else if (value.equals(DbAnswers.PURPOSE_OTHER)) {
+						imageResource = R.drawable.other_high;
+					}
+				}
+			}
+		} else if (status == TripData.STATUS_COMPLETE /* 1 */) {
+			imageResource = R.drawable.failedupload_high;
+		}
+		else {
+			Log.e(MODULE_TAG, "No icon for upload status:" + status);
+		}
+		return imageResource == -1 ? R.drawable.invalidtrip : imageResource;
 	}
 }
