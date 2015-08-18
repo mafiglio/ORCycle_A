@@ -60,8 +60,8 @@ public class NoteDetailActivity extends Activity {
 
 	public static final String MODULE_TAG = "NoteDetailActivity";
 
-	//public static final String ORCYCLE_EMAIL_ADDRESS = "figliozzi@pdx.edu";
-	public static final String ORCYCLE_EMAIL_ADDRESS = "robin5@pdx.edu";
+	public static final String ORCYCLE_EMAIL_ADDRESS = "figliozzi@pdx.edu";
+	//public static final String ORCYCLE_EMAIL_ADDRESS = "robin5@pdx.edu";
 
 	public static final String EXTRA_NOTE_ID = "noteId";
 	public static final String EXTRA_NOTE_SEVERITY = "noteSeverity";
@@ -612,11 +612,11 @@ public class NoteDetailActivity extends Activity {
 	private void dialogEmail() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.nda_dialog_email_title);
-		builder.setMessage(getResources().getString(R.string.nda_dialog_email_message));
+		builder.setMessage(R.string.nda_dialog_email_message);
 		builder.setCancelable(false);
-		builder.setPositiveButton(getResources().getString(R.string.nda_dialog_email_button_yes),
+		builder.setPositiveButton(R.string.nda_dialog_email_button_yes,
 				new DialogEmail_YesListener());
-		builder.setNegativeButton(getResources().getString(R.string.nda_dialog_email_button_no),
+		builder.setNegativeButton(R.string.nda_dialog_email_button_no,
 				new DialogEmail_NoListener());
 		final AlertDialog alert = builder.create();
 		alert.show();
@@ -660,9 +660,9 @@ public class NoteDetailActivity extends Activity {
 	private void dialogEmailEpilog() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.nda_dialog_epilog_title);
-		builder.setMessage(getResources().getString(R.string.nda_dialog_epilog_message));
+		builder.setMessage(R.string.nda_dialog_epilog_message);
 		builder.setCancelable(false);
-		builder.setPositiveButton(getResources().getString(R.string.nda_dialog_epilog_button_ok),
+		builder.setPositiveButton(R.string.nda_dialog_epilog_button_ok,
 				new DialogEmailEpilog_OkListener());
 		final AlertDialog alert = builder.create();
 		alert.show();
