@@ -24,6 +24,7 @@
 package edu.pdx.cecs.orcycle;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -808,11 +809,10 @@ public class TripQuestionsActivity extends Activity {
 
 	private void AlertUserRepeatTrips(String purpose) {
 
-		//String message = getResources().getString(R.string.tqa_alert_repeated_trips, purpose);
-
-		String message = "Data for this " + purpose + " trip will be logged and uploaded.&#160;&#160;" +
-				"<b>If you repeat the same route there is no need to log it again</b>.&#160;&#160;" +
-				"Please use ORcycle to log new trip purposes, routes, or safety locations.";
+		String message = "<i>" + capitalize(purpose) + "</i> trip logged.&#160;&#160;" +
+				"To reduce user burden, it is <b>optional</b> to log frequent (repeated) " +
+				purpose.toLowerCase(Locale.US) + " trips.&#160;&#160;" +
+				"We will remind you to log a new trip after 3 months without loggings.";
 
 		DsaDialog dsaDialog = new DsaDialog(this,
 			null,
@@ -839,7 +839,19 @@ public class TripQuestionsActivity extends Activity {
 		}
 	}
 
-    // *********************************************************************************
+	private String capitalize(String s) {
+		if (s == null || s.length() == 0) {
+			return "";
+		}
+		else if (s.length() == 1) {
+			return s.toUpperCase(Locale.US);
+		}
+		else {
+			return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+		}
+	}
+
+	// *********************************************************************************
 	// *                    Transitioning to other activities
 	// *********************************************************************************
 
