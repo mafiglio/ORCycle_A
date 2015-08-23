@@ -71,6 +71,8 @@ public class UserInfoActivity extends Activity {
 	public static final int PREF_INSTALLED       = 14;
 	public static final int PREF_DEVICE_MODEL    = 15;
 	public static final int PREF_APP_VERSION     = 16;
+	public static final int PREF_EMAIL_NAME      = 17;
+	public static final int PREF_EMAIL_PHONE     = 18;
 	public static final int PREF_RIDER_TYPE_OTHER = 1002;
 	public static final int PREF_BIKE_TYPE_OTHER  = 1006;
 	public static final int PREF_OCCUPATION_OTHER = 1007;
@@ -84,7 +86,8 @@ public class UserInfoActivity extends Activity {
 	private Spinner spnrGender;
 	private Spinner spnrEthnicity;
 	private Button btnSave;
-	private Button btnPrivacyPolicy;
+	private Button btnPrivacyPolicy1;
+	private Button btnPrivacyPolicy2;
 
 	private OnItemWithOtherSelectedListener spnrRiderType_OnItemSelected = null;
 	private OnItemWithOtherSelectedListener spnrOccupation_OnItemSelected = null;
@@ -159,12 +162,17 @@ public class UserInfoActivity extends Activity {
 			RecallPreferences();
 
 			((EditText) findViewById(R.id.editEmail)).setImeOptions(EditorInfo.IME_ACTION_DONE);
+			((EditText) findViewById(R.id.editEmailName)).setImeOptions(EditorInfo.IME_ACTION_DONE);
+			((EditText) findViewById(R.id.editEmailPhone)).setImeOptions(EditorInfo.IME_ACTION_DONE);
 
 			btnSave = (Button) findViewById(R.id.btn_aui_save_user_info);
 			btnSave.setOnClickListener(new ButtonSave_OnClickListener());
 
-			btnPrivacyPolicy = (Button) findViewById(R.id.btn_aui_privacy_policy);
-			btnPrivacyPolicy.setOnClickListener(new PrivacyPolicy_OnClickListener());
+			btnPrivacyPolicy1 = (Button) findViewById(R.id.btn_aui_privacy_policy_1);
+			btnPrivacyPolicy1.setOnClickListener(new PrivacyPolicy_OnClickListener());
+
+			btnPrivacyPolicy2 = (Button) findViewById(R.id.btn_aui_privacy_policy_2);
+			btnPrivacyPolicy2.setOnClickListener(new PrivacyPolicy_OnClickListener());
 		}
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
@@ -330,6 +338,8 @@ public class UserInfoActivity extends Activity {
 
 			switch (key) {
 			case PREF_EMAIL:           recallPref( (EditText) findViewById(R.id.editEmail         ),  p); break;
+			case PREF_EMAIL_NAME:      recallPref( (EditText) findViewById(R.id.editEmailName     ),  p); break;
+			case PREF_EMAIL_PHONE:     recallPref( (EditText) findViewById(R.id.editEmailPhone    ),  p); break;
 			case PREF_RIDER_ABILITY:   recallPref( (Spinner) findViewById(R.id.spnrRiderAbility   ),  p); break;
 			case PREF_RIDER_TYPE:      recallPref( (Spinner) findViewById(R.id.spnrRiderType      ),  p); break;
 			case PREF_CYCLE_FREQUENCY: recallPref( (Spinner) findViewById(R.id.spnrCycleFrequency ),  p); break;
@@ -370,6 +380,9 @@ public class UserInfoActivity extends Activity {
 		SharedPreferences.Editor editor = settings.edit();
 
 		savePref( editor, PREF_EMAIL,           (EditText) findViewById(R.id.editEmail          ));
+		savePref( editor, PREF_EMAIL_NAME,      (EditText) findViewById(R.id.editEmailName      ));
+		savePref( editor, PREF_EMAIL_PHONE,     (EditText) findViewById(R.id.editEmailPhone     ));
+
 		savePref( editor, PREF_RIDER_ABILITY,   (Spinner)  findViewById(R.id.spnrRiderAbility   ), forUpload);
 
 		savePref( editor, PREF_RIDER_TYPE,      (Spinner)  findViewById(R.id.spnrRiderType      ),

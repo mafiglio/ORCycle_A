@@ -172,6 +172,12 @@ Please use ORcycle to log new trip purposes, routes, or safety locations.</strin
     <string name="aui_save">Save</string>
     <string name="aui_header_1">Tell us about your biking habits&#8230;</string>
     <string name="aui_header_2">Please tell us about yourself&#8230;</string>
+    <string name="aui_email_policy1">To facilitate email auto-generation
+to ODOT provide your contact name and phone number.  <i>Your name and phone number will be 
+stored only in your phone and will not be shared.</i></string>
+    <string name="aui_email_policy2"><u>See our strict privacy policy.</u></string>
+    <string name="aui_email_name">Name:</string>
+    <string name="aui_email_phone">Phone:</string>
     <string name="dsaNoteImageContentDescription">How to description</string>
     <string name="aer_save">Save</string>
     <string name="aer_cancel">Cancel</string>
