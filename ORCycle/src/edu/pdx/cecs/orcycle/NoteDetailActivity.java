@@ -52,6 +52,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -90,8 +91,8 @@ public class NoteDetailActivity extends Activity {
 	private int reportType;
 	private double emailReportLat;  // original latitude location of report set by user
 	private double emailReportLng;	// original longitude location of report set by user
-	private double emailImageLat;  // original latitude location of report set by user
-	private double emailImageLng;	// original longitude location of report set by user
+	private double emailImageLat;  	// latitude location set by image
+	private double emailImageLng;	// longitude location set by image
 	private boolean imageHasLatLng = false;
 
 	private EditText noteDetails;
@@ -632,8 +633,9 @@ public class NoteDetailActivity extends Activity {
 			catch (Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
 			}
-
-			dialog.cancel();
+			finally {
+				dialog.cancel();
+			}
 		}
 	}
 
@@ -646,7 +648,9 @@ public class NoteDetailActivity extends Activity {
 			catch (Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
 			}
-			dialog.cancel();
+			finally {
+				dialog.cancel();
+			}
 		}
 	}
 
@@ -671,12 +675,65 @@ public class NoteDetailActivity extends Activity {
 	private final class DialogEmailEpilog_OkListener implements DialogInterface.OnClickListener {
 		public void onClick(final DialogInterface dialog, final int id) {
 			try {
+				if (MyApplication.getInstance().getHintEmailNameAndNumber()) {
+					dialogEmailNameAndNumber();
+				}
+				else {
+					transitionToSourceActivity();
+				}
+			}
+			catch (Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			finally {
+				dialog.cancel();
+			}
+		}
+	}
+
+	// *********************************************************************************
+	// *                       Email Name And Number Dialog
+	// *********************************************************************************
+
+	private void dialogEmailNameAndNumber() {
+
+		// Create dialog
+		DsaDialog dsaDialog = new DsaDialog(this, null,				// context and title
+			R.string.nda_email_message,								// message text
+			new dialogEmailNameAndNumber_CheckedChangeListener(),	// don't show again checkbox listener
+			R.string.nda_dialog_button_ok, 							// positive button text
+			new dialogEmailNameAndNumber_OkListener(),				// positive button listener
+			-1, null, 												// neutral button text and listener
+			-1, null); 												// negative button text and listener
+
+		// Show dialog
+		dsaDialog.show();
+	}
+
+    private final class dialogEmailNameAndNumber_OkListener implements
+			DialogInterface.OnClickListener {
+		public void onClick(final DialogInterface dialog, final int id) {
+			try {
 				transitionToSourceActivity();
 			}
 			catch (Exception ex) {
 				Log.e(MODULE_TAG, ex.getMessage());
 			}
-			dialog.cancel();
+			finally {
+				dialog.cancel();
+			}
+		}
+	}
+
+    private final class dialogEmailNameAndNumber_CheckedChangeListener implements
+    CompoundButton.OnCheckedChangeListener {
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			try {
+				MyApplication.getInstance().setHintEmailNameAndNumber(!isChecked);
+			}
+			catch (Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 		}
 	}
 

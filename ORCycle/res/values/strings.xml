@@ -213,6 +213,12 @@ stored only in your phone and will not be shared.</i></string>
     <string name="tutorial_title_add_reminder">How to: Add a reminder</string>
     <string name="tutorial_title_links">How to: Go to linked sites</string>
     
+    <string name="nda_email_message">If you add your name and/or phone number in the user 
+section they can be included automatically in the next email to ODOT.  <i>NOTE: ORcycle will 
+not store your name or phone number in a database. This information is stored <b>only</b> in your 
+phone and it is only used to facilitate the email generation"</i></string>
+<string name="nda_dialog_button_ok">OK</string>
+    
     
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->

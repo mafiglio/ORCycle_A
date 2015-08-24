@@ -50,6 +50,19 @@ public class DsaDialog {
 									negativeText, negativeListener);
 	}
 
+	public DsaDialog(Activity activity, String title, int textId,
+			CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
+			int positiveTextId, DialogInterface.OnClickListener positiveListener,
+			int neutralTextId, DialogInterface.OnClickListener neutralListener,
+			int negativeTextId, DialogInterface.OnClickListener negativeListener
+			) {
+
+			alertDialog = createDialog(activity, title, textId, onCheckedChangeListener,
+										positiveTextId, positiveListener,
+										neutralTextId, neutralListener,
+										negativeTextId, negativeListener);
+		}
+
 	private static final AlertDialog createDialog(Activity activity, String title, String text,
 			CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
 			String positiveText, DialogInterface.OnClickListener positiveListener,
@@ -84,6 +97,44 @@ public class DsaDialog {
 
 		if (null != negativeListener)
 			builder.setPositiveButton(negativeText, negativeListener);
+
+		return builder.create();
+	}
+
+	private static final AlertDialog createDialog(Activity activity, String title, int textId,
+			CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
+			int positiveTextId, DialogInterface.OnClickListener positiveListener,
+			int neutralTextId, DialogInterface.OnClickListener neutralListener,
+			int negativeTextId, DialogInterface.OnClickListener negativeListener
+			) {
+
+		// Load custom layout for alert dialog
+		LayoutInflater inflater = activity.getLayoutInflater();
+		View rootView = inflater.inflate(R.layout.dialog_text_checkbox, null);
+
+		// Reference custom layout's textbox and set text value
+		TextView textbox = (TextView) rootView.findViewById(R.id.tv_dtc_text);
+		textbox.setText(textId);
+
+		CheckBox cbDontShowAgain = (CheckBox) rootView.findViewById(R.id.cb_dtc_checkbox);
+		if (null != onCheckedChangeListener)
+			cbDontShowAgain.setOnCheckedChangeListener(onCheckedChangeListener);
+
+		// Create alert dialog
+		final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		builder.setView(rootView);
+
+		if (null != title)
+			builder.setTitle(title);
+
+		if (null != positiveListener)
+			builder.setPositiveButton(positiveTextId, positiveListener);
+
+		if (null != neutralListener)
+			builder.setNeutralButton(neutralTextId, neutralListener);
+
+		if (null != negativeListener)
+			builder.setPositiveButton(negativeTextId, negativeListener);
 
 		return builder.create();
 	}
