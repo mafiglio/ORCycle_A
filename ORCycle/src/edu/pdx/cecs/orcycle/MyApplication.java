@@ -65,6 +65,7 @@ public class MyApplication extends android.app.Application {
 	private static final String SETTING_USER_INFO_UPLOADED = "USER_INFO_UPLOADED";
 	private static final String SETTING_FIRST_TRIP_COMPLETED = "SETTING_FIRST_TRIP_COMPLETED";
 	private static final String SETTING_WARN_REPEAT_TRIPS = "SETTING_WARN_REPEAT_TRIPS";
+	private static final String SETTING_HINT_EMAIL_NAME_AND_NUMBER = "SETTING_HINT_EMAIL_NAME_AND_NUMBER";
 	private static final String SETTING_USER_ID = "SETTING_USER_ID";
 	private static final String SETTING_FIRST_USE = "SETTING_FIRST_USE";
 	private static final String SETTING_SIX_MONTH_ALARM_ENABLED = "SETTING_SIX_MONTH_ALARM_ENABLED";
@@ -80,6 +81,7 @@ public class MyApplication extends android.app.Application {
 	private boolean warnRepeatTrips;
 	private boolean firstTripCompleted;
 	private boolean sixMonthAlarmEnabled;
+	private boolean hintEmailNameAndNumber;
 	private RecordingService recordingService = null;
 	private TripData trip;
 
@@ -162,6 +164,8 @@ public class MyApplication extends android.app.Application {
 
 		warnRepeatTrips = settings.getBoolean(SETTING_WARN_REPEAT_TRIPS, true);
 
+		hintEmailNameAndNumber = settings.getBoolean(SETTING_HINT_EMAIL_NAME_AND_NUMBER, true);
+
 		if (false == (sixMonthAlarmEnabled = settings.getBoolean(SETTING_SIX_MONTH_ALARM_ENABLED, false))) {
 			SixMonthReminder.rescheduleSixMonthAlarm(this.getBaseContext());
 			setSixMonthAlarmEnabled(true);
@@ -171,13 +175,14 @@ public class MyApplication extends android.app.Application {
 	}
 
 	public void setDefaultApplicationSettings() {
-		setFirstTripCompleted(true); // for debugging
-		//setFirstTripCompleted(false);
+		//setFirstTripCompleted(true); // for debugging
+		setFirstTripCompleted(false);
 		setUserProfileUploaded(false);
 		setUserWelcomeEnabled(false);
 		setTutorialEnabled(true);
 		setWarnRepeatTrips(true);
 		setSixMonthAlarmEnabled(false);
+		setHintEmailNameAndNumber(true);
 	}
 
     /**
@@ -469,6 +474,23 @@ public class MyApplication extends android.app.Application {
 
 	public boolean getWarnRepeatTrips() {
 		return warnRepeatTrips;
+	}
+
+	// *********************************************************************************
+	// *                          HintAutoEmailNameAndNumber
+	// *********************************************************************************
+
+	public void setHintEmailNameAndNumber(boolean value) {
+		hintEmailNameAndNumber = value;
+		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor = settings.edit();
+		editor.putBoolean(SETTING_HINT_EMAIL_NAME_AND_NUMBER, hintEmailNameAndNumber);
+		editor.apply();
+	}
+
+	public boolean getHintEmailNameAndNumber() {
+		return hintEmailNameAndNumber;
 	}
 
 	// *********************************************************************************

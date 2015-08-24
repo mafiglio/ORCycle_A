@@ -504,7 +504,7 @@
 				    android:textColor="#A33F1F" />
 
 				<Button
-				    android:id="@+id/btn_aui_privacy_policy"
+				    android:id="@+id/btn_aui_privacy_policy_1"
 				    android:layout_width="fill_parent"
 				    android:layout_height="wrap_content"
 				    android:layout_alignParentLeft="true"
@@ -559,7 +559,108 @@
 
         	</RelativeLayout>
             
-	        <RelativeLayout
+<RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="@color/off_white"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+	            
+				<TextView
+				    android:id="@+id/tvEmailInfo2"
+				    android:layout_width="fill_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentLeft="true"
+				    android:layout_alignParentRight="true"
+				    android:layout_alignParentTop="true"
+				    android:background="@color/off_white"
+				    android:text="@string/aui_email_policy1"
+				    android:textAppearance="?android:attr/textAppearanceMedium"
+				    android:textColor="#A33F1F" />
+
+				<Button
+				    android:id="@+id/btn_aui_privacy_policy_2"
+				    android:layout_width="fill_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentLeft="true"
+				    android:layout_alignParentRight="true"
+				    android:layout_below="@id/tvEmailInfo2"
+				    android:layout_marginBottom="10dp"
+				    android:background="@color/off_white"
+				    android:paddingTop="4dp"
+				    android:text="@string/aui_email_policy2"
+				    android:textAppearance="?android:attr/textAppearanceMedium"
+				    android:textColor="#A33F1F"
+				    android:textStyle="bold" />
+
+        	</RelativeLayout>
+        	
+			<RelativeLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="1dp"
+	            android:background="#fcfcfc"
+	            android:orientation="vertical"
+	            android:paddingBottom="4dp"
+	            android:paddingLeft="@dimen/activity_horizontal_margin"
+	            android:paddingRight="@dimen/activity_horizontal_margin"
+	            android:paddingTop="12dp"
+	            tools:context=".UserInfo$DummySectionFragment" >
+	            
+				<TextView
+				    android:id="@+id/tvEmailName"
+				    android:layout_width="fill_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentLeft="true"
+				    android:layout_alignParentRight="true"
+				    android:layout_alignParentTop="true"
+				    android:layout_marginTop="10dp"
+				    android:text="@string/aui_email_name"
+				    android:textAppearance="?android:attr/textAppearanceMedium"
+				    android:textColor="#A33F1F" />
+		
+		        <EditText
+		            android:id="@+id/editEmailName"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_alignParentLeft="true"
+		            android:layout_alignParentRight="true"
+		            android:layout_below="@id/tvEmailName"
+		            android:layout_marginBottom="10dp"
+		            android:ems="20"
+		            android:inputType="textEmailAddress" />
+
+				<TextView
+				    android:id="@+id/tvEmailPhone"
+				    android:layout_width="fill_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentLeft="true"
+				    android:layout_alignParentRight="true"
+				    android:layout_below="@id/editEmailName"
+				    android:layout_marginTop="10dp"
+				    android:text="@string/aui_email_phone"
+				    android:textAppearance="?android:attr/textAppearanceMedium"
+				    android:textColor="#A33F1F" />
+		
+		        <EditText
+		            android:id="@+id/editEmailPhone"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_alignParentLeft="true"
+		            android:layout_alignParentRight="true"
+		            android:layout_below="@id/tvEmailPhone"
+		            android:layout_marginBottom="10dp"
+		            android:ems="20"
+		            android:inputType="textEmailAddress|phone" />
+
+			</RelativeLayout>
+			
+           	<RelativeLayout
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_marginTop="1dp"

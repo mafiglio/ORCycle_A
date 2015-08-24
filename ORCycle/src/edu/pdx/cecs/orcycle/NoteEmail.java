@@ -47,10 +47,14 @@ public class NoteEmail {
 	 * @param reportLng
 	 * @param imageLat
 	 * @param imageLng
+	 * @param userName
+	 * @param userPhone
+	 * @param userEmail
 	 */
 	public NoteEmail(Context context, NoteData noteData,
 			boolean imageHasLatLng, double reportLat, double reportLng,
-			double imageLat, double imageLng) {
+			double imageLat, double imageLng,
+			String userName, String userPhone, String userEmail) {
 
 		this.context = context;
 
@@ -65,9 +69,35 @@ public class NoteEmail {
 		// Assemble answers to note questions
 		getNoteResponses(noteData.getNoteId());
 
-		// Generate note text
-		text.append("Phone number for contact: <enter here>\n\n");
-		text.append("E-mail address: <enter here>\n\n");
+		// Add name to message
+		text.append("Name for contact: ");
+		if ((userName == null) || (userName.equals(""))){
+			text.append("<enter here>");
+		}
+		else {
+			text.append(userName);
+		}
+		text.append(NL2);
+
+		// Add phone number to message
+		text.append("Phone number for contact: ");
+		if ((userPhone == null) || (userPhone.equals(""))){
+			text.append("<enter here>");
+		}
+		else {
+			text.append(userPhone);
+		}
+		text.append(NL2);
+
+		// Add e-mail address to message
+		text.append("E-mail address: ");
+		if ((userEmail == null) || (userEmail.equals(""))){
+			text.append("<enter here>");
+		}
+		else {
+			text.append(userEmail);
+		}
+		text.append(NL2);
 
 		if (noteData.isAccident()) {
 
