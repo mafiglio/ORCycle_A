@@ -37,6 +37,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -626,8 +627,15 @@ public class NoteDetailActivity extends Activity {
 	private final class DialogEmail_YesListener implements DialogInterface.OnClickListener {
 		public void onClick(final DialogInterface dialog, final int id) {
 			try {
+				SharedPreferences settings = getSharedPreferences(UserInfoActivity.PREFS_USER_INFO_UPLOAD, Context.MODE_PRIVATE);
+				String userName = settings.getString(String.valueOf(UserInfoActivity.PREF_EMAIL_NAME), "");
+				String userPhone = settings.getString(String.valueOf(UserInfoActivity.PREF_EMAIL_PHONE), "");
+				String userEmail = settings.getString(String.valueOf(UserInfoActivity.PREF_EMAIL), "");
+
 				NoteEmail noteEmail = new NoteEmail(NoteDetailActivity.this, note, imageHasLatLng,
-						emailReportLat, emailReportLng, emailImageLat, emailImageLng);
+						emailReportLat, emailReportLng, emailImageLat, emailImageLng,
+						userName, userPhone, userEmail);
+
 				transitionToEmailActivity(noteEmail);
 			}
 			catch (Exception ex) {
