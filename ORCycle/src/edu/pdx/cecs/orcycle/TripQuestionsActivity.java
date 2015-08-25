@@ -51,6 +51,9 @@ import android.widget.Spinner;
 public class TripQuestionsActivity extends Activity {
 
 	private static final String MODULE_TAG = "TripQuestionsActivity";
+	private static final int HINT_DONT_REPEAT_TRIPS = 0;
+	private static final int HINT_DO_REPORT_NOW = 1;
+	private static final int HINT_DO_REPORT_LATER = 2;
 
 	private Button btnSave;
 	private MultiSelectionSpinner routePrefs;
@@ -59,10 +62,6 @@ public class TripQuestionsActivity extends Activity {
 	private Spinner tripPurpose;
 	private Spinner tripComfort;
 	private EditText tripComment;
-	//private MultiSelectionSpinner passengers;
-	//private MultiSelectionSpinner bikeAccessories;
-	//private Spinner routeSafety;
-	//private Spinner rideConflict;
 
 	public static final String EXTRA_TRIP_ID = "TRIP_ID";
 
@@ -72,10 +71,10 @@ public class TripQuestionsActivity extends Activity {
 	private static final int PREF_TRIP_PURPOSE     = 2;
 	private static final int PREF_ROUTE_PREFS      = 3;
 	private static final int PREF_TRIP_COMFORT     = 4;
-	private static final int PREF_ROUTE_SAFETY     = 5;
+	private static final int PREF_ROUTE_SAFETY     = 5; // No longer used but keep to maintain backwards compatibility
 	private static final int PREF_PASSENGERS       = 6;
-	private static final int PREF_BIKE_ACCESSORIES = 7;
-	private static final int PREF_RIDE_CONFLICT    = 8;
+	private static final int PREF_BIKE_ACCESSORIES = 7; // No longer used but keep to maintain backwards compatibility
+	private static final int PREF_RIDE_CONFLICT    = 8; // No longer used but keep to maintain backwards compatibility
 	private static final int PREF_ROUTE_STRESSORS  = 9;
 	private static final int PREF_TRIP_COMMENT     = 10;
 
@@ -176,7 +175,9 @@ public class TripQuestionsActivity extends Activity {
 		}
 	}
 
-	/* Creates the menu items */
+	/**
+	 *  Creates the menu items
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		try {
@@ -191,7 +192,9 @@ public class TripQuestionsActivity extends Activity {
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	/* Handles item selections */
+	/**
+	 * Handles menu item selections
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -210,6 +213,23 @@ public class TripQuestionsActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	/**
+	 * Handle back presses
+	 */
+	@Override
+	public void onBackPressed() {
+		try {
+			transitionToPreviousActivity();
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+	}
+
+	// *********************************************************************************
+	// *                              Misc methods
+	// *********************************************************************************
+
 	private void finishQuestions() {
 
 		MyApplication myApp = MyApplication.getInstance();
@@ -217,13 +237,10 @@ public class TripQuestionsActivity extends Activity {
 		if (mandatoryQuestionsAnswered()) {
 			String tripPurposeText = submitAnswers();
 			myApp.setFirstTripCompleted(true);
-			if (myApp.getWarnRepeatTrips())
-				AlertUserRepeatTrips(tripPurposeText);
-			else
-				querySafetyMarker();
+			doNextHint(HINT_DONT_REPEAT_TRIPS, tripPurposeText);
 		}
 		else {
-			AlertUserMandatoryAnswers();
+			dialogMandatoryAnswers();
 		}
 	}
 
@@ -234,32 +251,45 @@ public class TripQuestionsActivity extends Activity {
 			   (routePrefs.getSelectedIndicies().size() > 0);
 	}
 
-	private void AlertUserMandatoryAnswers() {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.tqa_alert_mandatory_title)
-				.setMessage(R.string.tqa_alert_answer_required_questions)
-				.setCancelable(true)
-				.setPositiveButton(
-						getResources().getString(R.string.tqa_alert_OK),
-						new AlertUserMandatoryAnswers_OnClickListener());
-		final AlertDialog alert = builder.create();
-		alert.show();
-	}
+	private void doNextHint(int hint, String tripPurposeText) {
 
-	private final class AlertUserMandatoryAnswers_OnClickListener implements
-			DialogInterface.OnClickListener {
-		public void onClick(final DialogInterface dialog, final int id) {
-			dialog.cancel();
-		}
-	}
+		MyApplication myApp = MyApplication.getInstance();
 
-	@Override
-	public void onBackPressed() {
-		try {
-			transitionToPreviousActivity();
-		}
-		catch(Exception ex) {
-			Log.e(MODULE_TAG, ex.getMessage());
+		switch (hint) {
+
+		case HINT_DONT_REPEAT_TRIPS:
+
+			if (myApp.getHintDontRepeatTrips())
+				dialogDontRepeatTrips(tripPurposeText);
+			else if (myApp.getHintDoReportNow())
+				dialogDoReportNow();
+			else if (myApp.getHintDoReportLater ())
+				dialogDoReportLater();
+			else
+				transitionToTabsConfigActivity();
+			break;
+
+		case HINT_DO_REPORT_NOW:
+
+			if (myApp.getHintDoReportNow())
+				dialogDoReportNow();
+			else if (myApp.getHintDoReportLater ())
+				dialogDoReportLater();
+			else
+				transitionToTabsConfigActivity();
+			break;
+
+		case HINT_DO_REPORT_LATER:
+
+			if (myApp.getHintDoReportLater ())
+				dialogDoReportLater();
+			else
+				transitionToTabsConfigActivity();
+			break;
+
+		default:
+			transitionToTabsConfigActivity();
+			break;
 		}
 	}
 
@@ -644,6 +674,7 @@ public class TripQuestionsActivity extends Activity {
 	 * @param question_id
 	 * @param answers
 	 */
+	@SuppressWarnings("unused")
 	private void submitSpinnerSelection(Spinner spinner, DbAdapter dbAdapter, int question_id, int[] answer_ids) {
 		// Note: The first entry is always blank, the array of answers displayed
 		// by the UI is one greater than the number of answers in the database.
@@ -664,6 +695,7 @@ public class TripQuestionsActivity extends Activity {
 			int question_id, int[] answer_ids) {
 		submitSpinnerSelection(dbAdapter, spinner, question_id, answer_ids, -1, null);
 	}
+
 	/**
 	 * Enters the spinner selection into the database
 	 * @param spinner
@@ -695,6 +727,7 @@ public class TripQuestionsActivity extends Activity {
 	 * @param question_id
 	 * @param answers
 	 */
+	@SuppressWarnings("unused")
 	private void submitSpinnerSelection(DbAdapter dbAdapter, MultiSelectionSpinner spinner, int question_id, int[] answers) {
 		List<Integer> selectedIndicies = spinner.getSelectedIndicies();
 		for (int index : selectedIndicies) {
@@ -747,67 +780,34 @@ public class TripQuestionsActivity extends Activity {
 	}
 
 	// *********************************************************************************
-	// *                         querySafetyMarker Dialog
+	// *                       Mandatory Answers Dialog
 	// *********************************************************************************
 
-	/**
-	 * Build dialog telling user that they can add safety markers to the trip
-	 */
-	private void querySafetyMarker() {
-
+	private void dialogMandatoryAnswers() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-		builder.setTitle(R.string.tqi_qsm_dialog_title);
-		builder.setMessage(getResources().getString(R.string.tqi_qsm_dialog_message));
-		builder.setCancelable(false);
-		builder.setPositiveButton(getResources().getString(R.string.tqi_qsm_dialog_ok),
-				new QuerySafetyMarker_OkListener());
-		builder.setNegativeButton(getResources().getString(R.string.tqi_qsm_dialog_later),
-				new QuerySafetyMarker_CancelListener());
-		final AlertDialog alert = builder.create();
-		alert.show();
-	}
-
-	class QuerySafetyMarker_OkListener implements DialogInterface.OnClickListener {
-		public void onClick(final DialogInterface dialog, final int id) {
-			transitionToTripMapActivity();
-		}
-	}
-
-	class QuerySafetyMarker_CancelListener implements DialogInterface.OnClickListener {
-		public void onClick(final DialogInterface dialog, final int id) {
-			dialog.cancel();
-			AlertUserAboutLater();
-		}
-	}
-
-	// *********************************************************************************
-	// *                       AlertUserAboutLater Dialog
-	// *********************************************************************************
-
-	private void AlertUserAboutLater() {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.tqa_alert_title)
-				.setMessage(getResources().getString(R.string.tqa_alert_user_about_later))
+		builder.setTitle(R.string.tqa_alert_mandatory_title)
+				.setMessage(R.string.tqa_alert_answer_required_questions)
 				.setCancelable(true)
-				.setPositiveButton("OK", new AlertUserAboutLater_OkListener());
+				.setPositiveButton(
+						getResources().getString(R.string.tqa_alert_OK),
+						new DialogMandatoryAnswers_OkListener());
 		final AlertDialog alert = builder.create();
 		alert.show();
 	}
 
-    private final class AlertUserAboutLater_OkListener implements
+	private final class DialogMandatoryAnswers_OkListener implements
 			DialogInterface.OnClickListener {
+
 		public void onClick(final DialogInterface dialog, final int id) {
-			dialog.cancel();
-			transitionToTabsConfigActivity();
+			dialog.dismiss();
 		}
 	}
 
 	// *********************************************************************************
-	// *                       AlertUserRepeatTrips Dialog
+	// *                       Dont Repeat Trips Dialog
 	// *********************************************************************************
 
-	private void AlertUserRepeatTrips(String purpose) {
+	private void dialogDontRepeatTrips(String purpose) {
 
 		String message = "<i>" + capitalize(purpose) + "</i> trip logged.&#160;&#160;" +
 				"To reduce user burden, it is <b>optional</b> to log frequent (repeated) " +
@@ -817,25 +817,37 @@ public class TripQuestionsActivity extends Activity {
 		DsaDialog dsaDialog = new DsaDialog(this,
 			null,
 			message,
-			new AlertUserRepeatTrips_CheckedChangeListener(),
-			getResources().getString(R.string.tqa_alert_OK), new AlertUserRepeatTrips_OkListener(),
+			new DialogDontRepeatTrips_CheckedChangeListener(),
+			getResources().getString(R.string.tqa_alert_OK), new DialogDontRepeatTrips_OkListener(),
 			null, null, null, null);
 
 		dsaDialog.show();
 	}
 
-    private final class AlertUserRepeatTrips_OkListener implements
+    private final class DialogDontRepeatTrips_OkListener implements
 			DialogInterface.OnClickListener {
+
 		public void onClick(final DialogInterface dialog, final int id) {
-			dialog.cancel();
-			querySafetyMarker();
+			try {
+				doNextHint(HINT_DO_REPORT_NOW, null);
+				dialog.dismiss();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 		}
 	}
 
-    private final class AlertUserRepeatTrips_CheckedChangeListener implements
+    private final class DialogDontRepeatTrips_CheckedChangeListener implements
     CompoundButton.OnCheckedChangeListener {
+
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			MyApplication.getInstance().setWarnRepeatTrips(!isChecked);
+			try {
+				MyApplication.getInstance().setHintDontRepeatTrips(!isChecked);
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 		}
 	}
 
@@ -848,6 +860,109 @@ public class TripQuestionsActivity extends Activity {
 		}
 		else {
 			return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+		}
+	}
+
+	// *********************************************************************************
+	// *                         Do Report Now Dialog
+	// *********************************************************************************
+
+	/**
+	 * Build dialog telling user that they can add safety markers to the trip
+	 */
+	private void dialogDoReportNow() {
+
+		DsaDialog dsaDialog = new DsaDialog(this,
+				getResources().getString(R.string.tqi_qsm_dialog_title),
+				R.string.tqi_qsm_dialog_message,
+				new DialogDoReportNow_CheckedChangeListener(),
+				R.string.tqi_qsm_dialog_ok, new DialogDoReportNow_OkListener(),
+				R.string.tqi_qsm_dialog_later, new DialogDoReportNow_LaterListener(),
+				-1, null);
+
+		dsaDialog.show();
+	}
+
+    private final class DialogDoReportNow_CheckedChangeListener implements
+    CompoundButton.OnCheckedChangeListener {
+
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			try {
+				MyApplication.getInstance().setHintDoReportNow(!isChecked);
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+	private final class DialogDoReportNow_OkListener implements DialogInterface.OnClickListener {
+
+		public void onClick(final DialogInterface dialog, final int id) {
+			try {
+				transitionToTripMapActivity();
+				dialog.dismiss();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+	private final class DialogDoReportNow_LaterListener implements DialogInterface.OnClickListener {
+
+		public void onClick(final DialogInterface dialog, final int id) {
+			try {
+				doNextHint(HINT_DO_REPORT_LATER, null);
+				dialog.dismiss();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+	// *********************************************************************************
+	// *                       AlertUserAboutLater Dialog
+	// *********************************************************************************
+
+	private void dialogDoReportLater() {
+
+		DsaDialog dsaDialog = new DsaDialog(this,
+				getResources().getString(R.string.tqa_alert_title),
+				R.string.tqa_alert_user_about_later,
+				new DialogDoReportLater_CheckedChangeListener(),
+				R.string.tqa_alert_OK, new DialogDoReportLater_OkListener(),
+				-1, null,
+				-1, null);
+
+		dsaDialog.show();
+	}
+
+    private final class DialogDoReportLater_CheckedChangeListener implements
+    CompoundButton.OnCheckedChangeListener {
+
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			try {
+				MyApplication.getInstance().setHintDoReportLater(!isChecked);
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+		}
+	}
+
+    private final class DialogDoReportLater_OkListener implements
+			DialogInterface.OnClickListener {
+
+		public void onClick(final DialogInterface dialog, final int id) {
+			try {
+				transitionToTabsConfigActivity();
+				dialog.dismiss();
+			}
+			catch(Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
 		}
 	}
 

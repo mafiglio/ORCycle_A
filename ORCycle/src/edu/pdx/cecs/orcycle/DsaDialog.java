@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.text.Html;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -34,6 +35,19 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 public class DsaDialog {
+
+	private static final class DsaDialog_OnKeyListener implements
+			DialogInterface.OnKeyListener {
+
+		@Override
+		public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                return true;
+            }
+			return false;
+		}
+	}
 
 	private final AlertDialog alertDialog;
 
@@ -98,6 +112,8 @@ public class DsaDialog {
 		if (null != negativeListener)
 			builder.setPositiveButton(negativeText, negativeListener);
 
+		builder.setOnKeyListener(new DsaDialog_OnKeyListener());
+
 		return builder.create();
 	}
 
@@ -135,6 +151,9 @@ public class DsaDialog {
 
 		if (null != negativeListener)
 			builder.setPositiveButton(negativeTextId, negativeListener);
+
+		// Don't allow users to back out of the dialog.  They must press a button!
+		builder.setCancelable(false);
 
 		return builder.create();
 	}
