@@ -64,7 +64,9 @@ public class MyApplication extends android.app.Application {
 	private static final String SETTING_TUTORIAL_ENABLED = "TUTORIAL_ENABLED";
 	private static final String SETTING_USER_INFO_UPLOADED = "USER_INFO_UPLOADED";
 	private static final String SETTING_FIRST_TRIP_COMPLETED = "SETTING_FIRST_TRIP_COMPLETED";
-	private static final String SETTING_WARN_REPEAT_TRIPS = "SETTING_WARN_REPEAT_TRIPS";
+	private static final String SETTING_HINT_DONT_REPEAT_TRIPS = "SETTING_WARN_REPEAT_TRIPS";
+	private static final String SETTING_HINT_DO_REPORT_NOW = "SETTING_HINT_DO_REPORT_NOW";
+	private static final String SETTING_HINT_DO_REPORT_LATER = "SETTING_HINT_DO_REPORT_LATER";
 	private static final String SETTING_HINT_EMAIL_NAME_AND_NUMBER = "SETTING_HINT_EMAIL_NAME_AND_NUMBER";
 	private static final String SETTING_USER_ID = "SETTING_USER_ID";
 	private static final String SETTING_FIRST_USE = "SETTING_FIRST_USE";
@@ -78,10 +80,13 @@ public class MyApplication extends android.app.Application {
 	private String appVersion;
 	private String deviceModel;
 	private long firstUse = -1;
-	private boolean warnRepeatTrips;
+	private boolean hintDontRepeatTrips;
+	private boolean hintDoReportNow;
+	private boolean hintDoReportLater;
+	private boolean hintEmailNameAndNumber;
 	private boolean firstTripCompleted;
 	private boolean sixMonthAlarmEnabled;
-	private boolean hintEmailNameAndNumber;
+
 	private RecordingService recordingService = null;
 	private TripData trip;
 
@@ -162,8 +167,9 @@ public class MyApplication extends android.app.Application {
 
 		tutorialEnabled = settings.getBoolean(SETTING_TUTORIAL_ENABLED, true);
 
-		warnRepeatTrips = settings.getBoolean(SETTING_WARN_REPEAT_TRIPS, true);
-
+		hintDontRepeatTrips = settings.getBoolean(SETTING_HINT_DONT_REPEAT_TRIPS, true);
+		hintDoReportNow = settings.getBoolean(SETTING_HINT_DO_REPORT_NOW, true);
+		hintDoReportLater = settings.getBoolean(SETTING_HINT_DO_REPORT_LATER, true);
 		hintEmailNameAndNumber = settings.getBoolean(SETTING_HINT_EMAIL_NAME_AND_NUMBER, true);
 
 		if (false == (sixMonthAlarmEnabled = settings.getBoolean(SETTING_SIX_MONTH_ALARM_ENABLED, false))) {
@@ -180,9 +186,11 @@ public class MyApplication extends android.app.Application {
 		setUserProfileUploaded(false);
 		setUserWelcomeEnabled(false);
 		setTutorialEnabled(true);
-		setWarnRepeatTrips(true);
-		setSixMonthAlarmEnabled(false);
+		setHintDontRepeatTrips(true);
+		setHintDoReportNow(true);
+		setHintDoReportLater(true);
 		setHintEmailNameAndNumber(true);
+		setSixMonthAlarmEnabled(false);
 	}
 
     /**
@@ -460,25 +468,47 @@ public class MyApplication extends android.app.Application {
 	}
 
 	// *********************************************************************************
-	// *                                WarnRepeatTrips
+	// *                                Hints
 	// *********************************************************************************
 
-	public void setWarnRepeatTrips(boolean value) {
-		warnRepeatTrips = value;
+	public void setHintDontRepeatTrips(boolean value) {
+		hintDontRepeatTrips = value;
 		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor = settings.edit();
-		editor.putBoolean(SETTING_WARN_REPEAT_TRIPS, warnRepeatTrips);
+		editor.putBoolean(SETTING_HINT_DONT_REPEAT_TRIPS, hintDontRepeatTrips);
 		editor.apply();
 	}
 
-	public boolean getWarnRepeatTrips() {
-		return warnRepeatTrips;
+	public boolean getHintDontRepeatTrips() {
+		return hintDontRepeatTrips;
 	}
 
-	// *********************************************************************************
-	// *                          HintAutoEmailNameAndNumber
-	// *********************************************************************************
+	public void setHintDoReportNow(boolean value) {
+		hintDoReportNow = value;
+		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor = settings.edit();
+		editor.putBoolean(SETTING_HINT_DO_REPORT_NOW, hintDoReportNow);
+		editor.apply();
+	}
+
+	public boolean getHintDoReportNow() {
+		return hintDoReportNow;
+	}
+
+	public void setHintDoReportLater(boolean value) {
+		hintDoReportLater = value;
+		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor = settings.edit();
+		editor.putBoolean(SETTING_HINT_DO_REPORT_NOW, hintDoReportLater);
+		editor.apply();
+	}
+
+	public boolean getHintDoReportLater() {
+		return hintDoReportLater;
+	}
 
 	public void setHintEmailNameAndNumber(boolean value) {
 		hintEmailNameAndNumber = value;
