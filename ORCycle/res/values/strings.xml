@@ -218,7 +218,15 @@ section they can be included automatically in the next email to ODOT.  <i>NOTE: 
 not store your name or phone number in a database. This information is stored <b>only</b> in your 
 phone and it is only used to facilitate the email generation"</i></string>
 <string name="nda_dialog_button_ok">OK</string>
-    
+
+	<string name="rr_use_toast_message">Please use ORcycle to log your typical commute, social, recreational, etc. trip</string>
+	<string name="rr_use_ticker_text">It\'s been %d months!  Would you like to start ORcycle</string>
+	<string name="rr_use_content_title">It\'s been %d months!</string>
+	<string name="rr_use_content_text">Tap to start ORcycle</string>
+	<string name="rr_orcycle_reminder">ORcycle Reminder</string>
+	<string name="rr_query_start">Reminder: %s. Would you like to start ORcycle?</string>
+	<string name="rr_tap_to_start">Tap to start ORcycle</string>
+					
     
     <!-- ********************************************************* -->
     <!-- *            User Information Questions                 * -->
