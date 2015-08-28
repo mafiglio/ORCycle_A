@@ -173,7 +173,7 @@ public class MyApplication extends android.app.Application {
 		hintEmailNameAndNumber = settings.getBoolean(SETTING_HINT_EMAIL_NAME_AND_NUMBER, true);
 
 		if (false == (sixMonthAlarmEnabled = settings.getBoolean(SETTING_SIX_MONTH_ALARM_ENABLED, false))) {
-			SixMonthReminder.rescheduleSixMonthAlarm(this.getBaseContext());
+			UseReminder.rescheduleAlarm(this.getBaseContext());
 			setSixMonthAlarmEnabled(true);
 		}
 
@@ -335,8 +335,8 @@ public class MyApplication extends android.app.Application {
 
 		startRecordingNotification(lastTripStartTime = trip.getStartTime());
 
-		SixMonthReminder.rescheduleSixMonthAlarm(activity);
-		SixMonthReminder.cancelOneWeekAlarm(activity);
+		UseReminder.rescheduleAlarm(activity);
+		UseReminder.cancelOneWeekAlarm(activity);
     }
 
     /**

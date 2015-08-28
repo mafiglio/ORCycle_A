@@ -31,14 +31,11 @@ import android.widget.Toast;
 
 public class ReminderReceiver extends BroadcastReceiver {
 
+	// TODO: Move messages to resource file
 	public static final String MODULE_TAG = "ReminderReceiver";
 	public static final String ACTION_REMIND_USER = "edu.pdx.cecs.orcycle.ACTION_REMIND_USER";
-	public static final String ACTION_SIX_MONTH_REMINDER = "edu.pdx.cecs.orcycle.ACTION_SIX_MONTH_REMINDER";
-	public static final String ACTION_ONE_WEEK_REMINDER = "edu.pdx.cecs.orcycle.ACTION_ONE_WEEK_REMINDER";
-	public static final String SIX_MONTH_TOAST_MESSAGE = "Please use ORcycle to log your typical commute, social, recreational, etc. trip";
-	public static final String SIX_MONTH_TICKER_TEXT = "It's been 6 months!  Would you like to start ORcycle";
-	public static final String SIX_MONTH_CONTENT_TITLE = "It's been 6 months!";
-	public static final String SIX_MONTH_CONTENT_TEXT = "Tap to start ORcycle";
+	public static final String ACTION_USE_REMINDER = "edu.pdx.cecs.orcycle.ACTION_USE_REMINDER";
+	public static final String ACTION_ONE_WEEK_USE_REMINDER = "edu.pdx.cecs.orcycle.ACTION_ONE_WEEK_USE_REMINDER";
 
 	/**
 	 * Process an alarm event
@@ -48,9 +45,10 @@ public class ReminderReceiver extends BroadcastReceiver {
 
 		String reminderName;
 		BikeBell bell;
-		CharSequence tickerText;
-		CharSequence contentTitle;
-		CharSequence contentText;
+		String toastMessage;
+		String tickerText;
+		String contentTitle;
+		String contentText;
 
 		try {
 			// Ring bell
@@ -58,45 +56,63 @@ public class ReminderReceiver extends BroadcastReceiver {
 				bell.ring();
 			}
 
+			// Determine action to take
 			String action = intent.getAction();
-			if (action.equals(ACTION_SIX_MONTH_REMINDER)) {
-				Toast.makeText(context, SIX_MONTH_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
-				Toast.makeText(context, SIX_MONTH_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
-				Toast.makeText(context, SIX_MONTH_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
-				MyNotifiers.setReminderNotification(context, SIX_MONTH_TICKER_TEXT,
-						SIX_MONTH_CONTENT_TITLE, SIX_MONTH_CONTENT_TEXT);
-				SixMonthReminder.scheduleOneWeekAlarm(context);
+
+			if (action.equals(ACTION_USE_REMINDER)) {
+
+				// Display toast message
+				toastMessage = context.getString(R.string.rr_use_toast_message);
+				longToastMessage(context, toastMessage);
+
+				// Display notification message
+				tickerText = context.getString(R.string.rr_use_ticker_text, UseReminder.REMINDER_PERIOD);
+				contentTitle = context.getString(R.string.rr_use_content_title, UseReminder.REMINDER_PERIOD);
+				contentText = context.getString(R.string.rr_use_content_text);
+				MyNotifiers.setReminderNotification(context, tickerText, contentTitle, contentText);
+
+				UseReminder.scheduleOneWeekAlarm(context);
 			}
-			else if (action.equals(ACTION_ONE_WEEK_REMINDER)) {
-				Toast.makeText(context, SIX_MONTH_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
-				Toast.makeText(context, SIX_MONTH_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
-				Toast.makeText(context, SIX_MONTH_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
-				MyNotifiers.setReminderNotification(context, SIX_MONTH_TICKER_TEXT,
-						SIX_MONTH_CONTENT_TITLE, SIX_MONTH_CONTENT_TEXT);
-				SixMonthReminder.rescheduleSixMonthAlarm(context);
+			else if (action.equals(ACTION_ONE_WEEK_USE_REMINDER)) {
+
+				// Display toast message
+				toastMessage = context.getString(R.string.rr_use_toast_message);
+				longToastMessage(context, toastMessage);
+
+				// Display notification message
+				tickerText = context.getString(R.string.rr_use_ticker_text, UseReminder.REMINDER_PERIOD);
+				contentTitle = context.getString(R.string.rr_use_content_title, UseReminder.REMINDER_PERIOD);
+				contentText = context.getString(R.string.rr_use_content_text);
+				MyNotifiers.setReminderNotification(context, tickerText, contentTitle, contentText);
+
+				UseReminder.rescheduleAlarm(context);
 			}
 			else if (action.equals(ACTION_REMIND_USER)) {
-				// Show reminder message
-				String message = "ORcycle reminder";
+
+				// Display toast message
+				toastMessage = context.getString(R.string.rr_orcycle_reminder);
 				if (null != (reminderName = intent.getStringExtra(Reminder.EXTRA_REMINDER_NAME))) {
-					message = message + ": " + reminderName;
+					toastMessage = toastMessage + ": " + reminderName;
 				}
 				else {
-					message = message + "!";
+					reminderName = "";
+					toastMessage = toastMessage + "!";
 				}
-				Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+				longToastMessage(context, toastMessage);
 
-				// If application is not running, display ORcycle start dialog
+				// If application is not running
 				if (!MyApplication.getInstance().isRunning()) {
+
+					// Display query start dialog
 					Intent startIntent = new Intent(context, QueryStartActivity.class);
 					startIntent.putExtra(QueryStartActivity.EXTRA_REMINDER_NAME, reminderName);
 					startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					context.startActivity(startIntent);
 
-					tickerText = "Reminder: " + reminderName + "Would you like to start ORcycle";
-					contentTitle = "ORcycle Reminder";
-					contentText = "Tap to start ORcycle";
-
+					// display notification message
+					tickerText = context.getString(R.string.rr_query_start, reminderName);
+					contentTitle = context.getString(R.string.rr_orcycle_reminder);
+					contentText = context.getString(R.string.rr_tap_to_start);
 					MyNotifiers.setReminderNotification(context, tickerText, contentTitle, contentText);
 				}
 			}
@@ -105,5 +121,11 @@ public class ReminderReceiver extends BroadcastReceiver {
 		catch(Exception ex) {
 			Log.e(MODULE_TAG, ex.getMessage());
 		}
+	}
+
+	private void longToastMessage(Context context, String message) {
+		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 	}
 }
