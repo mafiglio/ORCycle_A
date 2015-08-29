@@ -63,6 +63,7 @@ public class NoteDetailActivity extends Activity {
 	public static final String MODULE_TAG = "NoteDetailActivity";
 
 	public static final String ORCYCLE_EMAIL_ADDRESS = "figliozzi@pdx.edu";
+	public static final String ORCYCLE_CC_ADDRESS = "orcycle@pdx.edu";
 	//public static final String ORCYCLE_EMAIL_ADDRESS = "robin5@pdx.edu";
 
 	public static final String EXTRA_NOTE_ID = "noteId";
@@ -846,8 +847,9 @@ public class NoteDetailActivity extends Activity {
 	private void transitionToEmailActivity(NoteEmail noteEmail) {
 		try {
 			Intent intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("plain/text"); // TODO: intent.setType("text/html");
+			intent.setType("text/plain");
 			intent.putExtra(Intent.EXTRA_EMAIL, new String[] { ORCYCLE_EMAIL_ADDRESS });
+			intent.putExtra(Intent.EXTRA_CC, new String[] { ORCYCLE_CC_ADDRESS });
 			intent.putExtra(Intent.EXTRA_SUBJECT, noteEmail.getSubject());
 			intent.putExtra(Intent.EXTRA_TEXT, noteEmail.getText());
 
