@@ -86,12 +86,11 @@ public class TripData {
 	private boolean isPaused = false;
 	private boolean isFinished = false;
 
-
 	private int numpoints = 0;
 	private int lathigh, lgthigh, latlow, lgtlow, latestlat, latestlgt;
 	private int status;
 	private float distance;
-	String info;
+	private String info;
 	private String fancystart;
 	private String purp;
 	private String noteComment;
@@ -99,7 +98,7 @@ public class TripData {
 	private ArrayList<CyclePoint> gpspoints = new ArrayList<CyclePoint>();
 	CyclePoint startpoint, endpoint;
 
-	DbAdapter mDb;
+	private final DbAdapter mDb;
 
 	public static int STATUS_INCOMPLETE = 0;
 	public static int STATUS_COMPLETE = 1;
@@ -184,7 +183,9 @@ public class TripData {
 		updateTrip("", "", "");
 	}
 
-	// Get lat/long extremes, etc, from trip record
+	/**
+	 *  Get lat/long extremes, etc, from trip record
+	 */
 	void populateDetails() {
 
 		pauseStartedTime = RESET_START_TIME;
@@ -413,6 +414,24 @@ public class TripData {
 		}
 
 		return rtn;
+	}
+
+	public void addSensorReadings(double currentTime, String sensorName, int sensorType, int numSamples, float[] averageValues, float[] sumSquareDifferences) {
+
+		Log.i(MODULE_TAG, "Sensor(time:" + currentTime + ", name: " + sensorName + ", type: " + sensorType + ", numSamples: " + numSamples + ")");
+
+		if ((null != averageValues) && (null != sumSquareDifferences)) {
+			mDb.open();
+			try {
+				mDb.addSensorReadings(currentTime, sensorName, sensorType, numSamples, averageValues, sumSquareDifferences);
+			}
+			catch (Exception ex) {
+				Log.e(MODULE_TAG, ex.getMessage());
+			}
+			finally {
+				mDb.close();
+			}
+		}
 	}
 
 	/**
