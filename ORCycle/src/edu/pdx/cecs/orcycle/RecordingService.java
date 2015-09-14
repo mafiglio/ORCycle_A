@@ -61,6 +61,7 @@ package edu.pdx.cecs.orcycle;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -95,6 +96,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 
 	private SpeedMonitor speedMonitor;
 	private int pauseId = -1;
+	private SensorRecorder accelerationSensorRecorder;
 
 	private final MyServiceBinder myServiceBinder = new MyServiceBinder();
 
@@ -110,6 +112,12 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		try {
+			accelerationSensorRecorder = SensorRecorder.create(this, Sensor.TYPE_ACCELEROMETER);
+		}
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
 	}
 
 	@Override
@@ -199,6 +207,9 @@ public class RecordingService extends Service implements IRecordService, Locatio
 
 	public void reset() {
 		RecordingService.this.state = STATE_IDLE;
+		if (null != accelerationSensorRecorder) {
+			accelerationSensorRecorder.reset();
+		}
 	}
 
 	/**
@@ -211,15 +222,14 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		this.state = STATE_RECORDING;
 		this.trip = trip;
 		this.pauseId = -1;
-
-		distanceMeters = 0.0f;
-		lastLocation = null;
+		this.distanceMeters = 0.0f;
+		this.lastLocation = null;
 
 		// Start listening for GPS updates!
-		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				MIN_TIME_BETWEEN_READINGS_MILLISECONDS,
-				MIN_DISTANCE_BETWEEN_READINGS_METERS, this);
+		registerLocationUpdates();
+
+		// Start listening for sensor updates!
+		startSensorRecorders();
 
 		if (null == speedMonitor) {
 			speedMonitor = new SpeedMonitor(this);
@@ -236,6 +246,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		this.pauseId = pauseId;
 		this.state = STATE_PAUSED;
 		trip.startPause();
+		pauseSensorRecorders();
 		if (null != speedMonitor)
 			speedMonitor.cancel();
 	}
@@ -249,6 +260,7 @@ public class RecordingService extends Service implements IRecordService, Locatio
 		this.state = STATE_RECORDING;
 		this.pauseId = -1;
 		trip.finishPause();
+		resumeSensorRecorders();
 		if (null != speedMonitor)
 			speedMonitor.start();
 	}
@@ -261,14 +273,15 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	 *    database, otherwise cancel trip and don't save any data
 	 */
 	public long finishRecording() {
+
 		this.state = STATE_FULL;
 
 		if (null != speedMonitor)
 			speedMonitor.cancel();
 
 		// Disable location manager updates
-		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		lm.removeUpdates(this);
+		unregisterLocationUpdates();
+		unregisterSensorRecorders();
 
 		//
 		if (trip.getNumPoints() > 0) {
@@ -290,8 +303,9 @@ public class RecordingService extends Service implements IRecordService, Locatio
 			trip.dropTrip();
 		}
 
-		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		lm.removeUpdates(this);
+		// Disable location manager updates
+		unregisterLocationUpdates();
+		unregisterSensorRecorders();
 
 		this.state = STATE_IDLE;
 	}
@@ -300,17 +314,35 @@ public class RecordingService extends Service implements IRecordService, Locatio
 	// *                     LocationListener Implementation
 	// *********************************************************************************
 
+	private void registerLocationUpdates() {
+
+		LocationManager lm;
+		if (null != (lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE))) {
+			lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+					MIN_TIME_BETWEEN_READINGS_MILLISECONDS,
+					MIN_DISTANCE_BETWEEN_READINGS_METERS, this);
+		}
+	}
+
+	private void unregisterLocationUpdates() {
+		LocationManager lm;
+		if (null != (lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE))) {
+			lm.removeUpdates(this);
+		}
+	}
+
 	@Override
 	public void onLocationChanged(Location location) {
 
 		try {
 			if (location != null) {
 
-				double timeSinceStart = System.currentTimeMillis() - trip.getStartTime();
+				long currentTimeMillis = System.currentTimeMillis();
+				double timeSinceStart = currentTimeMillis - trip.getStartTime();
 				float accuracy = location.getAccuracy();
 
 				if ((null != speedMonitor) && (location.hasSpeed()))
-					speedMonitor.recordSpeed(System.currentTimeMillis(), location.getSpeed());
+					speedMonitor.recordSpeed(currentTimeMillis, location.getSpeed());
 
 				// The first 2 points are recorded regardless of accuracy, and
 				// we ignore accuracy for the first minute. After those 2
@@ -324,6 +356,10 @@ public class RecordingService extends Service implements IRecordService, Locatio
 					}
 
 					trip.addPointNow(location, System.currentTimeMillis(), distanceMeters);
+
+					if (null != accelerationSensorRecorder) {
+						accelerationSensorRecorder.writeResult(trip, currentTimeMillis, location);
+					}
 
 					// Update the status page every time, if we can.
 					// notifyListeners();
@@ -346,5 +382,34 @@ public class RecordingService extends Service implements IRecordService, Locatio
 
 	@Override
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+	}
+
+	// *********************************************************************************
+	// *                     SensorEventListener Implementation
+	// *********************************************************************************
+
+	private void startSensorRecorders() {
+		if (null != accelerationSensorRecorder) {
+			accelerationSensorRecorder.reset();
+			accelerationSensorRecorder.start(this);
+		}
+	}
+
+	private void pauseSensorRecorders() {
+		if (null != accelerationSensorRecorder) {
+			accelerationSensorRecorder.pause();
+		}
+	}
+
+	private void resumeSensorRecorders() {
+		if (null != accelerationSensorRecorder) {
+			accelerationSensorRecorder.resume();
+		}
+	}
+
+	private void unregisterSensorRecorders() {
+		if (null != accelerationSensorRecorder) {
+			accelerationSensorRecorder.unregister(this);
+		}
 	}
 }

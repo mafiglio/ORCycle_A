@@ -101,7 +101,10 @@ public class DbAdapter {
 	private static final int DATABASE_VERSION_REMINDERS = 29;
 	private static final int DATABASE_VERSION_REPORT_DATES = 30;
 	private static final int DATABASE_VERSION_NOTE_EMAILS = 31;
-	private static final int DATABASE_VERSION = DATABASE_VERSION_NOTE_EMAILS;
+	private static final int DATABASE_VERSION_SENSOR_VALUES_TABLE = 32;
+	private static final int DATABASE_VERSION = DATABASE_VERSION_SENSOR_VALUES_TABLE;
+
+	private static final String DATA_TABLE_SENSOR_VALUES = "sensor_values";
 
 	// Trips Table columns
 	public static final String K_TRIP_ROWID = "_id";
@@ -149,6 +152,19 @@ public class DbAdapter {
 	public static final String K_PAUSE_TRIP_ID = "_id";
 	public static final String K_PAUSE_START_TIME = "starttime";
 	public static final String K_PAUSE_END_TIME = "endtime";
+
+	// Sensor table columns
+	public static final String K_SENSOR_TIME = "time";
+	public static final String K_SENSOR_ID = "id";
+	public static final String K_SENSOR_TYPE = "type";
+	public static final String K_SENSOR_SAMPLES = "samples";
+	public static final String K_SENSOR_NUM_VALS = "numvals";
+	public static final String K_SENSOR_AVG_0 = "avg0";
+	public static final String K_SENSOR_AVG_1 = "avg1";
+	public static final String K_SENSOR_AVG_2 = "avg2";
+	public static final String K_SENSOR_SSD_0 = "ssd0";
+	public static final String K_SENSOR_SSD_1 = "ssd1";
+	public static final String K_SENSOR_SSD_2 = "ssd2";
 
 	// Trip Answers Table columns
 	public static final String K_ANSWER_TRIP_ID = "trip_id";
@@ -206,6 +222,22 @@ public class DbAdapter {
 			+ "(_id integer, starttime double, endtime double, "
 			+ "PRIMARY KEY(_id, startTime), "
 			+ "FOREIGN KEY(_id) REFERENCES TRIPS(_id));";
+
+	private static final String SQL_CREATE_TABLE_CMD = "create table";
+
+	private static final String TABLE_CREATE_SENSOR_VALUES = SQL_CREATE_TABLE_CMD + " " + DATA_TABLE_SENSOR_VALUES + " ("
+			+ K_SENSOR_TIME     + " double, "
+			+ K_SENSOR_ID       + " text, "
+			+ K_SENSOR_TYPE     + " integer, "
+			+ K_SENSOR_SAMPLES  + " integer, "
+			+ K_SENSOR_NUM_VALS + " integer, "
+			+ K_SENSOR_AVG_0  + " double, "
+			+ K_SENSOR_AVG_1  + " double, "
+			+ K_SENSOR_AVG_2  + " double, "
+			+ K_SENSOR_SSD_0  + " double, "
+			+ K_SENSOR_SSD_1  + " double, "
+			+ K_SENSOR_SSD_2  + " double, "
+			+ "PRIMARY KEY(" + K_SENSOR_TIME + ", " + K_SENSOR_ID + "));";
 
 	private static final String TABLE_CREATE_SEGMENTS = "create table segments "
 			+ "(_id integer primary key autoincrement, tripid int, rating int, "
@@ -354,6 +386,17 @@ public class DbAdapter {
 					Log.e(MODULE_TAG, ex.getMessage());
 				}
 			}
+
+			// Create table for holding sensor data
+			if (oldVersion < DATABASE_VERSION_SENSOR_VALUES_TABLE) {
+				try {
+					db.execSQL(TABLE_CREATE_SENSOR_VALUES);
+				}
+				catch(Exception ex) {
+					Log.e(MODULE_TAG, ex.getMessage());
+				}
+			}
+
 		}
 
 		@Override
@@ -486,6 +529,67 @@ public class DbAdapter {
 				mCursor.moveToFirst();
 			}
 			return mCursor;
+		} catch (Exception e) {
+			Log.e(MODULE_TAG, e.toString());
+			return null;
+		}
+	}
+
+	// ************************************************************************
+	// *                    Sensor table methods
+	// ************************************************************************
+
+	public void addSensorReadings(double currentTime, String sensorName, int sensorType, int numSamples, float[] averageValues, float[] sumSquareDifferences) {
+
+		// Add the latest point
+		ContentValues cv = new ContentValues();
+		cv.put(K_SENSOR_TIME, currentTime);
+		cv.put(K_SENSOR_ID, sensorName);
+		cv.put(K_SENSOR_TYPE, sensorType);
+		cv.put(K_SENSOR_SAMPLES, numSamples);
+		cv.put(K_SENSOR_NUM_VALS, averageValues.length);
+
+		switch(averageValues.length) {
+
+		case 1:
+			cv.put(K_SENSOR_AVG_0, averageValues[0]);
+			cv.put(K_SENSOR_SSD_0, sumSquareDifferences[0]);
+			break;
+
+		case 3:
+			cv.put(K_SENSOR_AVG_0, averageValues[0]);
+			cv.put(K_SENSOR_AVG_1, averageValues[1]);
+			cv.put(K_SENSOR_AVG_2, averageValues[2]);
+			cv.put(K_SENSOR_SSD_0, sumSquareDifferences[0]);
+			cv.put(K_SENSOR_SSD_1, sumSquareDifferences[1]);
+			cv.put(K_SENSOR_SSD_2, sumSquareDifferences[2]);
+			break;
+
+		default:
+			Log.e(MODULE_TAG, "addSensorReadings failed: invalid number of values encountered");
+			return;
+		}
+
+		if (-1 == mDb.insert(DATA_TABLE_SENSOR_VALUES, null, cv)) {
+			Log.e(MODULE_TAG, "Insert " + DATA_TABLE_SENSOR_VALUES + ": failed");
+		}
+	}
+
+	public Cursor fetchSensorValues(double time) {
+		try {
+			String[] columns = new String[] {
+					K_SENSOR_ID, K_SENSOR_TYPE, K_SENSOR_SAMPLES, K_SENSOR_NUM_VALS,
+					K_SENSOR_AVG_0, K_SENSOR_AVG_1, K_SENSOR_AVG_2,
+					K_SENSOR_SSD_0, K_SENSOR_SSD_1, K_SENSOR_SSD_2};
+
+			Cursor cursor = mDb.query(true, DATA_TABLE_SENSOR_VALUES, columns,
+					K_SENSOR_TIME + "=" + time,
+					null, null, null, null, null);
+
+			if (cursor != null) {
+				cursor.moveToFirst();
+			}
+			return cursor;
 		} catch (Exception e) {
 			Log.e(MODULE_TAG, e.toString());
 			return null;
@@ -680,8 +784,8 @@ public class DbAdapter {
 
 		numRows = mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "=" + tripid, null);
 
-		/* Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
-				+ "](" + K_TRIP_STATUS +"): " + String.valueOf(numRows) + " rows."); */
+		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
+				+ "](" + K_TRIP_STATUS +"): " + String.valueOf(numRows) + " rows.");
 
 		return numRows > 0;
 	}

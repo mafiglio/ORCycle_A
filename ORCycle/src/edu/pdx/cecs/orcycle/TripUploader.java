@@ -78,6 +78,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -92,15 +93,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 
 	private static final String MODULE_TAG = "TripUploader";
 	public static final int kSaveProtocolVersion = 3;
-
-	// Saving protocol version 2
-	// public static final String TRIP_COORDS_TIME = "rec";
-	// public static final String TRIP_COORDS_LAT = "lat";
-	// public static final String TRIP_COORDS_LON = "lon";
-	// public static final String TRIP_COORDS_ALT = "alt";
-	// public static final String TRIP_COORDS_SPEED = "spd";
-	// public static final String TRIP_COORDS_HACCURACY = "hac";
-	// public static final String TRIP_COORDS_VACCURACY = "vac";
+	private static final String POST_URL = "http://orcycle2.cecs.pdx.edu/post/";
 
 	// Saving protocol version 3
 	public static final String TRIP_COORDS_TIME = "r";
@@ -110,9 +103,21 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 	public static final String TRIP_COORDS_SPEED = "s";
 	public static final String TRIP_COORDS_HACCURACY = "h";
 	public static final String TRIP_COORDS_VACCURACY = "v";
+	public static final String TRIP_COORDS_SENSOR_READINGS = "sr";
 
 	public static final String PAUSE_START = "ps";
 	public static final String PAUSE_END = "pe";
+
+	public static final String TRIP_COORD_SENSOR_ID = "s_id";
+	public static final String TRIP_COORD_SENSOR_TYPE = "s_t";
+	public static final String TRIP_COORD_SENSOR_SAMPLES = "s_ns";
+	public static final String TRIP_COORD_SENSOR_NUM_VALS = "s_nv";
+	public static final String TRIP_COORD_SENSOR_AVG_0 = "s_a0";
+	public static final String TRIP_COORD_SENSOR_AVG_1 = "s_a1";
+	public static final String TRIP_COORD_SENSOR_AVG_2 = "s_a2";
+	public static final String TRIP_COORD_SENSOR_SSD_0 = "s_s0";
+	public static final String TRIP_COORD_SENSOR_SSD_1 = "s_s1";
+	public static final String TRIP_COORD_SENSOR_SSD_2 = "s_s2";
 
 	public static final String USER_AGE = "age";
 	public static final String USER_EMAIL = "email";
@@ -139,6 +144,8 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 	private final String userId;
 	private final DbAdapter mDb;
 
+	private Map<String, Integer> sensorColumn = null;
+
 	public TripUploader(Context ctx, String userId) {
 		super();
 		this.mCtx = ctx;
@@ -146,59 +153,153 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		this.mDb = new DbAdapter(this.mCtx);
 	}
 
+	@SuppressLint("SimpleDateFormat")
 	private JSONObject getCoordsJSON(long tripId) throws JSONException {
+
+		JSONObject jsonTripCoords = null;
+		JSONArray jsonSensorReadings = null;
+
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		mDb.openReadOnly();
-		Cursor tripCoordsCursor = mDb.fetchAllCoordsForTrip(tripId);
 
-		// Build the map between JSON fieldname and phone db fieldname:
-		Map<String, Integer> fieldMap = new HashMap<String, Integer>();
-		fieldMap.put(TRIP_COORDS_TIME,
-				tripCoordsCursor.getColumnIndex(DbAdapter.K_POINT_TIME));
-		fieldMap.put(TRIP_COORDS_LAT,
-				tripCoordsCursor.getColumnIndex(DbAdapter.K_POINT_LAT));
-		fieldMap.put(TRIP_COORDS_LON,
-				tripCoordsCursor.getColumnIndex(DbAdapter.K_POINT_LGT));
-		fieldMap.put(TRIP_COORDS_ALT,
-				tripCoordsCursor.getColumnIndex(DbAdapter.K_POINT_ALT));
-		fieldMap.put(TRIP_COORDS_SPEED,
-				tripCoordsCursor.getColumnIndex(DbAdapter.K_POINT_SPEED));
-		fieldMap.put(TRIP_COORDS_HACCURACY,
-				tripCoordsCursor.getColumnIndex(DbAdapter.K_POINT_ACC));
-		fieldMap.put(TRIP_COORDS_VACCURACY,
-				tripCoordsCursor.getColumnIndex(DbAdapter.K_POINT_ACC));
+		try {
+			Cursor cursorTripCoords = mDb.fetchAllCoordsForTrip(tripId);
 
-		// Build JSON objects for each coordinate:
-		JSONObject tripCoords = new JSONObject();
-		while (!tripCoordsCursor.isAfterLast()) {
-			JSONObject coord = new JSONObject();
+			// Build the map between JSON field name and phone db field name:
+			Map<String, Integer> fieldMap = new HashMap<String, Integer>();
 
-			coord.put(TRIP_COORDS_TIME, df.format(tripCoordsCursor
-					.getDouble(fieldMap.get(TRIP_COORDS_TIME))));
-			coord.put(
-					TRIP_COORDS_LAT,
-					tripCoordsCursor.getDouble(fieldMap.get(TRIP_COORDS_LAT)) / 1E6);
-			coord.put(
-					TRIP_COORDS_LON,
-					tripCoordsCursor.getDouble(fieldMap.get(TRIP_COORDS_LON)) / 1E6);
-			coord.put(TRIP_COORDS_ALT,
-					tripCoordsCursor.getDouble(fieldMap.get(TRIP_COORDS_ALT)));
-			coord.put(TRIP_COORDS_SPEED,
-					tripCoordsCursor.getDouble(fieldMap.get(TRIP_COORDS_SPEED)));
-			coord.put(TRIP_COORDS_HACCURACY, tripCoordsCursor
-					.getDouble(fieldMap.get(TRIP_COORDS_HACCURACY)));
-			coord.put(TRIP_COORDS_VACCURACY, tripCoordsCursor
-					.getDouble(fieldMap.get(TRIP_COORDS_VACCURACY)));
+			fieldMap.put(TRIP_COORDS_TIME,      cursorTripCoords.getColumnIndex(DbAdapter.K_POINT_TIME));
+			fieldMap.put(TRIP_COORDS_LAT,       cursorTripCoords.getColumnIndex(DbAdapter.K_POINT_LAT));
+			fieldMap.put(TRIP_COORDS_LON,       cursorTripCoords.getColumnIndex(DbAdapter.K_POINT_LGT));
+			fieldMap.put(TRIP_COORDS_ALT,       cursorTripCoords.getColumnIndex(DbAdapter.K_POINT_ALT));
+			fieldMap.put(TRIP_COORDS_SPEED,     cursorTripCoords.getColumnIndex(DbAdapter.K_POINT_SPEED));
+			fieldMap.put(TRIP_COORDS_HACCURACY, cursorTripCoords.getColumnIndex(DbAdapter.K_POINT_ACC));
+			fieldMap.put(TRIP_COORDS_VACCURACY, cursorTripCoords.getColumnIndex(DbAdapter.K_POINT_ACC));
 
-			tripCoords.put(coord.getString("r"), coord);
-			tripCoordsCursor.moveToNext();
+			// Build JSON objects for each coordinate:
+			jsonTripCoords = new JSONObject();
+			double coordTime;
+			while (!cursorTripCoords.isAfterLast()) {
+
+				// *****************
+				// * Get coordinates
+				// *****************
+
+				coordTime = cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_TIME));
+
+				JSONObject jsonCoord = new JSONObject();
+
+				jsonCoord.put(TRIP_COORDS_TIME,      df.format(coordTime));
+				jsonCoord.put(TRIP_COORDS_LAT,       cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_LAT)) / 1E6);
+				jsonCoord.put(TRIP_COORDS_LON,       cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_LON)) / 1E6);
+				jsonCoord.put(TRIP_COORDS_ALT,       cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_ALT)));
+				jsonCoord.put(TRIP_COORDS_SPEED,     cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_SPEED)));
+				jsonCoord.put(TRIP_COORDS_HACCURACY, cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_HACCURACY)));
+				jsonCoord.put(TRIP_COORDS_VACCURACY, cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_VACCURACY)));
+
+				// **********************************************************
+				// * Get all sensor readings corresponding to this time index
+				// **********************************************************
+
+				jsonSensorReadings = getJsonSensorReadings(coordTime);
+
+				if ((null != jsonSensorReadings) && (jsonSensorReadings.length() > 0)) {
+					jsonCoord.put(TRIP_COORDS_SENSOR_READINGS, jsonSensorReadings);
+				}
+
+				// ****************************************************
+				// * Insert sensor readings into jSON coordinate object
+				// ****************************************************
+
+				jsonTripCoords.put(jsonCoord.getString("r"), jsonCoord);
+
+				// move to next coordinate
+				cursorTripCoords.moveToNext();
+			}
+			cursorTripCoords.close();
 		}
-		tripCoordsCursor.close();
-		mDb.close();
-		return tripCoords;
+		catch(Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		finally {
+			mDb.close();
+		}
+		return jsonTripCoords;
 	}
 
+	/**
+	 * Get all sensor readings corresponding to this time index
+	 * @return
+	 */
+	private JSONArray getJsonSensorReadings(double coordTime) {
+		JSONArray jsonSensorReadings = null;
+		JSONObject jsonSensorReading;
+		int numVals;
+		Cursor cursorSV = null;
+
+		try {
+			if (null != (cursorSV = mDb.fetchSensorValues(coordTime))) {
+
+				// Collect sensor readings into a json object
+				jsonSensorReadings = new JSONArray();
+
+				// Construct a map between cursor column index
+				if (null == sensorColumn) {
+					sensorColumn = new HashMap<String, Integer>();
+					sensorColumn.put(TRIP_COORD_SENSOR_ID,       cursorSV.getColumnIndex(DbAdapter.K_SENSOR_ID));
+					sensorColumn.put(TRIP_COORD_SENSOR_TYPE,     cursorSV.getColumnIndex(DbAdapter.K_SENSOR_TYPE));
+					sensorColumn.put(TRIP_COORD_SENSOR_SAMPLES,  cursorSV.getColumnIndex(DbAdapter.K_SENSOR_SAMPLES));
+					sensorColumn.put(TRIP_COORD_SENSOR_NUM_VALS, cursorSV.getColumnIndex(DbAdapter.K_SENSOR_NUM_VALS));
+					sensorColumn.put(TRIP_COORD_SENSOR_AVG_0,    cursorSV.getColumnIndex(DbAdapter.K_SENSOR_AVG_0));
+					sensorColumn.put(TRIP_COORD_SENSOR_AVG_1,    cursorSV.getColumnIndex(DbAdapter.K_SENSOR_AVG_1));
+					sensorColumn.put(TRIP_COORD_SENSOR_AVG_2,    cursorSV.getColumnIndex(DbAdapter.K_SENSOR_AVG_2));
+					sensorColumn.put(TRIP_COORD_SENSOR_SSD_0,    cursorSV.getColumnIndex(DbAdapter.K_SENSOR_SSD_0));
+					sensorColumn.put(TRIP_COORD_SENSOR_SSD_1,    cursorSV.getColumnIndex(DbAdapter.K_SENSOR_SSD_1));
+					sensorColumn.put(TRIP_COORD_SENSOR_SSD_2,    cursorSV.getColumnIndex(DbAdapter.K_SENSOR_SSD_2));
+				}
+
+				while (!cursorSV.isAfterLast()) {
+
+					jsonSensorReading = new JSONObject();
+					jsonSensorReading.put(TRIP_COORD_SENSOR_ID,      cursorSV.getString(sensorColumn.get(TRIP_COORD_SENSOR_ID)));
+					jsonSensorReading.put(TRIP_COORD_SENSOR_TYPE,    cursorSV.getInt   (sensorColumn.get(TRIP_COORD_SENSOR_TYPE)));
+					jsonSensorReading.put(TRIP_COORD_SENSOR_SAMPLES, cursorSV.getInt   (sensorColumn.get(TRIP_COORD_SENSOR_SAMPLES)));
+
+					numVals = cursorSV.getInt(sensorColumn.get(TRIP_COORD_SENSOR_NUM_VALS));
+
+					switch(numVals) {
+					case 1:
+						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_0, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_0)));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0)));
+						break;
+					case 3:
+						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_0, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_0)));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_1, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_1)));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_2, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_2)));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0)));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_1, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_1)));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_2, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_2)));
+						break;
+					}
+
+					jsonSensorReadings.put(jsonSensorReading);
+					cursorSV.moveToNext();
+				}
+			}
+		}
+		catch (Exception ex) {
+			Log.e(MODULE_TAG, ex.getMessage());
+		}
+		finally {
+			if (null != cursorSV) {
+				cursorSV.close();
+			}
+		}
+		return jsonSensorReadings;
+	}
+
+	@SuppressLint("SimpleDateFormat")
 	private JSONArray getPausesJSON(long tripId) throws JSONException {
 
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -285,6 +386,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		return jsonAnswers;
 	}
 
+	@SuppressLint("SimpleDateFormat")
 	private Vector<String> getTripData(long tripId) {
 		Vector<String> tripData = new Vector<String>();
 		mDb.openReadOnly();
@@ -415,59 +517,46 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		String postBodyData;
 		try {
 			postBodyData = getPostData(currentTripId);
-		} catch (JSONException e) {
-			e.printStackTrace();
+		} catch (JSONException ex) {
+			ex.printStackTrace();
 			return result;
 		}
 
 		HttpClient client = new DefaultHttpClient();
-		// TODO: Server URL
-		final String postUrl = mCtx.getResources().getString(R.string.post_url);
-		HttpPost postRequest = new HttpPost(postUrl);
+		HttpPost postRequest = new HttpPost(POST_URL);
 
 		try {
 			// Zip Upload!!!
-			Log.v("Jason", "postBodyData: " + postBodyData.toString());
-			Log.v("Jason", "postBodyData Length: " + postBodyData.length());
-
 			postBodyDataZipped = compress(postBodyData);
-
-			Log.v("Jason", "postBodyDataZipped: " + postBodyDataZipped);
-			Log.v("Jason",
-					"postBodyDataZipped Length: "
-							+ String.valueOf(postBodyDataZipped.length));
-
-			Log.v("Jason", "Initializing HTTP POST request to " + postUrl
-					+ " of size " + String.valueOf(postBodyDataZipped.length)
-					+ " orig size " + postBodyData.length());
-
 			postRequest.setHeader("Cycleatl-Protocol-Version", "3");
 			postRequest.setHeader("Content-Encoding", "gzip");
-			postRequest.setHeader("Content-Type",
-					"application/vnd.cycleatl.trip-v3+form");
-			// postRequest.setHeader("Content-Length",String.valueOf(postBodyDataZipped.length));
-
+			postRequest.setHeader("Content-Type", "application/vnd.cycleatl.trip-v3+form");
 			postRequest.setEntity(new ByteArrayEntity(postBodyDataZipped));
 
 			HttpResponse response = client.execute(postRequest);
-			String responseString = convertStreamToString(response.getEntity()
-					.getContent());
-			// Log.v("httpResponse", responseString);
+			String responseString = convertStreamToString(response.getEntity().getContent());
+
 			JSONObject responseData = new JSONObject(responseString);
-			if (responseData.getString("status").equals("success")) {
+
+			String responseStatus = responseData.getString("status");
+
+			if (responseStatus.equals("success")) {
 				mDb.open();
 				mDb.updateTripStatus(currentTripId, TripData.STATUS_SENT);
 				mDb.close();
 				result = true;
 			}
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
+			else {
+				Log.e(MODULE_TAG, "Server response status: " + responseStatus);
+			}
+		} catch (IllegalStateException ex) {
+			ex.printStackTrace();
 			return false;
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ex) {
+			ex.printStackTrace();
 			return false;
-		} catch (JSONException e) {
-			e.printStackTrace();
+		} catch (JSONException ex) {
+			ex.printStackTrace();
 			return false;
 		}
 		return result;

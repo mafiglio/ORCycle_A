@@ -266,7 +266,7 @@ public class TripQuestionsActivity extends Activity {
 			else if (myApp.getHintDoReportLater ())
 				dialogDoReportLater();
 			else
-				transitionToTabsConfigActivity();
+				transitionToTripMapActivity();
 			break;
 
 		case HINT_DO_REPORT_NOW:
@@ -276,7 +276,7 @@ public class TripQuestionsActivity extends Activity {
 			else if (myApp.getHintDoReportLater ())
 				dialogDoReportLater();
 			else
-				transitionToTabsConfigActivity();
+				transitionToTripMapActivity();
 			break;
 
 		case HINT_DO_REPORT_LATER:
@@ -284,11 +284,11 @@ public class TripQuestionsActivity extends Activity {
 			if (myApp.getHintDoReportLater ())
 				dialogDoReportLater();
 			else
-				transitionToTabsConfigActivity();
+				transitionToTripMapActivity();
 			break;
 
 		default:
-			transitionToTabsConfigActivity();
+			transitionToTripMapActivity();
 			break;
 		}
 	}
@@ -957,7 +957,7 @@ public class TripQuestionsActivity extends Activity {
 
 		public void onClick(final DialogInterface dialog, final int id) {
 			try {
-				transitionToTabsConfigActivity();
+				transitionToTripMapActivity();
 				dialog.dismiss();
 			}
 			catch(Exception ex) {
@@ -988,15 +988,5 @@ public class TripQuestionsActivity extends Activity {
 		startActivity(intent);
 		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 		finish();
-	}
-
-	private void transitionToTabsConfigActivity() {
-
-		Intent intent = new Intent(this, TabsConfig.class);
-
-		intent.putExtra(TabsConfig.EXTRA_SHOW_FRAGMENT, TabsConfig.FRAG_INDEX_MAIN_INPUT);
-		startActivity(intent);
-		finish();
-		overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
 	}
 }
