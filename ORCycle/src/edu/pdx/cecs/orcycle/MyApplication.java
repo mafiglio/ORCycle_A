@@ -502,7 +502,7 @@ public class MyApplication extends android.app.Application {
 		SharedPreferences settings = getSharedPreferences(PREFS_APPLICATION, MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor = settings.edit();
-		editor.putBoolean(SETTING_HINT_DO_REPORT_NOW, hintDoReportLater);
+		editor.putBoolean(SETTING_HINT_DO_REPORT_LATER, hintDoReportLater);
 		editor.apply();
 	}
 

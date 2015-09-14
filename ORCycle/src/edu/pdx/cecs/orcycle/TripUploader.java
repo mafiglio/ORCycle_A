@@ -517,8 +517,8 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		String postBodyData;
 		try {
 			postBodyData = getPostData(currentTripId);
-		} catch (JSONException e) {
-			e.printStackTrace();
+		} catch (JSONException ex) {
+			ex.printStackTrace();
 			return result;
 		}
 
@@ -537,20 +537,26 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 			String responseString = convertStreamToString(response.getEntity().getContent());
 
 			JSONObject responseData = new JSONObject(responseString);
-			if (responseData.getString("status").equals("success")) {
+
+			String responseStatus = responseData.getString("status");
+
+			if (responseStatus.equals("success")) {
 				mDb.open();
 				mDb.updateTripStatus(currentTripId, TripData.STATUS_SENT);
 				mDb.close();
 				result = true;
 			}
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
+			else {
+				Log.e(MODULE_TAG, "Server response status: " + responseStatus);
+			}
+		} catch (IllegalStateException ex) {
+			ex.printStackTrace();
 			return false;
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ex) {
+			ex.printStackTrace();
 			return false;
-		} catch (JSONException e) {
-			e.printStackTrace();
+		} catch (JSONException ex) {
+			ex.printStackTrace();
 			return false;
 		}
 		return result;

@@ -784,8 +784,8 @@ public class DbAdapter {
 
 		numRows = mDb.update(DATA_TABLE_TRIPS, initialValues, K_TRIP_ROWID + "=" + tripid, null);
 
-		/* Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
-				+ "](" + K_TRIP_STATUS +"): " + String.valueOf(numRows) + " rows."); */
+		Log.i(MODULE_TAG, "Updated " + DATA_TABLE_TRIPS + "[" + String.valueOf(tripid)
+				+ "](" + K_TRIP_STATUS +"): " + String.valueOf(numRows) + " rows.");
 
 		return numRows > 0;
 	}
