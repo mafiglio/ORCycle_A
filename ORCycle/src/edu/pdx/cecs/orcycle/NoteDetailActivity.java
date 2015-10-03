@@ -62,7 +62,7 @@ public class NoteDetailActivity extends Activity {
 
 	public static final String MODULE_TAG = "NoteDetailActivity";
 
-	public static final String ORCYCLE_EMAIL_ADDRESS = "figliozzi@pdx.edu";
+	public static final String ORCYCLE_EMAIL_ADDRESS = "askodot@odot.state.or.us";
 	public static final String ORCYCLE_CC_ADDRESS = "orcycle@pdx.edu";
 	//public static final String ORCYCLE_EMAIL_ADDRESS = "robin5@pdx.edu";
 
