@@ -259,27 +259,45 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 					sensorColumn.put(TRIP_COORD_SENSOR_SSD_2,    cursorSV.getColumnIndex(DbAdapter.K_SENSOR_SSD_2));
 				}
 
+				int numSamples;
+
 				while (!cursorSV.isAfterLast()) {
 
 					jsonSensorReading = new JSONObject();
 					jsonSensorReading.put(TRIP_COORD_SENSOR_ID,      cursorSV.getString(sensorColumn.get(TRIP_COORD_SENSOR_ID)));
 					jsonSensorReading.put(TRIP_COORD_SENSOR_TYPE,    cursorSV.getInt   (sensorColumn.get(TRIP_COORD_SENSOR_TYPE)));
-					jsonSensorReading.put(TRIP_COORD_SENSOR_SAMPLES, cursorSV.getInt   (sensorColumn.get(TRIP_COORD_SENSOR_SAMPLES)));
+					jsonSensorReading.put(TRIP_COORD_SENSOR_SAMPLES, (numSamples = cursorSV.getInt   (sensorColumn.get(TRIP_COORD_SENSOR_SAMPLES))));
 
 					numVals = cursorSV.getInt(sensorColumn.get(TRIP_COORD_SENSOR_NUM_VALS));
 
 					switch(numVals) {
+
 					case 1:
+
 						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_0, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_0))));
-						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0))));
+						if (numSamples > 0) {
+							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, dr(Math.sqrt(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0))/numSamples)));
+						}
+						else {
+							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, 0.0);
+						}
 						break;
+
 					case 3:
+
 						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_0, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_0))));
 						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_1, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_1))));
 						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_2, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_2))));
-						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0))));
-						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_1, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_1))));
-						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_2, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_2))));
+						if (numSamples > 0) {
+							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, dr(Math.sqrt(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0))/numSamples)));
+							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_1, dr(Math.sqrt(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_1))/numSamples)));
+							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_2, dr(Math.sqrt(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_2))/numSamples)));
+						}
+						else {
+							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, 0.0);
+							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_1, 0.0);
+							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_2, 0.0);
+						}
 						break;
 					}
 
@@ -306,7 +324,7 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 	 * @return value rounded to two decimal places.
 	 */
 	private double dr(double value) {
-		return Math.round(value * 100)/100;
+		return Math.round(value * 100.0) / 100.0;
 	}
 
 
