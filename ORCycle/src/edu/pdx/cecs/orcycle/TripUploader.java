@@ -193,8 +193,8 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 				jsonCoord.put(TRIP_COORDS_TIME,      df.format(coordTime));
 				jsonCoord.put(TRIP_COORDS_LAT,       cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_LAT)) / 1E6);
 				jsonCoord.put(TRIP_COORDS_LON,       cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_LON)) / 1E6);
-				jsonCoord.put(TRIP_COORDS_ALT,       cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_ALT)));
-				jsonCoord.put(TRIP_COORDS_SPEED,     cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_SPEED)));
+				jsonCoord.put(TRIP_COORDS_ALT,       dr1(cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_ALT))));
+				jsonCoord.put(TRIP_COORDS_SPEED,     dr1(cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_SPEED))));
 				jsonCoord.put(TRIP_COORDS_HACCURACY, cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_HACCURACY)));
 				jsonCoord.put(TRIP_COORDS_VACCURACY, cursorTripCoords.getDouble(fieldMap.get(TRIP_COORDS_VACCURACY)));
 
@@ -274,9 +274,9 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 
 					case 1:
 
-						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_0, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_0))));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_0, dr2(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_0))));
 						if (numSamples > 0) {
-							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, dr(Math.sqrt(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0))/numSamples)));
+							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, dr2(Math.sqrt(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0))/numSamples)));
 						}
 						else {
 							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, 0.0);
@@ -285,13 +285,13 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 
 					case 3:
 
-						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_0, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_0))));
-						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_1, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_1))));
-						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_2, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_2))));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_0, dr2(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_0))));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_1, dr2(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_1))));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_2, dr2(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_2))));
 						if (numSamples > 0) {
-							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, dr(Math.sqrt(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0))/numSamples)));
-							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_1, dr(Math.sqrt(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_1))/numSamples)));
-							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_2, dr(Math.sqrt(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_2))/numSamples)));
+							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, dr2(Math.sqrt(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0))/numSamples)));
+							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_1, dr2(Math.sqrt(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_1))/numSamples)));
+							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_2, dr2(Math.sqrt(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_2))/numSamples)));
 						}
 						else {
 							jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, 0.0);
@@ -323,7 +323,16 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 	 * @param value to round.
 	 * @return value rounded to two decimal places.
 	 */
-	private double dr(double value) {
+	private double dr1(double value) {
+		return Math.round(value * 10.0) / 10.0;
+	}
+
+	/**
+	 * Rounds double value to two decimal places.
+	 * @param value to round.
+	 * @return value rounded to two decimal places.
+	 */
+	private double dr2(double value) {
 		return Math.round(value * 100.0) / 100.0;
 	}
 
