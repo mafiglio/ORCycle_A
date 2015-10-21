@@ -270,16 +270,16 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 
 					switch(numVals) {
 					case 1:
-						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_0, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_0)));
-						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0)));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_0, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_0))));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0))));
 						break;
 					case 3:
-						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_0, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_0)));
-						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_1, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_1)));
-						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_2, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_2)));
-						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0)));
-						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_1, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_1)));
-						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_2, cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_2)));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_0, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_0))));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_1, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_1))));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_AVG_2, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_AVG_2))));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_0, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_0))));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_1, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_1))));
+						jsonSensorReading.put(TRIP_COORD_SENSOR_SSD_2, dr(cursorSV.getDouble(sensorColumn.get(TRIP_COORD_SENSOR_SSD_2))));
 						break;
 					}
 
@@ -298,6 +298,17 @@ public class TripUploader extends AsyncTask<Long, Integer, Boolean> {
 		}
 		return jsonSensorReadings;
 	}
+
+
+	/**
+	 * Rounds double value to two decimal places.
+	 * @param value to round.
+	 * @return value rounded to two decimal places.
+	 */
+	private double dr(double value) {
+		return Math.round(value * 100)/100;
+	}
+
 
 	@SuppressLint("SimpleDateFormat")
 	private JSONArray getPausesJSON(long tripId) throws JSONException {
